@@ -3,7 +3,96 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-29 (**lisibilité du générateur d'historique volumineux**).
+**Dernière mise à jour :** 2026-10-03 (**skin TTY1 et version de l'app dans l'en-tête**).
+
+## Skin TTY1 et version de l'app dans l'en-tête (2026-10-03)
+
+Deux demandes, une session. Le thème **TTY1** : l'app habillée comme la première console virtuelle d'un
+Linux, qui se choisit dans Réglages > Apparence. Et, sur tous les écrans et dans tous les thèmes, le
+**numéro de version** en haut à droite de l'en-tête. Aucune table, aucun index, aucune version de
+schéma, aucun export : l'app change de peau et dit son numéro, ses données ne bougent pas.
+
+La maquette (`docs/design/mockups/2026-10-03-skin-tty1.html`), les deux specs et les deux plans
+(`docs/design/specs/` et `docs/design/plans/`, `skin-tty1` et `version-en-tete`) disent le détail. Voici
+ce qui compte pour la suite.
+
+**La version dans l'en-tête**
+
+- Source unique : `package.json`. `vite.config.ts` en fait la constante de build `__APP_VERSION__`,
+  `src/app/version.ts` (`APP_VERSION`) en est le seul lecteur, et le workflow Android lit le même champ
+  pour le `versionName` : la PWA et l'APK ne peuvent pas annoncer deux numéros, et une release n'a qu'un
+  numéro à changer.
+- `Screen` l'écrit (`v2.8.0`, 12 px, `--text-2`) dans la marge haute de l'en-tête, les 20 px de `pt-5` :
+  pas un pixel de hauteur de plus pour la séance en direct, et jamais à côté d'un titre que l'utilisateur
+  a choisi. C'est ce qui dit, sur le téléphone, si la PWA et l'APK sont sur la même construction.
+
+**Le thème TTY1**
+
+- `Theme` passe à `'dark' | 'light' | 'tty1'` (`THEMES` donne l'ordre de Réglages). Le script bloquant
+  d'`index.html` et la couleur de la barre système suivent, et un test exécute ce script tel quel pour le
+  comparer à `applyTheme`, thème par thème.
+- Un seul fichier, `src/styles/tty1.css`, importé par **une ligne** d'`index.css` (`Boot.test.tsx` y lit
+  des blocs par ancres). Il redéfinit chaque jeton du thème clair (un test le garde, avec les seuils de
+  contraste de la maquette), surcharge les variables de thème de Tailwind (`--font-sans`, `--text-*`) et
+  lit les classes existantes comme des rôles : **aucune classe n'a changé de nom**. Les points
+  d'accroche ajoutés sont des attributs `data-part`, sans effet hors du thème (la liste est dans la spec).
+- **Police** : Terminus 4.49.1 (SIL OFL 1.1) redessinée en contours aux quatre tailles natives, 12, 16,
+  24 et 32 px (`TTY12` à `TTY32`). Huit `woff2` de 5 à 8 Ko dans `src/assets/fonts/tty1/`, **dans le
+  précache** (234 → 242 entrées : `woff2` manquait au glob), créditée dans « À propos et crédits », licence
+  dans `licenses/terminus/`. Le générateur, `scripts/tty1-font/` (Python, hors de `package.json`), redonne
+  les mêmes octets à chaque exécution. Un test garde la couverture : un caractère qui entre dans l'app
+  sans être dans la police fait échouer la suite au lieu de retomber en silence sur la police du système.
+- **Ouverture** : avec TTY1 la console joue à chaque lancement, 2 180 ms, sautée par une séance en cours
+  comme les autres, sans toucher à la date de la surprise rare. Elle affiche le numéro de version.
+- Ce que le thème montre : vert ANSI `#55ff55` comme seul accent, noir et gris VGA, angles droits, crochets
+  sur les boutons, `[x]` pour une série validée, ▼ et ► pour les replis, `[ON ]` et `[OFF]`, vidéo
+  inverse au toucher, pistes en cellules, curseur bloc qui clignote (accueil, repos). Pas de trame CRT.
+  « Réduire les animations » arrête tout clignotement.
+
+**Vérifié**
+
+- 33 routes balayées dans Chromium à 390 px, en TTY1 et en Sombre : tout texte est dans une famille TTY,
+  chaque famille est sur sa taille, aucune cible tactile sous 48 px qui ne le soit déjà en Sombre (les
+  boutons de cadence et de plaques font 44 px de large dans les deux), aucun débordement horizontal. Les sept écrans de la maquette comparés à l'œil, côte à côte.
+- Le hors-ligne, le vrai : build servi, service worker actif, réseau coupé, page neuve. Le thème, les
+  quatre familles de police et la version sont là, aucune requête n'échoue.
+- `typecheck`, `lint` (un avertissement Fast Refresh préexistant dans `Boot.tsx`), `test:run` (**254
+  fichiers, 2 703 tests**, contre 248 et 2 657 au départ) et `build` verts ; le build Android web aussi.
+  Précache de 242 entrées, 8 258,79 Kio.
+
+**Pièges rencontrés**
+
+- Élargir `Theme` n'a signalé aucune des conditions écrites « sombre ou clair » : `syncSystemBars` aurait
+  donné à TTY1 des icônes sombres sur une barre noire. Un test l'a vu, pas le compilateur.
+- Un attribut de présentation SVG (`strokeLinecap="round"` sur un tracé) l'emporte sur une valeur héritée
+  du `svg` : le logo de l'ouverture gardait ses bouts ronds. La règle vise désormais le `svg` et ses
+  enfants.
+- Un élément qui reçoit `text-2xl` sans recevoir sa famille hérite de celle de son parent et étire un
+  bitmap : chaque classe de taille, y compris les cinq écrites en dur, porte donc la sienne.
+- La règle « mouvement réduit » de `index.css` est dans `@layer base` avec `!important`, et les
+  déclarations importantes d'une couche antérieure l'emportent sur celles d'une feuille sans couche : un
+  override du skin n'y fait rien là où une règle de la couche cible déjà la même propriété.
+- `fontTools` date chaque police de l'instant présent : deux exécutions sur les mêmes sources donnaient
+  huit binaires différents. `SOURCE_DATE_EPOCH` fixe rend le générateur reproductible.
+- La légende de la carte « À lancer » repose sur `:has()`. Son positionnement absolu vit dans le sélecteur
+  de sa carte : sans `:has()`, le navigateur jette la règle entière et la légende reste dans la carte.
+
+**Écarts avec la maquette, assumés** : `kg` reste en minuscules dans les en-têtes de colonne (un symbole du
+SI ne se met pas en capitales), l'icône de fermeture d'une feuille reste grise, et l'étoile d'un record suit
+le nom d'un exercice à la ligne. `src/styles/tty1.css` fait environ 730 lignes : consigné dans « Dette
+technique assumée » (`docs/progress/decisions-et-pieges.md`).
+
+**Non vérifié** : le rendu sur un téléphone (la seule chose qu'un écran d'ordinateur ne dit pas : une
+police de 16 px, en salle, à bout de bras), et l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Réglages > Apparence > TTY1, puis fermer et rouvrir l'app : l'ouverture console, deux secondes, avec le
+   numéro de version sous le nom.
+2. Lancer une séance, valider une série : `[x]`, le repos qui clignote, la jauge d'effort.
+3. Ouvrir la feuille des plaques ; parcourir l'historique et le volume.
+4. Couper le réseau, tuer l'app, la rouvrir : la police est là, rien ne retombe sur celle du système.
+5. Repasser en Sombre : rien n'a changé, sinon le numéro de version en haut à droite de chaque écran.
 
 ## Lisibilité du générateur d'historique volumineux (2026-09-29)
 

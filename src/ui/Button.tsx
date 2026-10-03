@@ -29,6 +29,8 @@ export function Button({
   const sizes = size === 'lg' ? 'min-h-14 px-6 text-lg' : 'min-h-12 px-4 text-base';
   return (
     <button
+      data-part="button"
+      data-variant={variant}
       data-tutorial-id={tutorialId}
       className={`inline-flex items-center justify-center gap-2 rounded-xl font-semibold
         transition-[filter,background-color,transform] duration-[var(--dur-1)] ease-[var(--ease-mech)]

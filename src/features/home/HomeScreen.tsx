@@ -44,6 +44,7 @@ export function HomeScreen() {
   return (
     <Screen
       title={t('home.title')}
+      cursor
       action={
         <HeaderAction label={t('nav.settings')} onClick={() => void navigate('/settings')}>
           <SlidersIcon />

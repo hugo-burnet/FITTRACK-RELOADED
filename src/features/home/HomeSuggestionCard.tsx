@@ -88,9 +88,9 @@ function HomeSuggestionCardContent({
   };
 
   const contextHeader = (
-    <div className="flex min-h-12 items-center gap-3">
+    <div data-part="card-head" className="flex min-h-12 items-center gap-3">
       <div className="min-w-0 flex-1">
-        <p className="label-xs font-semibold text-[var(--text-2)]">
+        <p data-part="legend" className="label-xs font-semibold text-[var(--text-2)]">
           {t('home.suggestionSection')}
         </p>
         {hasFolderPicker && (

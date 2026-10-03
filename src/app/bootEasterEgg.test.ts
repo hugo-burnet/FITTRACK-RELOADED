@@ -71,6 +71,26 @@ describe('selectBootVariant', () => {
     expect(selectBootVariant(storage, 1_800_000_000_000, 0)).toBe('normal');
   });
 
+  it('always opens on the TTY1 console, without touching the surprise schedule', () => {
+    const now = 1_800_000_000_000;
+    const state = memoryStorage(String(now - 1));
+
+    expect(selectBootVariant(state.storage, now, 0.5, 'tty1')).toBe('tty1');
+    expect(state.storage.setItem).not.toHaveBeenCalled();
+    expect(state.read()).toBe(String(now - 1));
+  });
+
+  it('plays the rare console again once TTY1 is left', () => {
+    const now = 1_800_000_000_000;
+    const state = memoryStorage(String(now - 1));
+
+    expect(selectBootVariant(state.storage, now, 0.5, 'dark')).toBe('console');
+  });
+
+  it('opens on the TTY1 console even when storage is unavailable', () => {
+    expect(selectBootVariant(null, 1_800_000_000_000, 0, 'tty1')).toBe('tty1');
+  });
+
   it('also survives the localStorage getter itself throwing', () => {
     expect(
       getBootStorage(() => {

@@ -29,9 +29,13 @@ import { EffortPromptSettings } from './EffortPromptSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
 
-const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
+const THEME_OPTIONS: {
+  value: Theme;
+  labelKey: 'settings.themeDark' | 'settings.themeLight' | 'settings.themeTty1';
+}[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
   { value: 'light', labelKey: 'settings.themeLight' },
+  { value: 'tty1', labelKey: 'settings.themeTty1' },
 ];
 
 /** Every answer the browser can give to "install this", each with its sentence. */
@@ -187,6 +191,7 @@ export function SettingsScreen() {
             <div
               role="radiogroup"
               aria-label={t('settings.theme')}
+              data-part="segmented"
               className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
             >
               {THEME_OPTIONS.map(({ value, labelKey }) => (
@@ -209,7 +214,7 @@ export function SettingsScreen() {
               ))}
             </div>
             <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
-              {t('settings.themeHint')}
+              {t(theme === 'tty1' ? 'settings.themeTty1Hint' : 'settings.themeHint')}
             </p>
           </div>
         </section>

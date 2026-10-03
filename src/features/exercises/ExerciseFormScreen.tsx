@@ -358,7 +358,7 @@ export function ExerciseFormScreen({
             <span className="flex-1 text-base text-[var(--text-1)]">
               {t('exerciseForm.unilateralLabel')}
             </span>
-            <span className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
+            <span data-part="segmented" className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
               {([0, 1] as const).map((value) => (
                 <button
                   key={value}

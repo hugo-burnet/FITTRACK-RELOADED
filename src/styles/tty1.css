@@ -1,0 +1,729 @@
+/*
+ * Le thème TTY1 : la première console virtuelle d'un Linux.
+ *
+ * Importé par `index.css`, qui n'en sait rien d'autre : `Boot.test.tsx` y lit des
+ * blocs par ancres, et un skin n'a pas à les déplacer.
+ *
+ * Ce fichier n'est dans aucune couche. Une règle sans couche l'emporte sur celles
+ * des couches de Tailwind, quelle que soit sa spécificité : c'est ce qui permet de
+ * surcharger ses utilitaires sans `!important`.
+ */
+
+/* Terminus, redessinée en contours à ses quatre tailles natives (scripts/tty1-font) : un pixel de
+   police vaut un pixel d'écran à 12, 16, 24 et 32 px, donc rien n'est flou. `block` et non `swap` : un
+   texte qui change de police en route est pire qu'un texte qui attend quelques millisecondes une
+   police qui sort du précache. */
+@font-face {
+  font-family: 'TTY16';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-16-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY16';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-16-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY12';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-12-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY12';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-12-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY24';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-24-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY24';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-24-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY32';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-32-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY32';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-32-bold.woff2') format('woff2');
+}
+
+:root[data-theme='tty1'] {
+  color-scheme: dark;
+
+  /* Les noms sont ceux de index.css. Un jeton oublié ici retomberait sur le thème
+     sombre ; `tty1.test.ts` compare ce bloc à celui du thème clair. */
+  --surface-0: #000000; /* le noir de la console */
+  --surface-1: #000000; /* une fenêtre : le même noir, cernée d'un filet */
+  --surface-2: #1c1c1c; /* champs et séries validées (gris xterm-256 n° 234) */
+  --border: #555555;
+  --text-1: #ffffff;
+  --text-2: #aaaaaa; /* le gris par défaut de tty1 */
+  --text-3: #555555; /* réservé : jamais pour une valeur qu'on lit */
+
+  --accent-fill: #55ff55; /* ANSI 10 */
+  --accent-fill-pressed: #aaffaa;
+  --accent-on-fill: #000000;
+  --accent-ink: #55ff55;
+  --accent-soft: #00260b;
+  --accent-data: #00aa00; /* ANSI 2 : barres de graphique ordinaires */
+  --axis: #878787;
+  --danger-ink: #ff5555; /* ANSI 9 */
+
+  --scrim: rgb(0 0 0 / 0.72);
+
+  /* Une famille par taille native, avec son repli : si une police manque, la chasse du système
+     garde au moins l'alignement des colonnes. */
+  --tty1-12: 'TTY12', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-16: 'TTY16', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-24: 'TTY24', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-32: 'TTY32', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+
+  /* Les gestes gardent leurs durées et avancent par paliers. */
+  --ease-mech: steps(3, end);
+
+  --font-sans: var(--tty1-16);
+
+  /* Quatre tailles natives. Les interlignes sont des longueurs, pas des rapports : un rapport
+     donne 15,9996 px, et un demi-pixel d'écart suffit à flouter une police de pixels. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: 2rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.5rem;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-7xl: 4rem; /* l'état vide : 2 × 32 px, un multiple entier de la bitmap */
+  --text-7xl--line-height: 4rem;
+}
+
+/*
+ * Les familles suivent les tailles.
+ *
+ * Tailwind ne pose que `font-size` et `line-height` : il ne sait pas lier une famille à une taille,
+ * et un élément qui reçoit 24 px sans recevoir TTY24 hérite de la famille de son parent, donc d'un
+ * bitmap étiré. Chaque classe de taille porte donc sa famille. Les règles ont la même spécificité :
+ * l'ordre qui suit est celui qui décide, et chaque famille repose sur l'ordre des tailles.
+ */
+:root[data-theme='tty1'] :is(.text-sm, .text-base, .text-\[0\.9375rem\]) {
+  font-family: var(--tty1-16);
+}
+
+/* `record-figure` fixe sa propre famille ; elle reprend celle du thème. */
+:root[data-theme='tty1'] .record-figure {
+  font-family: var(--font-sans);
+}
+
+:root[data-theme='tty1'] :is(.text-xs, .label-xs, .text-\[0\.6875rem\], .text-\[11px\]) {
+  font-family: var(--tty1-12);
+}
+
+:root[data-theme='tty1'] :is(.text-lg, .text-xl, .text-2xl) {
+  font-family: var(--tty1-24);
+}
+
+:root[data-theme='tty1']
+  :is(.text-3xl, .text-4xl, .text-7xl, .text-\[1\.75rem\], .text-\[2\.5rem\]) {
+  font-family: var(--tty1-32);
+}
+
+/* Les tailles écrites en dur : onze usages, cinq classes. */
+:root[data-theme='tty1'] :is(.text-\[0\.6875rem\], .text-\[11px\]) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+:root[data-theme='tty1'] .text-\[0\.9375rem\] {
+  font-size: 1rem;
+}
+:root[data-theme='tty1'] :is(.text-\[1\.75rem\], .text-\[2\.5rem\]) {
+  font-size: 2rem;
+}
+
+/* Une chasse fixe ne se crène pas ; seuls les libellés en capitales gardent un pixel. */
+:root[data-theme='tty1'] * {
+  letter-spacing: 0;
+}
+:root[data-theme='tty1'] :is(.label-xs, .tracking-\[0\.08em\]) {
+  letter-spacing: 1px;
+}
+:root[data-theme='tty1'] .label-xs {
+  line-height: 1rem;
+}
+
+/*
+ * Les formes.
+ *
+ * Angles droits partout. Un seul réglage : les rayons sont écrits dans cinq jeux de classes, dont
+ * trois ne sont pas des variables (`.rounded`, `.rounded-full` et `.rounded-[0.3rem]`), donc
+ * surcharger `--radius-*` ne suffirait pas.
+ */
+:root[data-theme='tty1'] *,
+:root[data-theme='tty1'] *::before,
+:root[data-theme='tty1'] *::after {
+  border-radius: 0;
+}
+:root[data-theme='tty1'] rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* Le rayon 2xl est, dans l'app, celui des blocs : sans fond distinct, ils prennent un contour. Le
+   cadre de mise en évidence du tutoriel porte déjà son anneau. */
+:root[data-theme='tty1'] .rounded-2xl:not(.ring-2) {
+  border: 1px solid var(--border);
+}
+
+/* Le titre d'une carte (« À lancer ») se pose sur son filet du haut, comme la légende d'un cadre,
+   au lieu de prendre une ligne dans la carte. Seule une carte qui en porte un devient relative et
+   cesse de rogner : les angles droits n'ont plus rien à rogner, et la légende dépasse. L'en-tête
+   qui ne garde plus que cette légende (pas de dossier à choisir) n'a plus rien à montrer : il se
+   réduit à rien, sans disparaître, puisque la légende en est un descendant.
+   Les trois règles reposent sur `:has()`. Là où il manque, le navigateur les jette entières, et la
+   légende reste dans la carte, comme dans les autres thèmes : le positionnement absolu de la
+   légende vit donc *dans* le sélecteur de sa carte, jamais seul. */
+:root[data-theme='tty1'] .rounded-2xl:has([data-part='legend']) {
+  position: relative;
+  overflow: visible;
+}
+:root[data-theme='tty1'] .rounded-2xl:has([data-part='legend']) [data-part='legend'] {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  z-index: 1;
+  padding: 0 6px;
+  background: var(--surface-0);
+}
+:root[data-theme='tty1'] [data-part='card-head']:not(:has(button, p:not([data-part='legend']))) {
+  min-height: 0;
+  margin-block-end: 0;
+}
+
+/* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
+   composant (`border-b`, retiré sur la dernière) : seul son style change. */
+:root[data-theme='tty1'] [data-part='row'] {
+  border-bottom-style: dotted;
+}
+
+/* `SectionTitle` : « ── Titre ───── ». Le titre de l'historique récent partage sa ligne avec un lien,
+   d'où `flex: 1`. */
+:root[data-theme='tty1'] h2.label-xs {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+:root[data-theme='tty1'] h2.label-xs::before {
+  content: '';
+  width: 12px;
+  border-top: 1px solid var(--border);
+}
+:root[data-theme='tty1'] h2.label-xs::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+/* Les feuilles : un double filet en tête, sans poignée. */
+:root[data-theme='tty1'] .sheet-panel {
+  border-top: 3px double var(--text-2);
+}
+:root[data-theme='tty1'] .sheet-panel header .h-1.w-9 {
+  display: none;
+}
+/* Dans une feuille, les filets qui séparent deux blocs sont pointillés, comme ceux des listes. */
+:root[data-theme='tty1'] .sheet-panel :is(.border-b, .border-t) {
+  border-style: dotted;
+}
+
+/*
+ * Les commandes.
+ *
+ * Aucun nom de classe ne change : le skin lit les classes de Tailwind comme des rôles et ne
+ * s'accroche par `data-part` que là où rien de stable n'existe (voir la spec).
+ */
+
+/* Pressé : vidéo inverse, aucune mise à l'échelle. */
+:root[data-theme='tty1'] :is(button, a):active:not(:disabled) {
+  background: var(--text-2);
+  color: var(--surface-0);
+}
+:root[data-theme='tty1'] :is(button, a):active:not(:disabled) * {
+  color: inherit;
+}
+:root[data-theme='tty1'] [data-part='button'][data-variant='primary']:active:not(:disabled) {
+  background: var(--accent-fill-pressed);
+  color: var(--accent-on-fill);
+}
+
+/* `active:scale-*` écrit la propriété `scale`, pas `transform`. Les trois classes, par leur nom :
+   `scale-x-0` de l'onglet actif doit rester intact. */
+:root[data-theme='tty1']
+  :is(.active\:scale-\[0\.92\], .active\:scale-\[0\.94\], .active\:scale-\[0\.97\]):active {
+  scale: none;
+}
+
+/* Les crochets : des marges automatiques les poussent aux extrémités et centrent le contenu. */
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band']) {
+  gap: 12px;
+  font-family: var(--tty1-16);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band'])::before {
+  content: '[';
+  margin-right: auto;
+}
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band'])::after {
+  content: ']';
+  margin-left: auto;
+}
+
+:root[data-theme='tty1'] [data-part='button'][data-variant='secondary'] {
+  background: transparent;
+  border: 1px solid var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='button']:is([data-variant='ghost'], [data-variant='danger']) {
+  border: 1px solid transparent;
+}
+
+:root[data-theme='tty1'] [data-part='add-row'] > svg,
+:root[data-theme='tty1'] [data-part='chip'] > svg {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='add-row']::before {
+  content: '[+]';
+}
+:root[data-theme='tty1'] [data-part='chip'] {
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='chip']::after {
+  content: '▼';
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='chip'][aria-pressed='true']::after {
+  color: inherit;
+}
+
+/* La coche d'une série : `[ ]`, puis `[x]` sur un bloc de l'accent. La cible reste de 48 px : seul
+   le bloc intérieur change. */
+:root[data-theme='tty1'] [data-part='set-check'] > span {
+  width: 40px;
+  height: 32px;
+  background: transparent;
+  color: var(--text-2);
+  font: 700 1.5rem/1.5rem var(--tty1-24);
+}
+:root[data-theme='tty1'] [data-part='set-check'] > span > svg {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='set-check'] > span::before {
+  content: '[ ]';
+}
+:root[data-theme='tty1'] [data-part='set-check'][aria-pressed='true'] > span {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+:root[data-theme='tty1'] [data-part='set-check'][aria-pressed='true'] > span::before {
+  content: '[x]';
+}
+/* Pressée, c'est le bloc qui s'inverse, pas la cible entière. */
+:root[data-theme='tty1'] [data-part='set-check']:active:not(:disabled) {
+  background: transparent;
+}
+:root[data-theme='tty1'] [data-part='set-check']:active:not(:disabled) > span {
+  background: var(--text-2);
+  color: var(--surface-0);
+}
+
+/* Un pli ouvert porte ▼, un pli fermé ►, à la place du chevron qui tourne. Celui d'un dossier de
+   routines dit son chevron dans une pastille en tête, celui d'un exercice en dernier. */
+:root[data-theme='tty1'] [data-part='fold'] > svg:last-child,
+:root[data-theme='tty1'] [data-part='fold'] > span[aria-hidden='true']:first-child {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='fold']::after {
+  content: '▼';
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='fold'][aria-expanded='false']::after {
+  content: '►';
+}
+
+/* Le nom d'un exercice se lit en entier, sur deux lignes au plus. La chasse fixe est plus large que la
+   police proportionnelle du thème sombre : « Squat (barre, n… » ne se reconnaît plus. */
+:root[data-theme='tty1'] [data-part='fold'] .truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Le pli d'une `details` (les plaques disponibles) se lit comme celui d'un exercice : fermé ►, ouvert ▼.
+   Son état est celui de l'élément, pas un `aria-expanded`. */
+:root[data-theme='tty1'] details:not([open]) > [data-part='fold']::after {
+  content: '►';
+}
+
+/* Un interrupteur dit son état en toutes lettres ; la marque (« 80% ») reste devant. */
+:root[data-theme='tty1'] [role='switch'] > span[aria-hidden='true']:last-child {
+  display: none;
+}
+:root[data-theme='tty1'] [role='switch']::after {
+  content: '[OFF]';
+  font-weight: 700;
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [role='switch'][aria-checked='true']::after {
+  content: '[ON ]';
+  color: var(--accent-ink);
+}
+
+/* Les sélecteurs segmentés : un cadre à filets, l'option choisie en bloc de l'accent. Une option est
+   un bouton, ou le lien d'une `li` (les onglets de Planifier). */
+:root[data-theme='tty1'] [data-part='segmented'] {
+  gap: 1px;
+  padding: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='segmented'] > *,
+:root[data-theme='tty1'] [data-part='segmented'] > li > a {
+  background: var(--surface-1);
+  color: var(--text-2);
+}
+:root[data-theme='tty1']
+  [data-part='segmented']
+  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+
+/* La barre du bas : l'onglet actif est un bloc, la marque du dessus disparaît. */
+:root[data-theme='tty1'] .bottom-nav a[aria-current='page'] {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+:root[data-theme='tty1'] .bottom-nav a[aria-current='page'] > span:last-child {
+  font-weight: 700;
+}
+:root[data-theme='tty1'] .bottom-nav a > span[aria-hidden='true'] {
+  display: none;
+}
+
+/* Les pictogrammes : angles vifs, aucun anti-crénelage. Sur le `svg` *et* sur ce qu'il contient : un
+   attribut de présentation (`strokeLinecap="round"` sur un tracé) l'emporte sur une valeur héritée,
+   et seule une règle qui vise l'élément lui-même l'emporte sur l'attribut. */
+:root[data-theme='tty1'] svg,
+:root[data-theme='tty1'] svg * {
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  shape-rendering: crispEdges;
+}
+
+/* Les champs : un cadre de 1 px, la valeur en 24 px gras, un curseur bloc, et au focus un filet de
+   l'accent de 2 px (le cadre et une ombre), comme la maquette. `cell` est la cellule d'une série,
+   `field` le champ numérique à boutons, `input` le champ de texte (nom, sous-titre, notes). */
+:root[data-theme='tty1'] [data-part='cell'],
+:root[data-theme='tty1'] [data-part='field'] > button,
+:root[data-theme='tty1'] [data-part='field'] input,
+:root[data-theme='tty1'] [data-part='input'] {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='cell'] input {
+  background: none;
+}
+:root[data-theme='tty1'] [data-part='cell']:focus-within,
+:root[data-theme='tty1'] [data-part='field'] input:focus,
+:root[data-theme='tty1'] [data-part='input']:focus {
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 1px var(--accent-ink);
+}
+:root[data-theme='tty1'] :is([data-part='cell'], [data-part='field']) input,
+:root[data-theme='tty1'] [data-part='input'] {
+  caret-color: var(--accent-ink);
+  caret-shape: block;
+}
+
+/* Sous 373 px, la grille d'une série se serre. */
+@media (max-width: 372px) {
+  :root[data-theme='tty1'] [data-part='set-check'] {
+    width: 44px;
+  }
+}
+
+/*
+ * Les jauges, le repos et l'effort.
+ */
+
+/* Une piste en cellules : le masque découpe la piste *et* son remplissage, dont la largeur reste
+   celle que le composant écrit (un `transform` ou un `width`). Une rampe répétée sur le remplissage
+   changerait la taille des cellules avec lui. */
+:root[data-theme='tty1'] :is([data-part='meter'], [data-part='meter-rail']) {
+  background-color: var(--border);
+  mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 8px);
+}
+/* L'objectif hebdomadaire : huit pixels de haut. Le fil du repos : quatre, au pied de la carte. */
+:root[data-theme='tty1'] [data-part='meter'] {
+  height: 8px;
+}
+:root[data-theme='tty1'] [data-part='meter-rail'] {
+  height: 4px;
+  bottom: 4px;
+}
+
+/* Le point du repos devient le curseur bloc, le seul clignotement de la séance. */
+:root[data-theme='tty1'] [data-part='rest-dot'] {
+  width: 8px;
+  height: 16px;
+  animation: tty-blink 1.06s steps(1) infinite;
+}
+@keyframes tty-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* La jauge d'effort : neuf cellules, un repère plein. */
+:root[data-theme='tty1'] .rpe-gauge::-webkit-slider-runnable-track {
+  height: 1rem;
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(100% / 9 - 2px),
+      var(--surface-2) calc(100% / 9 - 2px) calc(100% / 9)
+    ),
+    linear-gradient(
+      to right,
+      var(--accent-ink) 0 var(--rpe-progress),
+      var(--border) var(--rpe-progress) 100%
+    );
+}
+:root[data-theme='tty1'] .rpe-gauge::-webkit-slider-thumb {
+  width: 0.5rem;
+  height: 1.5rem;
+  margin-top: -0.25rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--text-1);
+  box-shadow: none;
+}
+:root[data-theme='tty1'] .rpe-gauge::-moz-range-track {
+  height: 1rem;
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(100% / 9 - 2px),
+      var(--surface-2) calc(100% / 9 - 2px) calc(100% / 9)
+    ),
+    linear-gradient(
+      to right,
+      var(--accent-ink) 0 var(--rpe-progress),
+      var(--border) var(--rpe-progress) 100%
+    );
+}
+:root[data-theme='tty1'] .rpe-gauge::-moz-range-thumb {
+  width: 0.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--text-1);
+  box-shadow: none;
+}
+
+/* Les onglets Journal et Calendrier : le choisi s'encadre de crochets, sans le trait du dessous. */
+:root[data-theme='tty1'] [data-part='tabs'] > button > span[aria-hidden='true'] {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::before {
+  content: '[ ';
+}
+:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::after {
+  content: ' ]';
+}
+
+/* Le curseur du titre de l'accueil : caché partout par `hidden`, le thème le montre. */
+:root[data-theme='tty1'] .tty-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.25em;
+  vertical-align: -0.125em;
+  background: var(--accent-ink);
+  animation: tty-blink 1.06s steps(1) infinite;
+}
+
+/*
+ * L'ouverture : le logo et le nom en haut, la console complète dessous (maquette, écran 1).
+ *
+ * Tout se pose par paliers, comme un écran de texte qui se redessine : les lignes d'état une à une,
+ * la commande qui se tape, puis la devise. Les keyframes sont celles de la variante `console` de
+ * `index.css` ; ce qui change ici, ce sont les temps, resserrés pour tenir dans les 2 180 ms de
+ * l'ouverture normale. Tout est dans la phase d'entrée : la phase de sortie rend l'écran déjà dans son
+ * état final.
+ */
+.boot[data-variant='tty1'] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 3rem 1rem 2rem;
+  background: #000;
+  color: #fff;
+}
+.boot[data-variant='tty1'] .boot-lockup {
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.boot[data-variant='tty1'] .boot-bar {
+  width: 56px;
+}
+.boot[data-variant='tty1'] .boot-mark {
+  font: 700 2rem/2rem var(--tty1-32);
+  letter-spacing: 0;
+  color: #fff;
+}
+.boot-tty1-version {
+  font: 400 0.75rem/1rem var(--tty1-12);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.boot-tty1 {
+  font: 400 1rem/1.625rem var(--tty1-16);
+}
+.boot-tty1-line {
+  white-space: pre-wrap;
+}
+.boot-tty1-bracket {
+  color: var(--text-2);
+}
+.boot-tty1-tag[data-level='ok'] {
+  color: var(--accent-ink);
+}
+.boot-tty1-tag[data-level='warn'] {
+  color: #ffff55; /* ANSI 11 */
+}
+.boot-tty1-tag[data-level='fail'] {
+  color: var(--danger-ink);
+}
+.boot-tty1-prompt,
+.boot-tty1-comment {
+  margin-top: 1.625rem; /* une ligne blanche, comme sur la console */
+  color: var(--text-2);
+}
+/* L'invite et sa commande tiennent sur 45 caractères, soit 360 px : un téléphone de 390 px n'en
+   offre que 358 entre ses marges. La ligne mord donc sur la marge de droite, et le curseur ne compte
+   pour rien dans sa largeur. En dessous, la commande passe à la ligne suivante, avec son curseur. */
+.boot-tty1-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -1rem;
+}
+.boot-tty1-input {
+  white-space: nowrap;
+}
+.boot-tty1-cursor {
+  margin-right: -1ch;
+}
+.boot-tty1-command {
+  display: inline-block;
+  width: 27ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  color: #fff;
+}
+
+/* Le logo se pose lui aussi par paliers : ni glissement, ni flou, ni fondu. */
+.boot[data-phase='in'][data-variant='tty1'] .boot-rail {
+  animation: boot-console-line 60ms steps(2, end) 100ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] :is(.boot-plate--l, .boot-plate--r) {
+  animation: boot-console-line 60ms steps(2, end) var(--boot-delay, 0ms) both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-mark {
+  animation: boot-console-line 60ms steps(2, end) 300ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-version {
+  animation: boot-console-line 60ms steps(2, end) 360ms both;
+}
+
+/* Les lignes se posent une à une, la commande se tape. */
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line {
+  animation: boot-console-line 60ms steps(2, end) both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(1) {
+  animation-delay: 600ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(2) {
+  animation-delay: 720ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(3) {
+  animation-delay: 840ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(4) {
+  animation-delay: 960ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-prompt {
+  animation: boot-console-line 60ms steps(2, end) 1200ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-command {
+  animation: boot-console-type 480ms steps(27, end) 1300ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-cursor {
+  animation: boot-console-cursor 500ms steps(1, end) 1260ms infinite;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-comment {
+  animation: boot-console-line 60ms steps(2, end) 1900ms both;
+}
+
+/* En mouvement réduit, la console est là d'emblée. La règle globale de `index.css` coupe déjà les
+   durées ; les délais, eux, retarderaient encore l'apparition. */
+@media (prefers-reduced-motion: reduce) {
+  .boot-tty1-line,
+  .boot-tty1-prompt,
+  .boot-tty1-command,
+  .boot-tty1-cursor,
+  .boot-tty1-comment,
+  .boot-tty1-version {
+    animation: none !important;
+  }
+}

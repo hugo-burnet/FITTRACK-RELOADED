@@ -46,7 +46,7 @@ function WorkoutRow({
 }) {
   const tutorial = useTutorialControls();
   return (
-    <article className="border-b border-[var(--border)] last:border-b-0">
+    <article data-part="row" className="border-b border-[var(--border)] last:border-b-0">
       <Link
         viewTransition
         to={`/history/${summary.workoutId}`}

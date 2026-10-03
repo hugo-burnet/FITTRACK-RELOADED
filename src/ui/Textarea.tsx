@@ -22,6 +22,7 @@ export function Textarea({ label, hint, labelHidden = false, className = '', ...
       </label>
       <textarea
         id={id}
+        data-part="input"
         rows={4}
         aria-describedby={hint ? hintId : undefined}
         className={`w-full resize-y rounded-lg bg-[var(--surface-2)] px-4 py-3 text-base

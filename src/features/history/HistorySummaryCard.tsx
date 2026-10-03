@@ -50,6 +50,7 @@ export function HistorySummaryCard({ regularity, onEditGoal }: Props) {
             {currentGoal !== null && (
               <span
                 aria-hidden="true"
+                data-part="meter"
                 className="mt-3 block h-1.5 overflow-hidden rounded-full bg-[var(--surface-2)]"
               >
                 <span

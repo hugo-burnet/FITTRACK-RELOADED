@@ -92,6 +92,7 @@ export function AnnouncerSettings() {
           /* Deux colonnes depuis qu'il y a quatre modes : « Voix uniquement »
              ne tient pas sur un quart de 375 px, et une rangée qui tronque ses
              propres libellés ne se choisit pas. */
+          data-part="segmented"
           className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
         >
           {MODES.map(({ value, labelKey }) => (

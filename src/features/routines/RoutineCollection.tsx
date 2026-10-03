@@ -236,6 +236,7 @@ export function RoutineCollection({
                 routine ferait disparaître la cible du geste. */}
             <button
               type="button"
+              data-part="fold"
               aria-expanded={!collapsed}
               disabled={reorderUnlocked}
               onClick={() => onToggleFolder(entry.id)}

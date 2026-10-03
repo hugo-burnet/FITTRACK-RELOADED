@@ -30,6 +30,7 @@ export function SetValueCell({ value, ghost, target, onChange, width, integer, .
 
   return (
     <label
+      data-part="cell"
       style={{ width }}
       className="relative flex min-h-12 shrink-0 rounded-lg bg-[var(--surface-2)]
         focus-within:ring-2 focus-within:ring-[var(--accent-ink)]"

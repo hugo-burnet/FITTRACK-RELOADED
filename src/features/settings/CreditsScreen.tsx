@@ -70,6 +70,36 @@ export function CreditsScreen() {
         </section>
 
         <section>
+          <SectionTitle>{t('credits.fontTitle')}</SectionTitle>
+          <Card padded>
+            <div className="flex flex-col gap-2">
+              <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="font-semibold text-[var(--text-1)]">{t('credits.fontWork')}</span>
+                <span className="text-sm text-[var(--text-2)]">{t('credits.fontLicence')}</span>
+              </p>
+
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('credits.fontAuthors')}
+              </p>
+
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('credits.fontNotice')}
+              </p>
+
+              {/* Le lien de la licence, lisible comme une adresse même hors-ligne. */}
+              <a
+                href="https://openfontlicense.org"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm break-all text-[var(--text-2)] underline underline-offset-4"
+              >
+                {t('credits.fontLink')}
+              </a>
+            </div>
+          </Card>
+        </section>
+
+        <section>
           <SectionTitle>{t('credits.appTitle')}</SectionTitle>
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('credits.appNotice')}</p>

@@ -222,7 +222,7 @@ export function ExerciseDetailScreen() {
         {/* Deux vues nommées, pas un accordéon : « Suivi » est ce qu'on ouvre en
             salle, « Documentation » ce qu'on lit à froid. Les mélanger sur un
             seul écran ferait descendre les records sous quinze paragraphes. */}
-        <div role="tablist" aria-label={t('exercise.viewsLabel')} className="flex gap-1
+        <div role="tablist" data-part="segmented" aria-label={t('exercise.viewsLabel')} className="flex gap-1
           rounded-xl bg-[var(--surface-2)] p-1">
           {(['tracking', 'documentation'] as const).map((value) => (
             <button

@@ -388,6 +388,14 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
+- **Assumée le 2026-10-03 — `src/styles/tty1.css` dépasse la règle des ~300 lignes (environ 730).**
+  Une feuille de style qui habille un thème est une seule responsabilité, comme `index.css`
+  (833 lignes) et `fr.ts` : ses sections suivent l'ordre où le skin se lit (jetons, tailles, formes,
+  commandes, jauges, ouverture) et chacune cite l'écran de la maquette qu'elle reproduit. La couper
+  en plusieurs fichiers ferait lire un même thème en cinq endroits et obligerait `tty1.test.ts` et
+  `Boot.test.tsx`, qui lisent ce fichier par ancres, à en connaître la carte. **À rouvrir** si un
+  second thème de ce genre arrive : c'est alors la structure commune qui se dégagera, pas avant.
+
 - **Assumée le 2026-08-10 — l'accueil lit tout l'historique pour afficher trois lignes.**
   `getHomeDashboard` charge toutes les séances terminées et relit les trois tables de routines
   en entier, à chaque écriture dans l'une des six tables observées. Mesurée à ~71 ms sur

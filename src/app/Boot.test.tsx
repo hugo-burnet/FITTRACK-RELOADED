@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { t } from '@/i18n/fr';
-import { BootScreen } from './Boot';
+import { BOOT_HOLD_MS, BootScreen } from './Boot';
+import { APP_VERSION } from './version';
 
 describe('BootScreen', () => {
   it('keeps the loaded bar but removes every ground-impact layer', () => {
@@ -103,5 +104,56 @@ describe('BootScreen', () => {
     expect(block).toMatch(/\.boot-console-log\s*{[^}]*color:\s*#fff;/s);
     expect(block).not.toMatch(/var\(--surface-0\)/);
     expect(block).not.toMatch(/var\(--text-1\)/);
+  });
+
+  it('plays the whole console under the logo on the TTY1 path', () => {
+    const { container, getByText, queryByText } = render(<BootScreen variant="tty1" />);
+
+    expect(container.querySelector('.boot')?.getAttribute('data-variant')).toBe('tty1');
+    expect(container.querySelector('.boot-bar')).not.toBeNull();
+    expect(queryByText(t('app.principle'))).toBeNull();
+    expect(container.querySelectorAll('.boot-tty1-line')).toHaveLength(4);
+    expect(getByText(t('boot.consoleCommand'))).not.toBeNull();
+    expect(getByText(`# ${t('app.tagline')}`)).not.toBeNull();
+  });
+
+  it('levels each status line of the TTY1 console', () => {
+    const { container } = render(<BootScreen variant="tty1" />);
+
+    expect(
+      [...container.querySelectorAll('.boot-tty1-tag')].map((tag) => tag.getAttribute('data-level')),
+    ).toEqual(['ok', 'ok', 'warn', 'fail']);
+  });
+
+  it('keeps the brackets of a status line out of its colour', () => {
+    const { container } = render(<BootScreen variant="tty1" />);
+    const first = container.querySelector('.boot-tty1-line');
+
+    // Grey brackets around a coloured word, as on a Linux console: `[` OK `]`.
+    expect(first?.querySelectorAll('.boot-tty1-bracket')).toHaveLength(2);
+    expect(first?.textContent).toBe(t('boot.consoleQuadriceps'));
+  });
+
+  it('prints the app version under its name', () => {
+    const { getByText } = render(<BootScreen variant="tty1" />);
+
+    expect(getByText(t('boot.versionLine', { version: APP_VERSION }))).not.toBeNull();
+  });
+
+  it('prints no version line on the other paths', () => {
+    const { container } = render(<BootScreen variant="normal" />);
+
+    expect(container.querySelector('.boot-tty1-version')).toBeNull();
+  });
+
+  it('keeps the TTY1 opening as long as the normal one', () => {
+    expect(BOOT_HOLD_MS.tty1).toBe(BOOT_HOLD_MS.normal);
+  });
+
+  it('shows the TTY1 console at once in reduced motion', () => {
+    const skin = readFileSync('src/styles/tty1.css', 'utf8');
+    const reduced = skin.slice(skin.indexOf('@media (prefers-reduced-motion: reduce)'));
+
+    expect(reduced).toMatch(/\.boot-tty1-line[^}]*animation:\s*none\s*!important;/s);
   });
 });

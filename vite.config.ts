@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+
+const { version } = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
+) as { version: string };
 
 export default defineConfig(({ mode }) => {
   // GitHub Pages needs its repository prefix; Capacitor loads local files.
@@ -10,6 +15,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
+    // The one number a release bumps. The Android workflow reads the same field for the APK's
+    // versionName, so the header and the APK cannot say different things.
+    define: { __APP_VERSION__: JSON.stringify(version) },
     plugins: [
       react(),
       tailwindcss(),
@@ -44,8 +52,9 @@ export default defineConfig(({ mode }) => {
 
         workbox: {
           // mp3, wav, and jpg included on purpose: a voice or a palier token
-          // that needs the network is not a voice, in a basement with no 4G.
-          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav,jpg}'],
+          // that needs the network is not a voice, in a basement with no 4G. Same for
+          // woff2: the TTY1 theme without its font is a different app.
+          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav,jpg,woff2}'],
           navigateFallback: `${base}index.html`,
           cleanupOutdatedCaches: true,
         },

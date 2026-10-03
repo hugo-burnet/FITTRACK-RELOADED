@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { t } from '@/i18n/fr';
 import type { BootVariant } from './bootEasterEgg';
+import { APP_VERSION } from './version';
 
 /**
  * Combien de temps le rideau d'ouverture reste en place, en millisecondes.
@@ -13,6 +14,9 @@ import type { BootVariant } from './bootEasterEgg';
 export const BOOT_HOLD_MS: Record<BootVariant, number> = {
   normal: 2180,
   console: 3360,
+  // La même durée que l'ouverture normale : TTY1 est jouée à chaque lancement, et un thème dont
+  // chaque démarrage coûterait trois secondes de plus se quitterait au bout d'une semaine.
+  tty1: 2180,
 };
 
 /** Sa disparition. Doit rester égal à la durée de `boot-curtain` dans index.css. */
@@ -88,9 +92,57 @@ function BootConsole() {
   );
 }
 
+/** `[ OK ]`, `[ WARN ]`, `[ FAIL ]` : le niveau d'une ligne d'état, au début de son texte. */
+const LEVEL = /^\[ (OK|WARN|FAIL) \]/;
+
+/**
+ * Une ligne d'état de la console TTY1. Les crochets restent gris et seul le mot prend sa couleur,
+ * comme sur une console Linux : `[` OK `]`. Le texte reste celui de `fr.ts`, découpé ici plutôt
+ * que réécrit, pour que la console de l'ouverture normale et celle-ci disent la même chose.
+ */
+function BootTty1Line({ text }: { text: string }) {
+  const match = LEVEL.exec(text);
+  if (match === null) return <p className="boot-tty1-line">{text}</p>;
+
+  const level = match[1] ?? '';
+  return (
+    <p className="boot-tty1-line">
+      <span className="boot-tty1-bracket">[</span>{' '}
+      <span className="boot-tty1-tag" data-level={level.toLowerCase()}>
+        {level}
+      </span>{' '}
+      <span className="boot-tty1-bracket">]</span>
+      {text.slice(match[0].length)}
+    </p>
+  );
+}
+
+/** La console complète de l'ouverture TTY1 : les quatre lignes, l'invite, la commande, la devise. */
+function BootTty1() {
+  return (
+    <div className="boot-tty1" aria-hidden="true">
+      <BootTty1Line text={t('boot.consoleQuadriceps')} />
+      <BootTty1Line text={t('boot.consoleCore')} />
+      <BootTty1Line text={t('boot.consoleEgo')} />
+      <BootTty1Line text={t('boot.consoleExcuses')} />
+      <p className="boot-tty1-prompt">
+        <span>{t('boot.consolePrompt')}&nbsp;</span>
+        {/* La commande et son curseur voyagent ensemble : sur un téléphone trop étroit, c'est la
+            commande entière qui passe à la ligne suivante, jamais son curseur seul. */}
+        <span className="boot-tty1-input">
+          <span className="boot-tty1-command">{t('boot.consoleCommand')}</span>
+          <span className="boot-tty1-cursor">█</span>
+        </span>
+      </p>
+      <p className="boot-tty1-comment">{`# ${t('app.tagline')}`}</p>
+    </div>
+  );
+}
+
 /**
  * L'ouverture charge la barre, puis fait apparaître les deux phrases. La rare
- * variante console bifurque seulement après le chargement des plaques.
+ * variante console bifurque seulement après le chargement des plaques. La variante
+ * TTY1 garde la barre et le nom en haut et joue sa console dessous, à chaque lancement.
  *
  * `exiting` rend le même écran **sans** aucune animation d'entrée : au moment où
  * `main.tsx` monte le routeur, ce composant est démonté puis remonté, et sans ce
@@ -115,7 +167,14 @@ export function BootScreen({
     >
       <div className="boot-lockup flex flex-col items-center gap-5">
         <LoadedBar />
-        <p className="boot-mark">{t('app.name')}</p>
+        {variant === 'tty1' ? (
+          <div>
+            <p className="boot-mark">{t('app.name')}</p>
+            <p className="boot-tty1-version">{t('boot.versionLine', { version: APP_VERSION })}</p>
+          </div>
+        ) : (
+          <p className="boot-mark">{t('app.name')}</p>
+        )}
       </div>
 
       {variant === 'normal' ? (
@@ -123,8 +182,10 @@ export function BootScreen({
           <p className="boot-principle">{t('app.principle')}</p>
           <p className="boot-tagline">{t('app.tagline')}</p>
         </div>
-      ) : (
+      ) : variant === 'console' ? (
         <BootConsole />
+      ) : (
+        <BootTty1 />
       )}
     </div>
   );

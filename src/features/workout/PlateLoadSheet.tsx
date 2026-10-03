@@ -145,6 +145,7 @@ export function PlateLoadSheet({
           data-tutorial-id="workout-plates-available"
         >
           <summary
+            data-part="fold"
             className="flex min-h-12 cursor-pointer list-none items-center gap-3 rounded-xl
               px-1 text-left active:bg-[var(--surface-2)]
               focus-visible:[outline-color:var(--text-2)]

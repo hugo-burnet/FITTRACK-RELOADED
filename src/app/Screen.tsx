@@ -3,6 +3,7 @@ import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { HeaderAction } from '@/ui/HeaderAction';
 import { navigatingBack } from './navigation';
+import { APP_VERSION } from './version';
 import { ArrowLeftIcon, HelpIcon } from '@/ui/icons';
 
 export type ScreenProps = {
@@ -32,6 +33,12 @@ export type ScreenProps = {
   footer?: ReactNode;
   /** Contextual tutorial help is opt-out for self-explanatory reading surfaces. */
   showTutorialHelp?: boolean;
+  /**
+   * A decorative block cursor at the end of the title. Hidden in every theme but TTY1, which
+   * shows it blinking — the app's front door reads as a prompt waiting for a command. Only the
+   * home screen passes it: one cursor per screen, and one screen with a name that is the app's.
+   */
+  cursor?: boolean;
   children: ReactNode;
 };
 
@@ -67,6 +74,7 @@ export function Screen({
   sub,
   footer,
   showTutorialHelp = true,
+  cursor = false,
   children,
 }: ScreenProps) {
   const tutorial = useTutorialControls();
@@ -79,7 +87,16 @@ export function Screen({
           son départ — que ces `animate-*` ne savaient pas faire : ils jouaient
           à chaque entrée, jamais à la sortie, donc aller et revenir se
           ressemblaient. Les superposer ferait deux mouvements pour un pas. */}
-      <header className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
+      <header className="relative flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
+        {/* La version de l'app, dans la marge haute de l'en-tête (les 20 px de `pt-5`).
+            Là, elle ne coûte pas un pixel de hauteur — ce qui compte sur la séance en
+            direct — et elle ne se pose jamais à côté du titre : un second texte près
+            d'un nom choisi par l'utilisateur se dispute les 375 px (la leçon du Lot 4,
+            plus haut). Un relevé, pas une commande : rien à toucher. `text-2` et non
+            `text-3`, parce que c'est un texte qu'on lit. */}
+        <span className="pointer-events-none absolute top-1 right-4 text-xs tabular text-[var(--text-2)]">
+          {t('app.versionLabel', { version: APP_VERSION })}
+        </span>
         {onBack && (
           <button
             type="button"
@@ -100,6 +117,7 @@ export function Screen({
             routine's name belongs to the user — it can be anything. */}
         <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
+          {cursor && <span aria-hidden="true" className="tty-cursor hidden" />}
         </h1>
         {(action !== undefined || hasTutorialHelp) && (
           <div className="flex shrink-0 items-center gap-1">

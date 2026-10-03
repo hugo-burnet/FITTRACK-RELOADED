@@ -25,6 +25,7 @@ export function FilterChip({ label, active, onClick, tutorialId }: Props) {
   return (
     <button
       type="button"
+      data-part="chip"
       data-tutorial-id={tutorialId}
       onClick={onClick}
       aria-pressed={active}
