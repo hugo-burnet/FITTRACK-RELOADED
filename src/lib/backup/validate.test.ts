@@ -214,4 +214,29 @@ describe('validateBackupTables', () => {
     expect(result.flawCount).toBeGreaterThan(result.flaws.length);
     expect(result.flaws.length).toBeLessThanOrEqual(20);
   });
+
+  it('accepte un palier sans séance — « pas de parent » n’est pas un orphelin', () => {
+    // noclip n'a été franchi par aucune séance : `workoutId` vaut `''`, comme `routineId` d'une
+    // séance libre. Un orphelin est une référence qui ne mène nulle part, pas une absence de référence.
+    const tables = account();
+    tables.milestones = [
+      {
+        id: 'm-noclip',
+        createdAt: 1,
+        updatedAt: 1,
+        deletedAt: 0,
+        definitionId: 'noclip',
+        achievedAt: 1,
+        workoutId: '',
+        value: 1,
+        acknowledgedAt: 1,
+      },
+    ];
+
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    if (!result.ok) throw new Error(`refusé : ${JSON.stringify(result.flaws)}`);
+    expect(result.orphans).toEqual([]);
+    expect(result.tables.milestones).toHaveLength(1);
+  });
 });

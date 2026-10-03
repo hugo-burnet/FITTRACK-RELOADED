@@ -10,6 +10,7 @@ import {
   selectBootVariant,
 } from './app/bootEasterEgg';
 import { drawBootScript } from './app/bootFacts';
+import { grantNoclipIfUnlocked } from './app/noclip';
 import { seededRandom } from './app/bootTty1Script';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
@@ -156,6 +157,9 @@ const openingHeld = holdBootOpening(
     // cours n'a pas été vue, elle rejouera — et ne débloque rien.
     scheduleNextBootEasterEgg(bootStorage);
     unlockTty1(bootStorage);
+    // noclip est la mémoire de ce déblocage. Célébré quand la console vient de le donner — la carte
+    // du palier attend l'accueil —, rangé sans bruit si TTY1 était déjà là.
+    void grantNoclipIfUnlocked(bootStorage, { celebrate: unlocking });
   },
   skipOpening.signal,
 );
@@ -181,6 +185,9 @@ void Promise.all([
     // Réglages, qui lit le drapeau une fois, ne soit monté.
     .then(async (seedFailed) => {
       await unlockTty1WhenSeasoned(bootStorage, getFirstUseAt);
+      // Le rattrapage de noclip, après l'ancienneté pour que les 30 jours le donnent dans le même
+      // démarrage : qui avait TTY1 avant ce palier le reçoit ici, acquitté.
+      await grantNoclipIfUnlocked(bootStorage, { celebrate: false });
       return seedFailed;
     }),
   openingHeld,

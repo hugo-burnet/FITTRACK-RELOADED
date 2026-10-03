@@ -5,6 +5,7 @@ import {
   FIRST_DOMS_HOURS,
   FIRST_DOMS_MILESTONE_ID,
   FIRST_SESSION_MILESTONE_ID,
+  milestoneById,
 } from '@/lib/milestones/catalogue';
 import { earnMilestones } from '@/lib/milestones/engine';
 import type { EarnedMilestone, MilestoneSet } from '@/lib/milestones/types';
@@ -66,9 +67,7 @@ function milestoneSetsOf(workout: HistoricalWorkout): MilestoneSet[] {
         ...(set.reps === undefined ? {} : { reps: set.reps }),
         ...(set.durationSeconds === undefined ? {} : { durationSeconds: set.durationSeconds }),
         tonnageKg:
-          entry === undefined
-            ? 0
-            : effectiveLoadKg(entry, workout.bodyWeightKg) * (set.reps ?? 0),
+          entry === undefined ? 0 : effectiveLoadKg(entry, workout.bodyWeightKg) * (set.reps ?? 0),
       };
     });
   });
@@ -85,6 +84,14 @@ async function readEarned(now: number): Promise<EarnedMilestone[]> {
     })),
     now,
   });
+}
+
+/**
+ * Un secret n'est franchi par aucune séance : le dépôt l'écrit (`grantSecretMilestone`), le moteur
+ * ne le rend jamais. Cf. `MilestoneKind`.
+ */
+function isSecret(definitionId: string): boolean {
+  return milestoneById(definitionId)?.kind === 'secret';
 }
 
 function followUpDueAt(firstAchievedAt: number): number {
@@ -179,6 +186,10 @@ export async function syncMilestones({
      * charge dont plus aucune trace n'existe.
      */
     for (const orphan of byDefinition.values()) {
+      // Un secret est toujours « orphelin » pour la projection, puisqu'aucune séance ne le porte :
+      // sans cette exception, la première séance terminée — ou un import, ou une réparation —
+      // l'effacerait, et l'on n'aurait plus que la ligne la plus rare de l'écran à regretter.
+      if (isSecret(orphan.definitionId)) continue;
       await softDelete(db.milestones, orphan.id);
     }
 
@@ -186,9 +197,7 @@ export async function syncMilestones({
     // rattrapage silencieux n'en pose pas : les DOMS d'un historique importé
     // ne doivent pas sonner 48 h plus tard comme si c'était aujourd'hui.
     const earnedIds = new Set(earned.map((item) => item.definitionId));
-    const firstCreated = created.find(
-      (row) => row.definitionId === FIRST_SESSION_MILESTONE_ID,
-    );
+    const firstCreated = created.find((row) => row.definitionId === FIRST_SESSION_MILESTONE_ID);
     if (celebrate && firstCreated !== undefined) {
       await db.settings.put({
         key: DOMS_FOLLOW_UP_KEY,
@@ -199,13 +208,55 @@ export async function syncMilestones({
     // Plus de première séance, ou les 48 h sont déjà écoulées : le rappel
     // n'a plus rien à attendre. Écrit puis effacé dans le même sync si les
     // deux paliers tombent ensemble (dueAt dans le passé).
-    if (
-      !earnedIds.has(FIRST_SESSION_MILESTONE_ID) ||
-      earnedIds.has(FIRST_DOMS_MILESTONE_ID)
-    ) {
+    if (!earnedIds.has(FIRST_SESSION_MILESTONE_ID) || earnedIds.has(FIRST_DOMS_MILESTONE_ID)) {
       await db.settings.delete(DOMS_FOLLOW_UP_KEY);
     }
     return created;
+  });
+}
+
+export interface SecretMilestoneOptions {
+  /**
+   * `true` quand le secret vient d'être découvert : la ligne naît non acquittée et l'accueil la
+   * montre une fois. `false` pour un rattrapage — qui avait déjà de quoi l'acquérir avant que le
+   * palier existe — : la ligne entre acquittée, consultable et muette, comme l'historique rattrapé.
+   */
+  celebrate: boolean;
+  now?: number;
+}
+
+/**
+ * Accorde un secret : un palier que rien dans l'historique ne franchit.
+ *
+ * **Une fois, et pour de bon.** Un second appel ne fait rien et rend `undefined`, ce qui permet de
+ * l'appeler à chaque démarrage sans savoir s'il a déjà tourné. Il ne rend la ligne que si elle vient
+ * d'être créée **et** qu'elle est à célébrer — le contrat de `syncMilestones`.
+ *
+ * Seul un identifiant de genre `secret` est accepté : un palier d'entraînement appartient à la
+ * projection, et lui en écrire un à la main l'offrirait sans qu'aucune séance l'ait franchi.
+ *
+ * `workoutId` vaut `''`, le « pas de parent » du modèle — la validation de sauvegarde le lit ainsi.
+ */
+export async function grantSecretMilestone(
+  definitionId: string,
+  { celebrate, now = Date.now() }: SecretMilestoneOptions,
+): Promise<Milestone | undefined> {
+  const definition = milestoneById(definitionId);
+  if (definition === undefined || definition.kind !== 'secret') return undefined;
+
+  return db.transaction('rw', db.milestones, async () => {
+    const held = alive(await db.milestones.where('definitionId').equals(definitionId).toArray());
+    if (held.length > 0) return undefined;
+
+    const fresh = newEntity<Milestone>({
+      definitionId,
+      achievedAt: now,
+      workoutId: '',
+      value: definition.threshold,
+      acknowledgedAt: celebrate ? 0 : now,
+    });
+    await db.milestones.add(fresh);
+    return celebrate ? fresh : undefined;
   });
 }
 
