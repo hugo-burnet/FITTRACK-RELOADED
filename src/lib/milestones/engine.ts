@@ -84,6 +84,9 @@ function firstCrossing(
       return tonnageCrossing(definition, sets);
     case 'hours_since_first_session':
       return hoursSinceFirstSession(definition, sessions, now);
+    case 'secret':
+      // Aucune série, aucune séance ne franchit un secret : le dépôt l'écrit.
+      return undefined;
   }
 }
 
@@ -151,9 +154,7 @@ function matchesSlug(definition: MilestoneDefinition, set: MilestoneSet): boolea
  * falsifie pas en tapant un nom, la porte peut rester ouverte.
  */
 function isDumbbellPair(set: MilestoneSet): boolean {
-  return (
-    set.equipment === 'dumbbell' && !set.isUnilateral && set.measurementType === 'weight_reps'
-  );
+  return set.equipment === 'dumbbell' && !set.isUnilateral && set.measurementType === 'weight_reps';
 }
 
 function firstQualifyingSet(

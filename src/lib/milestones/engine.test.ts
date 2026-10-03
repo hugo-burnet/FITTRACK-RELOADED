@@ -53,9 +53,7 @@ describe('les jalons de charge', () => {
     // Un historique importé commence rarement à zéro : la première séance lue
     // peut valoir trois paliers à la fois, et les taire serait les perdre.
     const earned = run({ sets: [set({ performedAt: MONDAY, weight: 105, reps: 1 })] });
-    expect(idsOf(earned)).toEqual(
-      expect.arrayContaining(['bench-60', 'bench-80', 'bench-100']),
-    );
+    expect(idsOf(earned)).toEqual(expect.arrayContaining(['bench-60', 'bench-80', 'bench-100']));
     expect(idsOf(earned)).not.toContain('bench-120');
   });
 
@@ -239,9 +237,7 @@ describe('les jalons de pratique', () => {
     // Dix semaines d’entraînement séparées par des mois d’arrêt valent dix
     // semaines. C’est toute la différence avec une série, et le cœur du module.
     const earned = run({
-      sessions: Array.from({ length: 10 }, (_, index) =>
-        session(MONDAY + index * 60 * DAY),
-      ),
+      sessions: Array.from({ length: 10 }, (_, index) => session(MONDAY + index * 60 * DAY)),
     });
     expect(find(earned, 'weeks-10')).toMatchObject({ value: 10 });
   });
@@ -344,9 +340,7 @@ describe('la première séance et les premières DOMS', () => {
 
   it('ne rend ni l’un ni l’autre sans séance', () => {
     expect(run({})).toEqual([]);
-    expect(
-      earnMilestones({ sets: [], sessions: [], now: MONDAY + FORTY_EIGHT }),
-    ).toEqual([]);
+    expect(earnMilestones({ sets: [], sessions: [], now: MONDAY + FORTY_EIGHT })).toEqual([]);
   });
 });
 
@@ -390,5 +384,23 @@ describe('la sortie du moteur', () => {
 
   it('ne rend rien sur une base vide', () => {
     expect(run({})).toEqual([]);
+  });
+});
+
+describe('les secrets', () => {
+  it('ne sont franchis par aucun historique, si long soit-il', () => {
+    // Un secret n'est pas un seuil : il se donne pour une découverte de l'app, pas pour
+    // l'entraînement, et c'est le dépôt qui l'écrit. Le moteur, qui ne lit que des séries et des
+    // séances, ne doit jamais en rendre un — sans quoi la projection le « retrouverait » à chaque
+    // séance et en réécrirait la date.
+    const sessions = Array.from({ length: 120 }, (_, index) => session(MONDAY + index * 3 * DAY));
+    const sets = sessions.map((item) =>
+      set({ performedAt: item.startedAt, weight: 150, reps: 5, tonnageKg: 750 }),
+    );
+    const earned = earnMilestones({ sets, sessions, now: MONDAY + 400 * DAY });
+
+    expect(idsOf(earned)).not.toContain('noclip');
+    // Le même historique, lui, franchit bien le reste.
+    expect(idsOf(earned)).toEqual(expect.arrayContaining(['bench-100', 'sessions-100']));
   });
 });

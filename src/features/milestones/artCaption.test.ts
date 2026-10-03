@@ -24,4 +24,8 @@ describe('la légende d’un jeton', () => {
       'Ça fait mal. FitTrack est toujours là. Tu lâches pas.',
     );
   });
+
+  it('renvoie noclip à Matrix sans le nommer', () => {
+    expect(captionForArt('noclip')).toBe('Il n’y a pas de mur. Il n’y a pas de cuillère.');
+  });
 });

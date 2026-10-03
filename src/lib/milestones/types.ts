@@ -31,13 +31,25 @@ export type MilestoneKind =
   /** Des kilos soulevés depuis toujours. */
   | 'lifetime_tonnage'
   /** Des heures écoulées depuis la première séance close. */
-  | 'hours_since_first_session';
+  | 'hours_since_first_session'
+  /**
+   * Un secret : ce que l'app donne pour une découverte, pas pour l'entraînement.
+   *
+   * **Aucun historique ne le franchit.** Le moteur ne le rend jamais, c'est le
+   * dépôt qui l'écrit (`grantSecretMilestone`), et la projection le laisse en
+   * place au lieu de le retirer comme un palier dont la séance a disparu : sans
+   * quoi la première séance terminée l'effacerait. Il n'a ni exercice, ni
+   * sujet, ni séance, et `threshold` ne vaut que 1 pour remplir la forme.
+   */
+  | 'secret';
 
 /**
- * Les quatre rayons de l'écran des jalons. Un ordre de lecture, pas une
- * hiérarchie : personne ne « vaut » plus qu'un autre.
+ * Les cinq rayons de l'écran des jalons. Un ordre de lecture, pas une
+ * hiérarchie : personne ne « vaut » plus qu'un autre. Le cinquième, les
+ * secrets, n'existe à l'écran qu'une fois l'un d'eux acquis — comme tout le
+ * reste, et c'est ce qui le garde secret.
  */
-export type MilestoneGroup = 'strength' | 'gateway' | 'practice' | 'volume';
+export type MilestoneGroup = 'strength' | 'gateway' | 'practice' | 'volume' | 'secret';
 
 export interface MilestoneDefinition {
   /**

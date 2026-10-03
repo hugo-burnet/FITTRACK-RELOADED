@@ -60,6 +60,8 @@ const SUBJECTS: Record<string, string> = {
 };
 
 export const FIRST_SESSION_MILESTONE_ID = 'sessions-1';
+/** Le succès de TTY1 : acquis si et seulement si TTY1 est débloqué (`app/noclip.ts`). */
+export const NOCLIP_MILESTONE_ID = 'noclip';
 export const FIRST_DOMS_MILESTONE_ID = 'doms-48';
 export const FIRST_DOMS_HOURS = 48;
 
@@ -192,6 +194,16 @@ export const MILESTONES: readonly MilestoneDefinition[] = [
   practice('tonnage-500', 'lifetime_tonnage', 500_000),
   practice('tonnage-1000', 'lifetime_tonnage', 1_000_000),
   practice('tonnage-5000', 'lifetime_tonnage', 5_000_000),
+
+  // ── Secrets : ce que l'app donne pour avoir regardé derrière le décor ───────
+  //
+  // Aucun historique ne les franchit : le dépôt les écrit, le moteur les ignore. Ils ne sont jamais
+  // annoncés avant d'être acquis — l'écran ne montre que ce qui l'est — et la règle du plafond vaut
+  // pour eux comme pour les autres : celui-ci est le cinquante-neuvième sur soixante.
+  //
+  // noclip est la triche qui traverse les murs, et ce qu'on obtient en ayant vu la console de
+  // l'ouverture : TTY1 débloqué et ce palier sont la même chose, vue de deux côtés.
+  secret(NOCLIP_MILESTONE_ID),
 ];
 
 function subjectKeyFor(slugs: readonly string[]): string {
@@ -201,11 +213,7 @@ function subjectKeyFor(slugs: readonly string[]): string {
   return key === undefined ? 'unknown' : `milestone.subject.${key}`;
 }
 
-function load(
-  id: string,
-  slugs: readonly string[],
-  threshold: number,
-): MilestoneDefinition {
+function load(id: string, slugs: readonly string[], threshold: number): MilestoneDefinition {
   return {
     id,
     kind: 'exercise_load',
@@ -227,11 +235,7 @@ function reps(id: string, slugs: readonly string[], threshold: number): Mileston
   };
 }
 
-function duration(
-  id: string,
-  slugs: readonly string[],
-  threshold: number,
-): MilestoneDefinition {
+function duration(id: string, slugs: readonly string[], threshold: number): MilestoneDefinition {
   return {
     id,
     kind: 'exercise_duration',
@@ -257,6 +261,10 @@ function practice(
   threshold: number,
 ): MilestoneDefinition {
   return { id, kind, group: kind === 'lifetime_tonnage' ? 'volume' : 'practice', threshold };
+}
+
+function secret(id: string): MilestoneDefinition {
+  return { id, kind: 'secret', group: 'secret', threshold: 1 };
 }
 
 const BY_ID = new Map(MILESTONES.map((definition) => [definition.id, definition]));

@@ -691,6 +691,16 @@ const fr = {
       gateway: 'Portes franchies',
       practice: 'Pratique',
       volume: 'Volume',
+      /** Ce rayon n'existe à l'écran qu'une fois un secret acquis. */
+      secret: 'Secrets',
+    },
+
+    /**
+     * Le titre d'un secret. En minuscules : c'est une commande, comme tout ce que l'ouverture TTY1
+     * écrit.
+     */
+    secret: {
+      noclip: 'noclip',
     },
 
     /**
@@ -804,6 +814,7 @@ const fr = {
       iceberg: 'Ce que tu vois, et tout ce qu’il y a dessous.',
       'rock-solid': 'Rock solid.',
       'doms-door': 'Ça fait mal. FitTrack est toujours là. Tu lâches pas.',
+      noclip: 'Il n’y a pas de mur. Il n’y a pas de cuillère.',
     },
   },
 
