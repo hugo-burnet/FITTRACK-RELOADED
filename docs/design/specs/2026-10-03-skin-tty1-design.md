@@ -2,7 +2,7 @@
 
 **Date :** 2026-10-03
 
-**Statut :** design à relire. La maquette est validée.
+**Statut :** implémenté. La maquette est validée ; les écarts qui restent sont dans « Limites connues ».
 
 **Périmètre :** le thème de l’application : jetons, police, formes, commandes, ouverture et réglages
 
@@ -223,13 +223,27 @@ Les classes existantes disent presque tout. Là où elles ne disent rien de stab
 | `AddRow`, `FilterChip` | `data-part="add-row"`, `data-part="chip"` | `[+]` et cadre |
 | `ListRow`, ligne d’historique | `data-part="row"` | filet pointillé |
 | Coche de série | `data-part="set-check"` | `[x]` à la place du carré et de son icône |
-| Pli d’un exercice ou d’un dossier | `data-part="fold"` | ▼ et ► à la place du chevron qui tourne |
-| Sélecteurs segmentés de Réglages | `data-part="segmented"` | cadre à filets, option choisie en vidéo inverse |
-| Piste de jauge (repos, objectif) | `data-part="meter"` | cellules par masque, sans toucher à la barre |
+| Pli d’un exercice, d’un dossier ou des plaques disponibles | `data-part="fold"` | ▼ et ► à la place du chevron qui tourne |
+| Les six sélecteurs segmentés (Réglages, Annonces, fiche et formulaire d’exercice, onglets de Planifier, feuille de série) | `data-part="segmented"` | cadre à filets, option choisie en vidéo inverse |
+| Onglets Journal et Calendrier | `data-part="tabs"` | l’onglet choisi s’encadre de crochets |
+| Piste de l’objectif hebdomadaire, fil du repos | `data-part="meter"`, `data-part="meter-rail"` | cellules par masque, sans toucher à la barre ; huit pixels et quatre |
 | Point du temps de repos | `data-part="rest-dot"` | le curseur bloc qui clignote |
+| Cellule de série, champ numérique, champ de texte | `data-part="cell"`, `"field"`, `"input"` | cadre de 1 px et focus de l’accent, sans chaîne de classes |
+| Titre et en-tête de la carte « À lancer » | `data-part="legend"`, `data-part="card-head"` | la légende se pose sur le filet de la carte |
 
 Tout le reste s’accroche à ce qui existe : `role="radiogroup"` et `role="switch"`, `aria-pressed`,
 `aria-expanded`, `aria-current`, `.bottom-nav`, `.sheet-panel`, `.resume-bar`, `.rpe-gauge`, `.boot-*`.
+
+Trois règles méritent d’être dites, parce qu’un lecteur du CSS ne les devinerait pas :
+
+- **Les pictogrammes.** Un attribut de présentation (`strokeLinecap="round"` sur un tracé) l’emporte
+  sur une valeur héritée : la règle des angles vifs vise donc le `svg` *et* ce qu’il contient.
+- **La légende de carte** repose sur `:has()`. Là où il manque, le navigateur jette ces règles entières
+  et la légende reste dans la carte, comme dans les autres thèmes ; son positionnement absolu n’existe
+  que dans le sélecteur de sa carte, jamais seul.
+- **Le nom d’un exercice** se lit sur deux lignes au plus au lieu de se tronquer : la chasse fixe est
+  plus large que la police proportionnelle des autres thèmes, et « Squat (barre, n… » ne se reconnaît
+  plus.
 
 Un seul ajout n’est pas un attribut : `Screen` reçoit une prop `cursor`, que seul l’accueil passe. Elle
 rend un élément décoratif que le CSS cache hors du thème et montre, clignotant, sous TTY1.
@@ -258,10 +272,10 @@ l’app connaît déjà son numéro.
   thème. En TTY1, une image brun-noir précède le noir. Les changer ferait de même pour Sombre.
 - **L’image exportée d’un graphique.** Ses couleurs suivent les jetons, donc elle sort noire et
   blanche. Son texte garde la police du système.
-- **Le titre incrusté de « À lancer ».** La maquette le pose sur le filet de la carte. L’app le garde
-  dans la carte, au-dessus du nom du dossier : l’en-tête de la carte (un `min-h-12`) resterait vide
-  sans dossier, et le corriger demande de toucher à son balisage. C’est un raffinement, à reprendre
-  si la carte reçoit un jour un titre en prop.
+- **Les écarts de détail avec la maquette.** L’app garde `kg` en minuscules dans les en-têtes de
+  colonne (un symbole du SI ne se met pas en capitales), l’icône de fermeture d’une feuille reste grise
+  et non verte, et l’étoile d’un record suit le nom d’un exercice à la ligne au lieu de s’accrocher à
+  son dernier mot. Les trois sont des choix de l’app, pas des oublis.
 - **Les caractères hors du sous-ensemble.** Ils retombent sur la police monospace du système, avec des
   métriques proches mais pas identiques.
 - **La première image.** `font-display: block` masque le texte le temps de charger une police servie

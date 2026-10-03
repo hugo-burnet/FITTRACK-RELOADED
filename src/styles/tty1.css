@@ -204,6 +204,29 @@
   border: 1px solid var(--border);
 }
 
+/* Le titre d'une carte (« À lancer ») se pose sur son filet du haut, comme la légende d'un cadre,
+   au lieu de prendre une ligne dans la carte. Seule une carte qui en porte un devient relative et
+   cesse de rogner : les angles droits n'ont plus rien à rogner, et la légende dépasse. L'en-tête
+   qui ne garde plus que cette légende (pas de dossier à choisir) n'a plus rien à montrer.
+   Les trois règles reposent sur `:has()`. Là où il manque, le navigateur les jette entières, et la
+   légende reste dans la carte, comme dans les autres thèmes : le positionnement absolu de la
+   légende vit donc *dans* le sélecteur de sa carte, jamais seul. */
+:root[data-theme='tty1'] .rounded-2xl:has([data-part='legend']) {
+  position: relative;
+  overflow: visible;
+}
+:root[data-theme='tty1'] .rounded-2xl:has([data-part='legend']) [data-part='legend'] {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  z-index: 1;
+  padding: 0 6px;
+  background: var(--surface-0);
+}
+:root[data-theme='tty1'] [data-part='card-head']:not(:has(button, p:not([data-part='legend']))) {
+  display: none;
+}
+
 /* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
    composant (`border-b`, retiré sur la dernière) : seul son style change. */
 :root[data-theme='tty1'] [data-part='row'] {
@@ -235,6 +258,10 @@
 }
 :root[data-theme='tty1'] .sheet-panel header .h-1.w-9 {
   display: none;
+}
+/* Dans une feuille, les filets qui séparent deux blocs sont pointillés, comme ceux des listes. */
+:root[data-theme='tty1'] .sheet-panel :is(.border-b, .border-t) {
+  border-style: dotted;
 }
 
 /*
@@ -363,6 +390,12 @@
   overflow-wrap: anywhere;
 }
 
+/* Le pli d'une `details` (les plaques disponibles) se lit comme celui d'un exercice : fermé ►, ouvert ▼.
+   Son état est celui de l'élément, pas un `aria-expanded`. */
+:root[data-theme='tty1'] details:not([open]) > [data-part='fold']::after {
+  content: '►';
+}
+
 /* Un interrupteur dit son état en toutes lettres ; la marque (« 80% ») reste devant. */
 :root[data-theme='tty1'] [role='switch'] > span[aria-hidden='true']:last-child {
   display: none;
@@ -409,18 +442,23 @@
   display: none;
 }
 
-/* Les pictogrammes : angles vifs, aucun anti-crénelage. */
-:root[data-theme='tty1'] svg {
+/* Les pictogrammes : angles vifs, aucun anti-crénelage. Sur le `svg` *et* sur ce qu'il contient : un
+   attribut de présentation (`strokeLinecap="round"` sur un tracé) l'emporte sur une valeur héritée,
+   et seule une règle qui vise l'élément lui-même l'emporte sur l'attribut. */
+:root[data-theme='tty1'] svg,
+:root[data-theme='tty1'] svg * {
   stroke-linecap: square;
   stroke-linejoin: miter;
   shape-rendering: crispEdges;
 }
 
 /* Les champs : un cadre de 1 px, la valeur en 24 px gras, un curseur bloc, et au focus un filet de
-   l'accent de 2 px (le cadre et une ombre), comme la maquette. */
+   l'accent de 2 px (le cadre et une ombre), comme la maquette. `cell` est la cellule d'une série,
+   `field` le champ numérique à boutons, `input` le champ de texte (nom, sous-titre, notes). */
 :root[data-theme='tty1'] [data-part='cell'],
 :root[data-theme='tty1'] [data-part='field'] > button,
-:root[data-theme='tty1'] [data-part='field'] input {
+:root[data-theme='tty1'] [data-part='field'] input,
+:root[data-theme='tty1'] [data-part='input'] {
   background: var(--surface-2);
   border: 1px solid var(--border);
 }
@@ -428,11 +466,13 @@
   background: none;
 }
 :root[data-theme='tty1'] [data-part='cell']:focus-within,
-:root[data-theme='tty1'] [data-part='field'] input:focus {
+:root[data-theme='tty1'] [data-part='field'] input:focus,
+:root[data-theme='tty1'] [data-part='input']:focus {
   border-color: var(--accent-ink);
   box-shadow: 0 0 0 1px var(--accent-ink);
 }
-:root[data-theme='tty1'] :is([data-part='cell'], [data-part='field']) input {
+:root[data-theme='tty1'] :is([data-part='cell'], [data-part='field']) input,
+:root[data-theme='tty1'] [data-part='input'] {
   caret-color: var(--accent-ink);
   caret-shape: block;
 }

@@ -35,6 +35,7 @@ export function Input({
           for values that really are echoes — Lot 5's previous set. */}
       <input
         id={id}
+        data-part="input"
         data-tutorial-id={tutorialId}
         aria-describedby={hint ? hintId : undefined}
         onKeyDown={(event) => {
