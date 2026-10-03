@@ -1802,8 +1802,10 @@ const fr = {
     theme: 'Thème',
     themeDark: 'Sombre',
     themeLight: 'Clair',
+    themeTty1: 'TTY1',
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
+    themeTty1Hint: 'TTY1 : la console. Noir, gris, une seule couleur vive.',
 
     announcerSection: 'Annonces',
     announcer: 'Annonces sonores',

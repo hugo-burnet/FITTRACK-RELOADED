@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,8 +6,10 @@ import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
+import { t } from '@/i18n/fr';
 import { watchInstall } from '@/platform/install';
 import * as saveFile from '@/platform/saveFile';
+import { THEME_STORAGE_KEY } from '@/stores/theme';
 import { SettingsScreen } from './SettingsScreen';
 
 async function seedCompletedWorkout(name: string, startedAt: number): Promise<void> {
@@ -265,5 +267,37 @@ describe('SettingsScreen — records personnels', () => {
       screen.queryByRole('button', { name: /Mettre à jour les anciennes séances/ }),
     ).toBeNull();
     expect(screen.getByRole('button', { name: /Dépannage et données/ })).toBeVisible();
+  });
+});
+
+describe('SettingsScreen — thème', () => {
+  beforeEach(async () => {
+    await resetDb();
+    localStorage.clear();
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  it('offers the three themes and applies TTY1 at once', async () => {
+    renderSettings();
+
+    const group = screen.getByRole('radiogroup', { name: t('settings.theme') });
+    expect(within(group).getAllByRole('radio').map((option) => option.textContent)).toEqual([
+      t('settings.themeDark'),
+      t('settings.themeLight'),
+      t('settings.themeTty1'),
+    ]);
+
+    await userEvent.click(within(group).getByRole('radio', { name: t('settings.themeTty1') }));
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('tty1');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('tty1');
+    expect(screen.getByText(t('settings.themeTty1Hint'))).toBeInTheDocument();
+  });
+
+  it('keeps the dark theme hint until TTY1 is chosen', () => {
+    renderSettings();
+
+    expect(screen.getByText(t('settings.themeHint'))).toBeInTheDocument();
+    expect(screen.queryByText(t('settings.themeTty1Hint'))).toBeNull();
   });
 });
