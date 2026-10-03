@@ -42,6 +42,12 @@ describe('syncSystemBars', () => {
     expect(state.setStyle).toHaveBeenCalledWith({ style: SystemBarsStyle.Light });
   });
 
+  it('uses dark system bars for the TTY1 theme', async () => {
+    await syncSystemBars('tty1');
+
+    expect(state.setStyle).toHaveBeenCalledWith({ style: SystemBarsStyle.Dark });
+  });
+
   it('contains native failures', async () => {
     const error = new Error('system bars failed');
     const report = vi.spyOn(console, 'error').mockImplementation(() => undefined);
