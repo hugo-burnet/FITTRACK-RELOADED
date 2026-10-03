@@ -6,6 +6,9 @@
 
 **Périmètre :** le thème de l’application : jetons, police, formes, commandes, ouverture et réglages
 
+**Prérequis :** `docs/design/specs/2026-10-03-version-en-tete-design.md`, la version de l’app dans
+l’en-tête, qui introduit `APP_VERSION`.
+
 **Maquette :** `docs/design/mockups/2026-10-03-skin-tty1.html`. Elle fait foi pour l’apparence, ce
 document pour le comportement et le code. Les contrastes et les tailles de l’une sont ceux de l’autre.
 
@@ -60,6 +63,8 @@ Ces choix sont ceux de la maquette. Le coût de chacun, s’il fallait en change
 - Le sens ne passe jamais par la couleur seule : une série validée se lit `[x]`, un record porte son
   étoile et son texte, un type de série garde son pictogramme.
 - Les textes de `src/i18n/fr.ts`, à trois ajouts près (voir Architecture).
+- La version de l’app, écrite en haut à droite de chaque en-tête : elle lit les jetons existants et
+  suit donc le thème. En TTY1 elle s’écrit en 12 px, comme tout `text-xs`.
 
 ## Comportement utilisateur
 
@@ -236,9 +241,9 @@ la date de la surprise rare : elle reprend là où elle en était quand on quitt
 variante `console` reprogramme la surprise ; `tty1` ne le fait pas.
 
 `BootScreen` affiche pour `tty1` le logo, le nom et la ligne de version, puis les lignes de la
-console avec les mêmes textes que `console`. La ligne de version demande que l’app connaisse son
-numéro : `vite.config.ts` le lit dans `package.json` et le publie comme constante. C’est aussi ce
-qui dit, sur le téléphone, si la PWA et l’APK sont à la même version.
+console avec les mêmes textes que `console`. La ligne de version lit `APP_VERSION`, la constante que
+la spec de la version dans l’en-tête (`2026-10-03-version-en-tete-design.md`) pose avant ce skin :
+l’app connaît déjà son numéro.
 
 ### Les réglages
 
