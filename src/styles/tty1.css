@@ -180,3 +180,59 @@
 :root[data-theme='tty1'] .label-xs {
   line-height: 1rem;
 }
+
+/*
+ * Les formes.
+ *
+ * Angles droits partout. Un seul réglage : les rayons sont écrits dans cinq jeux de classes, dont
+ * trois ne sont pas des variables (`.rounded`, `.rounded-full` et `.rounded-[0.3rem]`), donc
+ * surcharger `--radius-*` ne suffirait pas.
+ */
+:root[data-theme='tty1'] *,
+:root[data-theme='tty1'] *::before,
+:root[data-theme='tty1'] *::after {
+  border-radius: 0;
+}
+:root[data-theme='tty1'] rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* Le rayon 2xl est, dans l'app, celui des blocs : sans fond distinct, ils prennent un contour. Le
+   cadre de mise en évidence du tutoriel porte déjà son anneau. */
+:root[data-theme='tty1'] .rounded-2xl:not(.ring-2) {
+  border: 1px solid var(--border);
+}
+
+/* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
+   composant (`border-b`, retiré sur la dernière) : seul son style change. */
+:root[data-theme='tty1'] [data-part='row'] {
+  border-bottom-style: dotted;
+}
+
+/* `SectionTitle` : « ── Titre ───── ». Le titre de l'historique récent partage sa ligne avec un lien,
+   d'où `flex: 1`. */
+:root[data-theme='tty1'] h2.label-xs {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+:root[data-theme='tty1'] h2.label-xs::before {
+  content: '';
+  width: 12px;
+  border-top: 1px solid var(--border);
+}
+:root[data-theme='tty1'] h2.label-xs::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+/* Les feuilles : un double filet en tête, sans poignée. */
+:root[data-theme='tty1'] .sheet-panel {
+  border-top: 3px double var(--text-2);
+}
+:root[data-theme='tty1'] .sheet-panel header .h-1.w-9 {
+  display: none;
+}

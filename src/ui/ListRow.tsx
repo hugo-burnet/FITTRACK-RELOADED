@@ -42,6 +42,7 @@ export function ListRow({
   return (
     <Element
       type={onClick ? 'button' : undefined}
+      data-part="row"
       data-tutorial-id={tutorialId}
       role={checked === undefined ? undefined : 'checkbox'}
       aria-checked={checked}
