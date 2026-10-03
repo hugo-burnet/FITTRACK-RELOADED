@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+
+const { version } = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
+) as { version: string };
 
 export default defineConfig(({ mode }) => {
   // GitHub Pages needs its repository prefix; Capacitor loads local files.
@@ -10,6 +15,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
+    // The one number a release bumps. The Android workflow reads the same field for the APK's
+    // versionName, so the header and the APK cannot say different things.
+    define: { __APP_VERSION__: JSON.stringify(version) },
     plugins: [
       react(),
       tailwindcss(),
