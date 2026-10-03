@@ -8,6 +8,13 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_DELAY_DAYS = 14;
 const DELAY_DAY_COUNT = 15;
 
+/**
+ * Le plus long délai que la surprise puisse prendre. `skinUnlock.ts` s'en sert pour son seuil
+ * d'ancienneté : une app utilisée depuis plus longtemps que ça a forcément vu la console, sauf
+ * ouvertures toutes sautées par une séance en cours — que le seuil rattrape.
+ */
+export const BOOT_EASTER_EGG_MAX_DELAY_DAYS = MIN_DELAY_DAYS + DELAY_DAY_COUNT - 1;
+
 type BootStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
 export function getBootStorage(
