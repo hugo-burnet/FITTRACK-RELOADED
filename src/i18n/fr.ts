@@ -2049,6 +2049,14 @@ const fr = {
       'Le dessin est une œuvre dérivée : la géométrie a été extraite des maillages puis vectorisée. Il reste distribué sous la même licence, comme tout rendu qui en descend.',
     muscleMapLink: 'creativecommons.org/licenses/by-sa/4.0',
 
+    fontTitle: 'Police TTY1',
+    fontWork: 'Terminus Font',
+    fontLicence: 'SIL OFL 1.1',
+    fontAuthors: 'Dimitar Toshkov Zhekov',
+    fontNotice:
+      'La police du thème TTY1 est dérivée de Terminus : ses bitmaps ont été converties en contours et réduites aux caractères de l’app. Le nom d’origine est réservé, elle en porte un autre.',
+    fontLink: 'openfontlicense.org',
+
     appTitle: 'Application',
     appNotice:
       'Le reste de FitTrack n’est pas une œuvre dérivée de la carte et ne relève pas de sa licence.',

@@ -52,8 +52,9 @@ export default defineConfig(({ mode }) => {
 
         workbox: {
           // mp3, wav, and jpg included on purpose: a voice or a palier token
-          // that needs the network is not a voice, in a basement with no 4G.
-          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav,jpg}'],
+          // that needs the network is not a voice, in a basement with no 4G. Same for
+          // woff2: the TTY1 theme without its font is a different app.
+          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav,jpg,woff2}'],
           navigateFallback: `${base}index.html`,
           cleanupOutdatedCaches: true,
         },

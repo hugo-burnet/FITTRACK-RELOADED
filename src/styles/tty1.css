@@ -9,6 +9,67 @@
  * surcharger ses utilitaires sans `!important`.
  */
 
+/* Terminus, redessinée en contours à ses quatre tailles natives (scripts/tty1-font) : un pixel de
+   police vaut un pixel d'écran à 12, 16, 24 et 32 px, donc rien n'est flou. `block` et non `swap` : un
+   texte qui change de police en route est pire qu'un texte qui attend quelques millisecondes une
+   police qui sort du précache. */
+@font-face {
+  font-family: 'TTY16';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-16-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY16';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-16-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY12';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-12-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY12';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-12-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY24';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-24-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY24';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-24-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY32';
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-32-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'TTY32';
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url('../assets/fonts/tty1/tty1-32-bold.woff2') format('woff2');
+}
+
 :root[data-theme='tty1'] {
   color-scheme: dark;
 
@@ -32,6 +93,13 @@
   --danger-ink: #ff5555; /* ANSI 9 */
 
   --scrim: rgb(0 0 0 / 0.72);
+
+  /* Une famille par taille native, avec son repli : si une police manque, la chasse du système
+     garde au moins l'alignement des colonnes. */
+  --tty1-12: 'TTY12', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-16: 'TTY16', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-24: 'TTY24', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
+  --tty1-32: 'TTY32', 'DejaVu Sans Mono', 'Liberation Mono', ui-monospace, monospace;
 
   /* Les gestes gardent leurs durées et avancent par paliers. */
   --ease-mech: steps(3, end);
