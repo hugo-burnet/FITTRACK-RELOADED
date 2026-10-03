@@ -33,6 +33,12 @@ export type ScreenProps = {
   footer?: ReactNode;
   /** Contextual tutorial help is opt-out for self-explanatory reading surfaces. */
   showTutorialHelp?: boolean;
+  /**
+   * A decorative block cursor at the end of the title. Hidden in every theme but TTY1, which
+   * shows it blinking — the app's front door reads as a prompt waiting for a command. Only the
+   * home screen passes it: one cursor per screen, and one screen with a name that is the app's.
+   */
+  cursor?: boolean;
   children: ReactNode;
 };
 
@@ -68,6 +74,7 @@ export function Screen({
   sub,
   footer,
   showTutorialHelp = true,
+  cursor = false,
   children,
 }: ScreenProps) {
   const tutorial = useTutorialControls();
@@ -110,6 +117,7 @@ export function Screen({
             routine's name belongs to the user — it can be anything. */}
         <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
+          {cursor && <span aria-hidden="true" className="tty-cursor hidden" />}
         </h1>
         {(action !== undefined || hasTutorialHelp) && (
           <div className="flex shrink-0 items-center gap-1">

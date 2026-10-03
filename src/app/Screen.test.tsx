@@ -44,3 +44,27 @@ describe('Screen', () => {
     expect(version.closest('button')).toBeNull();
   });
 });
+
+describe('Screen cursor', () => {
+  it('renders a decorative cursor after the title when asked', () => {
+    const { container } = render(
+      <Screen title="Accueil" cursor>
+        <span />
+      </Screen>,
+    );
+
+    // Hidden from the accessibility tree: the title keeps its own name.
+    expect(screen.getByRole('heading', { level: 1, name: 'Accueil' })).toBeInTheDocument();
+    expect(container.querySelector('.tty-cursor')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('renders nothing extra by default', () => {
+    const { container } = render(
+      <Screen title="Accueil">
+        <span />
+      </Screen>,
+    );
+
+    expect(container.querySelector('.tty-cursor')).toBeNull();
+  });
+});

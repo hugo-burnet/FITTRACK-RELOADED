@@ -535,3 +535,14 @@
 :root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::after {
   content: ' ]';
 }
+
+/* Le curseur du titre de l'accueil : caché partout par `hidden`, le thème le montre. */
+:root[data-theme='tty1'] .tty-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.25em;
+  vertical-align: -0.125em;
+  background: var(--accent-ink);
+  animation: tty-blink 1.06s steps(1) infinite;
+}
