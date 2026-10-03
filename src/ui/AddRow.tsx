@@ -28,6 +28,7 @@ export function AddRow({
   return (
     <button
       type="button"
+      data-part="add-row"
       data-tutorial-id={tutorialId}
       onClick={onClick}
       className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-base

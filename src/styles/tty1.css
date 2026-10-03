@@ -236,3 +236,210 @@
 :root[data-theme='tty1'] .sheet-panel header .h-1.w-9 {
   display: none;
 }
+
+/*
+ * Les commandes.
+ *
+ * Aucun nom de classe ne change : le skin lit les classes de Tailwind comme des rôles et ne
+ * s'accroche par `data-part` que là où rien de stable n'existe (voir la spec).
+ */
+
+/* Pressé : vidéo inverse, aucune mise à l'échelle. */
+:root[data-theme='tty1'] :is(button, a):active:not(:disabled) {
+  background: var(--text-2);
+  color: var(--surface-0);
+}
+:root[data-theme='tty1'] :is(button, a):active:not(:disabled) * {
+  color: inherit;
+}
+:root[data-theme='tty1'] [data-part='button'][data-variant='primary']:active:not(:disabled) {
+  background: var(--accent-fill-pressed);
+  color: var(--accent-on-fill);
+}
+
+/* `active:scale-*` écrit la propriété `scale`, pas `transform`. Les trois classes, par leur nom :
+   `scale-x-0` de l'onglet actif doit rester intact. */
+:root[data-theme='tty1']
+  :is(.active\:scale-\[0\.92\], .active\:scale-\[0\.94\], .active\:scale-\[0\.97\]):active {
+  scale: none;
+}
+
+/* Les crochets : des marges automatiques les poussent aux extrémités et centrent le contenu. */
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band']) {
+  gap: 12px;
+  font-family: var(--tty1-16);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band'])::before {
+  content: '[';
+  margin-right: auto;
+}
+:root[data-theme='tty1'] :is([data-part='button'], [data-part='action-band'])::after {
+  content: ']';
+  margin-left: auto;
+}
+
+:root[data-theme='tty1'] [data-part='button'][data-variant='secondary'] {
+  background: transparent;
+  border: 1px solid var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='button']:is([data-variant='ghost'], [data-variant='danger']) {
+  border: 1px solid transparent;
+}
+
+:root[data-theme='tty1'] [data-part='add-row'] > svg,
+:root[data-theme='tty1'] [data-part='chip'] > svg {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='add-row']::before {
+  content: '[+]';
+}
+:root[data-theme='tty1'] [data-part='chip'] {
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='chip']::after {
+  content: '▼';
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='chip'][aria-pressed='true']::after {
+  color: inherit;
+}
+
+/* La coche d'une série : `[ ]`, puis `[x]` sur un bloc de l'accent. La cible reste de 48 px : seul
+   le bloc intérieur change. */
+:root[data-theme='tty1'] [data-part='set-check'] > span {
+  width: 40px;
+  height: 32px;
+  background: transparent;
+  color: var(--text-2);
+  font: 700 1.5rem/1.5rem var(--tty1-24);
+}
+:root[data-theme='tty1'] [data-part='set-check'] > span > svg {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='set-check'] > span::before {
+  content: '[ ]';
+}
+:root[data-theme='tty1'] [data-part='set-check'][aria-pressed='true'] > span {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+:root[data-theme='tty1'] [data-part='set-check'][aria-pressed='true'] > span::before {
+  content: '[x]';
+}
+/* Pressée, c'est le bloc qui s'inverse, pas la cible entière. */
+:root[data-theme='tty1'] [data-part='set-check']:active:not(:disabled) {
+  background: transparent;
+}
+:root[data-theme='tty1'] [data-part='set-check']:active:not(:disabled) > span {
+  background: var(--text-2);
+  color: var(--surface-0);
+}
+
+/* Un pli ouvert porte ▼, un pli fermé ►, à la place du chevron qui tourne. Celui d'un dossier de
+   routines dit son chevron dans une pastille en tête, celui d'un exercice en dernier. */
+:root[data-theme='tty1'] [data-part='fold'] > svg:last-child,
+:root[data-theme='tty1'] [data-part='fold'] > span[aria-hidden='true']:first-child {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='fold']::after {
+  content: '▼';
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [data-part='fold'][aria-expanded='false']::after {
+  content: '►';
+}
+
+/* Le nom d'un exercice se lit en entier, sur deux lignes au plus. La chasse fixe est plus large que la
+   police proportionnelle du thème sombre : « Squat (barre, n… » ne se reconnaît plus. */
+:root[data-theme='tty1'] [data-part='fold'] .truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Un interrupteur dit son état en toutes lettres ; la marque (« 80% ») reste devant. */
+:root[data-theme='tty1'] [role='switch'] > span[aria-hidden='true']:last-child {
+  display: none;
+}
+:root[data-theme='tty1'] [role='switch']::after {
+  content: '[OFF]';
+  font-weight: 700;
+  color: var(--text-2);
+}
+:root[data-theme='tty1'] [role='switch'][aria-checked='true']::after {
+  content: '[ON ]';
+  color: var(--accent-ink);
+}
+
+/* Les sélecteurs segmentés : un cadre à filets, l'option choisie en bloc de l'accent. Une option est
+   un bouton, ou le lien d'une `li` (les onglets de Planifier). */
+:root[data-theme='tty1'] [data-part='segmented'] {
+  gap: 1px;
+  padding: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='segmented'] > *,
+:root[data-theme='tty1'] [data-part='segmented'] > li > a {
+  background: var(--surface-1);
+  color: var(--text-2);
+}
+:root[data-theme='tty1']
+  [data-part='segmented']
+  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+
+/* La barre du bas : l'onglet actif est un bloc, la marque du dessus disparaît. */
+:root[data-theme='tty1'] .bottom-nav a[aria-current='page'] {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+:root[data-theme='tty1'] .bottom-nav a[aria-current='page'] > span:last-child {
+  font-weight: 700;
+}
+:root[data-theme='tty1'] .bottom-nav a > span[aria-hidden='true'] {
+  display: none;
+}
+
+/* Les pictogrammes : angles vifs, aucun anti-crénelage. */
+:root[data-theme='tty1'] svg {
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  shape-rendering: crispEdges;
+}
+
+/* Les champs : un cadre de 1 px, la valeur en 24 px gras, un curseur bloc, et au focus un filet de
+   l'accent de 2 px (le cadre et une ombre), comme la maquette. */
+:root[data-theme='tty1'] [data-part='cell'],
+:root[data-theme='tty1'] [data-part='field'] > button,
+:root[data-theme='tty1'] [data-part='field'] input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+:root[data-theme='tty1'] [data-part='cell'] input {
+  background: none;
+}
+:root[data-theme='tty1'] [data-part='cell']:focus-within,
+:root[data-theme='tty1'] [data-part='field'] input:focus {
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 1px var(--accent-ink);
+}
+:root[data-theme='tty1'] :is([data-part='cell'], [data-part='field']) input {
+  caret-color: var(--accent-ink);
+  caret-shape: block;
+}
+
+/* Sous 373 px, la grille d'une série se serre. */
+@media (max-width: 372px) {
+  :root[data-theme='tty1'] [data-part='set-check'] {
+    width: 44px;
+  }
+}

@@ -191,6 +191,7 @@ export function SettingsScreen() {
             <div
               role="radiogroup"
               aria-label={t('settings.theme')}
+              data-part="segmented"
               className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
             >
               {THEME_OPTIONS.map(({ value, labelKey }) => (

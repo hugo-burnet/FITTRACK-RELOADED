@@ -115,6 +115,7 @@ export function RoutineSetSheet({
           <div
             role="radiogroup"
             aria-label={t('routine.setTypeLabel')}
+            data-part="segmented"
             className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
           >
             {PLANNABLE_TYPES.map((type) => (

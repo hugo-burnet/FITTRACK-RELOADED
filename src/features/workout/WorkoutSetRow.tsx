@@ -249,6 +249,7 @@ export function WorkoutSetRow({
 
       <button
         type="button"
+        data-part="set-check"
         data-tutorial-id={
           tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-complete`
         }

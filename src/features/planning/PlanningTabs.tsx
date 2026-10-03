@@ -21,7 +21,7 @@ export function PlanningTabs() {
 
   return (
     <nav aria-label={t('planning.tabsLabel')} className="-mt-2">
-      <ul className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
+      <ul data-part="segmented" className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
         {SPACES.map(({ to, labelKey }) => {
           const isActive = pathname === to || pathname.startsWith(`${to}/`);
           return (

@@ -34,6 +34,8 @@ export function ActionBand({
   return (
     <button
       type="button"
+      data-part="action-band"
+      data-tone={tone}
       data-tutorial-id={tutorialId}
       onClick={onClick}
       disabled={disabled}

@@ -292,6 +292,7 @@ export function WorkoutExerciseCard({
 
           <button
             type="button"
+            data-part="fold"
             aria-expanded={expanded}
             onClick={() => setExpanded((open) => !open)}
             // Same as the routine card: locked order removes the handle that was

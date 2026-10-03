@@ -77,7 +77,7 @@ export function NumberInput({
       : 'focus-visible:[outline-color:var(--accent-ink)]');
 
   return (
-    <div className="flex items-stretch gap-1">
+    <div data-part="field" className="flex items-stretch gap-1">
       {steppers && (
         <button
           type="button"
