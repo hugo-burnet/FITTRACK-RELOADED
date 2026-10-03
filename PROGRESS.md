@@ -3,13 +3,22 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-03 (**maquette du skin TTY1**).
+**Dernière mise à jour :** 2026-10-03 (**skin TTY1 : maquette, spec et plan**).
 
-## Maquette du skin TTY1 (2026-10-03)
+## Skin TTY1 : maquette, spec et plan (2026-10-03)
 
-Aucune ligne applicative, aucun schéma, aucune version : une maquette HTML autonome,
-`docs/design/mockups/2026-10-03-skin-tty1.html`, qui s'ouvre telle quelle dans un navigateur.
-`typecheck`, `test:run` et `build` ne voient pas ce fichier et n'ont pas été rejoués.
+Aucune ligne applicative, aucun schéma, aucune version. Quatre livrables, rien d'implémenté :
+
+- la maquette HTML autonome, `docs/design/mockups/2026-10-03-skin-tty1.html`, qui s'ouvre telle
+  quelle dans un navigateur ;
+- la spec, `docs/design/specs/2026-10-03-skin-tty1-design.md` (statut : à relire) ;
+- le plan, `docs/design/plans/2026-10-03-skin-tty1.md` : treize tâches, de `stores/theme.ts` au
+  checkpoint téléphone. Les Tasks 1 à 6 et 12, qui ont une logique, se font en TDD ;
+- le générateur de la police, `scripts/tty1-font/` (Python, hors de `package.json`) : il redonne les
+  huit `woff2` et `glyphs.json` depuis les sources de Terminus, et son README dit comment.
+
+`typecheck`, `test:run` et `build` ne voient aucun de ces fichiers et n'ont pas été rejoués. La
+base mesurée pour le plan : 248 fichiers, 2 657 tests, précache de 234 entrées (8 192,75 Kio).
 
 Le skin habille l'app comme la console virtuelle tty1 : police à chasse fixe, 16 couleurs
 ANSI, angles droits, vidéo inverse pour ce qui est pressé. Mêmes écrans, mêmes gestes, mêmes
@@ -26,15 +35,21 @@ cibles de 48 px.
 - **Police : Terminus 4.49.1** (SIL OFL 1.1, nom réservé), convertie de bitmap en contours aux
   quatre tailles natives 12, 16, 24 et 32 px. Un pixel de police vaut un pixel CSS, chaque fichier
   pèse 5 à 8 Ko et la maquette l'embarque en data-URI : elle tient elle-même la règle hors-ligne.
-  La police dérivée s'appelle « TTY1 ». Son sous-ensemble n'a pas U+202F, que les milliers fr-FR
-  emploient : à ajouter avant toute intégration.
-- **Pas tranché** (liste en bas de la maquette) : l'accent (vert ANSI proposé, ambre, ou l'orange
-  actuel), la trame CRT, les icônes redessinées ou des glyphes, le boot en permanence, un réglage
-  séparé ou un troisième thème, le nom.
-- **Pour intégrer** : trois clés de `fr.ts`, le type `Theme`, le script bloquant d'`index.html`,
-  `platform/systemBars.ts`, un `tty1.css` d'environ 250 lignes. Les variables Tailwind
-  `--font-sans`, `--radius-*` et `--text-*` seraient surchargées dans le même bloc de jetons, à
-  confirmer au premier essai.
+  La police dérivée s'appelle « TTY1 ». Terminus n'a pas U+202F, que les milliers fr-FR emploient :
+  le générateur le dessine comme une cellule vide.
+- **Pas tranché dans la maquette, pris dans la spec** : l'accent (vert ANSI, pas l'ambre ni
+  l'orange actuel), pas de trame CRT, les pictogrammes gardés et des glyphes là où il y en a un
+  naturel, l'ouverture console à chaque lancement, un troisième thème plutôt qu'un réglage séparé.
+  Chaque choix porte dans la spec ce que coûterait d'en changer : ce sont des défauts, pas une
+  décision de l'utilisateur.
+- **Pour intégrer** : le plan. Un `src/styles/tty1.css` importé par une seule ligne d'`index.css`
+  (`Boot.test.tsx` y lit des blocs par ancres), le type `Theme`, le script bloquant d'`index.html`,
+  `platform/systemBars.ts`, trois clés de `fr.ts` et le glob du précache, où `woff2` manque. Les
+  variables Tailwind `--font-sans`, `--text-*` et `--radius-*` se surchargent : vérifié dans le CSS
+  généré. Le reste (`.rounded`, `.rounded-full`, les tailles arbitraires, `.record-figure`, les
+  `active:scale-*`) n'est pas une variable, le skin le récrit à la main.
+- **Écart connu** : le titre incrusté dans le filet des cartes (« À lancer ») n'est pas repris par
+  l'app, faute de prop sur la carte. Étape facultative de la Task 13.
 - **Checkpoint téléphone** : ouvrir la maquette sur le téléphone et juger la séance en direct à
   bout de bras. Une police de 16 px en salle est la seule chose qu'un écran d'ordinateur ne dit pas.
 
