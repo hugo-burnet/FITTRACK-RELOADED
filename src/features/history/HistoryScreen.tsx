@@ -161,6 +161,7 @@ export function HistoryScreen() {
         <div className="space-y-3">
           <div
             role="group"
+            data-part="tabs"
             aria-label={t('history.viewSelector')}
             className="grid grid-cols-2"
           >

@@ -443,3 +443,95 @@
     width: 44px;
   }
 }
+
+/*
+ * Les jauges, le repos et l'effort.
+ */
+
+/* Une piste en cellules : le masque découpe la piste *et* son remplissage, dont la largeur reste
+   celle que le composant écrit (un `transform` ou un `width`). Une rampe répétée sur le remplissage
+   changerait la taille des cellules avec lui. */
+:root[data-theme='tty1'] :is([data-part='meter'], [data-part='meter-rail']) {
+  background-color: var(--border);
+  mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 8px);
+}
+/* L'objectif hebdomadaire : huit pixels de haut. Le fil du repos : quatre, au pied de la carte. */
+:root[data-theme='tty1'] [data-part='meter'] {
+  height: 8px;
+}
+:root[data-theme='tty1'] [data-part='meter-rail'] {
+  height: 4px;
+  bottom: 4px;
+}
+
+/* Le point du repos devient le curseur bloc, le seul clignotement de la séance. */
+:root[data-theme='tty1'] [data-part='rest-dot'] {
+  width: 8px;
+  height: 16px;
+  animation: tty-blink 1.06s steps(1) infinite;
+}
+@keyframes tty-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* La jauge d'effort : neuf cellules, un repère plein. */
+:root[data-theme='tty1'] .rpe-gauge::-webkit-slider-runnable-track {
+  height: 1rem;
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(100% / 9 - 2px),
+      var(--surface-2) calc(100% / 9 - 2px) calc(100% / 9)
+    ),
+    linear-gradient(
+      to right,
+      var(--accent-ink) 0 var(--rpe-progress),
+      var(--border) var(--rpe-progress) 100%
+    );
+}
+:root[data-theme='tty1'] .rpe-gauge::-webkit-slider-thumb {
+  width: 0.5rem;
+  height: 1.5rem;
+  margin-top: -0.25rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--text-1);
+  box-shadow: none;
+}
+:root[data-theme='tty1'] .rpe-gauge::-moz-range-track {
+  height: 1rem;
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(100% / 9 - 2px),
+      var(--surface-2) calc(100% / 9 - 2px) calc(100% / 9)
+    ),
+    linear-gradient(
+      to right,
+      var(--accent-ink) 0 var(--rpe-progress),
+      var(--border) var(--rpe-progress) 100%
+    );
+}
+:root[data-theme='tty1'] .rpe-gauge::-moz-range-thumb {
+  width: 0.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--text-1);
+  box-shadow: none;
+}
+
+/* Les onglets Journal et Calendrier : le choisi s'encadre de crochets, sans le trait du dessous. */
+:root[data-theme='tty1'] [data-part='tabs'] > button > span[aria-hidden='true'] {
+  display: none;
+}
+:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::before {
+  content: '[ ';
+}
+:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::after {
+  content: ' ]';
+}

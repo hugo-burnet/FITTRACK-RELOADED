@@ -92,6 +92,7 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
   return (
     <span
       aria-hidden="true"
+      data-part="meter-rail"
       className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
         rounded-full bg-[var(--border)]"
     >
@@ -117,7 +118,11 @@ export function RestStatus({ endsAt }: { endsAt: number }) {
 
   return (
     <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-[var(--accent-ink)]">
-      <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]" />
+      <span
+        aria-hidden="true"
+        data-part="rest-dot"
+        className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]"
+      />
       <span className="tabular truncate">
         {t('workout.restLabel', { duration: formatRest(remaining) })}
       </span>
