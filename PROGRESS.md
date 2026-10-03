@@ -3,7 +3,119 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-03 (**skin TTY1 et version de l'app dans l'en-tête**).
+**Dernière mise à jour :** 2026-10-03 (**TTY1 à débloquer, ouverture complète**).
+
+## TTY1 à débloquer, ouverture complète (2026-10-03)
+
+**Branche de session `ccr-19a013d9-m9sh2y`, pas fusionnée dans `master`, pas versionnée** : l'accord de
+fusionner et de publier donné pour la v2.8.0 ne valait que pour elle. Un déblocage et une ouverture de plus
+sont une version **mineure** (2.9.0) : à demander.
+
+Deux demandes, une session : « ce skin se débloque lors de la première fois où l'on voit l'easter egg de
+l'écran de chargement » (et, après plus d'un mois d'usage, on l'a forcément vu), et « une fois ce skin
+activé, le grub se lance à chaque fois, plus complet, plus long, avec des infos au hasard sur l'app : une
+fonction de l'app qui s'affiche sans qu'on sache pourquoi et qui, validée, lance l'app, des check-up, des
+`dir /s`… ». La spec et le plan (`docs/design/specs/` et `docs/design/plans/`,
+`2026-10-03-tty1-debloque-et-boot-complet`) disent le détail. Aucune table, aucun index, aucun schéma.
+
+**Le déblocage**
+
+- Un drapeau `localStorage` (`fittrack.tty1Unlocked`), pas Dexie : il se lit avant le premier rendu.
+  `src/stores/skinUnlock.ts`, sans React ni Dexie, avale toute exception du stockage.
+- **Trois chemins** : la console rare jouée **jusqu'au bout** (écrit avec le report de la surprise, à la
+  fin d'une ouverture complète : une console coupée par une séance en cours n'a pas été vue) ; plus de
+  **30 jours** d'usage (la plus petite `createdAt` d'un exercice, `getFirstUseAt` : le catalogue est semé
+  au premier lancement, les exercices supprimés comptent, une base restaurée garde ses dates) ; le thème
+  mémorisé **est déjà** `tty1` (la v2.8.0 l'a livré ouvert : le retirer serait une régression). Un test
+  garde le seuil au-dessus du plus long délai de la surprise (28 jours).
+- Réglages : l'option reste visible, grisée, avec un cadenas et « TTY1 est verrouillé. Garde un œil sur
+  l'écran de chargement. » — sans dire comment. `aria-disabled` et non `disabled`, pour que le bouton garde
+  le focus et que sa phrase soit lue.
+- La console rare dit le déblocage, une fois : sous la commande tapée, `[ OK ] tty1.skin unlocked` puis
+  `# Réglages > Apparence`, 1,4 s de tenue en plus. La décision est prise **avant** le premier rendu
+  (TTY1 verrouillé et variante `console`) et n'est pas rediscutée quand l'ancienneté débloque ensuite.
+
+**L'ouverture complète**
+
+- Un démarrage de machine **tiré à chaque lancement** : chargeur (le noyau change de nom), noyau (l'heure
+  de la machine puis quatre faits parmi douze), services (les quatre lignes de la console rare toujours
+  là et dans leur ordre, quatre autres s'intercalent : deux `OK`, un `WARN`, un `FAIL`), vérifications
+  (`fsck`, `smartctl`, `memtest`…), interlude DOS (`dir /s` une fois sur deux, sinon `ver` ou `mem`), puis
+  **la porte** : une fonction réelle de l'app attendue comme un service (`estimateOneRepMax`,
+  `computePlateLoad`, `calculateWarmupSets`, `calculateDeloadWeight`, `formatRest`, `setVolume`), animée,
+  puis validée avec **le résultat qu'elle a vraiment rendu**. Fin : la cible, l'invite, la commande tapée,
+  la devise.
+- **Les faits sont vrais** : le catalogue, le repos par défaut, le deload, la barre, les plaques, les
+  cœurs et l'écran de l'appareil, le réseau. Rien n'est écrit en dur : « 175 exercices » mentirait à la
+  prochaine mise à jour du catalogue. `bootFacts.ts` les lit et appelle les fonctions, chacune dans son
+  `try` : une qui lève sort du tirage, elle n'empêche jamais l'app de s'ouvrir. Un test relit chaque nom
+  contre l'export réel : le paquet de production renomme les fonctions.
+- **Durée fixe, 4 650 ms**, quel que soit le tirage : il change le contenu et la cadence, jamais le
+  temps d'attente. 2 180 ms en mouvement réduit (tout est affiché d'emblée).
+- Le script est **pur** (`bootTty1Script.ts`, tiré par `main.tsx` une seule fois : `BootScreen` est
+  remonté en `BootCurtain`, un tirage dans le composant donnerait deux machines à la suite), rejouable par
+  graine (`seededRandom`, et `?bootSeed=` en développement seulement). Les textes sont des nœuds de
+  `fr.ts` que `tAll` énumère : ce dictionnaire n'a pas de tableaux. Aucune ligne au-delà de 41 caractères
+  (360 px en 16 px), sauf l'invite finale, dont la commande passe à la ligne d'un bloc.
+- `BootTty1Console.tsx` pose les lignes **au fil d'une horloge** (`useBootClock`) et non par des délais
+  CSS : une console défile, et avec toutes les lignes déjà dans la page rien ne défilerait. Fenêtre à
+  hauteur entière de lignes (`round()`), colonne inversée : elle se remplit du haut, puis défile par le bas.
+- **Toucher l'écran saute l'ouverture TTY1**, et elle seule — *non demandé, à retirer si on n'en veut pas* :
+  cinq secondes à chaque lancement sont ce que la règle n° 5 interdit. Le saut part du `click` et non du
+  `pointerdown` : le geste finit sur l'écran d'ouverture, au lieu de tomber sur le premier bouton de
+  l'accueil. Une ligne en bas le dit.
+
+**Vérifié**
+
+- Chromium à 390 × 844 et 360 × 740, horloge simulée et en temps réel : les lignes se posent à leur heure,
+  la fenêtre fait 25 lignes entières (650 px), la porte tourne puis se réécrit, les commandes se tapent
+  (`steps(6)`, `steps(27)` lus dans `getComputedStyle`), le curseur n'est que sur la dernière commande, le
+  mouvement réduit affiche tout d'emblée. La console rare avec et sans révélation (3 360 puis 4 760 ms), le
+  drapeau écrit à sa fin.
+- Le build de production, servi : l'ouverture TTY1 dure ce qu'elle doit sans une erreur de console ;
+  le thème mémorisé sans drapeau débloque ; une installation **vieillie de 40 jours** (les 175 exercices
+  antidatés) écrit le drapeau au démarrage suivant et Réglages montre TTY1 ouvert ; un doigt posé 500 ms
+  n'arrête rien, son relâchement saute l'ouverture sans atteindre le bouton dessous. `?bootSeed=` n'est
+  plus dans le paquet.
+- `typecheck`, `lint` (**zéro avertissement** : celui de `Boot.tsx`, préexistant, a disparu avec le
+  déplacement de `BOOT_HOLD_MS`), `test:run` (**261 fichiers, 2 827 tests**, contre 254 et 2 703 à la
+  v2.8.0) et `build` verts. Précache de 242 entrées, 8 272 Kio.
+
+**Pièges rencontrés**
+
+- Une console ancrée en bas fait apparaître ses premières lignes **en bas** de l'écran, comme un fil de
+  discussion ; une console qui démarre se remplit du haut. La colonne inversée avec une pile en
+  `margin-bottom: auto` fait les deux.
+- Les délais CSS ne défilent pas : toutes les lignes occupent leur hauteur finale dès la première image.
+  D'où l'horloge JavaScript, et la console rare qui, elle, reste en CSS — et ne se vérifie qu'en temps réel.
+- L'horloge simulée de Playwright **coule d'elle-même** tant qu'on ne l'a pas mise en pause (`pauseAt`) :
+  les premières captures montraient déjà l'app. Et les animations CSS ne la suivent pas.
+- Un test a trouvé ce que l'œil n'aurait pas vu : l'invite finale fait 44 caractères, pas 41. Le test
+  tient désormais l'invite et la commande chacune à 41, parce qu'elles passent à la ligne comme deux blocs.
+- Une ligne de la porte dépassait la largeur (`calculateWarmupSets() = 40/60/80 kg`, 42) : son résultat
+  vient du code, pas de `fr.ts`. La porte écarte d'elle-même la fonction qui ne tient pas.
+- `act()` regroupe les mises à jour : avancer l'horloge de 2 000 ms d'un coup ne rend que l'état final.
+  Les tests avancent par paliers.
+- `aria-disabled` est lu comme « désactivé » par Playwright, qui refuse de cliquer : `force: true` pour
+  prouver qu'un toucher ne fait rien.
+- `pkill -f <motif>` a tué le shell de la session : le motif figurait dans sa propre ligne de commande.
+  Tuer par PID.
+
+**Non vérifié** : le rendu sur un téléphone (police de 16 px à bout de bras, et la cadence de l'œil), l'APK,
+et le comportement de `round()` sur une vieille WebView Android (il retombe sur une ligne coupée, laide et
+sans conséquence).
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Installation neuve, thème Sombre : la troisième option de Réglages > Apparence est grisée, avec un
+   cadenas. Sur l'installation existante : TTY1 reste disponible.
+2. Choisir TTY1, fermer et rouvrir l'app **plusieurs fois** : les sept parties, un contenu différent à
+   chaque fois, 4,6 secondes, une fonction de l'app qui attend puis se valide.
+3. Toucher l'écran pendant l'ouverture : elle se coupe, sans que l'accueil reçoive le toucher.
+4. Lancer une séance et rouvrir l'app : aucune ouverture.
+5. « Réduire les animations » : la console est là d'emblée, deux secondes.
+6. Pour voir la révélation : effacer `fittrack.tty1Unlocked` et rouvrir avec `?boot=console` (développement
+   seulement), ou attendre la surprise de 14 à 28 jours sur une installation neuve.
 
 ## Skin TTY1 et version de l'app dans l'en-tête (2026-10-03)
 

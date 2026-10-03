@@ -136,6 +136,10 @@ globale de `index.css` s’en charge déjà.
 
 ### L’ouverture
 
+> **Remplacé le 2026-10-03** par `2026-10-03-tty1-debloque-et-boot-complet-design.md` : l’ouverture
+> TTY1 n’est plus cette console fixe de 2 180 ms mais un démarrage complet, tiré à chaque lancement
+> (4 650 ms). Ce qui suit décrit la v2.8.0.
+
 Avec TTY1, l’ouverture montre le logo et le nom en haut, puis la console en dessous : les quatre
 lignes d’état déjà dans `fr.ts`, l’invite, la commande qui se tape, puis la devise de l’app en
 commentaire (`# Production was the gym`). Sa durée est celle de l’ouverture normale, 2 180 ms. Une
@@ -249,6 +253,9 @@ Un seul ajout n’est pas un attribut : `Screen` reçoit une prop `cursor`, que 
 rend un élément décoratif que le CSS cache hors du thème et montre, clignotant, sous TTY1.
 
 ### L’ouverture
+
+> Voir la remarque plus haut : la console de `BootScreen` et sa durée ont changé le 2026-10-03. Le
+> choix de la variante (`selectBootVariant`) est resté tel qu’il est écrit ici.
 
 `BootVariant` gagne `'tty1'`. `selectBootVariant` reçoit le thème et renvoie `'tty1'` sans toucher à
 la date de la surprise rare : elle reprend là où elle en était quand on quitte le thème. Seule la

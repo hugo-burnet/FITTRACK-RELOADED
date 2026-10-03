@@ -2,7 +2,7 @@
 
 **Date :** 2026-10-03
 
-**Statut :** à implémenter. Le comportement est celui demandé le 2026-10-03 ; les choix d’exécution
+**Statut :** implémenté. Le comportement est celui demandé le 2026-10-03 ; les choix d’exécution
 que la demande ne tranchait pas sont dans « Décisions retenues », avec leur coût si l’on change d’avis.
 
 **Périmètre :** le déblocage du thème TTY1, sa révélation dans la console rare, et l’ouverture TTY1,
@@ -72,7 +72,10 @@ Deux choses, demandées ensemble :
     lancement est exactement ce que la règle n° 5 (une main, en sueur) interdit. La surprise rare et
     l’ouverture normale ne se sautent pas : elles sont rares ou courtes. *Ce choix n’était pas dans la
     demande* ; le retirer coûte un écouteur dans `main.tsx` et une ligne de texte. Un saut ne
-    consomme rien et ne débloque rien.
+    consomme rien et ne débloque rien. Le saut part du `click`, pas du `pointerdown` : le geste doit
+    finir sur l’écran d’ouverture, qui est encore là jusqu’à son terme. Avec `pointerdown`, l’app se
+    monterait sous un doigt encore posé et son relâchement pourrait tomber sur le premier bouton de
+    l’accueil.
 11. **En mouvement réduit, tout est affiché d’emblée et l’attente retombe à celle de l’ouverture
     normale (2 180 ms).** Un écran fixe de près de cinq secondes n’apporte rien à qui a demandé moins
     d’animation.
@@ -135,43 +138,47 @@ la console ne le consomme pas, et la console rejoue au prochain lancement.
 
 Le logo, le nom et la ligne de version restent en haut. La console occupe le reste de l’écran, **ancrée
 en bas** : chaque ligne se pose sous la précédente et les plus anciennes sortent par le haut, comme sur
-une console. Elle se compose, dans cet ordre, de sept parties. Les lignes sont celles d’un tirage
-possible ; tout ce qui est variable est dit dans le tableau qui suit.
+une console. Elle se compose, dans cet ordre, de sept parties. Les lignes sont celles d’un tirage réel (graine 3,
+écran de 390 px) ; tout ce qui est variable est dit dans le tableau qui suit.
 
 ```
 GNU GRUB  version 2.12
 Booting 'FitTrack GNU/Linux'
-Loading Linux 6.1.0-biceps ...
+Loading Linux 6.1.0-gains ...
 Loading initial ramdisk ...
-[    0.00] rtc: 2026-10-03 14:07:11
-[    0.04] cpu: 8 cores online
-[    0.09] idb: 1247 exercises mounted
-[    0.15] net: offline, as designed
-[    0.21] rest: 120 s default timer
-[ OK ] Started rest_timer.service
+[    0.05] rtc: 2026-10-03 14:07:11
+[    0.10] cpu: 4 cores online
+[    0.13] data: stays on this device
+[    0.17] fb0: 390x844 console
+[    0.23] bar: 20 kg, 10 plate sizes
 [ OK ] quadriceps.service active
-[ OK ] Mounted /gains (rw, relatime)
 [ OK ] core.stability mounted
+[ FAIL ] cheat_meal: dependency failed
 [ WARN ] ego-lifting detected
-[ OK ] Reached target Offline First
-[ FAIL ] leg_day.service: not found
+[ WARN ] sleep: below 7 h average
+[ OK ] Started plate_calc.service
 [ FAIL ] excuses.mount: permission denied
-fsck.idb: /gains clean, 1247 files
-smartctl: biceps PASSED
-memtest86: 5x5 passed
+[ OK ] Mounted /gains (rw, relatime)
+badblocks: 0 found in knees
+fsck.idb: /gains clean, 175 files
+lsblk: 0 plates missing
 [ OK ] Started dosemu.service
 C:\FITTRACK> dir /s
  Volume in drive C is GAINS
- Volume Serial Number is 1D07-F17E
+ Volume Serial Number is 82CB-DF23
 
  Directory of C:\FITTRACK
 
-SQUAT    EXE    41,216 10-03-26  2:07p
-PLATES   DAT     2,048 10-03-26  2:07p
-BENCH    EXE    38,912 10-03-26  2:07p
-         3 file(s)         82,176 bytes
-[*     ] Starting estimateOneRepMax()...
-[ OK ] estimateOneRepMax() = 116.7 kg
+OVERLOAD SYS    37,424 10-03-26   2:07p
+GAINS    DAT    72,547 10-03-26   2:07p
+ROW      EXE     1,142 10-03-26   2:07p
+DEADLIFT EXE     1,827 10-03-26   2:07p
+          4 file(s)        112,940 bytes
+Total files listed:
+          4 file(s)        112,940 bytes
+                 9,145,646 bytes free
+[*     ] Starting formatRest()
+[ OK ] formatRest() = 2:00
 [ OK ] Reached target Gym.
 root@fittrack:~# progressive_overload = true█
 # Production was the gym
@@ -192,19 +199,27 @@ sans que rien n’explique pourquoi, et c’est sa validation (`[ OK ]`) qui lan
 `estimateOneRepMax`, `computePlateLoad`, `calculateWarmupSets`, `calculateDeloadWeight`, `formatRest`
 et `setVolume`, avec chacune ses arguments fixes et son résultat réel.
 
-**Rythme.** Les lignes courent de 400 ms à 3 150 ms, à une cadence moyenne d’une ligne toutes les
-80 ms, plus lente aux vérifications et rapide dans une liste de fichiers. La porte attend 500 ms,
-validée à 3 650 ms ; l’invite se pose à 3 900 ms, la commande se tape en 400 ms, la devise suit à
-4 350 ms, et l’écran tient jusqu’à 4 650 ms. Un tirage trop dense ne s’accélère pas au-delà d’un
-plancher de 35 ms par ligne : il en perd, plutôt que de devenir illisible.
+**Rythme.** Les lignes courent de 400 ms à 3 150 ms, à une cadence d’une ligne toutes les 80 à
+110 ms, plus lente aux vérifications (160 ms) et rapide dans une liste de fichiers (une quarantaine de
+millisecondes). La porte se met à attendre à 3 150 ms, validée à 3 650 ms ; la cible suit à 3 770 ms,
+l’invite se pose à 3 900 ms, la commande se tape à 16 ms le caractère (432 ms), la devise suit à
+4 392 ms, et l’écran tient jusqu’à 4 650 ms. Les battements s’étirent ou se resserrent d’un même
+facteur pour que la porte tombe toujours à 3 150 ms ; le temps de frappe d’une commande, lui, ne se
+resserre pas, parce qu’une sortie ne précède pas la fin de la commande qui la produit. Le nombre de
+lignes tirées est borné de façon que deux lignes ne soient jamais plus proches que 30 ms, ce qu’un test
+mesure sur trois cents tirages.
 
 **Largeur.** Aucune ligne ne dépasse 41 caractères, ce que tient un téléphone de 360 px en police 16 px
 (chasse de 8 px, 328 px utiles). Une ligne plus longue se replierait sur deux rangs : un défaut
-cosmétique, pas une erreur, mais un test garde la limite.
+cosmétique, pas une erreur, mais un test garde la limite sur trois cents tirages. Seule exception, l’invite
+finale (`root@fittrack:~# progressive_overload = true`, 44 caractères) : la commande passe à la ligne
+suivante d’un bloc, avec son curseur, comme depuis la v2.8.0 ; le test tient l’invite et la commande
+chacune à 41. La porte écarte d’elle-même la fonction dont la ligne ne tiendrait pas : son résultat
+vient du code, pas de `fr.ts`.
 
-**Sauter.** Toucher l’écran pendant l’ouverture TTY1 la coupe. Une ligne discrète en bas le dit :
-« Touche l’écran pour passer. » Le rideau montre alors la console complète et s’efface en 320 ms,
-comme après une séance en cours.
+**Sauter.** Toucher l’écran pendant l’ouverture TTY1 la coupe, au relâchement du doigt. Une ligne
+discrète en bas le dit : « Touche l’écran pour passer. » Le rideau montre alors la console complète et
+s’efface en 320 ms, comme après une séance en cours.
 
 ## Architecture
 
@@ -275,34 +290,48 @@ fournissent, et le paramètre d’URL de développement `?bootSeed=` aussi.
 
 ### Le rendu
 
-`BootScreen` reçoit `script`. Sans lui (un test, une démonstration), il retombe sur le script d’une
-graine fixe : jamais un tirage pendant le rendu.
+`BootScreen` reçoit des `BootProps`, un type qui **exige** le script pour la variante `tty1` et le
+refuse pour les autres : jamais un tirage pendant le rendu, jamais un script inventé faute de mieux. La
+console elle-même est `BootTty1Console.tsx`, séparée de `Boot.tsx` : c’est un composant à horloge, qui
+n’a rien de commun avec les trois autres ouvertures, toutes en CSS.
 
-- Un crochet d’horloge programme un `setTimeout` par instant distinct du script et en tient la valeur
-  courante ; les lignes dont `at` est dépassé sont rendues. `exiting`, le mouvement réduit et le saut
-  donnent la valeur finale d’emblée et ne programment rien.
-- Le conteneur est une colonne ancrée en bas (`justify-content: flex-end`), sans défilement ni barre,
-  et son bord haut s’estompe sur une ligne et demie pour qu’aucune ligne ne soit coupée net.
+- `useBootClock(instants, immediate)` programme un `setTimeout` par instant distinct du script et en tient
+  la valeur courante, qui ne recule jamais ; les lignes dont `at` est dépassé sont rendues. `exiting`, le
+  mouvement réduit (`prefersReducedMotion()`) et le saut donnent la valeur finale d’emblée et ne
+  programment rien. Le démontage annule tout.
+- Trois niveaux de boîtes : un emplacement qui prend le reste de l’écran, dedans une fenêtre dont la
+  hauteur est un nombre **entier** de lignes (`round(down, 100%, 1.625rem)`, avec les 100 % pour repli
+  dans les navigateurs qui ne le connaissent pas : ils coupent une ligne au lieu de les montrer
+  entières), dedans la pile des lignes. La fenêtre est une colonne inversée et la pile porte
+  `margin-bottom: auto` : tant qu’elle tient, elle reste en haut et se remplit vers le bas, comme une
+  console qui démarre ; dès qu’elle déborde, elle s’ancre en bas et les plus anciennes sortent par le haut.
 - L’animation d’attente de la porte est faite de `transform` et de `steps()`, sans `content` animé :
   les WebView Android plus anciennes ne l’animent pas.
-- La frappe d’une commande lit sa longueur dans `--chars`, au lieu d’un `27ch` écrit en dur : la même
-  règle sert `progressive_overload = true` et `dir /s`.
+- La frappe d’une commande lit sa longueur dans `--chars` (`steps(var(--chars), end)` et
+  `calc(var(--chars) * 16ms)`), au lieu d’un `27ch` écrit en dur : la même règle sert
+  `progressive_overload = true` et `dir /s`. Un test garde les 16 ms d’accord avec le script.
+- Le curseur est sur la dernière commande tant qu’aucune sortie ne la suit ; une ligne de devise ne le
+  lui prend pas.
 - Les règles de l’ouverture TTY1 restent dans `src/styles/tty1.css`, avec le reste du thème. Les délais
   par `nth-child` de la console fixe disparaissent : les lignes sont posées par l’horloge.
 
 ### Le saut
 
 `holdBootOpening` reçoit un signal d’abandon facultatif. `main.tsx` en crée un pour l’ouverture TTY1
-seulement et l’annule au premier `pointerdown` du document ; l’écouteur est retiré à la fin de
-l’ouverture. Un saut est traité comme une séance en cours : l’attente se résout, `onFullOpening` ne
-tourne pas.
+seulement et l’annule au premier `click` du document ; l’écouteur est retiré à la fin de l’ouverture. Un
+saut est traité comme une séance en cours : l’attente se résout, `onFullOpening` ne tourne pas. Les
+durées de tenue (`BOOT_HOLD_MS`, `bootHoldMs`) vivent dans `bootEasterEgg.ts`, à côté de
+`holdBootOpening` qui les attend : un fichier de composants ne peut pas exporter une fonction sans
+casser le rechargement à chaud.
 
 ### Le branchement
 
 Dans `main.tsx`, dans cet ordre, avant le premier rendu : lecture du thème, déblocage par le thème,
-choix de la variante, choix de la révélation, tirage du script (variante `tty1` seulement). Après
-l’initialisation de la base : déblocage par l’ancienneté, dans son propre `try`. À la fin d’une
-ouverture complète de la console rare : report de la surprise **et** déblocage.
+choix de la variante, tirage du script (variante `tty1` seulement, par `drawBootScript`, qui rend
+`undefined` plutôt que de lever : l’ouverture retombe alors sur la normale), choix de la révélation.
+Après l’initialisation de la base : déblocage par l’ancienneté (`unlockTty1WhenSeasoned`, qui ne lit
+rien si TTY1 est déjà débloqué et ne laisse jamais une base illisible empêcher le démarrage). À la fin
+d’une ouverture complète de la console rare : report de la surprise **et** déblocage.
 
 Le paramètre `?boot=` de développement garde ses trois valeurs ; `?bootSeed=` fixe le tirage. Aucun des
 deux n’existe en production.
@@ -340,9 +369,12 @@ Du TDD sur ce qui a une logique :
   au-delà de 41 caractères sur plusieurs centaines de graines, durée tenue, ordre des `at`, lignes sans
   valeur écartées, `dir /s` sans date ni taille fausses ;
 - les faits : chaque fonction de la porte rend un résultat, une fonction qui lève est écartée ;
-- le rendu : lignes posées par l’horloge (temporisateurs simulés), défilement par le bas, sortie
-  complète d’emblée, mouvement réduit, curseur sur la dernière commande seulement, saut ;
-- `holdBootOpening` : signal d’abandon.
+- le rendu (`BootTty1Console`, `useBootClock`, `prefersReducedMotion`) : lignes posées par l’horloge
+  (temporisateurs simulés), sortie complète d’emblée, mouvement réduit, curseur sur la dernière
+  commande seulement, la porte qui se réécrit en place, démontage ; le CSS, lu comme le fait le dépôt
+  (colonne ancrée en bas, hauteur entière de lignes, frappe, plus aucun délai de position) ;
+- `holdBootOpening` : signal d’abandon, avant, pendant et après l’ouverture ;
+- `drawBootScript` : un tirage qui échoue rend `undefined`.
 
 L’affichage se vérifie à l’œil, captures de Chromium à 390 × 844 et 360 × 740, à plusieurs instants de
 l’ouverture, avec une graine fixe, puis en mouvement réduit.

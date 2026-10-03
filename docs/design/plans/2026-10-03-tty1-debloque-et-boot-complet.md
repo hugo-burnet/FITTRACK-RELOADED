@@ -332,3 +332,43 @@ lignes.
   `git push -u origin ccr-19a013d9-m9sh2y`.
 - [ ] **Step 4 : demander** à l'utilisateur s'il veut la fusion dans `master`, le push et la version
   (mineure : 2.9.0). Ne rien faire sans réponse.
+
+---
+
+## Écarts à l'exécution
+
+Ce que l'exécution a changé par rapport au plan, pour qui le relirait :
+
+- **Task 1.** `unlockTty1WhenSeasoned(storage, readFirstUseAt)` s'ajoute au store : la lecture de la base,
+  son `try` et le « ne rien lire si TTY1 est déjà débloqué » sont de la logique, donc testés, au lieu de
+  rester dans `main.tsx`, qu'on ne peut pas tester. Le store ne définit pas son propre type de stockage
+  importé de `app/` : il déclare le sien, structurellement identique, pour ne pas remonter d'une couche.
+- **Task 4.** `BOOT_HOLD_MS` quitte `Boot.tsx` pour `bootEasterEgg.ts`, avec `bootHoldMs` : un fichier de
+  composants ne peut exporter une fonction sans casser le rechargement à chaud, et c'est ce qui supprime
+  l'avertissement Fast Refresh que `lint` portait depuis des mois. `BOOT_HOLD_MS.tty1` n'est passé à sa
+  valeur finale qu'à la Task 8, avec le script (`TTY1_BOOT_MS`) : l'ancienne console fixe n'avait aucune
+  raison de tenir 4 650 ms. Les délais de la révélation sont 3 280 et 3 440 ms (la frappe finit à 3 180).
+- **Task 5.** Les tests de `tAll` sont dans `fr.test.ts`, pas dans un fichier à part. `PoolKey` refuse une
+  feuille et un nœud de nœuds : deux `@ts-expect-error` le gardent.
+- **Task 6.** Le générateur n'écarte pas de lignes pour tenir un plancher de cadence : il n'en tire pas
+  assez pour le franchir, et un test le mesure (30 ms sur 300 tirages). Seule la porte écarte, d'elle-même,
+  une fonction dont la ligne ne tiendrait pas dans 41 caractères. La limite de 41 caractères a une
+  exception, l'invite finale (44) : la commande passe à la ligne d'un bloc. `place()` distingue le
+  battement qui s'étire (`gap`) du temps de frappe qui ne bouge pas (`hold`).
+- **Task 7.** `drawBootScript(random, now, environment?)` s'ajoute : il enveloppe lecture des faits et
+  tirage dans un `try` et rend `undefined`, pour que `main.tsx` retombe sur l'ouverture normale au lieu de
+  laisser un écran blanc.
+- **Task 8.** La console est un composant à part (`BootTty1Console.tsx`) : elle n'a rien de commun avec les
+  trois autres ouvertures, toutes en CSS, et `Boot.tsx` n'avait pas à porter l'horloge. `BootScreen` et
+  `BootCurtain` prennent des `BootProps`, qui **exigent** le script pour `tty1` : le repli sur une graine
+  fixe du plan n'existe pas, le type refuse un `tty1` sans script. La console est en trois boîtes (un
+  emplacement, une fenêtre à hauteur entière de lignes, la pile) et non en une colonne ancrée en bas : une
+  colonne ancrée en bas fait apparaître les premières lignes **en bas** de l'écran, alors qu'une console qui
+  démarre se remplit du haut. Le bord haut ne s'estompe pas : une hauteur entière de lignes rend l'estompe
+  inutile, et il aurait estompé la première ligne tant que la console n'a pas défilé. Le saut part du
+  `click` et non du `pointerdown` (voir la spec, décision 10).
+- **Task 9.** `?bootSeed=` est dans la Task 8 : le script se tire dans `main.tsx`, au même endroit.
+- **Task 10.** Mesuré à l'œil dans Chromium à 390 × 844 et 360 × 740, et par `getComputedStyle` : la
+  frappe lit bien `--chars` (`steps(6)` et `steps(27)`), la fenêtre fait 650 px, soit 25 lignes de 26 px,
+  et `round()` est connu du navigateur. La console rare se vérifie en temps **réel** : elle tourne sur des
+  délais CSS, qu'une horloge simulée n'avance pas.
