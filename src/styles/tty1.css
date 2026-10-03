@@ -207,7 +207,8 @@
 /* Le titre d'une carte (« À lancer ») se pose sur son filet du haut, comme la légende d'un cadre,
    au lieu de prendre une ligne dans la carte. Seule une carte qui en porte un devient relative et
    cesse de rogner : les angles droits n'ont plus rien à rogner, et la légende dépasse. L'en-tête
-   qui ne garde plus que cette légende (pas de dossier à choisir) n'a plus rien à montrer.
+   qui ne garde plus que cette légende (pas de dossier à choisir) n'a plus rien à montrer : il se
+   réduit à rien, sans disparaître, puisque la légende en est un descendant.
    Les trois règles reposent sur `:has()`. Là où il manque, le navigateur les jette entières, et la
    légende reste dans la carte, comme dans les autres thèmes : le positionnement absolu de la
    légende vit donc *dans* le sélecteur de sa carte, jamais seul. */
@@ -224,7 +225,8 @@
   background: var(--surface-0);
 }
 :root[data-theme='tty1'] [data-part='card-head']:not(:has(button, p:not([data-part='legend']))) {
-  display: none;
+  min-height: 0;
+  margin-block-end: 0;
 }
 
 /* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
