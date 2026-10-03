@@ -103,4 +103,80 @@
 
   /* Les gestes gardent leurs durées et avancent par paliers. */
   --ease-mech: steps(3, end);
+
+  --font-sans: var(--tty1-16);
+
+  /* Quatre tailles natives. Les interlignes sont des longueurs, pas des rapports : un rapport
+     donne 15,9996 px, et un demi-pixel d'écart suffit à flouter une police de pixels. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: 2rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.5rem;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-7xl: 4rem; /* l'état vide : 2 × 32 px, un multiple entier de la bitmap */
+  --text-7xl--line-height: 4rem;
+}
+
+/*
+ * Les familles suivent les tailles.
+ *
+ * Tailwind ne pose que `font-size` et `line-height` : il ne sait pas lier une famille à une taille,
+ * et un élément qui reçoit 24 px sans recevoir TTY24 hérite de la famille de son parent, donc d'un
+ * bitmap étiré. Chaque classe de taille porte donc sa famille. Les règles ont la même spécificité :
+ * l'ordre qui suit est celui qui décide, et chaque famille repose sur l'ordre des tailles.
+ */
+:root[data-theme='tty1'] :is(.text-sm, .text-base, .text-\[0\.9375rem\]) {
+  font-family: var(--tty1-16);
+}
+
+/* `record-figure` fixe sa propre famille ; elle reprend celle du thème. */
+:root[data-theme='tty1'] .record-figure {
+  font-family: var(--font-sans);
+}
+
+:root[data-theme='tty1'] :is(.text-xs, .label-xs, .text-\[0\.6875rem\], .text-\[11px\]) {
+  font-family: var(--tty1-12);
+}
+
+:root[data-theme='tty1'] :is(.text-lg, .text-xl, .text-2xl) {
+  font-family: var(--tty1-24);
+}
+
+:root[data-theme='tty1']
+  :is(.text-3xl, .text-4xl, .text-7xl, .text-\[1\.75rem\], .text-\[2\.5rem\]) {
+  font-family: var(--tty1-32);
+}
+
+/* Les tailles écrites en dur : onze usages, cinq classes. */
+:root[data-theme='tty1'] :is(.text-\[0\.6875rem\], .text-\[11px\]) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+:root[data-theme='tty1'] .text-\[0\.9375rem\] {
+  font-size: 1rem;
+}
+:root[data-theme='tty1'] :is(.text-\[1\.75rem\], .text-\[2\.5rem\]) {
+  font-size: 2rem;
+}
+
+/* Une chasse fixe ne se crène pas ; seuls les libellés en capitales gardent un pixel. */
+:root[data-theme='tty1'] * {
+  letter-spacing: 0;
+}
+:root[data-theme='tty1'] :is(.label-xs, .tracking-\[0\.08em\]) {
+  letter-spacing: 1px;
+}
+:root[data-theme='tty1'] .label-xs {
+  line-height: 1rem;
 }
