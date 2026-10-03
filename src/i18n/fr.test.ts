@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { t } from './fr';
+import { t, tAll } from './fr';
 
 describe('bodyweight tonnage copy', () => {
   it.each([
@@ -43,5 +43,30 @@ describe('program week intention copy', () => {
       '−2 crans de charge sur les séries de travail.',
     );
     expect(t('program.loadRule.hint')).toContain('tous les 5 points');
+  });
+});
+
+describe('tAll', () => {
+  it('lists the strings of a node, in the order they are written', () => {
+    expect(tAll('weekday.long')).toEqual([
+      'dimanche',
+      'lundi',
+      'mardi',
+      'mercredi',
+      'jeudi',
+      'vendredi',
+      'samedi',
+    ]);
+  });
+
+  it('keeps duplicates: two entries that read alike are still two entries', () => {
+    expect(tAll('weekday.initial')).toEqual(['D', 'L', 'M', 'M', 'J', 'V', 'S']);
+  });
+
+  it('gives nothing for a leaf or for a node of nodes, which the types refuse anyway', () => {
+    // @ts-expect-error — a leaf is not a list
+    expect(tAll('common.yes')).toEqual([]);
+    // @ts-expect-error — nor is a node whose children are nodes
+    expect(tAll('weekday')).toEqual([]);
   });
 });
