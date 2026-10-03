@@ -1806,6 +1806,8 @@ const fr = {
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
     themeTty1Hint: 'TTY1 : la console. Noir, gris, une seule couleur vive.',
+    /** Ne dit pas *comment* : la console rare reste une surprise, on sait seulement qu'il y a à trouver. */
+    themeTty1Locked: 'TTY1 est verrouillé. Garde un œil sur l’écran de chargement.',
 
     announcerSection: 'Annonces',
     announcer: 'Annonces sonores',
