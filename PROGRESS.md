@@ -7,6 +7,10 @@
 
 ## Skin TTY1 et version de l'app dans l'en-tête (2026-10-03)
 
+Publication : un tag, **v2.8.0** — mineur et non correctif : un thème s'ajoute et l'en-tête de chaque écran
+dit le numéro de l'app, sans rien changer à ce qui existait ni au schéma. Ce numéro est celui de
+`package.json`, que l'APK lit aussi pour son `versionName` : la PWA et l'APK le disent l'un comme l'autre.
+
 Deux demandes, une session. Le thème **TTY1** : l'app habillée comme la première console virtuelle d'un
 Linux, qui se choisit dans Réglages > Apparence. Et, sur tous les écrans et dans tous les thèmes, le
 **numéro de version** en haut à droite de l'en-tête. Aucune table, aucun index, aucune version de
@@ -58,7 +62,7 @@ ce qui compte pour la suite.
   quatre familles de police et la version sont là, aucune requête n'échoue.
 - `typecheck`, `lint` (un avertissement Fast Refresh préexistant dans `Boot.tsx`), `test:run` (**254
   fichiers, 2 703 tests**, contre 248 et 2 657 au départ) et `build` verts ; le build Android web aussi.
-  Précache de 242 entrées, 8 258,79 Kio.
+  Précache de 242 entrées, 8 258,80 Kio.
 
 **Pièges rencontrés**
 
