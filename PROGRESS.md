@@ -3,7 +3,28 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**coach v2 : spec validée, banc de rejeu, tranche 1 — série à l'échec et pas déduit de l'historique** — sur la branche de session, non publiés ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 2 : le coach lit le RPE** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2, tranche 2 : le coach lit le RPE (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma : `rpe` existe depuis RF-30, il n'était simplement pas transmis au moteur.
+
+- **Effort de séance** : moyenne des RPE des séries jugées (séries à l'échec exclues, elles sont à 10 par
+  construction), définie seulement si la moitié au moins en porte un. Sinon, le moteur se comporte exactement
+  comme avant — un test le verrouille.
+- **Plafond arraché** (≥ 9,5, décision Q1) : le constat reste, sans charge proposée ; ni `increase_load` ni
+  `add_set`. Carte : « … mais à l'échec (RPE moyen 9,8) : on refait cette charge plus facilement avant de monter ».
+- **Consolidation**, nouveau code `consolidating` : même charge, au moins autant de répétitions, RPE moyen en
+  baisse d'un demi-point. Sévérité 38, entre le plafond et la fourchette tenue. Récap vocal : le son
+  « progrès » existant, aucune phrase à générer. Ajouté à la liste des codes que la validation des
+  sauvegardes accepte — sans quoi une sauvegarde contenant ce code serait refusée à la restauration.
+- **Plateau** : levé si l'effort baisse d'un demi-point sur la fenêtre ; drapeau `at_failure` quand chaque
+  séance est à 9,5 ou plus, et la carte suggère une décharge.
+- **Rejeu** : 11 lignes changent. Un plafond arraché (oiseau 10 × 15 @9,5 : plus de 12,5 kg proposé), dix
+  consolidations (développé incliné 20 kg de RPE 9,3 à 8,8, élévations latérales, rotation externe…), dont
+  quatre deviennent le message affiché. Aucun plateau ne change.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
 
 ## Coach v2 : décisions, banc de rejeu et tranche 1 (2026-10-04, suite)
 
@@ -975,6 +996,8 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
    Rowing tenu en haut de fourchette : la carte propose la hausse au lieu de « Plateau ». Une série à l'échec
    finie sous le bas de fourchette ne déclenche plus ni « Baisse de reps » ni allègement ; finie sous le haut,
    elle empêche le plafond.
+   Tranche 2 : un plafond atteint à RPE 9,5 ou plus ne propose pas de charge et dit pourquoi ; une séance à
+   même charge avec un RPE plus bas affiche « la charge se consolide ».
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »

@@ -90,7 +90,8 @@ moteur. Pour le pratiquant, la seconde est un progrès : même travail, moins d'
 séries porte un RPE.
 
 1. **Plafond à l'arraché.** Plafond atteint avec un effort ≥ `CEILING_GRINDING_RPE` (9,5) :
-   le signal `range_ceiling_reached` est émis mais `increase_load` n'est pas autorisé ; nouveau
+   le signal `range_ceiling_reached` est émis, sans charge proposée, et ni `increase_load` ni
+   `add_set` ne sont autorisés (consolider, c'est refaire la même séance) ; nouveau
    drapeau d'évidence `ceiling_grinding` (« Plafond atteint à l'échec : refais-le plus facilement
    avant de monter »). *Décision Q1 : consolider.*
 2. **Consolidation lisible.** Même charge, mêmes répétitions qu'à la séance comparable
