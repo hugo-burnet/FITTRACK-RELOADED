@@ -29,6 +29,7 @@ import {
   Card,
   EmptyState,
   HeaderAction,
+  OrderLockButton,
   ReorderableList,
   Toggle,
 } from '@/ui';
@@ -55,6 +56,7 @@ export function WorkoutScreen() {
   const tutorial = useTutorialControls();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
+  const toggleReorder = useExerciseOrderLock((state) => state.toggle);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
@@ -167,15 +169,19 @@ export function WorkoutScreen() {
             </p>
           )}
           {/*
-            Le bandeau ne garde que ce qui répond à « où j'en suis » et « que
-            suis-je en train de regarder ». Le cadenas d'ordre et la commande de
-            deload sont partis dans le menu de séance, sous leur vrai libellé :
-            deux icônes à apprendre, pour deux gestes qu'on ne fait presque
-            jamais, occupaient en permanence la barre qu'on lit entre deux
-            séries. L'allègement, lui, reste **affiché quand il est en cours** :
-            ce n'est plus une commande à ce moment-là, c'est l'état dans lequel
-            la séance se trouve, et c'est exactement ce qu'une place permanente
-            doit porter.
+            Le bandeau répond à « où j'en suis » et « que suis-je en train de
+            regarder », et garde le cadenas d'ordre. La commande de deload, elle,
+            est partie dans le menu de séance, sous son vrai libellé : un geste
+            qu'on fait presque jamais n'avait pas à occuper en permanence la barre
+            qu'on lit entre deux séries. L'allègement reste **affiché quand il est
+            en cours** : ce n'est plus une commande à ce moment-là, c'est l'état
+            dans lequel la séance se trouve, et c'est exactement ce qu'une place
+            permanente doit porter.
+
+            Le cadenas avait suivi le deload dans le menu ; il est revenu. On
+            s'aperçoit en cours de séance qu'on a pris les exercices dans le
+            mauvais ordre, et un geste qu'on cherche dans un menu est un geste dont
+            on a oublié l'existence. Il reste aussi dans le menu, sous son libellé.
           */}
           {exercises.length > 0 ? (
             <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
@@ -191,6 +197,10 @@ export function WorkoutScreen() {
                   onChange={() => undefined}
                 />
               )}
+              <OrderLockButton
+                unlocked={reorderUnlocked}
+                onToggle={() => toggleReorder('workout')}
+              />
               <button
                 type="button"
                 aria-label={t(willExpandAll ? 'workout.expandAll' : 'workout.collapseAll')}
