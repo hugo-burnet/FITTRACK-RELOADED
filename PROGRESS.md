@@ -16,6 +16,23 @@ acceptée par la validation. Fusion `--no-ff` dans `master` (`3fa42cc`) sur dema
 puis version demandée par lui. Les sections d'en dessous, jusqu'à « Le coach rejoué sur un historique réel »,
 en font partie. Le numéro est celui de `package.json`, que l'APK lit pour son `versionName`.
 
+La voie est celle de la v2.10.0 : fusion `--no-ff` (`3fa42cc`), `chore: prepare release v2.11.0` (`ec9e4c1`,
+`package.json`, le lock et ce fichier), `master` poussé sans force, le déploiement et le build Android du commit
+verts (runs 183 et 171), puis la release par le `workflow_dispatch` d'`android.yml` avec `release_tag` (run 172)
+— le push d'un tag reste refusé à une session d'agent, et le tag désigne ainsi le commit construit. La page :
+`releases/tag/v2.11.0`, l'asset `FitTrack-v2.11.0.apk` (11 081 520 octets, SHA-256 `b52a5c5b…a59d46`, la somme
+que GitHub annonce et celle du fichier téléchargé). Lu dans l'APK publié : la version 2.11.0 au manifeste et
+dans le paquet web, et les phrases nouvelles du coach (« la charge se consolide », « Reprise après {days}
+jours », « vise {needed} répétitions »).
+
+**Branches.** La suppression d'une branche distante est refusée à une session d'agent, comme le push d'un tag :
+`git push --delete` est coupé par le serveur, et l'outil GitHub n'a pas d'action pour le faire. À supprimer à la
+main depuis GitHub : les sept branches déjà fusionnées (`ccr-5ffd8e9e-uazeho`, `ccr-4e58be64-spej04`,
+`ccr-19a013d9-m9sh2y`, `claude/docs-exo-links-fix-fi7j76`, `claude/fittrack-quatre-evolutions-xzk0zw`,
+`claude/large-history-test-n3hxtz`, `claude/routine-targets-history-dksge4`) et, sur décision de l'utilisateur,
+`claude/animation-haltere-cheap-i7m3xg` et `claude/fittrack-skin-design-9icawv`. **Garder les trois
+`archive/*`** : `make-fragments.mjs` lit `archive/fittrack-kb-corpus`.
+
 ## Coach v2 : le cran de la fiche, tel quel (2026-10-04, suite)
 
 Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
