@@ -24,8 +24,28 @@ function resolvedNextLoadKg(signal: SignalLike): number | undefined {
   return signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg');
 }
 
-/** Constat from the signal code alone (no phase requalification). */
+/**
+ * Coach v2 notes, appended after the constat when the evidence carries them.
+ * Never a sentence of their own: they qualify the numbers, they do not replace
+ * them.
+ */
+function withEvidenceNotes(signal: SignalLike, message: string): string {
+  const notes: string[] = [];
+  const step = evidenceValue(signal, 'inferred_increment_kg');
+  if (step !== undefined && resolvedNextLoadKg(signal) !== undefined) {
+    notes.push(t('coach.inferredIncrement', { step: formatNumber(step) }));
+  }
+  const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
+  if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
+  return notes.length === 0 ? message : [message, ...notes].join(' ');
+}
+
 function baseSignalMessage(signal: SignalLike): string {
+  return withEvidenceNotes(signal, constatMessage(signal));
+}
+
+/** Constat from the signal code alone (no phase requalification). */
+function constatMessage(signal: SignalLike): string {
   switch (signal.code) {
     case 'range_satisfied': {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;

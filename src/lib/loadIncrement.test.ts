@@ -3,6 +3,7 @@ import { EQUIPMENT, type Equipment, MEASUREMENT_TYPES } from '@/data/types';
 import {
   DEFAULT_LOAD_INCREMENT_KG,
   defaultLoadIncrementKg,
+  inferLoadIncrementKg,
   nextLoad,
   previousLoad,
   roundLoadToIncrement,
@@ -174,5 +175,33 @@ describe('previousLoad', () => {
     expect(
       previousLoad(nextLoad(start, 5, 'assisted_weight_reps'), 5, 'assisted_weight_reps'),
     ).toBe(start);
+  });
+});
+
+describe('inferLoadIncrementKg', () => {
+  it('lit le pas réel dans les charges soulevées', () => {
+    // Oiseau à la machine, historique réel : la table dit 5 kg, la salle a des demi-pas.
+    expect(inferLoadIncrementKg([10, 12.5, 7.5, 12.5, 10])).toBe(2.5);
+    expect(inferLoadIncrementKg([40, 42.5, 45, 47.5, 50])).toBe(2.5);
+  });
+
+  it('exige que le plus petit écart revienne au moins deux fois', () => {
+    // Poulie à 3,5 / 5 / 6,125 : un seul écart de 1,125 — une charge isolée ne
+    // fait pas une grille, et proposer +1,125 kg serait inventer un cran.
+    expect(inferLoadIncrementKg([3.5, 5, 6.125])).toBeUndefined();
+  });
+
+  it('ne descend pas sous un demi-kilo', () => {
+    expect(inferLoadIncrementKg([10, 10.25, 10.5, 10.75])).toBeUndefined();
+  });
+
+  it('se tait sans au moins trois charges distinctes', () => {
+    expect(inferLoadIncrementKg([])).toBeUndefined();
+    expect(inferLoadIncrementKg([20, 20, 20])).toBeUndefined();
+    expect(inferLoadIncrementKg([20, 22.5])).toBeUndefined();
+  });
+
+  it('tolère les écarts flottants', () => {
+    expect(inferLoadIncrementKg([0.1 + 0.2, 0.8, 1.3])).toBe(0.5);
   });
 });

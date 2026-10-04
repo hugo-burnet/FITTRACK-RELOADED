@@ -578,6 +578,13 @@ const fr = {
     // et une observation ne demande rien.
     intra_session_drop: 'Baisse de reps observée : {first} puis {low} (−{drop}).',
     plateau: 'Plateau détecté : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
+    /**
+     * Notes ajoutées au constat (coach v2). Le pas déduit dit d'où vient un
+     * chiffre que la table d'équipement n'aurait pas donné ; la marge de la série
+     * à l'échec est une information, elle ne change pas la recommandation.
+     */
+    inferredIncrement: 'Pas de {step} kg, lu dans les charges que tu as déjà chargées.',
+    failureMargin: 'Série à l’échec : {reps} rép. au-delà du plafond.',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',

@@ -385,7 +385,11 @@ describe('range_missed', () => {
   // (échec), puis dégressive 3,5 kg × 15. Le coach annonçait « 3,5 → 0 kg » —
   // la charge de la dégressive prise pour la charge de travail, puis un pas de
   // 2,5 kg retombant sur zéro. Deux défauts, un seul écran.
-  const lateralRaise = (workoutId: string, startedAt: number) =>
+  const lateralRaise = (
+    workoutId: string,
+    startedAt: number,
+    secondSetType: 'failure' | 'normal' = 'failure',
+  ) =>
     line({
       exerciseId: 'lateral-raise',
       workoutId,
@@ -404,7 +408,7 @@ describe('range_missed', () => {
           order: 1,
           reps: 11,
           weight: 5,
-          setType: 'failure',
+          setType: secondSetType,
           targetReps: 12,
           targetRepsMax: 15,
           performedAt: startedAt + 120_000,
@@ -421,10 +425,23 @@ describe('range_missed', () => {
       ],
     });
 
-  it('backs off from the top load, not from the drop set that ended the session', () => {
+  it('lit la séance réelle sur sa charge du haut, sans juger la série à l’échec', () => {
+    // Coach v2, R2 : le 5 × 11 est la série poussée à l'échec, il ne juge plus le
+    // bas de fourchette. Ce test attendait « 5 → 2,5 kg » sur sa foi — le −50 %
+    // que l'utilisateur avait écarté. Reste le sujet d'origine : la charge de
+    // référence est celle du haut (5 kg), jamais celle de la dégressive.
     const signals = evaluateCoach([
       lateralRaise('w1', t0),
       lateralRaise('w2', t0 + 3 * 86_400_000),
+    ]);
+    // Et le plafond non plus : le 5 × 15 l'atteint, la série à l'échec à 11 non.
+    expect(signals.map((signal) => signal.code)).toEqual(['range_satisfied']);
+  });
+
+  it('backs off from the top load, not from the drop set that ended the session', () => {
+    const signals = evaluateCoach([
+      lateralRaise('w1', t0, 'normal'),
+      lateralRaise('w2', t0 + 3 * 86_400_000, 'normal'),
     ]);
 
     expect(signals).toEqual([
@@ -921,6 +938,161 @@ describe('plateau', () => {
       }),
     );
     expect(evaluateCoach(stuck).filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+});
+
+describe('séries à l’échec (R2)', () => {
+  const failing = (
+    workoutId: string,
+    dayIndex: number,
+    sets: { reps: number; failure?: boolean; weight?: number }[],
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 12, targetRepsMax: 15 },
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'fly',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * 86_400_000,
+      equipment: 'cable',
+      sets: sets.map((value, order) =>
+        set({
+          order,
+          reps: value.reps,
+          weight: value.weight ?? 10,
+          setType: value.failure ? 'failure' : 'normal',
+          performedAt: t0 + dayIndex * 86_400_000 + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('ne lit pas une série poussée à l’échec comme une baisse de reps', () => {
+    // Pec fly, historique réel : 10 × 12 @8,5 puis F 10 × 8 @9,5 — « Baisse de
+    // reps observée » trois séances de suite, sur une série faite pour ça.
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 12 }, { reps: 8, failure: true }], { targetReps: 12, targetRepsMax: 15 }),
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('intra_session_drop');
+  });
+
+  it('ne compte pas la série à l’échec dans le bas de fourchette manqué', () => {
+    // Élévations latérales : 5 × 12 · F 5 × 10 deux fois sur 12–15 → le coach
+    // proposait 5 → 2,5 kg (−50 %) sur la foi de la seule série à l'échec.
+    const history = [failing('w1', 0, [{ reps: 12, weight: 5 }, { reps: 10, weight: 5, failure: true }])];
+    const ev = evaluatePerformance(
+      failing('w2', 7, [{ reps: 12, weight: 5 }, { reps: 10, weight: 5, failure: true }]),
+      history,
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+    expect(ev.signals.map((s) => s.code)).toContain('range_satisfied');
+  });
+
+  it('se tait sur la fourchette quand toutes les séries sont à l’échec', () => {
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 15, failure: true }, { reps: 9, failure: true }]),
+    );
+    expect(ev.signals.map((s) => s.code)).toEqual([]);
+  });
+
+  it('ne déclare pas de plafond quand la série à l’échec reste sous le haut', () => {
+    // Pec fly, 2026-09-01 : 5 × 15 puis F 5 × 14 sur 12–15. Le premier rejeu de
+    // R2 y lisait un plafond ; l'utilisateur : « je plafonne pas sur le pec fly ».
+    const ev = evaluatePerformance(failing('w1', 0, [{ reps: 15 }, { reps: 14, failure: true }]));
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
+  it('signale la marge d’une série à l’échec au-delà du plafond, sans changer la partition', () => {
+    // Décision Q5 : une information, pas un plafond de plus.
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 15 }, { reps: 15 }, { reps: 18, failure: true }]),
+    );
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.evidence).toContainEqual({ label: 'failure_reps_over_ceiling', value: 3 });
+
+    const satisfied = evaluatePerformance(
+      failing('w1', 0, [{ reps: 13 }, { reps: 13 }, { reps: 16, failure: true }]),
+    );
+    expect(satisfied.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(satisfied.signals[0]!.evidence).toContainEqual({
+      label: 'failure_reps_over_ceiling',
+      value: 1,
+    });
+  });
+
+  it('laisse le plateau lire les séries à l’échec, les mieux mesurées', () => {
+    const flat = (workoutId: string, dayIndex: number) =>
+      failing(workoutId, dayIndex, [{ reps: 10 }, { reps: 11, failure: true }], {
+        targetReps: undefined,
+        targetRepsMax: undefined,
+      });
+    const signals = evaluateCoach([flat('w3', 14), flat('w2', 7), flat('w1', 0)]);
+    expect(signals.map((s) => s.code)).toEqual(['plateau']);
+    expect(signals[0]!.evidence).toContainEqual({ label: 'best_1rm_kg', value: 13.7 });
+  });
+});
+
+describe('pas de charge déduit de l’historique (R3.1)', () => {
+  const machine = (
+    workoutId: string,
+    dayIndex: number,
+    weight: number,
+    reps: number,
+    extra: Partial<CoachExerciseLine> = {},
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'leg-curl',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * 86_400_000,
+      equipment: 'machine',
+      sets: [0, 1].map((order) =>
+        set({
+          order,
+          reps,
+          weight,
+          targetReps: 10,
+          targetRepsMax: 12,
+          performedAt: t0 + dayIndex * 86_400_000 + order * 120_000,
+        }),
+      ),
+      ...extra,
+    });
+
+  it('monte du pas que la salle permet, et le dit', () => {
+    const ev = evaluatePerformance(machine('w3', 14, 15, 12), [
+      machine('w2', 7, 12.5, 11),
+      machine('w1', 0, 10, 12),
+    ]);
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(17.5);
+    expect(ceiling?.evidence).toContainEqual({ label: 'inferred_increment_kg', value: 2.5 });
+  });
+
+  it('laisse le réglage de l’exercice primer sur le pas déduit', () => {
+    const ev = evaluatePerformance(machine('w3', 14, 15, 12, { loadIncrementKg: 5 }), [
+      machine('w2', 7, 12.5, 11, { loadIncrementKg: 5 }),
+      machine('w1', 0, 10, 12, { loadIncrementKg: 5 }),
+    ]);
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(20);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('inferred_increment_kg');
+  });
+
+  it('garde la table quand l’historique ne montre pas de pas plus fin', () => {
+    const ev = evaluatePerformance(machine('w2', 7, 50, 12), [machine('w1', 0, 45, 12)]);
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(55);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('inferred_increment_kg');
+  });
+
+  it('allège du même pas déduit après deux manques', () => {
+    const ev = evaluatePerformance(machine('w4', 21, 15, 8), [
+      machine('w3', 14, 15, 8),
+      machine('w2', 7, 12.5, 12),
+      machine('w1', 0, 10, 12),
+    ]);
+    const missed = ev.signals.find((s) => s.code === 'range_missed');
+    expect(missed?.nextLoadKg).toBe(12.5);
+    expect(missed?.evidence).toContainEqual({ label: 'inferred_increment_kg', value: 2.5 });
   });
 });
 

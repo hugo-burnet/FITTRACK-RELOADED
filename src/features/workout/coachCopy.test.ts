@@ -203,3 +203,28 @@ describe('coachSignalMessage — phase intention copy', () => {
     expect(message).toContain('Fourchette respectée');
   });
 });
+
+describe('coachSignalMessage — notes du coach v2', () => {
+  it('dit que le pas vient des charges soulevées, quand il en vient', () => {
+    const message = coachSignalMessage(
+      rangeCeiling(15, 17.5, 'range_ceiling_reached', [{ label: 'inferred_increment_kg', value: 2.5 }]),
+    );
+    expect(message).toContain('15 → 17,5 kg');
+    expect(message).toContain(t('coach.inferredIncrement', { step: formatNumber(2.5) }));
+  });
+
+  it('signale la marge d’une série à l’échec sans toucher au constat', () => {
+    const plain = coachSignalMessage(rangeCeiling(10, 12.5));
+    const withMargin = coachSignalMessage(
+      rangeCeiling(10, 12.5, 'range_ceiling_reached', [{ label: 'failure_reps_over_ceiling', value: 3 }]),
+    );
+    expect(withMargin.startsWith(plain)).toBe(true);
+    expect(withMargin).toContain(t('coach.failureMargin', { reps: 3 }));
+  });
+
+  it('n’ajoute rien quand aucune de ces preuves n’est là', () => {
+    expect(coachSignalMessage(rangeCeiling(47.5, 50))).toBe(
+      t('coach.range_ceiling_reached', { current: '47,5', weight: '50', sets: 3, reps: 12 }),
+    );
+  });
+});

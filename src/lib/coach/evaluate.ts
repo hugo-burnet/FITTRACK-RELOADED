@@ -1,7 +1,12 @@
 import { isWorkingSet } from '@/lib/records';
 import { measurementShape, type WeightRole } from '@/lib/measurement';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
-import { nextLoad, previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
+import {
+  defaultLoadIncrementKg,
+  inferLoadIncrementKg,
+  nextLoad,
+  previousLoad,
+} from '@/lib/loadIncrement';
 import type {
   CoachAction,
   CoachEvaluateOptions,
@@ -72,6 +77,71 @@ function progressionSets(line: CoachExerciseLine): CoachSetInput[] {
   );
 }
 
+/**
+ * The sets the floor of a prescription may judge: progression sets, minus the
+ * ones taken to failure on purpose (spec coach v2, R2). The ceiling still reads
+ * them — see `rangeFlags`.
+ *
+ * A failure set is the last one pushed past the prescription. Its reps fall by
+ * design: `12 @8,5` then `F 8 @9,5` is the plan working, and reading it as « Baisse
+ * de reps » three sessions running — or as a floor missed, which proposed 5 → 2,5 kg
+ * on lateral raises — taught the user to ignore the card. The 1RM, the top load
+ * and the rep record still read failure sets: they are the best-measured of the
+ * session.
+ */
+function judgedSets(line: CoachExerciseLine): CoachSetInput[] {
+  return progressionSets(line).filter((set) => set.setType !== 'failure');
+}
+
+/** The load step the engine uses, and whether it was read from the history. */
+interface CoachIncrement {
+  kg: number;
+  inferred: boolean;
+}
+
+/**
+ * Exercise setting → step read from the loads lifted, when finer than the
+ * table → equipment table (spec coach v2, R3.1). A machine the user has loaded
+ * at 10, 12,5 and 15 kg has a 2,5 kg step, whatever the table says.
+ */
+function coachIncrement(newestFirst: readonly CoachExerciseLine[]): CoachIncrement {
+  const latest = newestFirst[0]!;
+  const override = latest.loadIncrementKg;
+  if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
+    return { kg: override, inferred: false };
+  }
+  const table = defaultLoadIncrementKg(latest.equipment);
+  const loads: number[] = [];
+  for (const line of newestFirst) {
+    for (const set of completedWorkingSets(line.sets)) {
+      if (typeof set.weight === 'number') loads.push(set.weight);
+    }
+  }
+  const inferred = inferLoadIncrementKg(loads);
+  return inferred !== undefined && inferred < table
+    ? { kg: inferred, inferred: true }
+    : { kg: table, inferred: false };
+}
+
+function withIncrementEvidence(evidence: CoachEvidence[], increment: CoachIncrement): void {
+  if (increment.inferred) evidence.push({ label: 'inferred_increment_kg', value: increment.kg });
+}
+
+/**
+ * How far a failure set at the session's reference load went past the
+ * ceiling — information only (spec coach v2, decision Q5): it never turns a
+ * range into a ceiling.
+ */
+function failureRepsOverCeiling(line: CoachExerciseLine, ceilingReps: number): number | undefined {
+  let over: number | undefined;
+  for (const set of progressionSets(line)) {
+    if (set.setType !== 'failure' || set.reps === undefined) continue;
+    const margin = set.reps - ceilingReps;
+    if (margin > 0 && (over === undefined || margin > over)) over = margin;
+  }
+  return over;
+}
+
 function isDeloadLine(line: CoachExerciseLine): boolean {
   return line.programIsDeload === 1 ||
     (typeof line.deloadPercent === 'number' &&
@@ -125,7 +195,10 @@ function effectiveCeiling(set: CoachSetInput): number | undefined {
  * Exclusive partition of the rep contract (spec §4.1).
  * Never both `ceiling` and `satisfied`; single-target hit is ceiling only.
  */
-function rangeFlags(working: CoachSetInput[]): {
+function rangeFlags(
+  working: CoachSetInput[],
+  judged: CoachSetInput[],
+): {
   ceiling: boolean;
   satisfied: boolean;
 } {
@@ -133,19 +206,24 @@ function rangeFlags(working: CoachSetInput[]): {
   if (working.some((set) => effectiveCeiling(set) === undefined)) {
     return { ceiling: false, satisfied: false };
   }
+  // **Le plafond se lit sur toutes les séries, échec compris.** Une série à
+  // l'échec qui s'arrête sous le haut de la fourchette dit que la charge n'est
+  // pas maîtrisée : pec fly `5 × 15 · F 5 × 14` sur 12–15 n'est pas un plafond
+  // — l'utilisateur l'a corrigé au premier rejeu qui l'affirmait.
   const ceiling = working.every(
     (set) => set.reps !== undefined && set.reps >= effectiveCeiling(set)!,
   );
-  const hasRange = working.every(
+  // Le bas de fourchette, lui, se juge hors échec (R2) : c'est là que la série
+  // poussée à fond faisait mentir le coach (« 5 → 2,5 kg »).
+  if (ceiling || judged.length === 0) return { ceiling, satisfied: false };
+  const hasRange = judged.every(
     (set) =>
       set.targetReps !== undefined &&
       set.targetRepsMax !== undefined &&
       set.targetRepsMax > set.targetReps,
   );
   const satisfied =
-    hasRange &&
-    !ceiling &&
-    working.every((set) => set.reps !== undefined && set.reps >= set.targetReps!);
+    hasRange && judged.every((set) => set.reps !== undefined && set.reps >= set.targetReps!);
   return { ceiling, satisfied };
 }
 
@@ -153,27 +231,37 @@ function rangeFlags(working: CoachSetInput[]): {
  * One of `range_ceiling_reached` | `range_satisfied`, never both, never on deload.
  * `range_completed` is not written — journal rows keep it as a read alias only.
  */
-function rangePartitionSignal(line: CoachExerciseLine): CoachSignal | undefined {
+function rangePartitionSignal(
+  line: CoachExerciseLine,
+  increment: CoachIncrement,
+): CoachSignal | undefined {
   if (isDeloadLine(line)) return undefined;
 
   // Les deux revues se rejoignent ici : la partition plafond/fourchette du
   // Lot 17 se lit sur les séries que le Lot 18 juge progressables — ni
-  // échauffement, ni drop set, ni série allégée à dessein.
+  // échauffement, ni drop set, ni série allégée à dessein. Depuis le coach v2,
+  // la série à l'échec compte pour le plafond mais pas pour le bas de fourchette.
   const working = progressionSets(line);
   if (working.length === 0) return undefined;
-  const { ceiling, satisfied } = rangeFlags(working);
+  const judged = judgedSets(line);
+  const { ceiling, satisfied } = rangeFlags(working, judged);
   if (!ceiling && !satisfied) return undefined;
 
+  const over = failureRepsOverCeiling(line, effectiveCeiling(working[0]!)!);
+  const failureEvidence: CoachEvidence[] =
+    over === undefined ? [] : [{ label: 'failure_reps_over_ceiling', value: over }];
+
   if (satisfied) {
-    const floor = working[0]!.targetReps!;
-    const max = working[0]!.targetRepsMax!;
+    const floor = judged[0]!.targetReps!;
+    const max = judged[0]!.targetRepsMax!;
     return {
       code: 'range_satisfied',
       exerciseId: line.exerciseId,
       evidence: [
-        { label: 'working_sets', value: working.length },
+        { label: 'working_sets', value: judged.length },
         { label: 'target_reps', value: floor },
         { label: 'target_reps_max', value: max },
+        ...failureEvidence,
       ],
       severity: SEVERITY.range_satisfied,
     };
@@ -190,13 +278,14 @@ function rangePartitionSignal(line: CoachExerciseLine): CoachSignal | undefined 
   let nextLoadKg: number | undefined;
   if (lastWeight !== undefined) {
     evidence.push({ label: 'current_load_kg', value: lastWeight });
-    const increment = resolveLoadIncrementKg(line);
-    const proposed = nextLoad(lastWeight, increment, line.measurementType);
+    const proposed = nextLoad(lastWeight, increment.kg, line.measurementType);
     if (proposed !== lastWeight) {
       nextLoadKg = proposed;
       evidence.push({ label: 'next_load_kg', value: proposed });
+      withIncrementEvidence(evidence, increment);
     }
   }
+  evidence.push(...failureEvidence);
 
   return {
     code: 'range_ceiling_reached',
@@ -260,7 +349,7 @@ function sortNewestFirst(lines: readonly CoachExerciseLine[]): CoachExerciseLine
 function floorMiss(
   line: CoachExerciseLine,
 ): { loadKg: number; lowReps: number; floor: number } | undefined {
-  const working = progressionSets(line);
+  const working = judgedSets(line);
   if (working.length === 0) return undefined;
 
   let worst: { reps: number; floor: number } | undefined;
@@ -294,6 +383,7 @@ function floorMiss(
  */
 function rangeMissedSignal(
   historyNewestFirst: readonly CoachExerciseLine[],
+  increment: CoachIncrement,
 ): CoachSignal | undefined {
   const comparable = historyNewestFirst.filter((line) => !isDeloadLine(line));
   if (comparable.length < MISSED_SESSIONS) return undefined;
@@ -306,8 +396,7 @@ function rangeMissedSignal(
   if (earlier.some((miss) => miss.loadKg !== latest!.loadKg)) return undefined;
 
   const line = window[0]!;
-  const increment = resolveLoadIncrementKg(line);
-  const proposed = previousLoad(latest!.loadKg, increment, line.measurementType);
+  const proposed = previousLoad(latest!.loadKg, increment.kg, line.measurementType);
   if (proposed === latest!.loadKg) return undefined;
 
   const evidence: CoachEvidence[] = [
@@ -323,7 +412,10 @@ function rangeMissedSignal(
   // Le constat reste — le bas de fourchette a bien été manqué deux fois — mais
   // sans proposition chiffrée, il n'y a rien de plus léger à mettre.
   const usable = proposed > 0;
-  if (usable) evidence.push({ label: 'next_load_kg', value: proposed });
+  if (usable) {
+    evidence.push({ label: 'next_load_kg', value: proposed });
+    withIncrementEvidence(evidence, increment);
+  }
 
   return {
     code: 'range_missed',
@@ -370,7 +462,7 @@ function intraSessionDropSignal(
   line: CoachExerciseLine,
   dropReps: number,
 ): CoachSignal | undefined {
-  const working = progressionSets(line);
+  const working = judgedSets(line);
   if (working.length < 2) return undefined;
 
   let worst: { set: CoachSetInput; reference: CoachSetInput; drop: number } | undefined;
@@ -481,8 +573,7 @@ function mostRepsAtLoad(line: CoachExerciseLine, load: number): number | undefin
  * le même 1RM — c'est une fourchette respectée, pas une stagnation.
  */
 function isCappedSession(line: CoachExerciseLine): boolean {
-  const working = progressionSets(line);
-  return working.length > 0 && rangeFlags(working).ceiling;
+  return rangeFlags(progressionSets(line), judgedSets(line)).ceiling;
 }
 
 function plateauSignal(
@@ -636,10 +727,12 @@ export function evaluatePerformance(
 
   const signals: CoachSignal[] = [];
 
-  const range = rangePartitionSignal(latest);
+  const increment = coachIncrement(newestFirst);
+
+  const range = rangePartitionSignal(latest, increment);
   if (range) signals.push(range);
 
-  const missed = rangeMissedSignal(newestFirst);
+  const missed = rangeMissedSignal(newestFirst, increment);
   if (missed) signals.push(missed);
 
   const drop = intraSessionDropSignal(latest, dropReps);

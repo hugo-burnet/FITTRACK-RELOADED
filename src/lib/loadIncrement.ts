@@ -37,6 +37,37 @@ export function resolveLoadIncrementKg(exercise: {
   return defaultLoadIncrementKg(exercise.equipment);
 }
 
+/** Under half a kilo, a "step" is more likely a typo or a float than a plate. */
+const MIN_INFERRED_INCREMENT_KG = 0.5;
+
+/**
+ * The step a gym really offers, read from the loads actually lifted
+ * (spec coach v2, R3.1): the smallest gap between consecutive distinct loads,
+ * provided it shows up at least twice.
+ *
+ * The equipment table says 5 kg for a machine; a lifter who has loaded 10,
+ * 12,5 and 15 kg on it has proved there is a 2,5 kg step. Twice, because one
+ * odd load (6,125 kg on a cable stack) is not a grid, and inventing a +1,125 kg
+ * step from it would be worse than the table.
+ */
+export function inferLoadIncrementKg(loads: readonly number[]): number | undefined {
+  const distinct = [...new Set(loads.filter((load) => Number.isFinite(load) && load > 0))]
+    .map((load) => Math.round(load * 1000) / 1000)
+    .sort((a, b) => a - b)
+    .filter((load, index, sorted) => index === 0 || load !== sorted[index - 1]);
+
+  const gaps: number[] = [];
+  for (let i = 1; i < distinct.length; i += 1) {
+    gaps.push(Math.round((distinct[i]! - distinct[i - 1]!) * 1000) / 1000);
+  }
+  if (gaps.length === 0) return undefined;
+
+  const smallest = Math.min(...gaps);
+  if (smallest < MIN_INFERRED_INCREMENT_KG) return undefined;
+  if (gaps.filter((gap) => gap === smallest).length < 2) return undefined;
+  return smallest;
+}
+
 /**
  * Rounds a proposed load to the nearest available gym increment.
  *
