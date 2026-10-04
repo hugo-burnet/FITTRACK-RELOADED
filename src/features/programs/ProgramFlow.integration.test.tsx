@@ -14,7 +14,7 @@ import {
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
 import * as routinesRepository from '@/data/repositories/routines';
-import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
+import { addExercisesToRoutine, createFolder, createRoutine } from '@/data/repositories/routines';
 import { finishWorkout, getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
 import * as programWorkoutRepository from '@/data/repositories/programWorkout';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
@@ -301,6 +301,83 @@ describe('parcours de création d’un programme', () => {
       [upper.id, 0, 1],
       [push.id, 1, 3],
     ]);
+  });
+
+  it('pose d’un coup toutes les routines d’un dossier dans une semaine du cycle', async () => {
+    const ul = await createFolder('UL');
+    const ppl = await createFolder("PPL 45'");
+    const upperA = await createRoutine('UPPER A', ul.id);
+    const lowerA = await createRoutine('LOWER A', ul.id);
+    const pushA = await createRoutine('PUSH A', ppl.id);
+    const pullA = await createRoutine('PULL A', ppl.id);
+    const legsA = await createRoutine('LEGS A', ppl.id);
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'UL puis PPL');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: '2 semaines' }));
+
+    await user.click(screen.getByRole('button', { name: 'Ajouter un dossier à la semaine 1' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Ajouter un dossier' });
+    // Chaque dossier dit combien de routines il apporte.
+    expect(within(sheet).getByRole('radio', { name: /UL.*2 routines/ })).toBeVisible();
+    expect(within(sheet).getByRole('radio', { name: /PPL 45'.*3 routines/ })).toBeVisible();
+    await user.click(within(sheet).getByRole('radio', { name: /^UL/ }));
+
+    // Les deux routines remplacent la séance vide du départ, sans en laisser de troisième.
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveValue(upperA.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 2' })).toHaveValue(lowerA.id);
+    expect(screen.queryByRole('combobox', { name: 'Routine de la séance 3' })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Ajouter un dossier à la semaine 2' }));
+    await user.click(
+      within(await screen.findByRole('dialog', { name: 'Ajouter un dossier' })).getByRole(
+        'radio',
+        { name: /^PPL 45'/ },
+      ),
+    );
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 3' })).toHaveValue(pushA.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 5' })).toHaveValue(legsA.id);
+
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+
+    const programs = await waitFor(async () => {
+      const stored = await listPrograms();
+      expect(stored[0]?.program.status).toBe('active');
+      return stored;
+    });
+    const detail = await getProgramDetail(programs[0]!.program.id);
+
+    expect(detail?.revisions[0]?.revision.cycleWeeks).toBe(2);
+    expect(
+      detail?.revisions[0]?.entries.map(({ routineId, cycleWeek, dayOfWeek }) => [
+        routineId,
+        cycleWeek,
+        dayOfWeek,
+      ]),
+    ).toEqual([
+      [upperA.id, 0, 1],
+      [lowerA.id, 0, 2],
+      [pushA.id, 1, 1],
+      [pullA.id, 1, 2],
+      [legsA.id, 1, 3],
+    ]);
+  });
+
+  it('ne propose pas d’ajouter un dossier quand la bibliothèque n’en a aucun', async () => {
+    await createRoutine('Libre');
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Sans dossier');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    expect(await screen.findByRole('button', { name: 'Ajouter une séance' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Ajouter un dossier/ })).not.toBeInTheDocument();
   });
 
   it('ne perd aucune séance quand on raccourcit le cycle, et le dit en repassant à chaque semaine', async () => {

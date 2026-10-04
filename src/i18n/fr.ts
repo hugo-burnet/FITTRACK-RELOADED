@@ -1040,6 +1040,20 @@ const fr = {
     // le « 1 » seul. La carte de la semaine dit déjà ce qu'on y ajoute.
     addSessionToWeek: 'Ajouter à la semaine {number}',
     cycleReading: 'Semaine {position} du cycle de {length} semaines',
+    /**
+     * Un dossier est souvent déjà la forme d'une semaine : un tap pose toutes ses
+     * routines, une par séance, sur des jours qui se suivent. Le libellé du bouton
+     * reste court (il passait à la ligne) ; c'est le nom accessible qui dit la
+     * semaine quand le cycle en a plusieurs.
+     */
+    addFolder: 'Ajouter un dossier',
+    addFolderToWeek: 'Ajouter un dossier à la semaine {number}',
+    // Court, comme le bouton : « Ajouter les routines d'un dossier » était tronqué
+    // dans la feuille avec la police du terminal. La ligne de chaque dossier dit
+    // déjà combien de séances il apporte.
+    addFolderTitle: 'Ajouter un dossier',
+    folderRoutineCountOne: '1 routine',
+    folderRoutineCount: '{count} routines',
     session: 'Séance {number}',
     sessionDayLabel: 'Jour de la séance {number}',
     sessionRoutineLabel: 'Routine de la séance {number}',

@@ -6,20 +6,13 @@ import {
   MIN_LOAD_INDEX,
   applyProgramRecipe,
   programPosition,
-  resolveSplitFrom,
 } from '@/lib/programs';
 import { ProgramRepositoryError } from '@/data/repositories/programs';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
-import type { ProgramSplitDraft, ProgramSplitDraftEntry } from './ProgramSplitStep';
 import type { ProgramWeekDraft } from './ProgramWeeksStep';
 
 const MIN_DURATION_WEEKS = 4;
 const MAX_DURATION_WEEKS = 12;
-
-export const emptySplit = (): ProgramSplitDraft => ({
-  cycleWeeks: 1,
-  entries: [{ routineId: '', dayOfWeek: 1, order: 0, cycleWeek: 0 }],
-});
 
 /**
  * Le trajet de départ : une recette, pas une ligne plate.
@@ -60,79 +53,6 @@ export function parseLocalDate(value: string): number {
   const date = new Date(year, month, day);
   if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return 0;
   return date.getTime();
-}
-
-/**
- * Renumbers `order` per weekday **inside each week of the cycle**, so two
- * sessions on the same day never collide — and Monday of week 1 never collides
- * with Monday of week 2, which is another Monday.
- */
-export function orderedSplit(entries: readonly ProgramSplitDraftEntry[]): ProgramSplitDraftEntry[] {
-  const orders = new Map<string, number>();
-  return entries.map((entry) => {
-    const slot = `${entry.cycleWeek}:${entry.dayOfWeek}`;
-    const order = orders.get(slot) ?? 0;
-    orders.set(slot, order + 1);
-    return { ...entry, order };
-  });
-}
-
-/**
- * Changes the length of the cycle without losing a session.
- *
- * Shortening folds the sessions of the weeks that disappear into the last one
- * that remains: a tap on a chip must not silently delete what took a dozen
- * taps to place. The list stays sorted by week — the editor numbers sessions
- * by position, and position has to follow what is on screen.
- */
-export function resizeCycle(split: ProgramSplitDraft, cycleWeeks: number): ProgramSplitDraft {
-  const lastWeek = cycleWeeks - 1;
-  const entries = split.entries
-    .map((entry) => (entry.cycleWeek > lastWeek ? { ...entry, cycleWeek: lastWeek } : entry))
-    // `sort` is stable: inside a week, sessions keep the order they were listed in.
-    .sort((left, right) => left.cycleWeek - right.cycleWeek);
-  return { cycleWeeks, entries };
-}
-
-/** Adds an empty session at the end of one week of the cycle, the list staying sorted by week. */
-export function addSplitSession(split: ProgramSplitDraft, cycleWeek: number): ProgramSplitDraft {
-  let insertAt = 0;
-  split.entries.forEach((entry, index) => {
-    if (entry.cycleWeek <= cycleWeek) insertAt = index + 1;
-  });
-
-  return {
-    ...split,
-    entries: [
-      ...split.entries.slice(0, insertAt),
-      { routineId: '', dayOfWeek: 1, order: 0, cycleWeek },
-      ...split.entries.slice(insertAt),
-    ],
-  };
-}
-
-/**
- * The split as it will play **from** a week: the cycle turned so that week comes
- * first. A revision always starts at its own first week, so what the editor
- * shows has to be what that week plays — or saving would shift the cycle.
- */
-export function splitForWeek(detail: ProgramDetail, weekIndex: number): ProgramSplitDraft {
-  const split = resolveSplitFrom(
-    detail.revisions.map(({ revision }) => revision),
-    detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
-    weekIndex,
-  );
-  return split.entries.length === 0
-    ? emptySplit()
-    : {
-        cycleWeeks: split.cycleWeeks,
-        entries: split.entries.map(({ routineId, dayOfWeek, order, cycleWeek }) => ({
-          routineId,
-          dayOfWeek,
-          order,
-          cycleWeek,
-        })),
-      };
 }
 
 export function weeksForBlock(detail: ProgramDetail): ProgramWeekDraft[] {
@@ -190,22 +110,6 @@ export function basicsIssue(basics: ProgramBasicsDraft): TranslationKey | null {
     return 'program.errorBasicsDuration';
   }
   return null;
-}
-
-export function splitIssue(split: ProgramSplitDraft): TranslationKey | null {
-  const invalid =
-    split.entries.length === 0 ||
-    split.entries.some(
-      (entry) =>
-        entry.routineId === '' ||
-        entry.dayOfWeek < 1 ||
-        entry.dayOfWeek > 7 ||
-        // Une semaine du cycle peut rester vide — un repos complet —, mais une
-        // séance ne peut pas être rangée sous une semaine qui n'existe pas.
-        entry.cycleWeek < 0 ||
-        entry.cycleWeek >= split.cycleWeeks,
-    );
-  return invalid ? 'program.errorSplit' : null;
 }
 
 export function weeksIssue(

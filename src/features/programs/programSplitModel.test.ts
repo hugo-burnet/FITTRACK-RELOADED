@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { ProgramDetail } from '@/data/repositories/programs';
 import {
+  addFolderSessions,
   addSplitSession,
   emptySplit,
   orderedSplit,
   resizeCycle,
+  splitFolderChoices,
   splitForWeek,
   splitIssue,
-} from './programEditorModel';
+} from './programSplitModel';
 import type { ProgramSplitDraft, ProgramSplitDraftEntry } from './ProgramSplitStep';
 
 const session = (
@@ -129,6 +131,160 @@ describe('addSplitSession', () => {
 
   it('leaves the cycle length alone', () => {
     expect(addSplitSession(split, 1).cycleWeeks).toBe(2);
+  });
+});
+
+describe('addFolderSessions', () => {
+  const summary = (entries: ProgramSplitDraftEntry[]) =>
+    entries.map(({ routineId, cycleWeek, dayOfWeek }) => [routineId, cycleWeek, dayOfWeek]);
+
+  it('replaces the empty placeholder of the week and spreads the routines over consecutive days', () => {
+    const next = addFolderSessions(emptySplit(), 0, ['upper-a', 'lower-a', 'upper-b']);
+
+    expect(summary(next.entries)).toEqual([
+      ['upper-a', 0, 1],
+      ['lower-a', 0, 2],
+      ['upper-b', 0, 3],
+    ]);
+  });
+
+  it('starts the day after the last one the week already uses', () => {
+    const split: ProgramSplitDraft = {
+      cycleWeeks: 1,
+      entries: [session('a', 0, 1), session('b', 0, 4)],
+    };
+
+    expect(summary(addFolderSessions(split, 0, ['c', 'd']).entries)).toEqual([
+      ['a', 0, 1],
+      ['b', 0, 4],
+      ['c', 0, 5],
+      ['d', 0, 6],
+    ]);
+  });
+
+  it('comes back to Monday after Sunday, and lets two sessions share a day', () => {
+    const ids = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8'];
+
+    expect(summary(addFolderSessions(emptySplit(), 0, ids).entries).map(([, , day]) => day)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 1,
+    ]);
+    expect(
+      summary(
+        addFolderSessions({ cycleWeeks: 1, entries: [session('a', 0, 7)] }, 0, ['b']).entries,
+      ),
+    ).toEqual([
+      ['a', 0, 7],
+      ['b', 0, 1],
+    ]);
+  });
+
+  it('files the folder under the week it was added to, the list staying sorted by week', () => {
+    const split: ProgramSplitDraft = {
+      cycleWeeks: 2,
+      entries: [session('a', 0, 1), session('b', 1, 1)],
+    };
+
+    expect(summary(addFolderSessions(split, 0, ['c']).entries)).toEqual([
+      ['a', 0, 1],
+      ['c', 0, 2],
+      ['b', 1, 1],
+    ]);
+    expect(summary(addFolderSessions(split, 1, ['c']).entries)).toEqual([
+      ['a', 0, 1],
+      ['b', 1, 1],
+      ['c', 1, 2],
+    ]);
+  });
+
+  it('only replaces the placeholders of the week it fills', () => {
+    const split: ProgramSplitDraft = {
+      cycleWeeks: 2,
+      entries: [session('', 0), session('', 1)],
+    };
+
+    const next = addFolderSessions(split, 1, ['push-a', 'pull-a']);
+
+    expect(summary(next.entries)).toEqual([
+      ['', 0, 1],
+      ['push-a', 1, 1],
+      ['pull-a', 1, 2],
+    ]);
+  });
+
+  it('keeps the sessions already filled in when a placeholder sits among them', () => {
+    const split: ProgramSplitDraft = {
+      cycleWeeks: 1,
+      entries: [session('a', 0, 2), session('', 0, 3)],
+    };
+
+    expect(summary(addFolderSessions(split, 0, ['b']).entries)).toEqual([
+      ['a', 0, 2],
+      ['b', 0, 3],
+    ]);
+  });
+
+  it('leaves the split alone for a folder without routine', () => {
+    const split = emptySplit();
+
+    expect(addFolderSessions(split, 0, [])).toBe(split);
+  });
+
+  it('keeps the length of the cycle and the draft it was given', () => {
+    const split: ProgramSplitDraft = { cycleWeeks: 3, entries: [session('a', 0)] };
+
+    const next = addFolderSessions(split, 2, ['b']);
+
+    expect(next.cycleWeeks).toBe(3);
+    expect(split.entries).toHaveLength(1);
+  });
+});
+
+describe('splitFolderChoices', () => {
+  const folder = (id: string, name: string) => ({ id, name });
+  const routine = (id: string, folderId: string, order: number) => ({
+    routine: { id, folderId, order },
+  });
+
+  it('lists the folders in library order, each with its routines in their own order', () => {
+    const choices = splitFolderChoices(
+      [folder('ul', 'UL'), folder('ppl', "PPL 45'")],
+      [
+        routine('push-a', 'ppl', 0),
+        routine('lower-a', 'ul', 5),
+        routine('upper-a', 'ul', 1),
+        routine('pull-a', 'ppl', 3),
+      ],
+    );
+
+    expect(choices).toEqual([
+      { folderId: 'ul', name: 'UL', routineIds: ['upper-a', 'lower-a'] },
+      { folderId: 'ppl', name: "PPL 45'", routineIds: ['push-a', 'pull-a'] },
+    ]);
+  });
+
+  it('leaves out a folder that has no routine', () => {
+    const choices = splitFolderChoices(
+      [folder('ul', 'UL'), folder('empty', 'Vide')],
+      [routine('upper-a', 'ul', 0)],
+    );
+
+    expect(choices.map((choice) => choice.folderId)).toEqual(['ul']);
+  });
+
+  it('adds the routines without folder last, once folders exist', () => {
+    const choices = splitFolderChoices(
+      [folder('ul', 'UL')],
+      [routine('free', '', 0), routine('upper-a', 'ul', 1)],
+    );
+
+    expect(choices).toEqual([
+      { folderId: 'ul', name: 'UL', routineIds: ['upper-a'] },
+      { folderId: '', name: null, routineIds: ['free'] },
+    ]);
+  });
+
+  it('offers nothing when no folder exists: every routine is then "without folder"', () => {
+    expect(splitFolderChoices([], [routine('free', '', 0)])).toEqual([]);
   });
 });
 

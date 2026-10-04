@@ -30,17 +30,14 @@ import {
   basicsIssue,
   defaultWeeks,
   effectiveWeekOptions,
-  emptySplit,
   formatLocalDate,
-  orderedSplit,
   parseLocalDate,
   repositoryErrorKey,
   resizeWeeks,
-  splitForWeek,
-  splitIssue,
   weeksForBlock,
   weeksIssue,
 } from './programEditorModel';
+import { emptySplit, orderedSplit, splitForWeek, splitIssue } from './programSplitModel';
 import { useProgramEditorData } from './useProgramEditorData';
 
 export function ProgramEditorScreen() {
@@ -69,7 +66,7 @@ export function ProgramEditorScreen() {
   // des questions est la seule chose qui rende le formulaire tenable.
   const stacked = routeProgramId !== undefined;
 
-  const { existing, routines, routinesReadFailed, splitBlocked } =
+  const { existing, routines, folders, routinesReadFailed, splitBlocked } =
     useProgramEditorData(routeProgramId);
 
   if (routeProgramId !== undefined && existing?.status === 'found' && hydratedId !== routeProgramId) {
@@ -292,6 +289,7 @@ export function ProgramEditorScreen() {
     <ProgramSplitStep
       split={split}
       routines={routines}
+      folders={folders}
       onChange={setSplit}
       onCreateRoutine={createSplitRoutine}
       // Un bloc lancé réécrit son split à partir d'une semaine : le cycle y

@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import type { RoutineSummary } from '@/data/repositories/routines';
+import type { RoutineFolder } from '@/data/types';
 import { MAX_CYCLE_WEEKS } from '@/lib/programs';
 import { t } from '@/i18n/fr';
-import { Button, Card, ChoiceChip, Input, Sheet } from '@/ui';
-import { addSplitSession, resizeCycle } from './programEditorModel';
+import { Button, Card, ChoiceChip, Input, OptionSheet, Sheet } from '@/ui';
+import {
+  addFolderSessions,
+  addSplitSession,
+  resizeCycle,
+  splitFolderChoices,
+  type SplitFolderChoice,
+} from './programSplitModel';
 import { ProgramSplitSession } from './ProgramSplitSession';
 
 export interface ProgramSplitDraftEntry {
@@ -24,6 +31,8 @@ export interface ProgramSplitDraft {
 interface Props {
   split: ProgramSplitDraft;
   routines: RoutineSummary[] | undefined;
+  /** Les dossiers de la bibliothèque : ce qui permet d'ajouter les routines de l'un d'eux d'un coup. */
+  folders?: readonly RoutineFolder[] | undefined;
   onChange: (split: ProgramSplitDraft) => void;
   /** Crée une routine vide et rend son identifiant, pour la sélectionner aussitôt. */
   onCreateRoutine?: (name: string) => Promise<string>;
@@ -32,6 +41,9 @@ interface Props {
 }
 
 const CYCLE_LENGTHS = Array.from({ length: MAX_CYCLE_WEEKS }, (_, index) => index + 1);
+
+const choiceValue = (choice: SplitFolderChoice): string =>
+  choice.folderId === '' ? 'root' : `folder:${choice.folderId}`;
 
 /**
  * Le rythme du bloc : un cycle de une à quatre semaines, rejoué en boucle.
@@ -45,13 +57,17 @@ const CYCLE_LENGTHS = Array.from({ length: MAX_CYCLE_WEEKS }, (_, index) => inde
 export function ProgramSplitStep({
   split,
   routines,
+  folders,
   onChange,
   onCreateRoutine,
   restartsAtWeek,
 }: Props) {
   const [creatingFor, setCreatingFor] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
+  // La semaine du cycle à laquelle la feuille « dossier » est en train d'ajouter.
+  const [folderFor, setFolderFor] = useState<number | null>(null);
   const { cycleWeeks, entries } = split;
+  const folderChoices = splitFolderChoices(folders ?? [], routines ?? []);
 
   const updateEntry = (index: number, changes: Partial<ProgramSplitDraftEntry>) => {
     onChange({
@@ -128,6 +144,23 @@ export function ProgramSplitStep({
                 : t('program.addSessionToWeek', { number: week + 1 })}
             </Button>
           </div>
+          {folderChoices.length > 0 && (
+            <div className="p-2">
+              <Button
+                type="button"
+                variant="ghost"
+                fullWidth
+                aria-label={
+                  cycleWeeks === 1
+                    ? t('program.addFolder')
+                    : t('program.addFolderToWeek', { number: week + 1 })
+                }
+                onClick={() => setFolderFor(week)}
+              >
+                {t('program.addFolder')}
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
     );
@@ -180,6 +213,29 @@ export function ProgramSplitStep({
               {renderWeek(week)}
             </section>
           ))}
+
+      <OptionSheet
+        open={folderFor !== null}
+        onClose={() => setFolderFor(null)}
+        title={t('program.addFolderTitle')}
+        options={folderChoices.map((choice) => ({
+          value: choiceValue(choice),
+          label: choice.name ?? t('routines.rootFolder'),
+          hint: t(
+            choice.routineIds.length === 1
+              ? 'program.folderRoutineCountOne'
+              : 'program.folderRoutineCount',
+            { count: choice.routineIds.length },
+          ),
+        }))}
+        // Rien n'est présélectionné : on ne « choisit » pas un dossier, on en prend un.
+        value=""
+        onSelect={(value) => {
+          const choice = folderChoices.find((candidate) => choiceValue(candidate) === value);
+          if (folderFor === null || choice === undefined) return;
+          onChange(addFolderSessions(split, folderFor, choice.routineIds));
+        }}
+      />
 
       <Sheet
         open={creatingFor !== null}
