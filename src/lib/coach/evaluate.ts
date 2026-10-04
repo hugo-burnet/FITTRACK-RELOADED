@@ -1,6 +1,6 @@
 import { isWorkingSet } from '@/lib/records';
 import { measurementShape, type WeightRole } from '@/lib/measurement';
-import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
+import { estimateOneRepMax, repsToAbsorbStep, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import {
   defaultLoadIncrementKg,
   inferLoadIncrementKg,
@@ -267,6 +267,31 @@ function rangeFlags(
 }
 
 /**
+ * Reps every set still has to reach before the next step, `undefined` when the
+ * session already carries it (spec coach v2, R3.2, décision Q2 révisée).
+ *
+ * Asked for: enough reps at today's load to land at least on the floor of the
+ * range once the step is on. On a heavy bar that is at most the ceiling and the
+ * rule says nothing new; on a 10 kg curl with a 2 kg step it is 18. Loads only:
+ * a weighted vest sits on top of the body, an assistance comes off it, and the
+ * ratio between two steps means nothing there.
+ */
+function repsNeededForStep(
+  line: CoachExerciseLine,
+  working: readonly CoachSetInput[],
+  load: number,
+  next: number,
+): number | undefined {
+  if (measurementShape(line.measurementType).weightRole !== 'load') return undefined;
+  const floor = working[0]?.targetReps;
+  const ceilingReps = working[0] === undefined ? undefined : effectiveCeiling(working[0]);
+  if (floor === undefined || ceilingReps === undefined) return undefined;
+  const absorb = repsToAbsorbStep(load, next, floor);
+  if (absorb === undefined || absorb <= ceilingReps) return undefined;
+  return working.every((set) => set.reps !== undefined && set.reps >= absorb) ? undefined : absorb;
+}
+
+/**
  * One of `range_ceiling_reached` | `range_satisfied`, never both, never on deload.
  * `range_completed` is not written — journal rows keep it as a read alias only.
  */
@@ -332,7 +357,16 @@ function rangePartitionSignal(
   // Reprise (R5) : le constat reste, la charge attend la séance d'après.
   if (lastWeight !== undefined && !grinding && !returning) {
     const proposed = nextLoad(lastWeight, increment.kg, line.measurementType);
-    if (proposed !== lastWeight) {
+    const needed = repsNeededForStep(line, working, lastWeight, proposed);
+    if (needed !== undefined) {
+      // Le cran est celui du matériel ; tant que les répétitions ne l'absorbent
+      // pas, on vise des répétitions, pas des kilos (R3.2).
+      evidence.push(
+        { label: 'step_needs_reps', value: needed },
+        { label: 'next_step_kg', value: proposed },
+        { label: 'target_reps', value: working[0]!.targetReps! },
+      );
+    } else if (proposed !== lastWeight) {
       nextLoadKg = proposed;
       evidence.push({ label: 'next_load_kg', value: proposed });
       withIncrementEvidence(evidence, increment);
@@ -363,11 +397,19 @@ function buildAllowedActions(signals: readonly CoachSignal[]): CoachAction[] {
   const grinding = signals.some((signal) =>
     signal.evidence.some((item) => item.label === 'ceiling_grinding' && item.value === 1),
   );
+  const stepNeedsReps = signals.some((signal) =>
+    signal.evidence.some((item) => item.label === 'step_needs_reps'),
+  );
   // Un plafond arraché n'autorise ni charge ni série de plus : consolider, c'est
-  // refaire la même séance plus facilement.
+  // refaire la même séance plus facilement. Un cran pas encore absorbé n'autorise
+  // que des répétitions de plus.
   if ((codes.has('range_ceiling_reached') || codes.has('range_completed')) && !grinding) {
-    allowed.add('increase_load');
-    allowed.add('add_set');
+    if (stepNeedsReps) {
+      allowed.add('increase_reps');
+    } else {
+      allowed.add('increase_load');
+      allowed.add('add_set');
+    }
   }
   if (codes.has('range_missed')) {
     allowed.add('reduce_load');

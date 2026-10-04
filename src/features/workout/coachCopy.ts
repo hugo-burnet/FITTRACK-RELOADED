@@ -71,6 +71,20 @@ function constatMessage(signal: SignalLike): string {
           rpe: formatNumber(evidenceValue(signal, 'session_rpe') ?? 0),
         });
       }
+      // Cran pas encore absorbé (R3.2) : des répétitions à viser, pas des kilos.
+      const needed = evidenceValue(signal, 'step_needs_reps');
+      const step = evidenceValue(signal, 'next_step_kg');
+      if (needed !== undefined && step !== undefined && current !== undefined && current > 0) {
+        return t('coach.stepNeedsReps', {
+          sets,
+          reps,
+          weight: formatNumber(step),
+          percent: Math.round(((step - current) / current) * 100),
+          needed,
+          current: formatNumber(current),
+          floor: evidenceValue(signal, 'target_reps') ?? 0,
+        });
+      }
       // No next load (stripped escalate): constat only — never `100 → 0 kg`.
       if (weight === undefined) {
         return t('coach.range_ceiling_reached_constat', { sets, reps });

@@ -25,9 +25,14 @@ function signalCue(signal: CoachSignal): RecapCue | null {
     case 'range_ceiling_reached':
     case 'range_completed':
       // Plafond arraché (R1) : la carte ne propose pas de charge, la voix non plus.
-      return signal.evidence.some((item) => item.label === 'ceiling_grinding' && item.value === 1)
-        ? null
-        : 'coach-recap-increase';
+      if (signal.evidence.some((item) => item.label === 'ceiling_grinding' && item.value === 1)) {
+        return null;
+      }
+      // Cran pas encore absorbé (R3.2) : l'objectif du jour est tenu, la hausse attend.
+      if (signal.evidence.some((item) => item.label === 'step_needs_reps')) {
+        return 'coach-recap-progress';
+      }
+      return 'coach-recap-increase';
     // Reprise (R5) : on refait la séance, le plan ne bouge pas.
     case 'returning':
       return null;

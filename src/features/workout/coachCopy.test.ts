@@ -286,3 +286,32 @@ describe('coachSignalMessage — reprise (R5)', () => {
     expect(message).toBe(t('coach.returning', { days: 21 }));
   });
 });
+
+describe('coachSignalMessage — cran à absorber (R3.2)', () => {
+  it('dit combien de répétitions viser avant le cran, et ce qu’il pèse', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'current_load_kg', value: 10 },
+        { label: 'step_needs_reps', value: 18 },
+        { label: 'next_step_kg', value: 12 },
+        { label: 'target_reps', value: 10 },
+      ],
+    });
+    expect(message).toBe(
+      t('coach.stepNeedsReps', {
+        sets: 3,
+        reps: 12,
+        weight: '12',
+        percent: 20,
+        needed: 18,
+        current: '10',
+        floor: 10,
+      }),
+    );
+    // Une consigne de répétitions, pas de charge : pas de flèche.
+    expect(message).not.toContain('→');
+  });
+});

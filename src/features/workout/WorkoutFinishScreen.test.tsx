@@ -220,31 +220,34 @@ describe('WorkoutFinishScreen', () => {
     const initial = (await getWorkoutDetail(workout.id))?.exercises[0]?.sets[0];
     if (initial === undefined) throw new Error('série initiale absente');
 
+    // 50 kg et non 15 : depuis le coach v2 (R3.2), +2,5 kg sur 15 kg demande
+    // 15 répétitions pour retomber à 8, et la carte ne proposerait pas de charge.
+    // Le sujet du test est l'attente du calcul, pas le cran.
     const sets = [
       initial,
-      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
-      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
-      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 50 }),
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 50 }),
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 50 }),
     ];
     for (const set of sets) {
       if (set.id === initial.id) {
         await db.workoutSets.update(set.id, {
           targetReps: 8,
           targetRepsMax: 10,
-          targetWeight: 15,
+          targetWeight: 50,
         });
       }
-      await completeSet(set.id, { weight: 15, reps: 10 });
+      await completeSet(set.id, { weight: 50, reps: 10 });
     }
 
     renderFinishScreen();
 
-    expect(await screen.findByText(/15 → 17,5 kg/)).toBeInTheDocument();
+    expect(await screen.findByText(/50 → 52,5 kg/)).toBeInTheDocument();
     await waitFor(() =>
       expect(speakWorkoutRecapMock).toHaveBeenCalledWith([
         expect.objectContaining({
           code: 'range_ceiling_reached',
-          nextLoadKg: 17.5,
+          nextLoadKg: 52.5,
         }),
       ]),
     );

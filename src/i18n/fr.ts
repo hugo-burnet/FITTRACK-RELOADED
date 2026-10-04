@@ -596,6 +596,12 @@ const fr = {
       '{sets} × {reps} a atteint le haut de la fourchette, mais à l’échec (RPE moyen {rpe}) : on refait cette charge plus facilement avant de monter.',
     plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     returning: 'Reprise après {days} jours sans cet exercice : on consolide avant de monter.',
+    /**
+     * R3.2 : le cran est celui du matériel. La phrase dit ce qu'il pèse et le
+     * compte de répétitions qui permet de le prendre sans sortir de la fourchette.
+     */
+    stepNeedsReps:
+      '{sets} × {reps} a atteint le haut de la fourchette. Le prochain cran ({weight} kg) pèse +{percent} % : vise {needed} répétitions à {current} kg pour retomber à {floor} au moins après la hausse.',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',

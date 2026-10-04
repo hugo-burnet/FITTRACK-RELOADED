@@ -178,15 +178,17 @@ describe('range_ceiling_reached (was range_completed)', () => {
 
   it('ne propose jamais plus d’un incrément depuis un demi-pas machine', () => {
     // Oiseau à la machine, 12,5 kg × 15 sur 12–15, pas machine par défaut 5 kg.
-    // Le coach proposait 20 kg trois séances de suite.
+    // Le coach proposait 20 kg trois séances de suite. Depuis R3.2, +2,5 kg sur
+    // 12,5 ne se prend qu'à 21 répétitions (retomber à 12 après le cran) : le
+    // test leur donne ce compte, son sujet reste l'arrondi.
     const signals = evaluateCoach([
       line({
         exerciseId: 'reverse-fly',
         workoutId: 'w1',
         equipment: 'machine',
         sets: [
-          set({ order: 0, reps: 15, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
-          set({ order: 1, reps: 15, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+          set({ order: 0, reps: 21, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+          set({ order: 1, reps: 21, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
         ],
       }),
     ]);
@@ -836,8 +838,9 @@ describe('plateau', () => {
     });
 
     it('ne masque pas un plafond tout juste atteint par les séances plates d’avant', () => {
+      // 13 et non 12 : +5 kg sur 70 demande 13 répétitions pour retomber à 10 (R3.2).
       const signals = evaluateCoach([
-        rowing('w4', 21, [12, 12, 12]),
+        rowing('w4', 21, [13, 13, 13]),
         rowing('w3', 14, [10, 10, 10]),
         rowing('w2', 7, [10, 10, 10]),
         rowing('w1', 0, [10, 10, 10]),
@@ -1057,8 +1060,11 @@ describe('pas de charge déduit de l’historique (R3.1)', () => {
       ...extra,
     });
 
+  // Les séances du haut portent assez de répétitions pour absorber le cran
+  // (R3.2) : 17 pour +2,5 sur 15 kg, 24 pour +5, 15 pour 50 → 55. Le sujet
+  // de ces tests est le pas, pas le compte.
   it('monte du pas que la salle permet, et le dit', () => {
-    const ev = evaluatePerformance(machine('w3', 14, 15, 12), [
+    const ev = evaluatePerformance(machine('w3', 14, 15, 17), [
       machine('w2', 7, 12.5, 11),
       machine('w1', 0, 10, 12),
     ]);
@@ -1068,7 +1074,7 @@ describe('pas de charge déduit de l’historique (R3.1)', () => {
   });
 
   it('laisse le réglage de l’exercice primer sur le pas déduit', () => {
-    const ev = evaluatePerformance(machine('w3', 14, 15, 12, { loadIncrementKg: 5 }), [
+    const ev = evaluatePerformance(machine('w3', 14, 15, 24, { loadIncrementKg: 5 }), [
       machine('w2', 7, 12.5, 11, { loadIncrementKg: 5 }),
       machine('w1', 0, 10, 12, { loadIncrementKg: 5 }),
     ]);
@@ -1078,7 +1084,7 @@ describe('pas de charge déduit de l’historique (R3.1)', () => {
   });
 
   it('garde la table quand l’historique ne montre pas de pas plus fin', () => {
-    const ev = evaluatePerformance(machine('w2', 7, 50, 12), [machine('w1', 0, 45, 12)]);
+    const ev = evaluatePerformance(machine('w2', 7, 50, 15), [machine('w1', 0, 45, 12)]);
     const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
     expect(ceiling?.nextLoadKg).toBe(55);
     expect(ceiling?.evidence.map((e) => e.label)).not.toContain('inferred_increment_kg');
@@ -1308,7 +1314,8 @@ describe('même contrat de répétitions (R4)', () => {
   });
 
   it('déduit toujours le pas de toutes les séances, quel que soit leur contrat', () => {
-    const ev = evaluatePerformance(contractSession('w3', 14, [15, 15], 15, usual), [
+    // 20 répétitions : assez pour absorber +2,5 sur 15 kg en 12–15 (R3.2).
+    const ev = evaluatePerformance(contractSession('w3', 14, [20, 20], 15, usual), [
       contractSession('w2', 7, [12, 12], 12.5, lighter),
       contractSession('w1', 0, [12, 12], 10, lighter),
     ]);
@@ -1391,6 +1398,65 @@ describe('retour de pause (R5)', () => {
 
     const later = evaluatePerformance(flat('w6', 49), [flat('w5', 42), ...history]);
     expect(later.signals.map((s) => s.code)).toContain('plateau');
+  });
+});
+
+describe('répétitions pour absorber le cran (R3.2)', () => {
+  const curl = (reps: number[], extra: Partial<CoachExerciseLine> = {}, weight = 10) =>
+    line({
+      exerciseId: 'curl',
+      workoutId: 'w1',
+      equipment: 'dumbbell',
+      sets: reps.map((value, order) =>
+        set({ order, reps: value, weight, targetReps: 10, targetRepsMax: 12 }),
+      ),
+      ...extra,
+    });
+
+  it('attend assez de répétitions quand le cran pèse lourd sur la charge', () => {
+    // Haltères : +2 kg, pas le choix. À 10 kg, 12 répétitions retomberaient à 8
+    // après le cran ; il en faut 18 pour retomber à 10.
+    const ev = evaluatePerformance(curl([12, 12, 12]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ceiling?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'step_needs_reps', value: 18 },
+        { label: 'next_step_kg', value: 12 },
+        { label: 'target_reps', value: 10 },
+        { label: 'current_load_kg', value: 10 },
+      ]),
+    );
+    expect(ev.allowedActions).toContain('increase_reps');
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+  });
+
+  it('monte quand toutes les séries y sont', () => {
+    const ready = evaluatePerformance(curl([18, 18, 18]));
+    expect(ready.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(12);
+    expect(ready.allowedActions).toContain('increase_load');
+
+    const almost = evaluatePerformance(curl([18, 18, 17]));
+    expect(almost.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBeUndefined();
+  });
+
+  it('ne change rien sur une charge lourde, où le plafond suffit', () => {
+    const ev = evaluatePerformance(curl([12, 12, 12], { equipment: 'barbell' }, 100));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('step_needs_reps');
+  });
+
+  it('laisse le lest et l’assistance tels quels', () => {
+    // Dips lestés de 4 kg : +2 kg, c'est +50 % du lest mais une broutille devant
+    // le poids du corps — le rapport entre deux crans n'y dit rien.
+    const weighted = evaluatePerformance(curl([12, 12, 12], { measurementType: 'reps_only' }, 4));
+    expect(weighted.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(6);
+    const assisted = evaluatePerformance(
+      curl([12, 12, 12], { measurementType: 'assisted_weight_reps', equipment: 'machine' }, 20),
+    );
+    expect(assisted.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(15);
   });
 });
 

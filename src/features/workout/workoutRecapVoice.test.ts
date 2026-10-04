@@ -74,4 +74,12 @@ describe('workoutRecapCues', () => {
       'coach-recap-adjust',
     ]);
   });
+
+  it('n’annonce pas de hausse tant que le cran n’est pas absorbé', () => {
+    const notYet: CoachSignal = {
+      ...signal('range_ceiling_reached'),
+      evidence: [{ label: 'step_needs_reps', value: 18 }],
+    };
+    expect(workoutRecapCues([notYet])).toEqual(['workout-recap-start', 'coach-recap-progress']);
+  });
 });
