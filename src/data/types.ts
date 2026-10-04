@@ -231,13 +231,22 @@ export interface ProgramWeek extends Syncable {
 export interface ProgramScheduleRevision extends Syncable {
   programId: string;
   effectiveFromWeekIndex: number;
+  /**
+   * Weeks in the split this revision repeats — a **cycle** (1 to 4). Optional and
+   * **not indexed**: a row written before cycles has none and reads as 1, the
+   * one-week split of the first version, so no Dexie version is spent on it.
+   */
+  cycleWeeks?: number;
 }
 
 export interface ProgramScheduleEntry extends Syncable {
   revisionId: string;
   routineId: string;
+  /** ISO weekday (1 = Monday) **within its cycle week**. */
   dayOfWeek: number;
   order: number;
+  /** Week of the cycle, from 0. Optional and not indexed: absent reads as the first. */
+  cycleWeek?: number;
 }
 
 export interface RoutineExercise extends Syncable {

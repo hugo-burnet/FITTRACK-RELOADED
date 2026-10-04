@@ -1,7 +1,13 @@
 export { isoDayOfWeek, programPosition, shiftLocalDate, type ProgramPosition } from './calendar';
 export {
+  MAX_CYCLE_WEEKS,
+  cycleLength,
+  cyclePosition,
+  entryCycleWeek,
   pickProgramSession,
+  resolveRevision,
   resolveSchedule,
+  resolveSplitFrom,
   type ProgramScheduleEntryInput,
   type ProgramScheduleRevisionInput,
   type ProgramSessionCandidate,
