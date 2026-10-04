@@ -7,37 +7,52 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
-### 2026-10-04 — Un échauffement qu'on ne marque pas est une série de travail
+### 2026-10-04 — « Ajouter une série » recopiait l'échauffement, et ses chiffres devenaient la suggestion du travail
 
-**Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de
-ta série d'échauffement en suggestion d'une série normale — par place, par ordre. »
+**Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de ta
+série d'échauffement en suggestions (place order) d'une série normale. » Puis, à la question de savoir s'il
+marque ses échauffements : « Je mets systématiquement le marqueur échauffement. » Message dicté : je l'ai lu
+« à la **série** d'après », la seule lecture que le code confirme (ci-dessous) — **à faire confirmer** par
+l'utilisateur.
 
-**Ce que le code répond.** Une série marquée « Échauffement » **ne fuit jamais** : `matchPreviousSets`
-apparie les échauffements entre eux et les séries de travail entre elles, par rang **dans leur type**
-(`lib/previousSets.ts`, testé). Rejoué de bout en bout — séance 1 avec une montée marquée, séance 2 lue dans
-Chromium — la colonne « Précédent » de la première série normale affiche **100 × 5**, pas 40 × 5. La fuite a
-une seule cause possible : une série qui **n'est pas marquée**. Rejouée avec une première série plus légère
-laissée en « normale » (la routine n'a qu'une série, on y fait son échauffement, on ajoute les séries de
-travail), la séance suivante propose **40 × 5** à la première série normale — et l'app ne peut pas savoir
-que c'était un échauffement : pour elle, c'est la série 1 de la dernière fois, très exactement ce que la
-colonne est faite pour montrer.
+**Ce que le code répond.**
 
-**Pourquoi c'est facile de ne pas la marquer.** « Ajouter une série » **ajoute en fin de liste** : on ne peut
-pas ajouter un échauffement en tête avec lui. La montée calculée (menu de l'exercice, ou la proposition de
-reprendre celle de la dernière fois) insère bien des séries d'échauffement, **marquées**, avant les autres —
-mais la proposition ne se montre que si la première série de travail du jour a déjà une charge saisie ou
-prescrite, et le calculateur est un détour pour une seule série légère. Marquer à la main passe par le menu
-de la série (toucher son numéro) puis « Type de série ».
+- **Ce n'était pas la colonne « Précédent ».** `matchPreviousSets` apparie les échauffements entre eux et les
+  séries de travail entre elles, par rang **dans leur type** (`lib/previousSets.ts`, testé depuis la v2.5.0).
+  Rejoué dans Chromium — séance 1 avec une montée marquée, séance 2 ouverte — la première série normale
+  affiche « Précédent 100 × 5 », pas 40 × 5.
+- **La première lecture était juste et hors sujet.** Un échauffement **non marqué** fuit bel et bien : une
+  première série plus légère laissée en « normale » est, pour l'app, la série 1 de la dernière fois, et rien
+  ne la distingue d'une série de travail légère voulue (une pyramide). Deviner par la charge reste écarté,
+  l'app préférant un type explicite à une heuristique. Mais l'utilisateur marque toujours : ce n'était pas
+  son cas, et cette note l'avait pris pour la cause.
+- **La cause : l'ajout recopiait la dernière série, quelle qu'elle soit.** `duplicateLastSet` (« Ajouter
+  une série » en séance) et `addRoutineSet` (l'éditeur de routine) prenaient `siblings.at(-1)` : son type
+  **et** ses chiffres. Après un échauffement validé à 40 × 5, la série ajoutée était « Série 2 —
+  Échauffement » avec 40 / 5 en gris. La repasser en normale ne touche pas aux chiffres (changer le type
+  n'y touche jamais, voulu), donc les 40 / 5 restaient, offerts comme suggestion d'une série de travail. Et
+  une cible passe **devant** la suggestion de la séance précédente (`ghost = cible ?? précédent`,
+  `WorkoutSetRow`) : le bon chiffre, 100 × 8, n'apparaissait jamais.
+- **Dans une routine c'est pire** : la copie s'écrit en base et se rejoue à chaque séance, au lieu de
+  disparaître avec la séance.
+- **Pourquoi les tests ne l'ont pas vu.** Ceux de `programWorkout` et de `routineExport` la contournaient —
+  type posé explicitement, ordre d'ajout inversé « parce que `addRoutineSet` recopie le type » — au lieu de
+  s'étonner qu'il le recopie. Un contournement écrit dans un test est une question qu'on n'a pas posée.
 
-**Ce qui est écarté.** Deviner : traiter comme échauffement toute série de tête nettement plus légère que les
-suivantes. Une pyramide (60 / 80 / 100) ou une routine qui prévoit une série de montée *normale* seraient
-alors mal lues, en silence, dans la colonne qui doit rester vraie — et l'app a toujours préféré un type
-explicite à une heuristique.
+**Décision.** Corrigé. `lastWorkingSet` (`lib/records.ts`, à côté d'`isWorkingSet`) rend la dernière série qui
+compte ; `duplicateLastSet` et `addRoutineSet` recopient celle-là. Après un échauffement seul, la série ajoutée
+est une série **normale, vierge**, et la séance précédente suggère le reste. Un échauffement posé après le
+travail est sauté ; une série de travail d'un autre type (dégressive) se recopie comme avant, type compris.
+Ce qu'on y perd : ajouter un second échauffement identique en un appui — rare, une montée change de charge, et
+la montée calculée de l'exercice existe.
 
-**Décision.** Aucune encore : la bonne réponse dépend de la façon dont l'utilisateur ajoute son échauffement
-(marqué par le menu ou la montée calculée, ou simple première série plus légère). Pistes : proposer, en fin
-de séance, de marquer les séries qui ressemblent à un échauffement ; ou ajouter un geste « échauffement »
-direct sur la carte de l'exercice. **Aucun code n'a été changé pour ce sujet.**
+**Resté ouvert.** « Appliquer à toutes les séries » (éditeur de routine) envoie **tout le brouillon de la
+feuille, type compris** (`RoutineSetSheet`, `onApplyToAll(draft)`) à `applyToAllSets`, qui l'écrit sur chaque
+série. Constaté : une routine `[échauffement 40 × 5, travail 100 × 8]`, « Appliquer à toutes » depuis la
+série de travail à 105 kg donne `[normal 105 × 8, normal 105 × 8]` — l'échauffement planifié est aplati en
+série de travail. **Pas corrigé** : la bonne réponse est un choix de sens (appliquer aux séries **du même
+type** que celle qu'on ouvre ? ne jamais écrire le type ? changer le libellé du bouton ?), et personne ne l'a
+demandé.
 
 ### 2026-10-04 — Une relecture externe du schéma d'entraînement : un point juste, deux à ne pas suivre
 
@@ -456,6 +471,15 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Assumée le 2026-10-04 — `workoutSets.ts` (dépôt) est remonté à 399 lignes**, après avoir été remboursé à
+  266 le 2026-07-27 : il a grandi depuis, jusqu'à 393, sans que l'écart soit consigné (l'historique de ce clone
+  est trop court pour dire ajout par ajout), et le correctif de l'échauffement y a ajouté six lignes — surtout
+  du commentaire — et un import. Il garde **une**
+  responsabilité — les séries de la séance en cours — et ses écritures partagent la même machinerie privée
+  (`appendSet`, `mutateWithRecordsIfCompleted`, `liveSetsOf`) : les séparer obligerait à l'exporter. **À rouvrir**
+  si une capacité de plus s'y ajoute : `completeFirstSide` et `resetUnilateralProgress` (une quarantaine de lignes,
+  sans aucun des assistants privés) sont la sortie toute désignée.
 
 - **Assumée le 2026-10-04 — quatre fichiers touchés par le cycle des programmes et le contexte
   multi-dossiers restent au-dessus des ~300 lignes** : `programSchedules.ts` (412), `ProgramDetailScreen.tsx`

@@ -110,7 +110,9 @@ Trois champs × cinq séries × six exercices en saisie directe sur 375 px, c'es
 faire leur travail.
 
 **« Ajouter une série » recopie la précédente.** Définir 3 × 8-12 @ 80 kg coûte alors une saisie et
-deux appuis, au lieu de trois saisies. C'est le cas écrasant.
+deux appuis, au lieu de trois saisies. C'est le cas écrasant. *(Précision du 2026-10-04 : la dernière série
+**de travail** — jamais un échauffement, dont la charge n'est pas celle de la série qui suit ; voir
+`docs/progress/decisions-et-pieges.md`.)*
 
 **« Appliquer à toutes les séries »** dans la feuille : monter une routine de 80 à 85 kg est le geste
 d'entretien le plus fréquent d'une routine, et le faire série par série est la meilleure façon d'en
@@ -200,7 +202,7 @@ groupWithPrevious(routineId: string, routineExerciseId: string): Promise<void>
 ungroupSuperset(routineId: string, routineExerciseId: string): Promise<void>
 
 // Séries prévues (RF-11)
-addRoutineSet(routineExerciseId: string): Promise<RoutineSet>     // recopie la précédente
+addRoutineSet(routineExerciseId: string): Promise<RoutineSet>     // recopie la dernière série de travail
 updateRoutineSet(id, changes): Promise<void>
 applyToAllSets(routineExerciseId: string, changes): Promise<void>
 deleteRoutineSet(id: string): Promise<void>                       // renumérote les suivantes
@@ -248,7 +250,7 @@ export interface RoutineDetail {
 - Supprimer un dossier : ses routines **existent toujours**, à la racine.
 - Réordonner renumérote `order` de 0 à n-1 sans trou.
 - Réordonner hors d'un superset dissout le groupe orphelin.
-- `addRoutineSet` recopie reps/charge/type de la dernière série ; sur une ligne vide, série neutre.
+- `addRoutineSet` recopie reps/charge/type de la dernière série **de travail** (depuis le 2026-10-04) ; sur une ligne vide, ou qui n'a que des échauffements, série neutre.
 - `applyToAllSets` n'écrase que les champs fournis.
 - Un exercice supprimé laisse `exercise: undefined` et la routine reste lisible.
 

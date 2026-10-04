@@ -3,16 +3,89 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**ajouter un dossier au split, l'échauffement qu'on ne marque pas ; avant : cycle des programmes, « À lancer » sur plusieurs dossiers**).
+**Dernière mise à jour :** 2026-10-04 (**« Ajouter une série » ne recopie plus l'échauffement ; avant : ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
 
-## Ajouter un dossier au split, et l'échauffement qu'on ne marque pas (2026-10-04, suite)
+## « Ajouter une série » ne recopie plus l'échauffement (2026-10-04, suite)
+
+Publication : **aucune**, comme les deux sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours
+en 2.9.0. C'est la demande de la section d'en dessous (l'échauffement qui ressort en suggestion), reprise après
+la précision de l'utilisateur : « je mets systématiquement le marqueur échauffement ». Le diagnostic d'alors
+(un échauffement non marqué) ne tenait donc pas. Aucune table, aucun index, aucune version de schéma.
+
+**La cause**
+
+- « Ajouter une série » recopiait **la dernière série, quelle qu'elle soit** : son type et ses chiffres.
+  Après un échauffement validé à 40 × 5, la série ajoutée était « Série 2 — Échauffement » avec 40 / 5 en
+  gris. La repasser en normale ne touche pas aux chiffres : les 40 / 5 restaient, offerts comme suggestion
+  d'une série de travail. Et une cible passe **devant** la suggestion de la séance précédente
+  (`ghost = cible ?? précédent`) : le bon chiffre, 100 × 8, n'apparaissait jamais.
+- L'éditeur de routine faisait pareil (`addRoutineSet`) — en pire, parce que cette copie-là s'écrit en base et
+  se rejoue à chaque séance.
+- La colonne « Précédent » n'y était pour rien : `matchPreviousSets` apparie bien échauffements et travail
+  séparément.
+- **Lecture du message** : « à la séance d'après » a été lu « à la **série** d'après » (message dicté), la seule
+  lecture que le code confirme. **À faire confirmer** par l'utilisateur.
+
+**Le correctif**
+
+- `lastWorkingSet` (`lib/records.ts`, à côté d'`isWorkingSet`) rend la dernière série qui compte ;
+  `duplicateLastSet` et `addRoutineSet` recopient celle-là. Après un échauffement seul : une série **normale,
+  vierge**, et la séance précédente suggère le reste. Un échauffement posé après le travail est sauté ; une
+  série de travail d'un autre type (dégressive…) se recopie comme avant, type compris.
+- **Perdu en route** : ajouter un second échauffement identique en un appui. Rare — une montée change de
+  charge — et la montée calculée de l'exercice existe.
+- Les tests de `programWorkout` et `routineExport` qui contournaient la copie sont laissés, sauf une phrase qui
+  n'était plus vraie : `routineExport` retrouve l'ordre naturel (marquer, puis ajouter), et devient une garde —
+  l'ancien code y faisait écrire « 0 + 2 échauffements ».
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**268 fichiers, 2 987 tests**, 13 de plus que la
+  section d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,73 Kio.
+- Tests écrits et **vus rouges** avant le code : l'aide pure (3), six des neuf tests de dépôt (les trois autres
+  fixent ce qui ne change pas : la série de travail et la dégressive se recopient), et l'écran
+  (`WorkoutScreen.addSet.test.tsx` : `placeholder="40"` là où 100 est attendu — exactement le symptôme).
+  **Mutation** : une aide qui rend la première série de travail au lieu de la dernière fait tomber deux tests.
+- **Chromium à 390 px, gestes réels**, deux séances de suite : séance 1, échauffement marqué puis validé, « Ajouter
+  une série » donne « Série 2 » normale, vierge (avant : « Série 2 — Échauffement » 40 / 5) ; séance 2, même
+  geste : la série ajoutée affiche « Précédent 100 × 8 » et 100 / 8 en gris. La routine à échauffement planifié
+  et la séance complète rejouées : rien de changé.
+
+**Pièges rencontrés**
+
+- Le diagnostic d'abord retenu tenait à ce que j'avais rejoué des **séances** (montée marquée ou non) sans
+  rejouer le geste de la personne : marquer, valider, puis « Ajouter une série ». C'est ce geste qui montrait la
+  fuite. Rejouer d'abord la suite exacte de gestes décrite, avant de chercher une cause dans les données.
+- La carte d'un exercice **se replie** quand toutes ses séries sont validées : « Ajouter une série » disparaît
+  tant qu'on ne l'a pas rouverte. Le test d'écran et le rejeu la rouvrent, comme sur le téléphone.
+
+**Resté ouvert**
+
+- **« Appliquer à toutes les séries » aplatit l'échauffement planifié d'une routine** : la feuille envoie tout
+  son brouillon, type compris, à chaque série (`[échauffement 40 × 5, travail 100 × 8]` devient
+  `[normal 105 × 8, normal 105 × 8]` depuis la série de travail à 105 kg, constaté). Non corrigé : c'est un
+  choix de sens à faire (appliquer aux séries du même type ? ne jamais écrire le type ?), et personne ne l'a
+  demandé. Détail dans `docs/progress/decisions-et-pieges.md`.
+- **Fusion dans `master`, tag v2.10.0 et APK** : toujours sans réponse de l'utilisateur — rien n'est fusionné,
+  rien n'est tagué, le téléphone reste en 2.9.0.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK ; que ce soit bien le symptôme que l'utilisateur a vu.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Une séance, un exercice : toucher le numéro de la série 1 › « Type de série » › Échauffement ; saisir
+   40 × 5 et valider.
+2. Rouvrir la carte (elle s'est repliée), « Ajouter une série » : la série 2 n'a **pas** de flamme, elle est vide,
+   et ses chiffres en gris sont ceux de la séance d'avant (rien si c'est la première).
+3. Dans l'éditeur d'une routine qui porte un échauffement : « Ajouter une série » ajoute une série normale
+   vierge, pas un second échauffement.
+
+## Ajouter un dossier au split (2026-10-04, suite)
 
 Publication : **aucune**, comme la section d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
-2.9.0. Deux demandes de l'utilisateur après la livraison du cycle : « quand tu as fait une série
-d'échauffement, à la séance d'après tu vois les poids de ta série d'échauffement en suggestions (place order)
-d'une série normale », et « oui je veux bien le bouton » — celui que la section d'en dessous proposait en
-sortie. Spec et plan : `2026-10-04-split-ajouter-un-dossier`. Aucune table, aucun index, aucune version de
-schéma.
+2.9.0. « Oui je veux bien le bouton » : celui que la section d'en dessous proposait en sortie. (Le même message
+signalait l'échauffement qui ressort en suggestion : traité dans la section d'au-dessus.) Spec et plan :
+`2026-10-04-split-ajouter-un-dossier`. Aucune table, aucun index, aucune version de schéma.
 
 **Le bouton « Ajouter un dossier »**
 
@@ -29,20 +102,12 @@ schéma.
 - `useProgramEditorData` lit les dossiers avec les routines. **Le modèle du split a quitté
   `programEditorModel.ts`** (309 lignes, deux métiers) pour `programSplitModel.ts` (182) ; ses tests ont suivi.
 
-**L'échauffement qui ressort en suggestion — analysé, pas corrigé**
+**L'échauffement qui ressort en suggestion — mal diagnostiqué ici, corrigé dans la section d'au-dessus**
 
-- **Marqué « Échauffement », il ne fuit pas.** `matchPreviousSets` apparie échauffements et séries de travail
-  séparément, et un test le garde depuis la v2.5.0. Rejoué dans Chromium (séance 1 avec une montée marquée,
-  séance 2 ouverte) : la première série normale affiche « Précédent 100 × 5 ».
-- **Non marqué, il fuit — et l'app ne peut pas le savoir.** Une première série plus légère laissée en
-  « normale » est, pour l'app, la série 1 de la dernière fois : la séance suivante en propose les chiffres
-  (**40 × 5**). Rien dans le code ne distingue cette série d'une série de travail légère voulue, une pyramide
-  par exemple. « Ajouter une série » ajoute **en fin de liste**, donc on ne peut pas ajouter un échauffement en
-  tête avec lui ; marquer passe par le menu de la série puis « Type de série ».
-- **Aucun code changé.** Deviner par la charge a été écarté (une pyramide serait mal lue, en silence, dans la
-  colonne qui doit rester vraie). Question restée ouverte avec l'utilisateur : comment ajoute-t-il son
-  échauffement ? Selon la réponse : proposer de marquer, en fin de séance, les séries qui y ressemblent, ou un
-  geste « échauffement » direct sur la carte. Détail dans `docs/progress/decisions-et-pieges.md`.
+- Cette section avait conclu à un échauffement **non marqué**, sans code changé. L'utilisateur a répondu qu'il
+  le marque toujours : la cause était ailleurs (« Ajouter une série » recopiait l'échauffement). Ce qui reste
+  vrai — un échauffement non marqué fuit dans « Précédent », l'app ne peut pas le savoir, deviner par la
+  charge est écarté — est dans `docs/progress/decisions-et-pieges.md`, avec la vraie cause.
 
 **Vérifié**
 
