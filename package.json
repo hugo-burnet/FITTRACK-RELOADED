@@ -19,6 +19,7 @@
     "bench:history": "vitest bench src/data/repositories/history.bench.ts --run",
     "bench:home": "vitest bench src/data/repositories/home.bench.ts --run",
     "bench:records": "vitest bench src/data/repositories/personalRecords.bench.ts --run",
+    "coach:replay": "vitest run src/lib/coach/replay.cli.test.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "voice:generate": "node scripts/generate-voice.mjs",

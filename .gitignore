@@ -60,3 +60,7 @@ Z-Anatomy/
 public/lab/
 public/judge-lab.html
 public/embed-lab.html
+
+# Banc de rejeu du coach : une sauvegarde réelle et son rejeu ne quittent jamais la machine.
+fittrack-sauvegarde-*.json
+coach-replay*.txt
