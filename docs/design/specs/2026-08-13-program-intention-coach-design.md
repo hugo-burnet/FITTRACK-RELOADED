@@ -174,6 +174,15 @@ Il reste `{ maintain }`, et `reduce_load` si `range_missed` coexiste.
 
 Le plateau est un **critère de performance**, pas un habillage. Il s’applique **avant** que la phase ne choisisse. Une Surcharge ne peut pas répondre à un plateau en ajoutant encore du volume.
 
+> **Amendement du 2026-10-04 — une séance plafonnée n’est pas un point plat.** Son 1RM estimé ne
+> peut pas monter : ce sont les répétitions prescrites qui ont plafonné. Lire trois plafonds à la
+> même charge comme un plateau fermait un cercle — le plateau retirait `increase_load`, la hausse
+> même que la consolidation préparait (vu sur un rowing tenu à 70 × 12 × 3, RPE en baisse :
+> « Plateau » trois fois). Désormais le plateau ne se déclare pas quand la dernière séance hors
+> décharge est plafonnée, et les séances plafonnées sont écartées de sa fenêtre comme les séances
+> de décharge. Plafond et plateau ne coexistent donc plus ; le retrait de `add_set` reste écrit
+> par défense. Les deux tests du § 10 qui supposaient « plafond + plateau » sont caducs.
+
 Invariant de double progression :
 
 > On n’augmente jamais la charge tant que la fourchette n’est pas saturée.
@@ -316,8 +325,8 @@ Toutes les chaînes vivent dans `src/i18n/fr.ts`. Disparaissent les libellés qu
 - `increase_reps` absent si `range_ceiling_reached`.
 - 3×8–12, 12/12/10 → `range_satisfied`, pas de plafond ; `increase_reps` autorisé ; `increase_load` interdit.
 - 3×8–12, 12/12/12 → plafond, pas de `range_satisfied` ; `increase_load` autorisé ; `increase_reps` interdit.
-- Plafond + plateau + phase `overload` → `add_set` interdit ; action = `maintain` ; signal plateau affiché.
-- Phase Progression + plafond + plateau → `{ maintain }` ; reco = maintien ; signal plateau affiché.
+- ~~Plafond + plateau + phase `overload` → `add_set` interdit ; action = `maintain` ; signal plateau affiché.~~ Caduc (amendement du 2026-10-04) : trois plafonds à la même charge autorisent `increase_load` et `add_set`.
+- Phase Progression + fourchette tenue sans plafond + plateau → `{ maintain }` ; reco = maintien ; signal plateau affiché.
 - `targetProgramContext` = décharge alors que la séance close était surcharge : pas de `add_set`.
 - Décharge : cibles réduites avant séance ; `programIsDeload === 1` ; pas d’escalade proposée pour une *cible* encore en décharge.
 - `createDeloadTargets(routine, 60)` === `createDeloadTargets(routine, 90)`.

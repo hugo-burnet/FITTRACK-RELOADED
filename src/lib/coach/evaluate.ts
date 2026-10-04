@@ -454,7 +454,7 @@ function topWorkingLoad(line: CoachExerciseLine): number | undefined {
 }
 
 /**
- * Plateau: N consecutive non-deload sessions with no improvement on best estimated 1RM.
+ * Plateau: N consecutive non-deload, non-capped sessions with no improvement on best estimated 1RM.
  * Deload sessions are skipped so a planned cut never looks like stagnation.
  *
  * Assisted machines are out of scope: the figure recorded is the help you took,
@@ -463,12 +463,33 @@ function topWorkingLoad(line: CoachExerciseLine): number | undefined {
  * engine is not given — so the rule says nothing rather than reading progress
  * as stagnation.
  */
+/**
+ * Une séance dont chaque série a touché le haut de sa prescription.
+ *
+ * Son 1RM estimé ne peut pas monter : ce sont les répétitions prescrites qui ont
+ * plafonné, pas le pratiquant. Trois `70 × 12 × 3` sur un 10–12 donnent trois fois
+ * le même 1RM — c'est une fourchette respectée, pas une stagnation.
+ */
+function isCappedSession(line: CoachExerciseLine): boolean {
+  const working = progressionSets(line);
+  return working.length > 0 && rangeFlags(working).ceiling;
+}
+
 function plateauSignal(
   historyNewestFirst: readonly CoachExerciseLine[],
   formula: OneRepMaxFormula,
   plateauSessions: number,
 ): CoachSignal | undefined {
-  const comparable = historyNewestFirst.filter((line) => !isDeloadLine(line));
+  const nonDeload = historyNewestFirst.filter((line) => !isDeloadLine(line));
+  // **Consolider n'est pas stagner.** Lire une séance plafonnée comme un point
+  // plat fermait un cercle : plus on respectait sa fourchette, plus le coach
+  // déclarait un plateau, et le plateau retirait `increase_load` — la hausse
+  // même que la consolidation préparait. Vu sur un rowing tenu à 70 × 12 × 3
+  // pendant trois séances, RPE en baisse : « Plateau », trois fois.
+  // La dernière séance plafonnée est une réussite, et les précédentes ne
+  // témoignent de rien ; on les écarte comme les séances de décharge.
+  if (nonDeload[0] !== undefined && isCappedSession(nonDeload[0])) return undefined;
+  const comparable = nonDeload.filter((line) => !isCappedSession(line));
   if (comparable.length < plateauSessions) return undefined;
   if (measurementShape(comparable[0]!.measurementType).weightRole === 'assist') return undefined;
 

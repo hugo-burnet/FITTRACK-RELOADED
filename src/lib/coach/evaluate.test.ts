@@ -92,36 +92,58 @@ describe('evaluatePerformance — exclusive range partition + allowedActions', (
     expect(ev.signals.map((s) => s.code)).not.toContain('range_ceiling_reached');
   });
 
-  it('plateau strips add_set as well as increase_*', () => {
+  it('plateau strips escalation: a flat satisfied range loses increase_reps', () => {
+    const satisfiedSession = (workoutId: string, day: number): CoachExerciseLine =>
+      line({
+        exerciseId: 'bench',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        sets: [0, 1, 2].map((order) =>
+          set({
+            order,
+            reps: 10,
+            weight: 100,
+            performedAt: t0 + day * 86_400_000 + order * 120_000,
+          }),
+        ),
+      });
+
+    const latest = satisfiedSession('w3', 14);
+    const history = [satisfiedSession('w2', 7), satisfiedSession('w1', 0)];
+    const ev = evaluatePerformance(latest, history);
+
+    expect(ev.signals.some((s) => s.code === 'plateau')).toBe(true);
+    expect(ev.signals.some((s) => s.code === 'range_satisfied')).toBe(true);
+    expect(ev.allowedActions).toEqual(['maintain']);
+  });
+
+  it('consolider n’est pas stagner : trois plafonds à la même charge autorisent la hausse', () => {
+    // Ce test affirmait l'inverse — plafond + plateau → maintien. C'était le
+    // défaut : une séance plafonnée ne peut pas faire monter le 1RM estimé, donc
+    // trois séances bien faites passaient pour un plateau, et le plateau
+    // interdisait la hausse qu'elles préparaient.
     const ceilingSession = (workoutId: string, day: number): CoachExerciseLine =>
       line({
         exerciseId: 'bench',
         workoutId,
         workoutStartedAt: t0 + day * 86_400_000,
-        sets: [
-          set({ order: 0, reps: 12, weight: 100, performedAt: t0 + day * 86_400_000 }),
+        sets: [0, 1, 2].map((order) =>
           set({
-            order: 1,
+            order,
             reps: 12,
             weight: 100,
-            performedAt: t0 + day * 86_400_000 + 120_000,
+            performedAt: t0 + day * 86_400_000 + order * 120_000,
           }),
-          set({
-            order: 2,
-            reps: 12,
-            weight: 100,
-            performedAt: t0 + day * 86_400_000 + 240_000,
-          }),
-        ],
+        ),
       });
 
     const latest = ceilingSession('w3', 14);
     const history = [ceilingSession('w2', 7), ceilingSession('w1', 0)];
     const ev = evaluatePerformance(latest, history);
 
-    expect(ev.signals.some((s) => s.code === 'plateau')).toBe(true);
-    expect(ev.signals.some((s) => s.code === 'range_ceiling_reached')).toBe(true);
-    expect(ev.allowedActions).toEqual(['maintain']);
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_ceiling_reached']);
+    expect(ev.allowedActions).toContain('increase_load');
+    expect(ev.allowedActions).toContain('add_set');
   });
 });
 
@@ -764,6 +786,63 @@ describe('plateau', () => {
     ]);
     // Deload skipped → comparable are 110 and 100 (progress) — not enough for N=3.
     expect(onlyDeloadNewest.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  describe('séances plafonnées', () => {
+    const rowing = (
+      workoutId: string,
+      day: number,
+      reps: number[],
+      range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 10, targetRepsMax: 12 },
+    ): CoachExerciseLine =>
+      line({
+        exerciseId: 'row',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        equipment: 'machine',
+        sets: reps.map((value, order) =>
+          set({ order, reps: value, weight: 70, performedAt: t0 + day * 86_400_000 + order * 120_000, ...range }),
+        ),
+      });
+
+    it('ne lit pas une consolidation comme un plateau, même suivie d’une séance sans cible', () => {
+      // Rowing buste appuyé, historique réel : 70 kg tenu, RPE en baisse. La
+      // dernière séance vient d'une routine sans cible — le coach y affichait
+      // « Plateau » sur la foi des deux plafonds d'avant.
+      const signals = evaluateCoach([
+        rowing('w4', 21, [12, 12, 12], { targetReps: undefined, targetRepsMax: undefined }),
+        rowing('w3', 14, [12, 12, 12]),
+        rowing('w2', 7, [12, 12, 12]),
+        rowing('w1', 0, [12, 11, 11]),
+      ]);
+      expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
+    });
+
+    it('ne masque pas un plafond tout juste atteint par les séances plates d’avant', () => {
+      const signals = evaluateCoach([
+        rowing('w4', 21, [12, 12, 12]),
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]);
+      expect(signals).toEqual([
+        expect.objectContaining({ code: 'range_ceiling_reached', nextLoadKg: 75 }),
+      ]);
+    });
+
+    it('garde le plateau quand la fourchette n’est jamais atteinte', () => {
+      const signals = evaluateCoach([
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]);
+      expect(signals.map((s) => s.code)).toEqual(['range_satisfied']);
+      expect(collectCoachSignals([
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]).some((s) => s.code === 'plateau')).toBe(true);
+    });
   });
 
   it('ne parle pas de plateau quand la barre s’est alourdie', () => {
