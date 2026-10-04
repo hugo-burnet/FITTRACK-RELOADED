@@ -30,7 +30,7 @@ où on l'emploie, regarder à quel moment on la cherche.
 **Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de ta
 série d'échauffement en suggestions (place order) d'une série normale. » Puis, à la question de savoir s'il
 marque ses échauffements : « Je mets systématiquement le marqueur échauffement. » Message dicté : je l'ai lu
-« à la **série** d'après », la seule lecture que le code confirme (ci-dessous) — **à faire confirmer** par
+« à la **série** d'après », la seule lecture que le code confirme (ci-dessous) — **confirmée ensuite** par
 l'utilisateur.
 
 **Ce que le code répond.**
@@ -64,13 +64,15 @@ travail est sauté ; une série de travail d'un autre type (dégressive) se reco
 Ce qu'on y perd : ajouter un second échauffement identique en un appui — rare, une montée change de charge, et
 la montée calculée de l'exercice existe.
 
-**Resté ouvert.** « Appliquer à toutes les séries » (éditeur de routine) envoie **tout le brouillon de la
-feuille, type compris** (`RoutineSetSheet`, `onApplyToAll(draft)`) à `applyToAllSets`, qui l'écrit sur chaque
-série. Constaté : une routine `[échauffement 40 × 5, travail 100 × 8]`, « Appliquer à toutes » depuis la
-série de travail à 105 kg donne `[normal 105 × 8, normal 105 × 8]` — l'échauffement planifié est aplati en
-série de travail. **Pas corrigé** : la bonne réponse est un choix de sens (appliquer aux séries **du même
-type** que celle qu'on ouvre ? ne jamais écrire le type ? changer le libellé du bouton ?), et personne ne l'a
-demandé.
+**Voisin, corrigé ensuite.** « Appliquer à toutes les séries » (éditeur de routine) envoyait **tout le brouillon
+de la feuille, type compris** (`RoutineSetSheet`, `onApplyToAll(draft)`) à `applyToAllSets`, qui l'écrivait sur
+chaque série. Constaté : une routine `[échauffement 40 × 5, travail 100 × 8]`, « Appliquer à toutes » depuis la
+série de travail à 105 kg donnait `[normal 105 × 8, normal 105 × 8]` — l'échauffement planifié aplati en série de
+travail. L'utilisateur a demandé qu'on le corrige ; le choix de sens, c'était : appliquer aux séries **du même
+genre** que celle qu'on ouvre, **ne jamais écrire le type**, dire le genre dans le libellé. `applyToAllSets` lit
+donc le `setType` du brouillon comme le genre de la source et non comme un chiffre à copier ; des chiffres sans
+type sont des chiffres de travail. Depuis un échauffement, seuls les autres échauffements changent (« Appliquer
+aux échauffements »). Le plan du Lot 4 disait « n'écrase que les champs fournis » : la feuille en fournissait six.
 
 ### 2026-10-04 — Une relecture externe du schéma d'entraînement : un point juste, deux à ne pas suivre
 

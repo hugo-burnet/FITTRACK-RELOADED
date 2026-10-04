@@ -3,7 +3,62 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**le cadenas d'ordre revient dans la séance en cours ; avant : « Ajouter une série » ne recopie plus l'échauffement, ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+**Dernière mise à jour :** 2026-10-04 (**« Appliquer à toutes les séries » ne touche plus à l'échauffement ; avant : le cadenas d'ordre revient dans la séance, « Ajouter une série » ne recopie plus l'échauffement, ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+
+## « Appliquer à toutes les séries » ne touche plus à l'échauffement (2026-10-04, suite)
+
+Publication : **aucune** pour l'instant, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`,
+toujours en 2.9.0. C'est le défaut voisin que la section d'en dessous avait consigné sans le corriger, et que
+l'utilisateur a demandé de corriger. Aucune table, aucun index, aucune version de schéma.
+
+**La cause.** La feuille d'une série envoie **tout son brouillon**, type compris (`onApplyToAll(draft)`), et
+`applyToAllSets` l'écrivait sur chaque série de l'exercice. Depuis une série de travail montée à 105 kg, un
+échauffement planifié devenait une série de travail à 105 kg : `[échauffement 40 × 5, travail 100 × 8]` donnait
+deux séries normales à 105 × 8. Le plan du Lot 4 disait que le geste « n'écrase que les champs fournis » : la
+feuille en fournissait six, dont celui qu'il ne fallait pas.
+
+**Le correctif**
+
+- `applyToAllSets` lit le `setType` du brouillon comme le **genre de la série dont viennent les chiffres**
+  (travail ou échauffement) : les chiffres vont aux séries de ce genre, et **le type lui-même n'est plus jamais
+  écrit**. Depuis un échauffement, seuls les autres échauffements changent. Des chiffres sans type sont des
+  chiffres de travail — la lecture sûre, puisque la seule chose à ne jamais faire sans qu'on le demande est de
+  déplacer un échauffement. Une routine sans échauffement se comporte comme avant.
+- Sur un échauffement, le bouton dit **« Appliquer aux échauffements »** au lieu de promettre toutes les séries, et
+  le libellé suit le type quand on le change dans la feuille. Il compte 27 caractères : la première version,
+  « …à tous les échauffements » (34), passait sur deux lignes dans la police du terminal de TTY1, alors que
+  « …à toutes les séries » (29) tient.
+- Inchangé : le rapport au tutoriel (`routine-target-updated`) garde l'identité de la première série, personne
+  ne lit cet identifiant ; le plan du Lot 4 reçoit une phrase datée.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**271 fichiers, 3 001 tests**, 9 de plus que la section
+  d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,96 Kio.
+- Quatre des cinq tests de `applyToAllSets.test.ts` vus **rouges** avant le code (le cinquième fixe ce qui ne change
+  pas : une fourchette que la feuille ne montre plus est effacée partout), trois des quatre de `RoutineSetSheet.test.tsx`
+  (le libellé d'une série de travail, lui, ne change pas). **Mutation** : réécrire le type fait tomber « ne réécrit
+  jamais le type d'une série », et lui seul.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, une routine `[échauffement 40 × 5, travail 100 × 8, travail 100 × 8]` :
+  la série 2 montée à 105 kg avec le pas de la feuille, « Appliquer à toutes les séries » donne
+  `[échauffement 40 × 5, travail 105 × 8, travail 105 × 8]` ; la feuille de l'échauffement dit « Appliquer aux
+  échauffements » sur une ligne ; l'appuyer ne change rien d'autre ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Un libellé qui tient en Sombre peut passer sur deux lignes dans TTY1 : la police du terminal est à chasse fixe, et
+  les crochets du bouton prennent de la place. Mesurer dans TTY1 — c'est la troisième fois de la journée.
+- `pkill -f <motif>` a de nouveau tué le shell de la session, alors que la section de la v2.9.0 l'avait consigné : le
+  motif figure dans la ligne de commande du shell. `pgrep -f "[m]otif"`, ou tuer par PID.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Éditeur d'une routine qui porte un échauffement planifié (série 1, « Échauffement », 40 kg) et deux séries de
+   travail : ouvrir une série de travail, monter la charge, « Appliquer à toutes les séries ».
+2. L'échauffement n'a pas bougé (« ÉCH. », 40 kg) ; les séries de travail ont la nouvelle charge.
+3. Ouvrir l'échauffement : le bouton dit « Appliquer aux échauffements ».
 
 ## Le cadenas d'ordre revient dans la séance en cours (2026-10-04, suite)
 
@@ -81,7 +136,7 @@ la précision de l'utilisateur : « je mets systématiquement le marqueur échau
 - La colonne « Précédent » n'y était pour rien : `matchPreviousSets` apparie bien échauffements et travail
   séparément.
 - **Lecture du message** : « à la séance d'après » a été lu « à la **série** d'après » (message dicté), la seule
-  lecture que le code confirme. **À faire confirmer** par l'utilisateur.
+  lecture que le code confirme. **Confirmé ensuite par l'utilisateur** : c'est bien la série d'après.
 
 **Le correctif**
 
@@ -116,17 +171,12 @@ la précision de l'utilisateur : « je mets systématiquement le marqueur échau
 - La carte d'un exercice **se replie** quand toutes ses séries sont validées : « Ajouter une série » disparaît
   tant qu'on ne l'a pas rouverte. Le test d'écran et le rejeu la rouvrent, comme sur le téléphone.
 
-**Resté ouvert**
+**Resté ouvert, depuis réglé**
 
-- **« Appliquer à toutes les séries » aplatit l'échauffement planifié d'une routine** : la feuille envoie tout
-  son brouillon, type compris, à chaque série (`[échauffement 40 × 5, travail 100 × 8]` devient
-  `[normal 105 × 8, normal 105 × 8]` depuis la série de travail à 105 kg, constaté). Non corrigé : c'est un
-  choix de sens à faire (appliquer aux séries du même type ? ne jamais écrire le type ?), et personne ne l'a
-  demandé. Détail dans `docs/progress/decisions-et-pieges.md`.
-- **Fusion dans `master`, tag v2.10.0 et APK** : toujours sans réponse de l'utilisateur — rien n'est fusionné,
-  rien n'est tagué, le téléphone reste en 2.9.0.
+- **« Appliquer à toutes les séries » aplatissait l'échauffement planifié d'une routine** : corrigé à la demande de
+  l'utilisateur, section d'au-dessus.
 
-**Non vérifié** : le rendu sur un téléphone, l'APK ; que ce soit bien le symptôme que l'utilisateur a vu.
+**Non vérifié** : le rendu sur un téléphone, l'APK.
 
 **Checkpoint téléphone**, en salle ou à défaut à bout de bras :
 

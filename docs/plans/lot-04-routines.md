@@ -251,7 +251,7 @@ export interface RoutineDetail {
 - Réordonner renumérote `order` de 0 à n-1 sans trou.
 - Réordonner hors d'un superset dissout le groupe orphelin.
 - `addRoutineSet` recopie reps/charge/type de la dernière série **de travail** (depuis le 2026-10-04) ; sur une ligne vide, ou qui n'a que des échauffements, série neutre.
-- `applyToAllSets` n'écrase que les champs fournis.
+- `applyToAllSets` n'écrase que les champs fournis, et seulement sur les séries du même genre (travail ou échauffement) que celle dont ils viennent ; il n'écrit jamais le type (depuis le 2026-10-04).
 - Un exercice supprimé laisse `exercise: undefined` et la routine reste lisible.
 
 **Commit :** `feat(lot-04): repository des routines`.
