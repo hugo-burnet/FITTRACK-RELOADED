@@ -1,6 +1,7 @@
 import { db } from '@/data/db';
 import type { SetType, Syncable, WorkoutSet } from '@/data/types';
 import { SIDE_TRANSITION_MS } from '@/features/workout/sideProgress';
+import { lastWorkingSet } from '@/lib/records';
 import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { alive, newEntity, softDelete, touch } from './base';
 import {
@@ -141,20 +142,25 @@ export async function addSet(
 }
 
 /**
- * Appends a set **proposing the last one again** — another set at the same load
- * is by far the most common next move, and this makes it one tap.
+ * Appends a set **proposing the last working one again** — another set at the
+ * same load is by far the most common next move, and this makes it one tap.
  *
  * What the previous set holds becomes the new one's *prescription*, not its
  * result: the figures come up greyed, and the tick is what turns them into
  * something performed. A set that arrived already filled in would be a set the
  * app claims you did.
  *
+ * "Working" is the point: a warm-up is never proposed again (`lastWorkingSet`).
+ * After one, the new set is a plain normal set with no prescription, and the
+ * previous session's matching set is what the grid shows greyed — the warm-up's
+ * 40 kg offered as the suggestion of a working set was the defect.
+ *
  * The last set is read from the same siblings the rank comes from, inside the
  * same transaction: what is copied and where it lands are one decision.
  */
 export async function duplicateLastSet(workoutExerciseId: string): Promise<WorkoutSet> {
   return appendSet(workoutExerciseId, (siblings) => {
-    const last = siblings.at(-1);
+    const last = lastWorkingSet(siblings);
 
     return {
       setType: last?.setType ?? 'normal',

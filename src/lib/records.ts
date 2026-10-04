@@ -29,6 +29,29 @@ export function setVolume(set: Pick<WorkoutSet, 'weight' | 'reps'>): number {
  */
 export const isWorkingSet = (set: Pick<WorkoutSet, 'setType'>): boolean => set.setType !== 'warmup';
 
+/**
+ * The set that an *added* one should continue from: the last that counts, not
+ * simply the last.
+ *
+ * "Add a set" proposes the previous one again, and a warm-up is the one set
+ * nobody repeats — what follows the bar at 40 kg is the work, at another load.
+ * Continuing from the warm-up gave the new set its type and, worse, its figures,
+ * which the grid shows greyed as the suggestion of a working set: 40 × 5 offered
+ * for a set at 100 × 8, ahead of the one honest suggestion, last session's.
+ *
+ * Nothing to continue from — no sets, or warm-ups only — answers `undefined`:
+ * the caller adds a plain set and the previous session proposes the figures.
+ */
+export function lastWorkingSet<T extends Pick<WorkoutSet, 'setType'>>(
+  sets: readonly T[],
+): T | undefined {
+  for (let index = sets.length - 1; index >= 0; index -= 1) {
+    const set = sets[index];
+    if (set !== undefined && isWorkingSet(set)) return set;
+  }
+  return undefined;
+}
+
 export interface RecordSource {
   workoutId: string;
   workoutSetId?: string;

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { MeasurementType, PersonalRecordType, WorkoutSet } from '@/data/types';
 import {
   isWorkingSet,
+  lastWorkingSet,
   projectRecordTimeline,
   setVolume,
   type RecordEventDraft,
@@ -60,6 +61,27 @@ describe('record primitives', () => {
     expect(isWorkingSet(aSet({ setType: 'warmup' }))).toBe(false);
     expect(isWorkingSet(aSet({ setType: 'normal' }))).toBe(true);
     expect(isWorkingSet(aSet({ setType: 'dropset' }))).toBe(true);
+  });
+});
+
+describe('lastWorkingSet', () => {
+  it('skips the warm-ups that come after the work', () => {
+    const work = aSet({ setType: 'normal', weight: 100 });
+    const sets = [aSet({ setType: 'warmup' }), work, aSet({ setType: 'warmup' })];
+
+    expect(lastWorkingSet(sets)).toBe(work);
+  });
+
+  it('answers the last of several working sets, whatever their kind', () => {
+    const last = aSet({ setType: 'dropset', weight: 80 });
+    const sets = [aSet({ setType: 'warmup' }), aSet({ setType: 'normal' }), last];
+
+    expect(lastWorkingSet(sets)).toBe(last);
+  });
+
+  it('answers nothing when there is no working set to continue from', () => {
+    expect(lastWorkingSet([])).toBeUndefined();
+    expect(lastWorkingSet([aSet({ setType: 'warmup' }), aSet({ setType: 'warmup' })])).toBeUndefined();
   });
 });
 

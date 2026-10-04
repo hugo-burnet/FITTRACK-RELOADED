@@ -1,5 +1,6 @@
 import { db } from '@/data/db';
 import type { RoutineSet } from '@/data/types';
+import { lastWorkingSet } from '@/lib/records';
 import { alive, newEntity, softDelete, touch } from './base';
 
 /** What a set sheet may change. `order` is excluded: it belongs to the list, not to a form. */
@@ -23,16 +24,21 @@ const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b
 // ---------------------------------------------------------------------------
 
 /**
- * Appends a set **copied from the last one**. Writing 3 × 8-12 @ 80 kg then
- * costs one entry and two taps instead of three entries — and that is the
+ * Appends a set **copied from the last working one**. Writing 3 × 8-12 @ 80 kg
+ * then costs one entry and two taps instead of three entries — and that is the
  * overwhelmingly common shape of a routine.
+ *
+ * Never from a warm-up (`lastWorkingSet`): the copy is written, so it replays at
+ * every session and sits ahead of what the previous session would propose. A
+ * working set born as a copy of the warm-up suggested 40 kg for the work, session
+ * after session. After a warm-up the new set is a plain normal set, left blank.
  */
 export async function addRoutineSet(routineExerciseId: string): Promise<RoutineSet> {
   const siblings = alive(
     await db.routineSets.where('routineExerciseId').equals(routineExerciseId).toArray(),
   ).sort(byOrder);
 
-  const last = siblings.at(-1);
+  const last = lastWorkingSet(siblings);
   const set = newEntity<RoutineSet>({
     routineExerciseId,
     order: siblings.length,
