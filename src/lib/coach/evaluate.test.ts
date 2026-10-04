@@ -1034,7 +1034,7 @@ describe('séries à l’échec (R2)', () => {
   });
 });
 
-describe('pas de charge déduit de l’historique (R3.1)', () => {
+describe('cran de la fiche de l’exercice (R3.1 révisée)', () => {
   const machine = (
     workoutId: string,
     dayIndex: number,
@@ -1060,45 +1060,57 @@ describe('pas de charge déduit de l’historique (R3.1)', () => {
       ...extra,
     });
 
-  // Les séances du haut portent assez de répétitions pour absorber le cran
-  // (R3.2) : 17 pour +2,5 sur 15 kg, 24 pour +5, 15 pour 50 → 55. Le sujet
-  // de ces tests est le pas, pas le compte.
-  it('monte du pas que la salle permet, et le dit', () => {
-    const ev = evaluatePerformance(machine('w3', 14, 15, 17), [
+  it('ajoute le micro-chargement renseigné, sans le ramener sur une grille', () => {
+    // Élévations à la poulie : 5 kg, plaque de 1,125 kg renseignée sur la fiche.
+    // 21 répétitions absorbent le cran en 12–15 (R3.2).
+    const lateral = (reps: number) =>
+      line({
+        exerciseId: 'lateral',
+        workoutId: 'w1',
+        equipment: 'cable',
+        loadIncrementKg: 1.125,
+        sets: [0, 1].map((order) =>
+          set({ order, reps, weight: 5, targetReps: 12, targetRepsMax: 15 }),
+        ),
+      });
+    expect(
+      evaluatePerformance(lateral(21)).signals.find((s) => s.code === 'range_ceiling_reached')
+        ?.nextLoadKg,
+    ).toBe(6.125);
+    expect(
+      evaluatePerformance(lateral(15)).signals.find((s) => s.code === 'range_ceiling_reached')
+        ?.evidence,
+    ).toEqual(
+      expect.arrayContaining([
+        { label: 'step_needs_reps', value: 21 },
+        { label: 'next_step_kg', value: 6.125 },
+      ]),
+    );
+  });
+
+  it('prend la table du matériel quand la fiche est vide, sans deviner dans l’historique', () => {
+    // Des charges de 10, 12,5 et 15 kg montrent des demi-pas ; le coach ne les
+    // déduit plus — « Vide = défaut selon le matériel », dit la fiche. 24
+    // répétitions absorbent +5 kg sur 15 (R3.2).
+    const ev = evaluatePerformance(machine('w3', 14, 15, 24), [
       machine('w2', 7, 12.5, 11),
       machine('w1', 0, 10, 12),
     ]);
-    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
-    expect(ceiling?.nextLoadKg).toBe(17.5);
-    expect(ceiling?.evidence).toContainEqual({ label: 'inferred_increment_kg', value: 2.5 });
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(20);
   });
 
-  it('laisse le réglage de l’exercice primer sur le pas déduit', () => {
-    const ev = evaluatePerformance(machine('w3', 14, 15, 24, { loadIncrementKg: 5 }), [
-      machine('w2', 7, 12.5, 11, { loadIncrementKg: 5 }),
-      machine('w1', 0, 10, 12, { loadIncrementKg: 5 }),
+  it('suit le cran renseigné quel que soit le matériel', () => {
+    const ev = evaluatePerformance(machine('w2', 7, 50, 15, { loadIncrementKg: 2.5 }), [
+      machine('w1', 0, 45, 12, { loadIncrementKg: 2.5 }),
     ]);
-    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
-    expect(ceiling?.nextLoadKg).toBe(20);
-    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('inferred_increment_kg');
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(52.5);
   });
 
-  it('garde la table quand l’historique ne montre pas de pas plus fin', () => {
-    const ev = evaluatePerformance(machine('w2', 7, 50, 15), [machine('w1', 0, 45, 12)]);
-    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
-    expect(ceiling?.nextLoadKg).toBe(55);
-    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('inferred_increment_kg');
-  });
-
-  it('allège du même pas déduit après deux manques', () => {
-    const ev = evaluatePerformance(machine('w4', 21, 15, 8), [
-      machine('w3', 14, 15, 8),
-      machine('w2', 7, 12.5, 12),
-      machine('w1', 0, 10, 12),
+  it('allège du cran renseigné après deux manques', () => {
+    const ev = evaluatePerformance(machine('w2', 7, 15, 8, { loadIncrementKg: 2.5 }), [
+      machine('w1', 0, 15, 8, { loadIncrementKg: 2.5 }),
     ]);
-    const missed = ev.signals.find((s) => s.code === 'range_missed');
-    expect(missed?.nextLoadKg).toBe(12.5);
-    expect(missed?.evidence).toContainEqual({ label: 'inferred_increment_kg', value: 2.5 });
+    expect(ev.signals.find((s) => s.code === 'range_missed')?.nextLoadKg).toBe(12.5);
   });
 });
 
@@ -1311,15 +1323,6 @@ describe('même contrat de répétitions (R4)', () => {
       [contractSession('w1', 0, [12, 12], 10, usual, [9, 9])],
     );
     expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
-  });
-
-  it('déduit toujours le pas de toutes les séances, quel que soit leur contrat', () => {
-    // 20 répétitions : assez pour absorber +2,5 sur 15 kg en 12–15 (R3.2).
-    const ev = evaluatePerformance(contractSession('w3', 14, [20, 20], 15, usual), [
-      contractSession('w2', 7, [12, 12], 12.5, lighter),
-      contractSession('w1', 0, [12, 12], 10, lighter),
-    ]);
-    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(17.5);
   });
 });
 

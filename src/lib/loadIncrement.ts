@@ -37,35 +37,31 @@ export function resolveLoadIncrementKg(exercise: {
   return defaultLoadIncrementKg(exercise.equipment);
 }
 
-/** Under half a kilo, a "step" is more likely a typo or a float than a plate. */
-const MIN_INFERRED_INCREMENT_KG = 0.5;
-
 /**
- * The step a gym really offers, read from the loads actually lifted
- * (spec coach v2, R3.1): the smallest gap between consecutive distinct loads,
- * provided it shows up at least twice.
+ * The step the coach and the targets move a load by, and whether results are
+ * snapped onto its grid.
  *
- * The equipment table says 5 kg for a machine; a lifter who has loaded 10,
- * 12,5 and 15 kg on it has proved there is a 2,5 kg step. Twice, because one
- * odd load (6,125 kg on a cable stack) is not a grid, and inventing a +1,125 kg
- * step from it would be worse than the table.
+ * A step the user typed on the exercise sheet is the truth about their gym and
+ * is added as is: a cable stack at 5 kg plus a 1,125 kg microplate is 6,125 —
+ * snapped onto multiples of 1,125, it became 5,625, a load that does not exist
+ * on that stack. The equipment table is a guess, so its results stay on its grid,
+ * which is what keeps an odd load from drifting off it.
  */
-export function inferLoadIncrementKg(loads: readonly number[]): number | undefined {
-  const distinct = [...new Set(loads.filter((load) => Number.isFinite(load) && load > 0))]
-    .map((load) => Math.round(load * 1000) / 1000)
-    .sort((a, b) => a - b)
-    .filter((load, index, sorted) => index === 0 || load !== sorted[index - 1]);
+export interface LoadStep {
+  kg: number;
+  onGrid: boolean;
+}
 
-  const gaps: number[] = [];
-  for (let i = 1; i < distinct.length; i += 1) {
-    gaps.push(Math.round((distinct[i]! - distinct[i - 1]!) * 1000) / 1000);
+/** Exercise sheet first (« Vide = défaut selon le matériel »), then the table. */
+export function resolveLoadStep(exercise: {
+  equipment: Equipment;
+  loadIncrementKg?: number;
+}): LoadStep {
+  const override = exercise.loadIncrementKg;
+  if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
+    return { kg: override, onGrid: false };
   }
-  if (gaps.length === 0) return undefined;
-
-  const smallest = Math.min(...gaps);
-  if (smallest < MIN_INFERRED_INCREMENT_KG) return undefined;
-  if (gaps.filter((gap) => gap === smallest).length < 2) return undefined;
-  return smallest;
+  return { kg: defaultLoadIncrementKg(exercise.equipment), onGrid: true };
 }
 
 /**
@@ -91,10 +87,12 @@ export function roundLoadToIncrement(load: number, increment: number): number | 
 
 function shiftLoad(
   current: number,
-  increment: number,
+  step: number | LoadStep,
   measurementType: MeasurementType,
   towards: 'harder' | 'easier',
 ): number {
+  // A bare number is a table-like step: snapped onto its grid, as before.
+  const { kg: increment, onGrid } = typeof step === 'number' ? { kg: step, onGrid: true } : step;
   if (!(increment > 0) || !Number.isFinite(increment) || !Number.isFinite(current)) {
     return current;
   }
@@ -107,6 +105,7 @@ function shiftLoad(
   const roleSign = role === 'assist' ? -1 : 1;
   const directionSign = towards === 'harder' ? 1 : -1;
   const raw = current + roleSign * directionSign * increment;
+  if (!onGrid) return Math.max(0, Math.round(raw * 1000) / 1000);
   // Une charge posée sur un demi-pas (12,5 kg sur une machine réglée à 5) fait
   // tomber le pas pile entre deux crans : 17,5 est à égale distance de 15 et 20.
   // `Math.round` tranche toujours vers le haut, donc vers 20 en montant — un pas
@@ -129,7 +128,7 @@ function shiftLoad(
  */
 export function nextLoad(
   current: number,
-  increment: number,
+  increment: number | LoadStep,
   measurementType: MeasurementType,
 ): number {
   return shiftLoad(current, increment, measurementType, 'harder');
@@ -141,7 +140,7 @@ export function nextLoad(
  */
 export function previousLoad(
   current: number,
-  increment: number,
+  increment: number | LoadStep,
   measurementType: MeasurementType,
 ): number {
   return shiftLoad(current, increment, measurementType, 'easier');

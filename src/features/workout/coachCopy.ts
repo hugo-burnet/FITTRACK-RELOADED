@@ -31,10 +31,6 @@ function resolvedNextLoadKg(signal: SignalLike): number | undefined {
  */
 function withEvidenceNotes(signal: SignalLike, message: string): string {
   const notes: string[] = [];
-  const step = evidenceValue(signal, 'inferred_increment_kg');
-  if (step !== undefined && resolvedNextLoadKg(signal) !== undefined) {
-    notes.push(t('coach.inferredIncrement', { step: formatNumber(step) }));
-  }
   const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
   if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
   if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {

@@ -1,12 +1,7 @@
 import { isWorkingSet } from '@/lib/records';
 import { measurementShape, type WeightRole } from '@/lib/measurement';
 import { estimateOneRepMax, repsToAbsorbStep, type OneRepMaxFormula } from '@/lib/oneRepMax';
-import {
-  defaultLoadIncrementKg,
-  inferLoadIncrementKg,
-  nextLoad,
-  previousLoad,
-} from '@/lib/loadIncrement';
+import { nextLoad, previousLoad, resolveLoadStep, type LoadStep } from '@/lib/loadIncrement';
 import type {
   CoachAction,
   CoachEvaluateOptions,
@@ -130,40 +125,6 @@ function sessionEffort(line: CoachExerciseLine): number | undefined {
 
 function roundRpe(value: number): number {
   return Math.round(value * 10) / 10;
-}
-
-/** The load step the engine uses, and whether it was read from the history. */
-interface CoachIncrement {
-  kg: number;
-  inferred: boolean;
-}
-
-/**
- * Exercise setting → step read from the loads lifted, when finer than the
- * table → equipment table (spec coach v2, R3.1). A machine the user has loaded
- * at 10, 12,5 and 15 kg has a 2,5 kg step, whatever the table says.
- */
-function coachIncrement(newestFirst: readonly CoachExerciseLine[]): CoachIncrement {
-  const latest = newestFirst[0]!;
-  const override = latest.loadIncrementKg;
-  if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
-    return { kg: override, inferred: false };
-  }
-  const table = defaultLoadIncrementKg(latest.equipment);
-  const loads: number[] = [];
-  for (const line of newestFirst) {
-    for (const set of completedWorkingSets(line.sets)) {
-      if (typeof set.weight === 'number') loads.push(set.weight);
-    }
-  }
-  const inferred = inferLoadIncrementKg(loads);
-  return inferred !== undefined && inferred < table
-    ? { kg: inferred, inferred: true }
-    : { kg: table, inferred: false };
-}
-
-function withIncrementEvidence(evidence: CoachEvidence[], increment: CoachIncrement): void {
-  if (increment.inferred) evidence.push({ label: 'inferred_increment_kg', value: increment.kg });
 }
 
 /**
@@ -297,7 +258,7 @@ function repsNeededForStep(
  */
 function rangePartitionSignal(
   line: CoachExerciseLine,
-  increment: CoachIncrement,
+  increment: LoadStep,
   returning: boolean,
 ): CoachSignal | undefined {
   if (isDeloadLine(line)) return undefined;
@@ -356,7 +317,7 @@ function rangePartitionSignal(
   }
   // Reprise (R5) : le constat reste, la charge attend la séance d'après.
   if (lastWeight !== undefined && !grinding && !returning) {
-    const proposed = nextLoad(lastWeight, increment.kg, line.measurementType);
+    const proposed = nextLoad(lastWeight, increment, line.measurementType);
     const needed = repsNeededForStep(line, working, lastWeight, proposed);
     if (needed !== undefined) {
       // Le cran est celui du matériel ; tant que les répétitions ne l'absorbent
@@ -369,7 +330,6 @@ function rangePartitionSignal(
     } else if (proposed !== lastWeight) {
       nextLoadKg = proposed;
       evidence.push({ label: 'next_load_kg', value: proposed });
-      withIncrementEvidence(evidence, increment);
     }
   }
   evidence.push(...failureEvidence);
@@ -488,7 +448,7 @@ function floorMiss(
  */
 function rangeMissedSignal(
   historyNewestFirst: readonly CoachExerciseLine[],
-  increment: CoachIncrement,
+  increment: LoadStep,
 ): CoachSignal | undefined {
   const comparable = historyNewestFirst.filter((line) => !isDeloadLine(line));
   if (comparable.length < MISSED_SESSIONS) return undefined;
@@ -501,7 +461,7 @@ function rangeMissedSignal(
   if (earlier.some((miss) => miss.loadKg !== latest!.loadKg)) return undefined;
 
   const line = window[0]!;
-  const proposed = previousLoad(latest!.loadKg, increment.kg, line.measurementType);
+  const proposed = previousLoad(latest!.loadKg, increment, line.measurementType);
   if (proposed === latest!.loadKg) return undefined;
 
   const evidence: CoachEvidence[] = [
@@ -517,10 +477,7 @@ function rangeMissedSignal(
   // Le constat reste — le bas de fourchette a bien été manqué deux fois — mais
   // sans proposition chiffrée, il n'y a rien de plus léger à mettre.
   const usable = proposed > 0;
-  if (usable) {
-    evidence.push({ label: 'next_load_kg', value: proposed });
-    withIncrementEvidence(evidence, increment);
-  }
+  if (usable) evidence.push({ label: 'next_load_kg', value: proposed });
 
   return {
     code: 'range_missed',
@@ -959,9 +916,10 @@ export function evaluatePerformance(
 
   const signals: CoachSignal[] = [];
 
-  // Le pas se lit sur tout l'historique : une charge soulevée prouve un cran,
-  // quelle que soit la fourchette du jour et même avant une pause.
-  const increment = coachIncrement(newestFirst);
+  // Le cran est celui de la fiche de l'exercice, sinon celui du matériel. Le
+  // coach v2 l'a d'abord déduit des charges soulevées ; il ne savait pas lire un
+  // micro-chargement de 1,125 kg sur une poulie, que l'utilisateur, lui, renseigne.
+  const increment = resolveLoadStep(latest);
   const { lines: sinceReturn, gapDays } = sinceLatestReturn(newestFirst);
   const contract = contractKey(latest);
   const comparable = sinceReturn.filter((entry) => contractKey(entry) === contract);

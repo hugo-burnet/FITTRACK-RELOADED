@@ -3,11 +3,11 @@ import { EQUIPMENT, type Equipment, MEASUREMENT_TYPES } from '@/data/types';
 import {
   DEFAULT_LOAD_INCREMENT_KG,
   defaultLoadIncrementKg,
-  inferLoadIncrementKg,
   nextLoad,
   previousLoad,
   roundLoadToIncrement,
   resolveLoadIncrementKg,
+  resolveLoadStep,
 } from './loadIncrement';
 
 describe('DEFAULT_LOAD_INCREMENT_KG', () => {
@@ -178,30 +178,40 @@ describe('previousLoad', () => {
   });
 });
 
-describe('inferLoadIncrementKg', () => {
-  it('lit le pas réel dans les charges soulevées', () => {
-    // Oiseau à la machine, historique réel : la table dit 5 kg, la salle a des demi-pas.
-    expect(inferLoadIncrementKg([10, 12.5, 7.5, 12.5, 10])).toBe(2.5);
-    expect(inferLoadIncrementKg([40, 42.5, 45, 47.5, 50])).toBe(2.5);
+describe('resolveLoadStep', () => {
+  it('prend le cran renseigné sur la fiche, tel quel', () => {
+    expect(resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 })).toEqual({
+      kg: 1.125,
+      onGrid: false,
+    });
   });
 
-  it('exige que le plus petit écart revienne au moins deux fois', () => {
-    // Poulie à 3,5 / 5 / 6,125 : un seul écart de 1,125 — une charge isolée ne
-    // fait pas une grille, et proposer +1,125 kg serait inventer un cran.
-    expect(inferLoadIncrementKg([3.5, 5, 6.125])).toBeUndefined();
+  it('retombe sur la table du matériel quand la fiche est vide, et garde sa grille', () => {
+    expect(resolveLoadStep({ equipment: 'machine' })).toEqual({ kg: 5, onGrid: true });
+    expect(resolveLoadStep({ equipment: 'machine', loadIncrementKg: 0 })).toEqual({
+      kg: 5,
+      onGrid: true,
+    });
+  });
+});
+
+describe('cran renseigné : ajouté tel quel, sans grille', () => {
+  const microload = resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 });
+
+  it('ajoute le micro-chargement à la charge du jour', () => {
+    // Poulie à 5 kg + plaque de 1,125 : 6,125. Ramené sur la grille des multiples
+    // de 1,125, le calcul tombait à 5,625 — une charge qui n'existe pas sur la poulie.
+    expect(nextLoad(5, microload, 'weight_reps')).toBe(6.125);
+    expect(previousLoad(6.125, microload, 'weight_reps')).toBe(5);
   });
 
-  it('ne descend pas sous un demi-kilo', () => {
-    expect(inferLoadIncrementKg([10, 10.25, 10.5, 10.75])).toBeUndefined();
+  it('garde l’inversion de l’assistance et le plancher à zéro', () => {
+    const step = resolveLoadStep({ equipment: 'machine', loadIncrementKg: 2.5 });
+    expect(nextLoad(31, step, 'assisted_weight_reps')).toBe(28.5);
+    expect(previousLoad(1, step, 'weight_reps')).toBe(0);
   });
 
-  it('se tait sans au moins trois charges distinctes', () => {
-    expect(inferLoadIncrementKg([])).toBeUndefined();
-    expect(inferLoadIncrementKg([20, 20, 20])).toBeUndefined();
-    expect(inferLoadIncrementKg([20, 22.5])).toBeUndefined();
-  });
-
-  it('tolère les écarts flottants', () => {
-    expect(inferLoadIncrementKg([0.1 + 0.2, 0.8, 1.3])).toBe(0.5);
+  it('ne laisse pas traîner d’écart flottant', () => {
+    expect(nextLoad(0.1, resolveLoadStep({ equipment: 'band', loadIncrementKg: 0.2 }), 'weight_reps')).toBe(0.3);
   });
 });
