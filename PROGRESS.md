@@ -16,6 +16,13 @@ demande explicite de l'utilisateur, une fois la branche terminée : l'accord don
 pour elle. Les cinq sections d'en dessous en font partie. Le numéro est celui de `package.json`, que l'APK lit
 aussi pour son `versionName`.
 
+La voie est celle de la v2.9.0 : fusion `--no-ff` (`ca2bc6c`), `chore: prepare release v2.10.0` (`033a146`,
+`package.json`, le lock et ce fichier), `master` poussé sans force, le déploiement et le build Android du commit
+verts du premier coup (runs 180 et 167), puis la release par le `workflow_dispatch` d'`android.yml` avec
+`release_tag` (run 168) — le push d'un tag est refusé à une session d'agent (consigné pour la v2.9.0, pas retenté
+cette fois), et le tag désigne ainsi le commit construit. La page : `releases/tag/v2.10.0`, l'asset
+`FitTrack-v2.10.0.apk` (11 079 496 octets, SHA-256 `e3ae8083…bd7`, la somme que GitHub annonce).
+
 C'est le défaut voisin que la section d'en dessous avait consigné sans le corriger, et que l'utilisateur a
 demandé de corriger.
 
@@ -51,18 +58,30 @@ feuille en fournissait six, dont celui qu'il ne fallait pas.
   la série 2 montée à 105 kg avec le pas de la feuille, « Appliquer à toutes les séries » donne
   `[échauffement 40 × 5, travail 105 × 8, travail 105 × 8]` ; la feuille de l'échauffement dit « Appliquer aux
   échauffements » sur une ligne ; l'appuyer ne change rien d'autre ; aucune erreur de console.
+- **La v2.10.0 sur `master`, avant de pousser** : `typecheck`, `lint`, les 3 001 tests, `build`, puis
+  `android:sync` (le build web du mode Android et la synchro Capacitor) verts avec le numéro changé.
+- **L'APK de la v2.10.0, ouvert et lu** : `2.10.0` dans le manifeste (`versionName`) et dans le paquet web ;
+  « Durée du cycle », « Choisir les dossiers », « Ajouter un dossier » et « Appliquer aux échauffements » y sont,
+  donc le cycle, l'accueil multi-dossiers, le bouton de dossier et le correctif y sont ; les huit `woff2` ; et il
+  est signé par le **même certificat** que la v2.9.0 (SHA-256 `1bc42667…b931`, schéma v2) : il s'installe par-dessus.
+- **Le déploiement Pages** : l'API GitHub le donne en `success` pour `033a146`.
 
 **Pièges rencontrés**
 
+- `git merge` n'accepte pas `-F -` (le message sur l'entrée standard, que `git commit` accepte) : « could not read
+  file '-' », et rien n'est fusionné. Le message va dans un fichier.
+- Le proxy de la session refuse `hugo-burnet.github.io` (403) : le site déployé ne se lit pas d'ici, seul le
+  déploiement se vérifie, par l'API.
 - Un libellé qui tient en Sombre peut passer sur deux lignes dans TTY1 : la police du terminal est à chasse fixe, et
   les crochets du bouton prennent de la place. Mesurer dans TTY1 — c'est la troisième fois de la journée.
 - `pkill -f <motif>` a de nouveau tué le shell de la session, alors que la section de la v2.9.0 l'avait consigné : le
   motif figure dans la ligne de commande du shell. `pgrep -f "[m]otif"`, ou tuer par PID.
 
-**Non vérifié** : le rendu sur un téléphone, l'APK.
+**Non vérifié** : le rendu sur un téléphone, l'APK installé et lancé (il a été ouvert et lu, pas exécuté), et le site Pages lui-même.
 
 **Checkpoint téléphone**, en salle ou à défaut à bout de bras :
 
+0. Installer la v2.10.0 par-dessus (`releases/tag/v2.10.0`) : l'en-tête dit « v2.10.0 », les séances et routines sont intactes.
 1. Éditeur d'une routine qui porte un échauffement planifié (série 1, « Échauffement », 40 kg) et deux séries de
    travail : ouvrir une série de travail, monter la charge, « Appliquer à toutes les séries ».
 2. L'échauffement n'a pas bougé (« ÉCH. », 40 kg) ; les séries de travail ont la nouvelle charge.
