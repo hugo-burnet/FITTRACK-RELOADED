@@ -1,7 +1,7 @@
 # Coach v2 — lire l'effort, pas seulement les répétitions
 
 **Date :** 2026-10-04
-**Statut :** proposition — **à valider** (questions ouvertes au § 9)
+**Statut :** conception validée le 2026-10-04 (décisions au § 9)
 **Prolonge :** Lot 18 (`docs/plans/lot-18-coach-deterministe.md`) et
 `2026-08-13-program-intention-coach-design.md` (le bloc fixe l'intention, le Coach valide l'action).
 **Ne remplace pas :** le moteur déterministe et pur (`src/lib/coach/`, ni Dexie ni `Date.now()`),
@@ -92,7 +92,7 @@ séries porte un RPE.
 1. **Plafond à l'arraché.** Plafond atteint avec un effort ≥ `CEILING_GRINDING_RPE` (9,5) :
    le signal `range_ceiling_reached` est émis mais `increase_load` n'est pas autorisé ; nouveau
    drapeau d'évidence `ceiling_grinding` (« Plafond atteint à l'échec : refais-le plus facilement
-   avant de monter »). *Question ouverte Q1.*
+   avant de monter »). *Décision Q1 : consolider.*
 2. **Consolidation lisible.** Même charge, mêmes répétitions qu'à la séance comparable
    précédente, effort en baisse d'au moins 0,5 → nouveau code `consolidating` (« Même travail,
    moins d'effort »). Rang d'affichage : sous un plafond (qui reste la nouvelle à donner),
@@ -116,7 +116,7 @@ série à l'échec à 10 sous un plancher de 12 déclenche `range_missed` et pro
   toutes les séries de progression sont à l'échec ne témoigne de rien pour le plancher.
 - La partition plafond / fourchette se lit sur les séries hors échec. Une série à l'échec qui
   dépasse le plafond ajoute une évidence `failure_reps_over_ceiling` (marge disponible), sans
-  changer la partition. *Question ouverte Q5.*
+  changer la partition. *Décision Q5 : information seulement.*
 - Le 1RM estimé et le plateau **continuent** de lire les séries à l'échec : ce sont les mieux
   mesurées de la séance.
 
@@ -134,7 +134,8 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
 2. **Pas relatif plafonné.** Si le pas proposé dépasse `MAX_RELATIVE_STEP` (10 %) de la charge,
    le plafond n'autorise pas `increase_load` tout de suite : il autorise `increase_reps` au-delà
    de la fourchette, jusqu'à `targetRepsMax + EXTRA_REPS_BEFORE_BIG_STEP` (3), puis la hausse.
-   Évidence `relative_step_pct` pour que la carte affiche le pourcentage. *Question ouverte Q2.*
+   Évidence `relative_step_pct` pour que la carte affiche le pourcentage. *Décision Q2 : 10 % et
+   3 répétitions.*
 
 ### R4 — Ne comparer que ce qui est comparable
 
@@ -156,7 +157,8 @@ peuvent prescrire le même contrat — ce qui est comparable, c'est la prescript
 **Constat.** 15 retours après ≥ 14 jours en 8 semaines. Après 21 jours sans presse, le coach
 propose +5 kg comme si les séances s'enchaînaient.
 
-**Règle.** Si l'écart avec la séance comparable précédente dépasse `RETURN_GAP_DAYS` (14) :
+**Règle.** Si l'écart avec la séance comparable précédente atteint `RETURN_GAP_DAYS` (14, décision
+Q4) :
 - pas d'`increase_load` ni d'`add_set` sur la séance de retour ; signal `returning`
   (« Reprise après N jours : on consolide avant de monter ») ;
 - la fenêtre du plateau et de `range_missed` repart de la séance de retour.
@@ -174,11 +176,22 @@ travail indirect), ischios 3,8, quadriceps 5,1.
   jours glissants, avec la même logique que `muscleBalance`, qui compte et ne pondère pas
   (cf. le commentaire de `lib/analytics/involvement.ts`). Le travail indirect à 0,4 est affiché en
   contexte, jamais utilisé pour décider.
-- `add_set` n'est autorisé que si le muscle principal de l'exercice est sous
-  `WEEKLY_SETS_HIGH`. Un signal de semaine `volume_low` est émis pour un muscle sous
-  `WEEKLY_SETS_LOW` deux semaines de suite.
-- Bornes **personnelles et réglables**, aucune valeur « scientifique » par défaut affichée comme
-  telle (invariant 4). *Question ouverte Q3.*
+
+**Bornes adaptées à l'utilisateur (décision Q3).** Aucun chiffre universel. Les bornes viennent de
+l'historique de la personne, et c'est elle qui les corrige :
+
+- **Référence personnelle** par muscle : les 6 dernières semaines complètes. Il en faut au moins 3
+  où le muscle a été travaillé, sinon la règle se tait (invariant 2).
+- **Plafond par défaut** = le plus haut volume hebdomadaire observé sur ces semaines, soit ce que
+  la personne a déjà encaissé. `add_set` n'est autorisé que si la semaine glissante est en dessous.
+  La règle n'empêche pas de progresser en volume : elle empêche le coach de proposer d'aller
+  au-delà de ce qui a déjà été tenu.
+- **Plancher par défaut** = aucun. L'app ne décide pas que 3,8 séries d'ischios, c'est trop peu :
+  c'est peut-être un choix. Le signal `volume_low` n'existe que pour un muscle dont la personne a
+  posé un plancher, et se déclenche sous ce plancher deux semaines de suite.
+- **Réglage** : un écran « Volume par muscle » montre, pour chaque muscle, la médiane et le
+  maximum de ses 6 semaines, et permet de fixer un plancher et un plafond. Stockage dans la table
+  `settings` (clé `coachVolumeBounds`) : aucune version de schéma.
 
 Ce signal est **par semaine**, pas par exercice : il demande une carte à part (accueil ou fin de
 séance), et un `exerciseId` facultatif dans le journal.
@@ -198,8 +211,9 @@ réel existe pour l'écrire en test.
   `exercisePrimaryMuscle`, déjà sur `workoutExercises`).
 - `CoachSignalCode` gagne `consolidating`, `returning`, `volume_low`. Lecture rétrocompatible :
   les anciennes lignes du journal ne changent pas.
-- R6 seul pourrait demander un `exerciseId` facultatif sur `coachRecommendations` ; à trancher au
-  plan, avec la version de schéma qui l'accompagne si besoin.
+- R6 : bornes dans `settings` (clé `coachVolumeBounds`, sauvegardée avec le reste de la table). Le
+  signal de semaine pourrait demander un `exerciseId` facultatif sur `coachRecommendations` ; à
+  trancher au plan de la tranche 5, avec la version de schéma qui l'accompagne si besoin.
 - Toutes les chaînes nouvelles dans `src/i18n/fr.ts` (`coachCopy`).
 
 ## 7. Banc de rejeu
@@ -228,16 +242,15 @@ combinaison avec un autre.
 
 Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test:run`, `build`.
 
-## 9. Questions ouvertes
+## 9. Décisions (2026-10-04)
 
-- **Q1 — Plafond à RPE ≥ 9,5.** Consolider une séance de plus (proposé) ou monter quand même ?
-- **Q2 — Pas relatif.** 10 % comme plafond, et 3 répétitions au-delà de la fourchette avant le
-  gros pas : est-ce ainsi que tu procèdes sur les élévations latérales ?
-- **Q3 — Bornes de volume.** Quelles bornes par muscle ? Les mêmes pour tous, ou différenciées
-  (petits muscles, priorités) ?
-- **Q4 — Retour de pause.** 14 jours, ou plus court ?
-- **Q5 — Série à l'échec au-delà du plafond.** Simple information (proposé), ou elle compte comme
-  plafond atteint ?
+| | Question | Décision |
+|---|---|---|
+| Q1 | Plafond atteint à RPE ≥ 9,5 | **Consolider** : refaire la charge avant de monter |
+| Q2 | Pas relatif | **10 %** maximum ; au-delà, **3 répétitions** de plus que la fourchette avant le saut |
+| Q3 | Bornes de volume | **Adaptées à l'utilisateur** : plafond tiré de son historique, plancher seulement s'il le pose (R6) |
+| Q4 | Retour de pause | **14 jours** |
+| Q5 | Série à l'échec au-delà du plafond | **Information** ; elle ne change pas la partition |
 
 ## 10. Tests minimaux (contrat)
 
@@ -254,7 +267,10 @@ Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test
   d'`increase_load`.
 - R4 : séance « reprise » 7,5 × 10 sur 10–12 après des 10 × 12 sur 12–15 → pas de plateau.
 - R5 : écart de 21 jours → pas d'`increase_load`, signal `returning`, fenêtre remise à zéro.
-- R6 : muscle à `WEEKLY_SETS_HIGH` → `add_set` retiré, `increase_load` intact.
+- R6 : semaine glissante au plus haut des 6 dernières semaines → `add_set` retiré, `increase_load`
+  intact ; moins de 3 semaines d'historique → aucun effet.
+- R6 : sans plancher posé, aucun `volume_low`, même à 2 séries par semaine ; plancher posé à 8 et
+  deux semaines à 6 → `volume_low`.
 - Non-régression : les 52 tests actuels de `evaluate.test.ts` restent verts sans modification
   d'assertion.
 
