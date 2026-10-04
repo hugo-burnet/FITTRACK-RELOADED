@@ -3,11 +3,22 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**coach v2 : le cran est celui de la fiche de l'exercice, ajouté tel quel** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**v2.11.0 — le coach v2 : rejoué sur un historique réel, il lit le RPE, la série à l'échec, la fourchette, la reprise après une pause, et le cran de la fiche de l'exercice**).
+
+## Publication de la v2.11.0 — le coach v2 (2026-10-04, suite)
+
+Publication : un tag, **v2.11.0** — mineur et non correctif : le coach gagne des capacités (deux constats
+nouveaux, `consolidating` et `returning`, la lecture du RPE, des répétitions à viser avant un cran trop lourd)
+et le dépôt un banc de rejeu ; le reste corrige (trois défauts du coach v1, l'arrondi d'un cran renseigné aux
+quatre endroits qui le calculent). Aucune table, aucun index, aucune version de schéma, aucun export : une
+sauvegarde v2.10.0 se restaure telle quelle, et une sauvegarde v2.11.0 contenant les deux codes nouveaux est
+acceptée par la validation. Fusion `--no-ff` dans `master` (`3fa42cc`) sur demande explicite de l'utilisateur,
+puis version demandée par lui. Les sections d'en dessous, jusqu'à « Le coach rejoué sur un historique réel »,
+en font partie. Le numéro est celui de `package.json`, que l'APK lit pour son `versionName`.
 
 ## Coach v2 : le cran de la fiche, tel quel (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
 version de schéma : le champ « Incrément de charge » de la fiche existe déjà.
 
 **Décision de l'utilisateur** : « sur une poulie tu peux micro-charger à +1,125 — on va plutôt respecter les
@@ -32,7 +43,7 @@ incrémentations que l'utilisateur renseigne déjà dans la fiche de l'exo ».
 
 ## Coach v2, tranche 4 : les répétitions absorbent le cran (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
 version de schéma.
 
 **La règle a changé avant d'être codée.** La spec prévoyait un saut maximal de 10 % et 3 répétitions au-delà
@@ -60,7 +71,7 @@ retomber au bas de la fourchette après le cran.
 
 ## Coach v2, tranche 3 : même fourchette, retour de pause (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
 version de schéma.
 
 - **R4 — même contrat.** `contractKey` : les paires `targetReps–targetRepsMax` des séries de travail. Le bas
@@ -81,7 +92,7 @@ version de schéma.
 
 ## Coach v2, tranche 2 : le coach lit le RPE (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
 version de schéma : `rpe` existe depuis RF-30, il n'était simplement pas transmis au moteur.
 
 - **Effort de séance** : moyenne des RPE des séries jugées (séries à l'échec exclues, elles sont à 10 par
@@ -102,7 +113,7 @@ version de schéma : `rpe` existe depuis RF-30, il n'était simplement pas trans
 
 ## Coach v2 : décisions, banc de rejeu et tranche 1 (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus). Aucune table, aucun index, aucune
 version de schéma.
 
 **Décisions de l'utilisateur** (spec § 9) : consolider un plafond atteint à l'échec ; pas relatif de 10 % et
@@ -130,7 +141,7 @@ Plan : `docs/design/plans/2026-10-04-coach-v2.md`.
 
 ## Le coach rejoué sur un historique réel : trois correctifs et la spec v2 (2026-10-04, suite)
 
-Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée** : la v2.10.0 reste la dernière version.
+Branche de session `ccr-5ffd8e9e-uazeho`, fusionnée et publiée en v2.11.0 (section au-dessus).
 Aucune table, aucun index, aucune version de schéma.
 
 L'utilisateur trouvait le coach « trop simpliste » et a fourni une sauvegarde (28 séances, ~8 semaines, 164
@@ -1065,7 +1076,7 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
 
 ## Checkpoints téléphone encore dus
 
-- **Coach** (2026-10-04, branche de session, une fois fusionnée) — au plafond sur une machine où tu charges
+- **Coach** (v2.11.0) — au plafond sur une machine où tu charges
    par 2,5 kg, la carte propose +2,5 kg et dit « Pas de 2,5 kg, lu dans les charges que tu as déjà chargées ».
    Rowing tenu en haut de fourchette : la carte propose la hausse au lieu de « Plateau ». Une série à l'échec
    finie sous le bas de fourchette ne déclenche plus ni « Baisse de reps » ni allègement ; finie sous le haut,
