@@ -76,7 +76,16 @@ function shiftLoad(
   const roleSign = role === 'assist' ? -1 : 1;
   const directionSign = towards === 'harder' ? 1 : -1;
   const raw = current + roleSign * directionSign * increment;
-  const rounded = Math.round(raw / increment) * increment;
+  // Une charge posée sur un demi-pas (12,5 kg sur une machine réglée à 5) fait
+  // tomber le pas pile entre deux crans : 17,5 est à égale distance de 15 et 20.
+  // `Math.round` tranche toujours vers le haut, donc vers 20 en montant — un pas
+  // de 7,5 kg, +60 % sur un oiseau à 12,5 kg. L'égalité se tranche vers la charge
+  // de départ : on ne s'éloigne jamais de plus d'un incrément.
+  const ratio = raw / increment;
+  const lower = Math.floor(ratio);
+  const isTie = Math.abs(ratio - lower - 0.5) < 1e-9;
+  const steps = isTie ? (raw > current ? lower : lower + 1) : Math.round(ratio);
+  const rounded = steps * increment;
   // Float hygiene: 102.5 / 2.5 * 2.5 can still land at 102.50000000000001.
   const cleaned = Math.round(rounded * 1000) / 1000;
   return Math.max(0, cleaned);

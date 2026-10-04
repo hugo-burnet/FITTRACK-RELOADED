@@ -154,6 +154,23 @@ describe('range_ceiling_reached (was range_completed)', () => {
     );
   });
 
+  it('ne propose jamais plus d’un incrément depuis un demi-pas machine', () => {
+    // Oiseau à la machine, 12,5 kg × 15 sur 12–15, pas machine par défaut 5 kg.
+    // Le coach proposait 20 kg trois séances de suite.
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'reverse-fly',
+        workoutId: 'w1',
+        equipment: 'machine',
+        sets: [
+          set({ order: 0, reps: 15, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+          set({ order: 1, reps: 15, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+        ],
+      }),
+    ]);
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 15 });
+  });
+
   it('emits range_satisfied (not ceiling) when one set is under the top', () => {
     const signals = evaluateCoach([
       line({

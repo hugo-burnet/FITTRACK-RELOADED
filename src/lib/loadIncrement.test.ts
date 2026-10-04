@@ -102,6 +102,16 @@ describe('nextLoad', () => {
     expect(nextLoad(47, 2.5, 'weight_reps')).toBe(50);
   });
 
+  it('never steps more than one increment from a half-step load', () => {
+    // Vu sur un vrai historique : oiseau à la machine à 12,5 kg, pas machine de
+    // 5 kg. 12,5 + 5 = 17,5 tombe pile entre 15 et 20 ; l'arrondi vers le haut
+    // proposait 20 kg (+60 %). Le cran retenu est celui du côté de la charge.
+    expect(nextLoad(12.5, 5, 'weight_reps')).toBe(15);
+    expect(nextLoad(47.5, 5, 'weight_reps')).toBe(50);
+    // Assistance : progresser, c'est retirer de l'aide — même règle, sens inverse.
+    expect(nextLoad(12.5, 5, 'assisted_weight_reps')).toBe(10);
+  });
+
   it('leaves time_only and distance_time unchanged (no weight role)', () => {
     expect(nextLoad(60, 2.5, 'time_only')).toBe(60);
     expect(nextLoad(1000, 2.5, 'distance_time')).toBe(1000);
@@ -147,6 +157,11 @@ describe('previousLoad', () => {
 
   it('rounds back onto the increment grid like its twin', () => {
     expect(previousLoad(100.4, 2.5, 'weight_reps')).toBe(97.5);
+  });
+
+  it('never steps more than one increment down from a half-step load', () => {
+    expect(previousLoad(12.5, 5, 'weight_reps')).toBe(10);
+    expect(previousLoad(12.5, 5, 'assisted_weight_reps')).toBe(15);
   });
 
   it('leaves a type with no weight field alone', () => {
