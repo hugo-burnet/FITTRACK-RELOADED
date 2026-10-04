@@ -1,6 +1,6 @@
 import { db } from '@/data/db';
 import type { RoutineSet } from '@/data/types';
-import { lastWorkingSet } from '@/lib/records';
+import { isWorkingSet, lastWorkingSet } from '@/lib/records';
 import { alive, newEntity, softDelete, touch } from './base';
 
 /** What a set sheet may change. `order` is excluded: it belongs to the list, not to a form. */
@@ -61,16 +61,30 @@ export async function updateRoutineSet(id: string, changes: RoutineSetTargets): 
   await db.routineSets.put(touch(set, changes));
 }
 
-/** Moving a whole exercise from 80 to 85 kg is a routine's most frequent edit. */
+/**
+ * Moving a whole exercise from 80 to 85 kg is a routine's most frequent edit.
+ *
+ * The sheet sends its whole draft, and the draft's `setType` is the **kind of the
+ * set the figures come from** — it says where they apply, it is not one of them.
+ * The figures go to the live sets of that same kind (work or warm-up) and the type
+ * itself is never written. Written on every set, as it once was, the draft turned
+ * a planned warm-up into a working set at the working load: 40 × 5 became 105 × 8.
+ *
+ * Figures with no type are working figures: the safe reading, since the one thing
+ * this must never do unasked is move a warm-up.
+ */
 export async function applyToAllSets(
   routineExerciseId: string,
   changes: RoutineSetTargets,
 ): Promise<void> {
+  const { setType, ...figures } = changes;
+  const fromWork = isWorkingSet({ setType: setType ?? 'normal' });
+
   const sets = alive(
     await db.routineSets.where('routineExerciseId').equals(routineExerciseId).toArray(),
-  );
+  ).filter((set) => isWorkingSet(set) === fromWork);
   if (sets.length === 0) return;
-  await db.routineSets.bulkPut(sets.map((set) => touch(set, changes)));
+  await db.routineSets.bulkPut(sets.map((set) => touch(set, figures)));
 }
 
 /** Renumbers what is left: "série 1, série 3" is a hole you can read on screen. */

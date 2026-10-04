@@ -1218,6 +1218,11 @@ const fr = {
     targetDistanceLabel: 'Distance visée',
     targetDistanceHint: 'En mètres. 1 000 m s’affiche « 1 km ».',
     applyToAll: 'Appliquer à toutes les séries',
+    /**
+     * Sur un échauffement, le bouton ne répercute que sur les autres échauffements
+     * (`applyToAllSets`) : il le dit, au lieu de promettre toutes les séries.
+     */
+    applyToAllWarmups: 'Appliquer aux échauffements',
     deleteSet: 'Supprimer la série',
     /**
      * Le mot gravé sous la ligne, découvert par le balayage — même geste et même

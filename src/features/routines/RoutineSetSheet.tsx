@@ -212,7 +212,11 @@ export function RoutineSetSheet({
         )}
 
         {/* Raising a whole exercise from 80 to 85 kg is a routine's most frequent
-            edit, and doing it set by set is how you forget one. */}
+            edit, and doing it set by set is how you forget one.
+
+            The draft goes out with its `setType`: that is what tells the
+            repository which sets the figures apply to — work sets from a work
+            set, warm-ups from a warm-up — and the label says the same. */}
         <Button
           fullWidth
           size="lg"
@@ -221,7 +225,7 @@ export function RoutineSetSheet({
             onClose();
           }}
         >
-          {t('routine.applyToAll')}
+          {t(draft.setType === 'warmup' ? 'routine.applyToAllWarmups' : 'routine.applyToAll')}
         </Button>
 
         <Button
