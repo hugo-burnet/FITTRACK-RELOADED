@@ -3,13 +3,21 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**« Appliquer à toutes les séries » ne touche plus à l'échauffement ; avant : le cadenas d'ordre revient dans la séance, « Ajouter une série » ne recopie plus l'échauffement, ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+**Dernière mise à jour :** 2026-10-04 (**v2.10.0 — le cycle des programmes, « À lancer » sur plusieurs dossiers, un dossier d'un coup dans le split, l'échauffement qu'on ne recopie plus ni n'écrase, le cadenas d'ordre dans la séance**).
 
 ## « Appliquer à toutes les séries » ne touche plus à l'échauffement (2026-10-04, suite)
 
-Publication : **aucune** pour l'instant, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`,
-toujours en 2.9.0. C'est le défaut voisin que la section d'en dessous avait consigné sans le corriger, et que
-l'utilisateur a demandé de corriger. Aucune table, aucun index, aucune version de schéma.
+Publication : un tag, **v2.10.0** — mineur et non correctif : un split de bloc peut s'étendre sur un cycle de
+une à quatre semaines, « À lancer » suit plusieurs dossiers et un dossier se pose d'un coup dans le split (trois
+capacités qui n'existaient pas), et le reste retouche la séance et l'éditeur de routine (l'ajout de série qui
+recopiait l'échauffement, « Appliquer à toutes les séries » qui l'écrasait, le cadenas d'ordre rangé dans un
+menu). Aucune table, aucun index, aucune version de schéma, aucun export. Fusionné dans `master` et publié sur
+demande explicite de l'utilisateur, une fois la branche terminée : l'accord donné pour la v2.9.0 ne valait que
+pour elle. Les cinq sections d'en dessous en font partie. Le numéro est celui de `package.json`, que l'APK lit
+aussi pour son `versionName`.
+
+C'est le défaut voisin que la section d'en dessous avait consigné sans le corriger, et que l'utilisateur a
+demandé de corriger.
 
 **La cause.** La feuille d'une série envoie **tout son brouillon**, type compris (`onApplyToAll(draft)`), et
 `applyToAllSets` l'écrivait sur chaque série de l'exercice. Depuis une série de travail montée à 105 kg, un
@@ -62,9 +70,8 @@ feuille en fournissait six, dont celui qu'il ne fallait pas.
 
 ## Le cadenas d'ordre revient dans la séance en cours (2026-10-04, suite)
 
-Publication : **aucune**, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
-2.9.0. Demande de l'utilisateur : « fais réapparaître le cadenas quand la routine est en cours ». Aucune table,
-aucun index, aucune version de schéma.
+Publié dans la **v2.10.0** (voir la publication en haut de ce fichier). Demande de l'utilisateur : « fais
+réapparaître le cadenas quand la routine est en cours ». Aucune table, aucun index, aucune version de schéma.
 
 **Ce qui s'était passé.** Le 2026-09-06, la passe « alléger la séance » (`660fc61`) a sorti le cadenas d'ordre
 **et** la commande de deload du bandeau pour les ranger dans le menu « Options de la séance ». Le bandeau n'a
@@ -119,8 +126,8 @@ cadenas à l'œil ne le cherche pas dans un menu : il a cru qu'il avait disparu.
 
 ## « Ajouter une série » ne recopie plus l'échauffement (2026-10-04, suite)
 
-Publication : **aucune**, comme les deux sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours
-en 2.9.0. C'est la demande de la section d'en dessous (l'échauffement qui ressort en suggestion), reprise après
+Publié dans la **v2.10.0**. C'est la demande de la section d'en dessous (l'échauffement qui ressort en
+suggestion), reprise après
 la précision de l'utilisateur : « je mets systématiquement le marqueur échauffement ». Le diagnostic d'alors
 (un échauffement non marqué) ne tenait donc pas. Aucune table, aucun index, aucune version de schéma.
 
@@ -189,8 +196,8 @@ la précision de l'utilisateur : « je mets systématiquement le marqueur échau
 
 ## Ajouter un dossier au split (2026-10-04, suite)
 
-Publication : **aucune**, comme la section d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
-2.9.0. « Oui je veux bien le bouton » : celui que la section d'en dessous proposait en sortie. (Le même message
+Publié dans la **v2.10.0**. « Oui je veux bien le bouton » : celui que la section d'en dessous proposait en
+sortie. (Le même message
 signalait l'échauffement qui ressort en suggestion : traité dans la section d'au-dessus.) Spec et plan :
 `2026-10-04-split-ajouter-un-dossier`. Aucune table, aucun index, aucune version de schéma.
 
@@ -244,8 +251,8 @@ signalait l'échauffement qui ressort en suggestion : traité dans la section d'
 
 ## Cycle des programmes et « À lancer » sur plusieurs dossiers (2026-10-04)
 
-Publication : **aucune**. Le travail est sur la branche `ccr-4e58be64-spej04`, ni fusionné dans `master`
-ni tagué, et la version reste **2.9.0**. Une release se fait sur demande explicite, comme les précédentes.
+Publication : la **v2.10.0**, fusionnée dans `master` et publiée sur demande explicite de l'utilisateur, comme
+les précédentes. Le travail s'est fait sur la branche de session `ccr-4e58be64-spej04`.
 
 Deux demandes, une session : « j'ai pas une routine sur 1 semaine mais sur 2 semaines, ce qui fait que
 Programmes ne peut pas fonctionner » et « j'ai 10 séances réparties dans 2 dossiers, du coup le
