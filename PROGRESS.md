@@ -3,7 +3,35 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 3 : même fourchette et retour de pause** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 4 : on monte quand les répétitions absorbent le cran** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2, tranche 4 : les répétitions absorbent le cran (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+**La règle a changé avant d'être codée.** La spec prévoyait un saut maximal de 10 % et 3 répétitions au-delà
+de la fourchette ; l'utilisateur l'a arrêtée : « les haltères c'est +2 kg, t'as pas le choix ». Le cran est
+celui du matériel ; ce qui s'adapte, c'est le nombre de répétitions exigé avant de le prendre — assez pour
+retomber au bas de la fourchette après le cran.
+
+- `repsToAbsorbStep(charge, suivante, plancher)` (`lib/oneRepMax`) : inverse d'Epley, **arrondi au plus
+  proche**. L'arrondi supérieur réclamait 13 répétitions au leg curl (45 × 12 annonce 9,8 à 47,5 kg) : une
+  répétition entière pour 0,2, sous la précision d'Epley. Charges seulement : un lest s'ajoute au poids du
+  corps, une assistance se retire.
+- Moteur : tant que toutes les séries n'atteignent pas le compte, le plafond reste affiché **sans charge
+  proposée**, avec le compte visé ; seule `increase_reps` est autorisée. Carte : « Le prochain cran (12 kg)
+  pèse +20 % : vise 18 répétitions à 10 kg pour retomber à 10 au moins après la hausse. » Récap vocal sur
+  « progrès », jamais « une hausse de charge est prévue ».
+- **Rejeu** : 69 propositions de hausse sur l'historique → 25 (18 avec l'arrondi supérieur). Charges lourdes
+  inchangées (rowing 70 → 72,5). Vérifié sur un cas réel : au développé incliné, 18 × 12 × 3 puis 20 × 8 × 3,
+  pile le plancher — la règle demande ces 12 répétitions ; le coach v1 proposait 20 kg dès 18 × 10/11/11.
+  Contre-exemple honnête : rowing 45 × 12 → 50 × 12, mieux qu'Epley ne le prévoyait (14 répétitions
+  demandées). Epley est prudent aux répétitions hautes ; à juger en salle.
+- **Sept tests existants** dont le sujet était ailleurs (arrondi du demi-pas, pas déduit, fenêtre du plateau,
+  écran de fin de séance) ont reçu assez de répétitions ou une charge plus lourde, commentaire à l'appui. Aucune
+  assertion sur leur sujet n'a changé.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
 
 ## Coach v2, tranche 3 : même fourchette, retour de pause (2026-10-04, suite)
 
@@ -1021,6 +1049,8 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
    même charge avec un RPE plus bas affiche « la charge se consolide ».
    Tranche 3 : reprendre un exercice après deux semaines affiche « Reprise après N jours » et ne propose pas
    de charge ; le récap vocal ne dit pas « une hausse de charge est prévue ».
+   Tranche 4 : un curl aux haltères à 10 kg × 12 sur 10–12 ne propose pas 12 kg mais « vise 18 répétitions » ;
+   à 18 partout, il propose 12 kg. Sur une barre lourde, rien ne change.
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »

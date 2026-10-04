@@ -58,7 +58,7 @@ volontairement plus légère — exactement le cas de R4.
    a besoin se tait et le comportement actuel s'applique. Même principe que la revue des cibles
    (« le RPE absent n'est pas un RPE supérieur à 8 »).
 3. **Jamais plus d'un incrément.** Aucune règle ne compose deux pas en une recommandation.
-4. **Un seuil est une politique, pas une vérité.** Chaque seuil chiffré (RPE 9,5, 10 %, 14 jours,
+4. **Un seuil est une politique, pas une vérité.** Chaque seuil chiffré (RPE 9,5, 0,5 point, 14 jours,
    bornes de volume) est une constante nommée, exportée, testée, et l'UI dit « règle de l'app »,
    jamais « la science dit ». La KB couvre mal la programmation (25 affirmations sur 410,
    `fittrack-kb-contract/benchmark/e5-retrieval/RESULTATS.md`) : aucun de ces seuils n'est sourcé
@@ -125,7 +125,7 @@ série à l'échec à 10 sous un plancher de 12 déclenche `range_missed` et pro
 - Le 1RM estimé et le plateau **continuent** de lire les séries à l'échec : ce sont les mieux
   mesurées de la séance.
 
-### R3 — Le pas se mesure aussi en pourcentage
+### R3 — Le cran est imposé ; ce sont les répétitions qui s'adaptent
 
 **Constat.** 5 → 7,5 kg aux élévations latérales, c'est +50 %. La double progression à pas fixe en
 kilos est conçue pour des charges où le pas est petit devant la charge.
@@ -136,11 +136,26 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
    pas par défaut et qu'il apparaît au moins deux fois. Priorité : réglage explicite de
    l'exercice → pas déduit → table par équipement. Sur l'historique mesuré, cela donne 2,5 kg aux
    machines où l'on charge 12,5 ou 47,5 — la cause du bug corrigé au § 2.1.
-2. **Pas relatif plafonné.** Si le pas proposé dépasse `MAX_RELATIVE_STEP` (10 %) de la charge,
-   le plafond n'autorise pas `increase_load` tout de suite : il autorise `increase_reps` au-delà
-   de la fourchette, jusqu'à `targetRepsMax + EXTRA_REPS_BEFORE_BIG_STEP` (3), puis la hausse.
-   Évidence `relative_step_pct` pour que la carte affiche le pourcentage. *Décision Q2 : 10 % et
-   3 répétitions.*
+2. **Assez de répétitions pour absorber le cran.** Le cran est celui du matériel — +2 kg sur des
+   haltères, on n'a pas le choix. Ce qui s'adapte, c'est le nombre de répétitions exigé avant de
+   monter : assez pour que, une fois le cran posé, on retombe encore au moins sur le bas de la
+   fourchette, à une demi-répétition près (la précision d'Epley, pas mieux). Avec l'inverse
+   d'Epley arrondi au plus proche, `repsToAbsorbStep(charge, charge suivante, plancher)`, et au
+   minimum le plafond de la fourchette :
+   - rowing 70 kg, +2,5, 10–12 → 12 : sur une charge lourde, la règle se confond avec le plafond ;
+   - curl 10 kg, +2, 10–12 → **18** répétitions à 10 kg avant 12 kg ;
+   - élévations 5 kg, +2,5, 12–15 → 33 : le cran est trop gros pour l'exercice, et la carte le dit.
+   - vérifié sur l'historique : au développé incliné, 18 × 12 × 3 puis 20 × 8 × 3, pile le
+     plancher — la règle demande 12 répétitions à 18 kg, le coach v1 proposait 20 kg dès 10–11.
+     Sur 69 propositions de hausse de l'historique, 25 restent ; l'arrondi supérieur n'en
+     laissait que 18, en réclamant par exemple 13 répétitions au leg curl pour 0,2 répétition.
+
+   Tant que toutes les séries n'y sont pas, le plafond reste affiché sans charge proposée,
+   avec le nombre visé ; seule `increase_reps` est autorisée. Ne s'applique qu'aux charges
+   (`weightRole: 'load'`) : un lest s'ajoute au poids du corps, une assistance se retire, et le
+   rapport entre deux crans n'y dit rien. *Décision Q2, révisée le 2026-10-04 : la première
+   version (10 % de saut maximal, 3 répétitions au-delà de la fourchette) a été écartée par
+   l'utilisateur avant d'être codée — le cran ne se choisit pas.*
 
 ### R4 — Ne comparer que ce qui est comparable
 
@@ -244,7 +259,7 @@ combinaison avec un autre.
 | 1 | R2 (échec) + R3.1 (pas déduit) | Petits, sans UI nouvelle, suppriment les pires alertes |
 | 2 | R1 (RPE) | Le plus gros gain ; la donnée est là à 84 % |
 | 3 | R4 (comparabilité) + R5 (pause) | Ferment les faux plateaux restants |
-| 4 | R3.2 (pas relatif) | Change la forme des recommandations, à valider en salle |
+| 4 | R3.2 (répétitions pour absorber le cran) | Change la forme des recommandations, à valider en salle |
 | 5 | R6 (volume) | Nouvelle carte, éventuellement schéma |
 | — | R7 | Quand un cas réel existera |
 
@@ -255,7 +270,7 @@ Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test
 | | Question | Décision |
 |---|---|---|
 | Q1 | Plafond atteint à RPE ≥ 9,5 | **Consolider** : refaire la charge avant de monter |
-| Q2 | Pas relatif | **10 %** maximum ; au-delà, **3 répétitions** de plus que la fourchette avant le saut |
+| Q2 | Gros cran relatif | Le cran est imposé : on monte quand les répétitions suffisent à retomber au bas de la fourchette après le cran (R3.2). *Révisée : la règle des 10 % est écartée* |
 | Q3 | Bornes de volume | **Adaptées à l'utilisateur** : plafond tiré de son historique, plancher seulement s'il le pose (R6) |
 | Q4 | Retour de pause | **14 jours** |
 | Q5 | Série à l'échec au-delà du plafond | **Information** ; elle ne change pas la partition |
@@ -272,8 +287,8 @@ Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test
 - R2 : `5 × 12 · F 5 × 10` deux fois sur 12–15 → aucun `range_missed`.
 - R2 : `5 × 15 · F 5 × 14` sur 12–15 → `range_satisfied`, pas de plafond.
 - R3 : charges historiques 10 / 12,5 / 15 sur machine → pas déduit 2,5.
-- R3 : élévations à 5 kg, pas 2,5 (+50 %) au plafond 15 → `increase_reps` jusqu'à 18, pas
-  d'`increase_load`.
+- R3 : curl haltères 10 kg × 12 sur 10–12 → plafond sans charge, 18 répétitions visées ; à 18 →
+  12 kg. Barre à 100 kg × 12 sur 8–12 → 102,5 kg, comme avant. Lest et assistance : inchangés.
 - R4 : séance « reprise » 7,5 × 10 sur 10–12 après des 10 × 12 sur 12–15 → pas de plateau.
 - R5 : écart de 21 jours → pas d'`increase_load`, signal `returning`, fenêtre remise à zéro.
 - R6 : semaine glissante au plus haut des 6 dernières semaines → `add_set` retiré, `increase_load`
