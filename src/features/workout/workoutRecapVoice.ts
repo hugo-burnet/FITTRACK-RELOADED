@@ -15,6 +15,7 @@ type RecapCue =
 function signalCue(signal: CoachSignal): RecapCue {
   switch (signal.code) {
     case 'range_satisfied':
+    case 'consolidating':
       return 'coach-recap-progress';
     case 'range_ceiling_reached':
     case 'range_completed':

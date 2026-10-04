@@ -9,6 +9,7 @@ function toCoachSet(set: WorkoutSet): CoachSetInput {
     weight: set.weight,
     targetReps: set.targetReps,
     targetRepsMax: set.targetRepsMax,
+    rpe: set.rpe,
     performedAt: set.performedAt,
     order: set.order,
   };

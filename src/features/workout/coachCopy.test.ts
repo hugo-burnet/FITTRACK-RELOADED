@@ -228,3 +228,51 @@ describe('coachSignalMessage — notes du coach v2', () => {
     );
   });
 });
+
+describe('coachSignalMessage — effort (R1)', () => {
+  it('raconte une consolidation avec la charge et les deux RPE', () => {
+    const message = coachSignalMessage({
+      code: 'consolidating',
+      evidence: [
+        { label: 'current_load_kg', value: 70 },
+        { label: 'rpe_before', value: 9 },
+        { label: 'rpe_after', value: 8.5 },
+      ],
+    });
+    expect(message).toBe(t('coach.consolidating', { weight: '70', before: '9', after: '8,5' }));
+    // Une observation ne porte pas de flèche : « → » veut dire « fais ça ».
+    expect(message).not.toContain('→');
+  });
+
+  it('dit pourquoi un plafond arraché ne fait pas monter', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'session_rpe', value: 9.8 },
+        { label: 'current_load_kg', value: 100 },
+      ],
+    });
+    expect(message).toBe(t('coach.ceilingGrinding', { sets: 3, reps: 12, rpe: '9,8' }));
+  });
+
+  it('ajoute au plateau à l’échec la piste de la décharge', () => {
+    const plateau: CoachSignal = {
+      exerciseId: 'fly',
+      code: 'plateau',
+      severity: 30,
+      evidence: [
+        { label: 'sessions', value: 3 },
+        { label: 'best_1rm_kg', value: 14 },
+      ],
+    };
+    const plain = coachSignalMessage(plateau);
+    const atFailure = coachSignalMessage({
+      ...plateau,
+      evidence: [...plateau.evidence, { label: 'at_failure', value: 1 }],
+    });
+    expect(atFailure).toBe(`${plain} ${t('coach.plateauAtFailure')}`);
+  });
+});

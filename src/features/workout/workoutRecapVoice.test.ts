@@ -40,4 +40,13 @@ describe('workoutRecapCues', () => {
     expect(workoutRecapCues([signal(code)])).toEqual(['workout-recap-start', expectedCue]);
     expect(workoutRecapCues([signal(code)])).not.toContain('coach-recap-steady');
   });
+
+  it('annonce une consolidation comme un progrès', () => {
+    // Pas de phrase enregistrée de plus : « même travail, moins d'effort » est un
+    // progrès, et la voix en a déjà une pour ça.
+    expect(workoutRecapCues([signal('consolidating')])).toEqual([
+      'workout-recap-start',
+      'coach-recap-progress',
+    ]);
+  });
 });

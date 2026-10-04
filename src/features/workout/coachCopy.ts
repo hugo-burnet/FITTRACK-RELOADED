@@ -37,6 +37,9 @@ function withEvidenceNotes(signal: SignalLike, message: string): string {
   }
   const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
   if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
+  if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {
+    notes.push(t('coach.plateauAtFailure'));
+  }
   return notes.length === 0 ? message : [message, ...notes].join(' ');
 }
 
@@ -60,6 +63,14 @@ function constatMessage(signal: SignalLike): string {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
       const reps = evidenceValue(signal, 'target_reps_max') ?? 0;
       const current = evidenceValue(signal, 'current_load_kg');
+      // Plafond arraché (R1) : le constat, et pourquoi on ne monte pas.
+      if (hasFlag(signal, 'ceiling_grinding')) {
+        return t('coach.ceilingGrinding', {
+          sets,
+          reps,
+          rpe: formatNumber(evidenceValue(signal, 'session_rpe') ?? 0),
+        });
+      }
       // No next load (stripped escalate): constat only — never `100 → 0 kg`.
       if (weight === undefined) {
         return t('coach.range_ceiling_reached_constat', { sets, reps });
@@ -123,6 +134,12 @@ function constatMessage(signal: SignalLike): string {
       return t('coach.plateau', {
         sessions: evidenceValue(signal, 'sessions') ?? 0,
         value: formatNumber(evidenceValue(signal, 'best_1rm_kg') ?? 0),
+      });
+    case 'consolidating':
+      return t('coach.consolidating', {
+        weight: formatNumber(evidenceValue(signal, 'current_load_kg') ?? 0),
+        before: formatNumber(evidenceValue(signal, 'rpe_before') ?? 0),
+        after: formatNumber(evidenceValue(signal, 'rpe_after') ?? 0),
       });
     case 'long_rest':
       return t('coach.long_rest', {

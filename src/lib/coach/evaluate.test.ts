@@ -1096,6 +1096,143 @@ describe('pas de charge déduit de l’historique (R3.1)', () => {
   });
 });
 
+describe('effort de séance (R1)', () => {
+  const day = 86_400_000;
+  /** Une séance de 3 séries, RPE par série (`undefined` = non noté). */
+  const effortSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    rpe: (number | undefined)[],
+    weight = 100,
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 8, targetRepsMax: 12 },
+    setTypes: ('normal' | 'failure')[] = [],
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'bench',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          rpe: rpe[order],
+          setType: setTypes[order] ?? 'normal',
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('monte quand le plafond est atteint avec de la marge', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [8, 8.5, 9]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('consolide un plafond arraché à l’échec (décision Q1)', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [9.5, 10, 10]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling).toBeDefined();
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toContainEqual({ label: 'ceiling_grinding', value: 1 });
+    expect(ceiling!.evidence).toContainEqual({ label: 'session_rpe', value: 9.8 });
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+  });
+
+  it('se tait sur l’effort quand moins de la moitié des séries porte un RPE', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [10, undefined, undefined]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('ceiling_grinding');
+  });
+
+  it('ne compte pas la série à l’échec dans l’effort', () => {
+    const ev = evaluatePerformance(
+      effortSession('w1', 0, [12, 12, 12], [8, 8, 10], 100, undefined, ['normal', 'normal', 'failure']),
+    );
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+  });
+
+  it('lit une consolidation : même travail, moins d’effort', () => {
+    // Rowing, historique réel, sous le plafond : 70 × 11 × 3 @9 puis @8,5.
+    const ev = evaluatePerformance(
+      effortSession('w2', 7, [11, 11, 11], [8.5, 8.5, 8.5], 70, { targetReps: 10, targetRepsMax: 12 }),
+      [effortSession('w1', 0, [11, 11, 11], [9, 9, 9], 70, { targetReps: 10, targetRepsMax: 12 })],
+    );
+    const consolidating = ev.signals.find((s) => s.code === 'consolidating');
+    expect(consolidating?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'current_load_kg', value: 70 },
+        { label: 'rpe_before', value: 9 },
+        { label: 'rpe_after', value: 8.5 },
+      ]),
+    );
+    expect(pickSignals(ev.signals)[0]!.code).toBe('consolidating');
+  });
+
+  it('ne parle pas de consolidation pour une baisse d’effort sous 0,5', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [11, 11, 11], [9, 9, 8.5]), [
+      effortSession('w1', 0, [11, 11, 11], [9, 9, 9]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+
+  it('ne parle pas de consolidation quand la charge a changé', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [11, 11, 11], [8, 8, 8], 102.5), [
+      effortSession('w1', 0, [11, 11, 11], [9, 9, 9], 100),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+
+  it('garde le plafond devant la consolidation', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [12, 12, 12], [8, 8, 8]), [
+      effortSession('w1', 0, [12, 12, 12], [9, 9, 9]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).toContain('consolidating');
+    expect(pickSignals(ev.signals)[0]!.code).toBe('range_ceiling_reached');
+  });
+
+  it('lève le plateau quand l’effort baisse sur la fenêtre', () => {
+    const signals = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [8.5, 8.5, 8.5]),
+      effortSession('w2', 7, [10, 10, 10], [9, 9, 9]),
+      effortSession('w1', 0, [10, 10, 10], [9.5, 9.5, 9.5]),
+    ]);
+    expect(signals.map((s) => s.code)).not.toContain('plateau');
+  });
+
+  it('garde le plateau quand l’effort ne baisse pas, et dit s’il est à l’échec', () => {
+    const flat = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [9, 9, 9]),
+      effortSession('w2', 7, [10, 10, 10], [9, 9, 9]),
+      effortSession('w1', 0, [10, 10, 10], [9, 9, 9]),
+    ]);
+    const plateau = flat.find((s) => s.code === 'plateau');
+    expect(plateau).toBeDefined();
+    expect(plateau!.evidence.map((e) => e.label)).not.toContain('at_failure');
+
+    const atFailure = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [10, 10, 9.5]),
+      effortSession('w2', 7, [10, 10, 10], [9.5, 10, 10]),
+      effortSession('w1', 0, [10, 10, 10], [10, 10, 10]),
+    ]).find((s) => s.code === 'plateau');
+    expect(atFailure?.evidence).toContainEqual({ label: 'at_failure', value: 1 });
+  });
+
+  it('se comporte comme avant sans aucun RPE', () => {
+    const signals = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [undefined, undefined, undefined]),
+      effortSession('w2', 7, [10, 10, 10], [undefined, undefined, undefined]),
+      effortSession('w1', 0, [10, 10, 10], [undefined, undefined, undefined]),
+    ]);
+    expect(signals.map((s) => s.code).sort()).toEqual(['plateau', 'range_satisfied']);
+  });
+});
+
 describe('pickSignals', () => {
   it('keeps one signal per exercise, highest severity first', () => {
     const signals: CoachSignal[] = [

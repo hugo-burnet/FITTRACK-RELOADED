@@ -23,6 +23,15 @@ const DEFAULT_DROP_REPS = 2;
 const DEFAULT_LONG_REST_MS = 180_000;
 /** Consecutive sessions under the floor, at the same load, before backing off. */
 const MISSED_SESSIONS = 2;
+/**
+ * Effort thresholds (spec coach v2, R1). Product policy, not physiology: the
+ * corpus has no source for them, and the card says « règle de l'app ».
+ */
+export const CEILING_GRINDING_RPE = 9.5;
+export const CONSOLIDATION_RPE_DROP = 0.5;
+export const AT_FAILURE_RPE = 9.5;
+/** RPE comes by halves; a mean can land a hair under a threshold in floats. */
+const RPE_EPSILON = 1e-9;
 
 /** Severity ladder — UI keeps one signal per exercise; higher wins. */
 const SEVERITY: Record<CoachSignalCode, number> = {
@@ -32,6 +41,9 @@ const SEVERITY: Record<CoachSignalCode, number> = {
   range_ceiling_reached: 40,
   /** Read alias for legacy journal rows; same weight as ceiling. */
   range_completed: 40,
+  // Sous le plafond, qui reste la nouvelle à donner ; au-dessus de la fourchette
+  // tenue, que la consolidation précise.
+  consolidating: 38,
   range_satisfied: 35,
   plateau: 30,
   intra_session_drop: 20,
@@ -42,6 +54,7 @@ const CODE_ORDER: CoachSignalCode[] = [
   'range_missed',
   'range_ceiling_reached',
   'range_completed',
+  'consolidating',
   'range_satisfied',
   'plateau',
   'intra_session_drop',
@@ -91,6 +104,25 @@ function progressionSets(line: CoachExerciseLine): CoachSetInput[] {
  */
 function judgedSets(line: CoachExerciseLine): CoachSetInput[] {
   return progressionSets(line).filter((set) => set.setType !== 'failure');
+}
+
+/**
+ * Mean RPE of the judged sets (spec coach v2, R1), failure sets excluded: they
+ * are at 10 by design and would drag every session toward « à l'échec ».
+ * Undefined unless at least half of those sets carry an RPE — an absent RPE is
+ * neither a 10 nor a 7, and a mean of one set out of four is not the session's.
+ */
+function sessionEffort(line: CoachExerciseLine): number | undefined {
+  const judged = judgedSets(line);
+  const rated = judged
+    .map((set) => set.rpe)
+    .filter((rpe): rpe is number => typeof rpe === 'number' && Number.isFinite(rpe));
+  if (judged.length === 0 || rated.length * 2 < judged.length) return undefined;
+  return rated.reduce((sum, rpe) => sum + rpe, 0) / rated.length;
+}
+
+function roundRpe(value: number): number {
+  return Math.round(value * 10) / 10;
 }
 
 /** The load step the engine uses, and whether it was read from the history. */
@@ -275,9 +307,21 @@ function rangePartitionSignal(
     { label: 'target_reps_max', value: ceilingReps },
   ];
 
+  // **Plafond arraché : on consolide (décision Q1).** Douze répétitions à RPE 10
+  // ne sont pas douze répétitions maîtrisées ; monter maintenant, c'est arriver
+  // la fois d'après sous le plancher. Le constat reste, sans charge proposée.
+  const effort = sessionEffort(line);
+  const grinding = effort !== undefined && effort >= CEILING_GRINDING_RPE - RPE_EPSILON;
+  if (grinding) {
+    evidence.push({ label: 'ceiling_grinding', value: 1 });
+    evidence.push({ label: 'session_rpe', value: roundRpe(effort) });
+  }
+
   let nextLoadKg: number | undefined;
   if (lastWeight !== undefined) {
     evidence.push({ label: 'current_load_kg', value: lastWeight });
+  }
+  if (lastWeight !== undefined && !grinding) {
     const proposed = nextLoad(lastWeight, increment.kg, line.measurementType);
     if (proposed !== lastWeight) {
       nextLoadKg = proposed;
@@ -307,7 +351,12 @@ function buildAllowedActions(signals: readonly CoachSignal[]): CoachAction[] {
   if (codes.has('range_satisfied')) {
     allowed.add('increase_reps');
   }
-  if (codes.has('range_ceiling_reached') || codes.has('range_completed')) {
+  const grinding = signals.some((signal) =>
+    signal.evidence.some((item) => item.label === 'ceiling_grinding' && item.value === 1),
+  );
+  // Un plafond arraché n'autorise ni charge ni série de plus : consolider, c'est
+  // refaire la même séance plus facilement.
+  if ((codes.has('range_ceiling_reached') || codes.has('range_completed')) && !grinding) {
     allowed.add('increase_load');
     allowed.add('add_set');
   }
@@ -644,14 +693,83 @@ function plateauSignal(
     }
   }
 
+  // **Moins d'effort pour le même travail est un progrès** (R1). Le 1RM estimé ne
+  // voit que charges et répétitions ; un rowing tenu à 70 × 12 de RPE 9,5 à 8,5
+  // est plus fort, pas bloqué.
+  const efforts = window.map(sessionEffort);
+  const newestEffort = efforts[0];
+  const oldestEffort = efforts[efforts.length - 1];
+  if (
+    newestEffort !== undefined &&
+    oldestEffort !== undefined &&
+    oldestEffort - newestEffort >= CONSOLIDATION_RPE_DROP - RPE_EPSILON
+  ) {
+    return undefined;
+  }
+  // Bloqué *et* à fond à chaque séance : c'est là qu'une décharge sert.
+  const atFailure = efforts.every(
+    (effort) => effort !== undefined && effort >= AT_FAILURE_RPE - RPE_EPSILON,
+  );
+
   return {
     code: 'plateau',
     exerciseId: window[0]!.exerciseId,
     evidence: [
       { label: 'sessions', value: plateauSessions },
       { label: 'best_1rm_kg', value: Math.round(newest * 10) / 10 },
+      ...(atFailure ? [{ label: 'at_failure', value: 1 }] : []),
     ],
     severity: SEVERITY.plateau,
+  };
+}
+
+/** Heaviest load among the judged sets, `undefined` without a figure. */
+function judgedLoad(line: CoachExerciseLine): number | undefined {
+  let top: number | undefined;
+  for (const set of judgedSets(line)) {
+    if (typeof set.weight !== 'number') continue;
+    if (top === undefined || set.weight > top) top = set.weight;
+  }
+  return top;
+}
+
+function judgedReps(line: CoachExerciseLine): number {
+  return judgedSets(line).reduce((sum, set) => sum + (set.reps ?? 0), 0);
+}
+
+/**
+ * Consolidation (spec coach v2, R1): same load as the previous comparable
+ * session, at least as many reps, and an effort down by half a point or more.
+ *
+ * Without it the engine had two words for this session — silence, or « plateau »
+ * — and both were false: the bar did not move, the lifter did.
+ */
+function consolidationSignal(
+  historyNewestFirst: readonly CoachExerciseLine[],
+): CoachSignal | undefined {
+  const latest = historyNewestFirst[0];
+  if (latest === undefined || isDeloadLine(latest)) return undefined;
+  const previous = historyNewestFirst.slice(1).find((line) => !isDeloadLine(line));
+  if (previous === undefined) return undefined;
+
+  const after = sessionEffort(latest);
+  const before = sessionEffort(previous);
+  if (after === undefined || before === undefined) return undefined;
+  if (before - after < CONSOLIDATION_RPE_DROP - RPE_EPSILON) return undefined;
+
+  const load = judgedLoad(latest);
+  if (load === undefined || judgedLoad(previous) !== load) return undefined;
+  if (judgedReps(latest) < judgedReps(previous)) return undefined;
+
+  return {
+    code: 'consolidating',
+    exerciseId: latest.exerciseId,
+    evidence: [
+      { label: 'current_load_kg', value: load },
+      { label: 'rpe_before', value: roundRpe(before) },
+      { label: 'rpe_after', value: roundRpe(after) },
+    ],
+    severity: SEVERITY.consolidating,
   };
 }
 
@@ -743,6 +861,9 @@ export function evaluatePerformance(
 
   const plateau = plateauSignal(newestFirst, formula, plateauSessions);
   if (plateau) signals.push(plateau);
+
+  const consolidating = consolidationSignal(newestFirst);
+  if (consolidating) signals.push(consolidating);
 
   return {
     signals,

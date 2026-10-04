@@ -585,6 +585,16 @@ const fr = {
      */
     inferredIncrement: 'Pas de {step} kg, lu dans les charges que tu as déjà chargées.',
     failureMargin: 'Série à l’échec : {reps} rép. au-delà du plafond.',
+    /**
+     * Coach v2, R1. Le RPE est une règle de l'app, pas une vérité médicale :
+     * les phrases disent ce qui a été lu, pas ce que « la science » prescrit.
+     * Pas de flèche dans les constats : elle est réservée à la charge à mettre.
+     */
+    consolidating:
+      'Même charge ({weight} kg), au moins autant de répétitions, et un RPE moyen passé de {before} à {after} : la charge se consolide.',
+    ceilingGrinding:
+      '{sets} × {reps} a atteint le haut de la fourchette, mais à l’échec (RPE moyen {rpe}) : on refait cette charge plus facilement avant de monter.',
+    plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',
