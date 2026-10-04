@@ -92,36 +92,58 @@ describe('evaluatePerformance — exclusive range partition + allowedActions', (
     expect(ev.signals.map((s) => s.code)).not.toContain('range_ceiling_reached');
   });
 
-  it('plateau strips add_set as well as increase_*', () => {
+  it('plateau strips escalation: a flat satisfied range loses increase_reps', () => {
+    const satisfiedSession = (workoutId: string, day: number): CoachExerciseLine =>
+      line({
+        exerciseId: 'bench',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        sets: [0, 1, 2].map((order) =>
+          set({
+            order,
+            reps: 10,
+            weight: 100,
+            performedAt: t0 + day * 86_400_000 + order * 120_000,
+          }),
+        ),
+      });
+
+    const latest = satisfiedSession('w3', 14);
+    const history = [satisfiedSession('w2', 7), satisfiedSession('w1', 0)];
+    const ev = evaluatePerformance(latest, history);
+
+    expect(ev.signals.some((s) => s.code === 'plateau')).toBe(true);
+    expect(ev.signals.some((s) => s.code === 'range_satisfied')).toBe(true);
+    expect(ev.allowedActions).toEqual(['maintain']);
+  });
+
+  it('consolider n’est pas stagner : trois plafonds à la même charge autorisent la hausse', () => {
+    // Ce test affirmait l'inverse — plafond + plateau → maintien. C'était le
+    // défaut : une séance plafonnée ne peut pas faire monter le 1RM estimé, donc
+    // trois séances bien faites passaient pour un plateau, et le plateau
+    // interdisait la hausse qu'elles préparaient.
     const ceilingSession = (workoutId: string, day: number): CoachExerciseLine =>
       line({
         exerciseId: 'bench',
         workoutId,
         workoutStartedAt: t0 + day * 86_400_000,
-        sets: [
-          set({ order: 0, reps: 12, weight: 100, performedAt: t0 + day * 86_400_000 }),
+        sets: [0, 1, 2].map((order) =>
           set({
-            order: 1,
+            order,
             reps: 12,
             weight: 100,
-            performedAt: t0 + day * 86_400_000 + 120_000,
+            performedAt: t0 + day * 86_400_000 + order * 120_000,
           }),
-          set({
-            order: 2,
-            reps: 12,
-            weight: 100,
-            performedAt: t0 + day * 86_400_000 + 240_000,
-          }),
-        ],
+        ),
       });
 
     const latest = ceilingSession('w3', 14);
     const history = [ceilingSession('w2', 7), ceilingSession('w1', 0)];
     const ev = evaluatePerformance(latest, history);
 
-    expect(ev.signals.some((s) => s.code === 'plateau')).toBe(true);
-    expect(ev.signals.some((s) => s.code === 'range_ceiling_reached')).toBe(true);
-    expect(ev.allowedActions).toEqual(['maintain']);
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_ceiling_reached']);
+    expect(ev.allowedActions).toContain('increase_load');
+    expect(ev.allowedActions).toContain('add_set');
   });
 });
 
@@ -152,6 +174,25 @@ describe('range_ceiling_reached (was range_completed)', () => {
         { label: 'next_load_kg', value: 102.5 },
       ]),
     );
+  });
+
+  it('ne propose jamais plus d’un incrément depuis un demi-pas machine', () => {
+    // Oiseau à la machine, 12,5 kg × 15 sur 12–15, pas machine par défaut 5 kg.
+    // Le coach proposait 20 kg trois séances de suite. Depuis R3.2, +2,5 kg sur
+    // 12,5 ne se prend qu'à 21 répétitions (retomber à 12 après le cran) : le
+    // test leur donne ce compte, son sujet reste l'arrondi.
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'reverse-fly',
+        workoutId: 'w1',
+        equipment: 'machine',
+        sets: [
+          set({ order: 0, reps: 21, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+          set({ order: 1, reps: 21, weight: 12.5, targetReps: 12, targetRepsMax: 15 }),
+        ],
+      }),
+    ]);
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 15 });
   });
 
   it('emits range_satisfied (not ceiling) when one set is under the top', () => {
@@ -346,7 +387,11 @@ describe('range_missed', () => {
   // (échec), puis dégressive 3,5 kg × 15. Le coach annonçait « 3,5 → 0 kg » —
   // la charge de la dégressive prise pour la charge de travail, puis un pas de
   // 2,5 kg retombant sur zéro. Deux défauts, un seul écran.
-  const lateralRaise = (workoutId: string, startedAt: number) =>
+  const lateralRaise = (
+    workoutId: string,
+    startedAt: number,
+    secondSetType: 'failure' | 'normal' = 'failure',
+  ) =>
     line({
       exerciseId: 'lateral-raise',
       workoutId,
@@ -365,7 +410,7 @@ describe('range_missed', () => {
           order: 1,
           reps: 11,
           weight: 5,
-          setType: 'failure',
+          setType: secondSetType,
           targetReps: 12,
           targetRepsMax: 15,
           performedAt: startedAt + 120_000,
@@ -382,10 +427,23 @@ describe('range_missed', () => {
       ],
     });
 
-  it('backs off from the top load, not from the drop set that ended the session', () => {
+  it('lit la séance réelle sur sa charge du haut, sans juger la série à l’échec', () => {
+    // Coach v2, R2 : le 5 × 11 est la série poussée à l'échec, il ne juge plus le
+    // bas de fourchette. Ce test attendait « 5 → 2,5 kg » sur sa foi — le −50 %
+    // que l'utilisateur avait écarté. Reste le sujet d'origine : la charge de
+    // référence est celle du haut (5 kg), jamais celle de la dégressive.
     const signals = evaluateCoach([
       lateralRaise('w1', t0),
       lateralRaise('w2', t0 + 3 * 86_400_000),
+    ]);
+    // Et le plafond non plus : le 5 × 15 l'atteint, la série à l'échec à 11 non.
+    expect(signals.map((signal) => signal.code)).toEqual(['range_satisfied']);
+  });
+
+  it('backs off from the top load, not from the drop set that ended the session', () => {
+    const signals = evaluateCoach([
+      lateralRaise('w1', t0, 'normal'),
+      lateralRaise('w2', t0 + 3 * 86_400_000, 'normal'),
     ]);
 
     expect(signals).toEqual([
@@ -749,6 +807,64 @@ describe('plateau', () => {
     expect(onlyDeloadNewest.filter((s) => s.code === 'plateau')).toEqual([]);
   });
 
+  describe('séances plafonnées', () => {
+    const rowing = (
+      workoutId: string,
+      day: number,
+      reps: number[],
+      range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 10, targetRepsMax: 12 },
+    ): CoachExerciseLine =>
+      line({
+        exerciseId: 'row',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        equipment: 'machine',
+        sets: reps.map((value, order) =>
+          set({ order, reps: value, weight: 70, performedAt: t0 + day * 86_400_000 + order * 120_000, ...range }),
+        ),
+      });
+
+    it('ne lit pas une consolidation comme un plateau, même suivie d’une séance sans cible', () => {
+      // Rowing buste appuyé, historique réel : 70 kg tenu, RPE en baisse. La
+      // dernière séance vient d'une routine sans cible — le coach y affichait
+      // « Plateau » sur la foi des deux plafonds d'avant.
+      const signals = evaluateCoach([
+        rowing('w4', 21, [12, 12, 12], { targetReps: undefined, targetRepsMax: undefined }),
+        rowing('w3', 14, [12, 12, 12]),
+        rowing('w2', 7, [12, 12, 12]),
+        rowing('w1', 0, [12, 11, 11]),
+      ]);
+      expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
+    });
+
+    it('ne masque pas un plafond tout juste atteint par les séances plates d’avant', () => {
+      // 13 et non 12 : +5 kg sur 70 demande 13 répétitions pour retomber à 10 (R3.2).
+      const signals = evaluateCoach([
+        rowing('w4', 21, [13, 13, 13]),
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]);
+      expect(signals).toEqual([
+        expect.objectContaining({ code: 'range_ceiling_reached', nextLoadKg: 75 }),
+      ]);
+    });
+
+    it('garde le plateau quand la fourchette n’est jamais atteinte', () => {
+      const signals = evaluateCoach([
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]);
+      expect(signals.map((s) => s.code)).toEqual(['range_satisfied']);
+      expect(collectCoachSignals([
+        rowing('w3', 14, [10, 10, 10]),
+        rowing('w2', 7, [10, 10, 10]),
+        rowing('w1', 0, [10, 10, 10]),
+      ]).some((s) => s.code === 'plateau')).toBe(true);
+    });
+  });
+
   it('ne parle pas de plateau quand la barre s’est alourdie', () => {
     // 100 × 10 → 105 × 8 → 110 × 6 : le 1RM estimé recule d’un kilo (133,3 →
     // 133 → 132) alors que dix kilos sont montés sur la barre. Le modèle dit
@@ -757,6 +873,27 @@ describe('plateau', () => {
       session('w3', 14, 110, 6),
       session('w2', 7, 105, 8),
       session('w1', 0, 100, 10),
+    ]);
+    expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  it('ne parle pas de plateau sur un record de répétitions au-delà de 12', () => {
+    // Oiseau à la machine, historique réel : 12,5 × 12, 12,5 × 12, puis 12,5 × 13
+    // et 12,5 × 11. Le 1RM estimé ignore la série à 13 et ne juge que celle à 11.
+    const twoSets = (workoutId: string, day: number, reps: [number, number]) =>
+      line({
+        exerciseId: 'reverse-fly',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        equipment: 'machine',
+        sets: reps.map((value, order) =>
+          set({ order, reps: value, weight: 12.5, targetReps: undefined, targetRepsMax: undefined }),
+        ),
+      });
+    const signals = evaluateCoach([
+      twoSets('w3', 14, [13, 11]),
+      twoSets('w2', 7, [12, 12]),
+      twoSets('w1', 0, [12, 12]),
     ]);
     expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
   });
@@ -804,6 +941,525 @@ describe('plateau', () => {
       }),
     );
     expect(evaluateCoach(stuck).filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+});
+
+describe('séries à l’échec (R2)', () => {
+  const failing = (
+    workoutId: string,
+    dayIndex: number,
+    sets: { reps: number; failure?: boolean; weight?: number }[],
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 12, targetRepsMax: 15 },
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'fly',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * 86_400_000,
+      equipment: 'cable',
+      sets: sets.map((value, order) =>
+        set({
+          order,
+          reps: value.reps,
+          weight: value.weight ?? 10,
+          setType: value.failure ? 'failure' : 'normal',
+          performedAt: t0 + dayIndex * 86_400_000 + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('ne lit pas une série poussée à l’échec comme une baisse de reps', () => {
+    // Pec fly, historique réel : 10 × 12 @8,5 puis F 10 × 8 @9,5 — « Baisse de
+    // reps observée » trois séances de suite, sur une série faite pour ça.
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 12 }, { reps: 8, failure: true }], { targetReps: 12, targetRepsMax: 15 }),
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('intra_session_drop');
+  });
+
+  it('ne compte pas la série à l’échec dans le bas de fourchette manqué', () => {
+    // Élévations latérales : 5 × 12 · F 5 × 10 deux fois sur 12–15 → le coach
+    // proposait 5 → 2,5 kg (−50 %) sur la foi de la seule série à l'échec.
+    const history = [failing('w1', 0, [{ reps: 12, weight: 5 }, { reps: 10, weight: 5, failure: true }])];
+    const ev = evaluatePerformance(
+      failing('w2', 7, [{ reps: 12, weight: 5 }, { reps: 10, weight: 5, failure: true }]),
+      history,
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+    expect(ev.signals.map((s) => s.code)).toContain('range_satisfied');
+  });
+
+  it('se tait sur la fourchette quand toutes les séries sont à l’échec', () => {
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 15, failure: true }, { reps: 9, failure: true }]),
+    );
+    expect(ev.signals.map((s) => s.code)).toEqual([]);
+  });
+
+  it('ne déclare pas de plafond quand la série à l’échec reste sous le haut', () => {
+    // Pec fly, 2026-09-01 : 5 × 15 puis F 5 × 14 sur 12–15. Le premier rejeu de
+    // R2 y lisait un plafond ; l'utilisateur : « je plafonne pas sur le pec fly ».
+    const ev = evaluatePerformance(failing('w1', 0, [{ reps: 15 }, { reps: 14, failure: true }]));
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
+  it('signale la marge d’une série à l’échec au-delà du plafond, sans changer la partition', () => {
+    // Décision Q5 : une information, pas un plafond de plus.
+    const ev = evaluatePerformance(
+      failing('w1', 0, [{ reps: 15 }, { reps: 15 }, { reps: 18, failure: true }]),
+    );
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.evidence).toContainEqual({ label: 'failure_reps_over_ceiling', value: 3 });
+
+    const satisfied = evaluatePerformance(
+      failing('w1', 0, [{ reps: 13 }, { reps: 13 }, { reps: 16, failure: true }]),
+    );
+    expect(satisfied.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(satisfied.signals[0]!.evidence).toContainEqual({
+      label: 'failure_reps_over_ceiling',
+      value: 1,
+    });
+  });
+
+  it('laisse le plateau lire les séries à l’échec, les mieux mesurées', () => {
+    const flat = (workoutId: string, dayIndex: number) =>
+      failing(workoutId, dayIndex, [{ reps: 10 }, { reps: 11, failure: true }], {
+        targetReps: undefined,
+        targetRepsMax: undefined,
+      });
+    const signals = evaluateCoach([flat('w3', 14), flat('w2', 7), flat('w1', 0)]);
+    expect(signals.map((s) => s.code)).toEqual(['plateau']);
+    expect(signals[0]!.evidence).toContainEqual({ label: 'best_1rm_kg', value: 13.7 });
+  });
+});
+
+describe('cran de la fiche de l’exercice (R3.1 révisée)', () => {
+  const machine = (
+    workoutId: string,
+    dayIndex: number,
+    weight: number,
+    reps: number,
+    extra: Partial<CoachExerciseLine> = {},
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'leg-curl',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * 86_400_000,
+      equipment: 'machine',
+      sets: [0, 1].map((order) =>
+        set({
+          order,
+          reps,
+          weight,
+          targetReps: 10,
+          targetRepsMax: 12,
+          performedAt: t0 + dayIndex * 86_400_000 + order * 120_000,
+        }),
+      ),
+      ...extra,
+    });
+
+  it('ajoute le micro-chargement renseigné, sans le ramener sur une grille', () => {
+    // Élévations à la poulie : 5 kg, plaque de 1,125 kg renseignée sur la fiche.
+    // 21 répétitions absorbent le cran en 12–15 (R3.2).
+    const lateral = (reps: number) =>
+      line({
+        exerciseId: 'lateral',
+        workoutId: 'w1',
+        equipment: 'cable',
+        loadIncrementKg: 1.125,
+        sets: [0, 1].map((order) =>
+          set({ order, reps, weight: 5, targetReps: 12, targetRepsMax: 15 }),
+        ),
+      });
+    expect(
+      evaluatePerformance(lateral(21)).signals.find((s) => s.code === 'range_ceiling_reached')
+        ?.nextLoadKg,
+    ).toBe(6.125);
+    expect(
+      evaluatePerformance(lateral(15)).signals.find((s) => s.code === 'range_ceiling_reached')
+        ?.evidence,
+    ).toEqual(
+      expect.arrayContaining([
+        { label: 'step_needs_reps', value: 21 },
+        { label: 'next_step_kg', value: 6.125 },
+      ]),
+    );
+  });
+
+  it('prend la table du matériel quand la fiche est vide, sans deviner dans l’historique', () => {
+    // Des charges de 10, 12,5 et 15 kg montrent des demi-pas ; le coach ne les
+    // déduit plus — « Vide = défaut selon le matériel », dit la fiche. 24
+    // répétitions absorbent +5 kg sur 15 (R3.2).
+    const ev = evaluatePerformance(machine('w3', 14, 15, 24), [
+      machine('w2', 7, 12.5, 11),
+      machine('w1', 0, 10, 12),
+    ]);
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(20);
+  });
+
+  it('suit le cran renseigné quel que soit le matériel', () => {
+    const ev = evaluatePerformance(machine('w2', 7, 50, 15, { loadIncrementKg: 2.5 }), [
+      machine('w1', 0, 45, 12, { loadIncrementKg: 2.5 }),
+    ]);
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(52.5);
+  });
+
+  it('allège du cran renseigné après deux manques', () => {
+    const ev = evaluatePerformance(machine('w2', 7, 15, 8, { loadIncrementKg: 2.5 }), [
+      machine('w1', 0, 15, 8, { loadIncrementKg: 2.5 }),
+    ]);
+    expect(ev.signals.find((s) => s.code === 'range_missed')?.nextLoadKg).toBe(12.5);
+  });
+});
+
+describe('effort de séance (R1)', () => {
+  const day = 86_400_000;
+  /** Une séance de 3 séries, RPE par série (`undefined` = non noté). */
+  const effortSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    rpe: (number | undefined)[],
+    weight = 100,
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 8, targetRepsMax: 12 },
+    setTypes: ('normal' | 'failure')[] = [],
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'bench',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          rpe: rpe[order],
+          setType: setTypes[order] ?? 'normal',
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('monte quand le plafond est atteint avec de la marge', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [8, 8.5, 9]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('consolide un plafond arraché à l’échec (décision Q1)', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [9.5, 10, 10]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling).toBeDefined();
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toContainEqual({ label: 'ceiling_grinding', value: 1 });
+    expect(ceiling!.evidence).toContainEqual({ label: 'session_rpe', value: 9.8 });
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+  });
+
+  it('se tait sur l’effort quand moins de la moitié des séries porte un RPE', () => {
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [10, undefined, undefined]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('ceiling_grinding');
+  });
+
+  it('ne compte pas la série à l’échec dans l’effort', () => {
+    const ev = evaluatePerformance(
+      effortSession('w1', 0, [12, 12, 12], [8, 8, 10], 100, undefined, ['normal', 'normal', 'failure']),
+    );
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+  });
+
+  it('lit une consolidation : même travail, moins d’effort', () => {
+    // Rowing, historique réel, sous le plafond : 70 × 11 × 3 @9 puis @8,5.
+    const ev = evaluatePerformance(
+      effortSession('w2', 7, [11, 11, 11], [8.5, 8.5, 8.5], 70, { targetReps: 10, targetRepsMax: 12 }),
+      [effortSession('w1', 0, [11, 11, 11], [9, 9, 9], 70, { targetReps: 10, targetRepsMax: 12 })],
+    );
+    const consolidating = ev.signals.find((s) => s.code === 'consolidating');
+    expect(consolidating?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'current_load_kg', value: 70 },
+        { label: 'rpe_before', value: 9 },
+        { label: 'rpe_after', value: 8.5 },
+      ]),
+    );
+    expect(pickSignals(ev.signals)[0]!.code).toBe('consolidating');
+  });
+
+  it('ne parle pas de consolidation pour une baisse d’effort sous 0,5', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [11, 11, 11], [9, 9, 8.5]), [
+      effortSession('w1', 0, [11, 11, 11], [9, 9, 9]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+
+  it('ne parle pas de consolidation quand la charge a changé', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [11, 11, 11], [8, 8, 8], 102.5), [
+      effortSession('w1', 0, [11, 11, 11], [9, 9, 9], 100),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+
+  it('garde le plafond devant la consolidation', () => {
+    const ev = evaluatePerformance(effortSession('w2', 7, [12, 12, 12], [8, 8, 8]), [
+      effortSession('w1', 0, [12, 12, 12], [9, 9, 9]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).toContain('consolidating');
+    expect(pickSignals(ev.signals)[0]!.code).toBe('range_ceiling_reached');
+  });
+
+  it('lève le plateau quand l’effort baisse sur la fenêtre', () => {
+    const signals = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [8.5, 8.5, 8.5]),
+      effortSession('w2', 7, [10, 10, 10], [9, 9, 9]),
+      effortSession('w1', 0, [10, 10, 10], [9.5, 9.5, 9.5]),
+    ]);
+    expect(signals.map((s) => s.code)).not.toContain('plateau');
+  });
+
+  it('garde le plateau quand l’effort ne baisse pas, et dit s’il est à l’échec', () => {
+    const flat = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [9, 9, 9]),
+      effortSession('w2', 7, [10, 10, 10], [9, 9, 9]),
+      effortSession('w1', 0, [10, 10, 10], [9, 9, 9]),
+    ]);
+    const plateau = flat.find((s) => s.code === 'plateau');
+    expect(plateau).toBeDefined();
+    expect(plateau!.evidence.map((e) => e.label)).not.toContain('at_failure');
+
+    const atFailure = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [10, 10, 9.5]),
+      effortSession('w2', 7, [10, 10, 10], [9.5, 10, 10]),
+      effortSession('w1', 0, [10, 10, 10], [10, 10, 10]),
+    ]).find((s) => s.code === 'plateau');
+    expect(atFailure?.evidence).toContainEqual({ label: 'at_failure', value: 1 });
+  });
+
+  it('se comporte comme avant sans aucun RPE', () => {
+    const signals = collectCoachSignals([
+      effortSession('w3', 14, [10, 10, 10], [undefined, undefined, undefined]),
+      effortSession('w2', 7, [10, 10, 10], [undefined, undefined, undefined]),
+      effortSession('w1', 0, [10, 10, 10], [undefined, undefined, undefined]),
+    ]);
+    expect(signals.map((s) => s.code).sort()).toEqual(['plateau', 'range_satisfied']);
+  });
+});
+
+describe('même contrat de répétitions (R4)', () => {
+  const day = 86_400_000;
+  const contractSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    weight: number,
+    range: { targetReps?: number; targetRepsMax?: number },
+    rpe: (number | undefined)[] = [],
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'fly',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      equipment: 'machine',
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          rpe: rpe[order],
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+  const usual = { targetReps: 12, targetRepsMax: 15 };
+  const lighter = { targetReps: 10, targetRepsMax: 12 };
+  const none = { targetReps: undefined, targetRepsMax: undefined };
+
+  it('ne compare pas une séance de reprise plus légère aux séances habituelles', () => {
+    // Pec fly, historique réel : une routine « reprise » en 10–12 à 7,5 kg après des
+    // séances en 12–15 à 10 kg. Le coach y lisait un plateau.
+    const signals = collectCoachSignals([
+      contractSession('w3', 14, [10, 9], 7.5, lighter),
+      contractSession('w2', 7, [12, 12], 10, usual),
+      contractSession('w1', 0, [12, 12], 10, usual),
+    ]);
+    expect(signals.map((s) => s.code)).not.toContain('plateau');
+  });
+
+  it('ne cumule pas deux manques pris sous des fourchettes différentes', () => {
+    const ev = evaluatePerformance(contractSession('w2', 7, [11, 11], 10, usual), [
+      contractSession('w1', 0, [9, 9], 10, lighter),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+  });
+
+  it('enjambe une séance d’une autre fourchette pour retrouver la précédente comparable', () => {
+    const ev = evaluatePerformance(contractSession('w3', 14, [11, 11], 10, usual), [
+      contractSession('w2', 7, [12, 12], 10, lighter),
+      contractSession('w1', 0, [11, 11], 10, usual),
+    ]);
+    expect(ev.signals.map((s) => s.code)).toContain('range_missed');
+  });
+
+  it('fait des séances sans cible un flux à part, que le plateau lit', () => {
+    const signals = collectCoachSignals([
+      contractSession('w4', 21, [12, 12], 10, none),
+      contractSession('w3', 14, [15, 15], 10, usual),
+      contractSession('w2', 7, [12, 12], 10, none),
+      contractSession('w1', 0, [12, 12], 10, none),
+    ]);
+    expect(signals.map((s) => s.code)).toContain('plateau');
+  });
+
+  it('ne lit une consolidation qu’entre deux séances du même contrat', () => {
+    const ev = evaluatePerformance(
+      contractSession('w2', 7, [12, 12], 10, lighter, [8, 8]),
+      [contractSession('w1', 0, [12, 12], 10, usual, [9, 9])],
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+});
+
+describe('retour de pause (R5)', () => {
+  const day = 86_400_000;
+  const pauseSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 8, targetRepsMax: 12 },
+    weight = 115,
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'leg-press',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      equipment: 'machine',
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('consolide au retour après 14 jours, sans proposer de monter', () => {
+    // Presse à cuisses, historique réel : 21 jours sans, puis 115 × 12 × 3 sur
+    // 8–12 — le coach proposait 120 kg comme si les séances s'enchaînaient.
+    const ev = evaluatePerformance(pauseSession('w2', 21, [12, 12, 12]), [
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    const returning = ev.signals.find((s) => s.code === 'returning');
+    expect(returning?.evidence).toContainEqual({ label: 'gap_days', value: 21 });
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBeUndefined();
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(pickSignals(ev.signals)[0]!.code).toBe('returning');
+  });
+
+  it('ne parle pas de reprise sous 14 jours', () => {
+    const ev = evaluatePerformance(pauseSession('w2', 13, [12, 12, 12]), [
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('mesure la pause depuis la dernière séance de l’exercice, quelle qu’en soit la fourchette', () => {
+    const ev = evaluatePerformance(pauseSession('w3', 20, [12, 12, 12]), [
+      pauseSession('w2', 10, [15, 15, 15], { targetReps: 12, targetRepsMax: 15 }),
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+  });
+
+  it('ne parle pas de reprise à la toute première séance', () => {
+    const ev = evaluatePerformance(pauseSession('w1', 0, [12, 12, 12]));
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+  });
+
+  it('fait repartir de zéro la fenêtre du bas manqué', () => {
+    const ev = evaluatePerformance(pauseSession('w2', 20, [7, 7, 7]), [
+      pauseSession('w1', 0, [7, 7, 7]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+  });
+
+  it('fait repartir de zéro la fenêtre du plateau', () => {
+    const flat = (workoutId: string, dayIndex: number) => pauseSession(workoutId, dayIndex, [10, 10, 10]);
+    const history = [flat('w4', 35), flat('w3', 14), flat('w2', 7), flat('w1', 0)];
+    const afterReturn = evaluatePerformance(flat('w5', 42), history);
+    expect(afterReturn.signals.map((s) => s.code)).not.toContain('plateau');
+
+    const later = evaluatePerformance(flat('w6', 49), [flat('w5', 42), ...history]);
+    expect(later.signals.map((s) => s.code)).toContain('plateau');
+  });
+});
+
+describe('répétitions pour absorber le cran (R3.2)', () => {
+  const curl = (reps: number[], extra: Partial<CoachExerciseLine> = {}, weight = 10) =>
+    line({
+      exerciseId: 'curl',
+      workoutId: 'w1',
+      equipment: 'dumbbell',
+      sets: reps.map((value, order) =>
+        set({ order, reps: value, weight, targetReps: 10, targetRepsMax: 12 }),
+      ),
+      ...extra,
+    });
+
+  it('attend assez de répétitions quand le cran pèse lourd sur la charge', () => {
+    // Haltères : +2 kg, pas le choix. À 10 kg, 12 répétitions retomberaient à 8
+    // après le cran ; il en faut 18 pour retomber à 10.
+    const ev = evaluatePerformance(curl([12, 12, 12]));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ceiling?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'step_needs_reps', value: 18 },
+        { label: 'next_step_kg', value: 12 },
+        { label: 'target_reps', value: 10 },
+        { label: 'current_load_kg', value: 10 },
+      ]),
+    );
+    expect(ev.allowedActions).toContain('increase_reps');
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+  });
+
+  it('monte quand toutes les séries y sont', () => {
+    const ready = evaluatePerformance(curl([18, 18, 18]));
+    expect(ready.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(12);
+    expect(ready.allowedActions).toContain('increase_load');
+
+    const almost = evaluatePerformance(curl([18, 18, 17]));
+    expect(almost.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBeUndefined();
+  });
+
+  it('ne change rien sur une charge lourde, où le plafond suffit', () => {
+    const ev = evaluatePerformance(curl([12, 12, 12], { equipment: 'barbell' }, 100));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(102.5);
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('step_needs_reps');
+  });
+
+  it('laisse le lest et l’assistance tels quels', () => {
+    // Dips lestés de 4 kg : +2 kg, c'est +50 % du lest mais une broutille devant
+    // le poids du corps — le rapport entre deux crans n'y dit rien.
+    const weighted = evaluatePerformance(curl([12, 12, 12], { measurementType: 'reps_only' }, 4));
+    expect(weighted.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(6);
+    const assisted = evaluatePerformance(
+      curl([12, 12, 12], { measurementType: 'assisted_weight_reps', equipment: 'machine' }, 20),
+    );
+    expect(assisted.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(15);
   });
 });
 

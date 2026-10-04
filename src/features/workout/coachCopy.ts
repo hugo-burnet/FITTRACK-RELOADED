@@ -24,8 +24,27 @@ function resolvedNextLoadKg(signal: SignalLike): number | undefined {
   return signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg');
 }
 
-/** Constat from the signal code alone (no phase requalification). */
+/**
+ * Coach v2 notes, appended after the constat when the evidence carries them.
+ * Never a sentence of their own: they qualify the numbers, they do not replace
+ * them.
+ */
+function withEvidenceNotes(signal: SignalLike, message: string): string {
+  const notes: string[] = [];
+  const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
+  if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
+  if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {
+    notes.push(t('coach.plateauAtFailure'));
+  }
+  return notes.length === 0 ? message : [message, ...notes].join(' ');
+}
+
 function baseSignalMessage(signal: SignalLike): string {
+  return withEvidenceNotes(signal, constatMessage(signal));
+}
+
+/** Constat from the signal code alone (no phase requalification). */
+function constatMessage(signal: SignalLike): string {
   switch (signal.code) {
     case 'range_satisfied': {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
@@ -40,6 +59,28 @@ function baseSignalMessage(signal: SignalLike): string {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
       const reps = evidenceValue(signal, 'target_reps_max') ?? 0;
       const current = evidenceValue(signal, 'current_load_kg');
+      // Plafond arraché (R1) : le constat, et pourquoi on ne monte pas.
+      if (hasFlag(signal, 'ceiling_grinding')) {
+        return t('coach.ceilingGrinding', {
+          sets,
+          reps,
+          rpe: formatNumber(evidenceValue(signal, 'session_rpe') ?? 0),
+        });
+      }
+      // Cran pas encore absorbé (R3.2) : des répétitions à viser, pas des kilos.
+      const needed = evidenceValue(signal, 'step_needs_reps');
+      const step = evidenceValue(signal, 'next_step_kg');
+      if (needed !== undefined && step !== undefined && current !== undefined && current > 0) {
+        return t('coach.stepNeedsReps', {
+          sets,
+          reps,
+          weight: formatNumber(step),
+          percent: Math.round(((step - current) / current) * 100),
+          needed,
+          current: formatNumber(current),
+          floor: evidenceValue(signal, 'target_reps') ?? 0,
+        });
+      }
       // No next load (stripped escalate): constat only — never `100 → 0 kg`.
       if (weight === undefined) {
         return t('coach.range_ceiling_reached_constat', { sets, reps });
@@ -104,6 +145,14 @@ function baseSignalMessage(signal: SignalLike): string {
         sessions: evidenceValue(signal, 'sessions') ?? 0,
         value: formatNumber(evidenceValue(signal, 'best_1rm_kg') ?? 0),
       });
+    case 'consolidating':
+      return t('coach.consolidating', {
+        weight: formatNumber(evidenceValue(signal, 'current_load_kg') ?? 0),
+        before: formatNumber(evidenceValue(signal, 'rpe_before') ?? 0),
+        after: formatNumber(evidenceValue(signal, 'rpe_after') ?? 0),
+      });
+    case 'returning':
+      return t('coach.returning', { days: evidenceValue(signal, 'gap_days') ?? 0 });
     case 'long_rest':
       return t('coach.long_rest', {
         seconds: evidenceValue(signal, 'max_rest_seconds') ?? 0,

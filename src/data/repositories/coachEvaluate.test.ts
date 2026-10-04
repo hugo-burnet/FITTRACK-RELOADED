@@ -697,7 +697,9 @@ describe('evaluateCoachForWorkout', () => {
   });
 
   it('progression target + plateau: shows plateau, strips load, no deferred stamp', async () => {
-    // Three identical ceiling sessions → plateau strips escalations → maintain.
+    // Trois séances identiques sous le plafond (10 sur 8–12) → plateau, qui retire
+    // l'escalade → maintien. Ce test prenait trois séances *au* plafond : c'était
+    // le piège de la consolidation, qui n'est plus un plateau (cf. lib/coach).
     const programStart = new Date(2026, 7, 10, 12).getTime();
     const closeAt = new Date(2026, 7, 17, 12).getTime(); // week 0 done; next week = progression
     const program = await createProgramDraft({
@@ -719,7 +721,7 @@ describe('evaluateCoachForWorkout', () => {
     const entry = (await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray())[0]!;
     await activateProgram(program.id);
 
-    // Prior ceiling sessions (plateau history).
+    // Prior flat sessions (plateau history).
     for (const [i, dayOffset] of [0, 7].entries()) {
       const id = `hist-${i}`;
       const at = programStart + dayOffset * 86_400_000;
@@ -757,7 +759,7 @@ describe('evaluateCoachForWorkout', () => {
             setType: 'normal',
             side: 'both',
             weight: 100,
-            reps: 12,
+            reps: 10,
             targetReps: 8,
             targetRepsMax: 12,
             isCompleted: 1,
@@ -808,7 +810,7 @@ describe('evaluateCoachForWorkout', () => {
           setType: 'normal',
           side: 'both',
           weight: 100,
-          reps: 12,
+          reps: 10,
           targetReps: 8,
           targetRepsMax: 12,
           isCompleted: 1,

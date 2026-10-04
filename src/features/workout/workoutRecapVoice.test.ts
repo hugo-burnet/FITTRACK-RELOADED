@@ -40,4 +40,46 @@ describe('workoutRecapCues', () => {
     expect(workoutRecapCues([signal(code)])).toEqual(['workout-recap-start', expectedCue]);
     expect(workoutRecapCues([signal(code)])).not.toContain('coach-recap-steady');
   });
+
+  it('annonce une consolidation comme un progrès', () => {
+    // Pas de phrase enregistrée de plus : « même travail, moins d'effort » est un
+    // progrès, et la voix en a déjà une pour ça.
+    expect(workoutRecapCues([signal('consolidating')])).toEqual([
+      'workout-recap-start',
+      'coach-recap-progress',
+    ]);
+  });
+
+  it('n’annonce pas de hausse sur un plafond arraché ni sur une reprise', () => {
+    // Le coach n'y propose pas de charge : « une hausse de charge est prévue »
+    // contredirait la carte. Le plan reste celui d'aujourd'hui.
+    const grinding: CoachSignal = {
+      ...signal('range_ceiling_reached'),
+      evidence: [{ label: 'ceiling_grinding', value: 1 }],
+    };
+    expect(workoutRecapCues([grinding])).toEqual(['workout-recap-start', 'coach-recap-steady']);
+    expect(workoutRecapCues([signal('returning')])).toEqual([
+      'workout-recap-start',
+      'coach-recap-steady',
+    ]);
+  });
+
+  it('ne mêle pas « plan inchangé » à une phrase d’ajustement', () => {
+    const grinding: CoachSignal = {
+      ...signal('range_ceiling_reached'),
+      evidence: [{ label: 'ceiling_grinding', value: 1 }],
+    };
+    expect(workoutRecapCues([grinding, signal('range_missed')])).toEqual([
+      'workout-recap-start',
+      'coach-recap-adjust',
+    ]);
+  });
+
+  it('n’annonce pas de hausse tant que le cran n’est pas absorbé', () => {
+    const notYet: CoachSignal = {
+      ...signal('range_ceiling_reached'),
+      evidence: [{ label: 'step_needs_reps', value: 18 }],
+    };
+    expect(workoutRecapCues([notYet])).toEqual(['workout-recap-start', 'coach-recap-progress']);
+  });
 });

@@ -7,6 +7,7 @@ import {
   previousLoad,
   roundLoadToIncrement,
   resolveLoadIncrementKg,
+  resolveLoadStep,
 } from './loadIncrement';
 
 describe('DEFAULT_LOAD_INCREMENT_KG', () => {
@@ -102,6 +103,16 @@ describe('nextLoad', () => {
     expect(nextLoad(47, 2.5, 'weight_reps')).toBe(50);
   });
 
+  it('never steps more than one increment from a half-step load', () => {
+    // Vu sur un vrai historique : oiseau à la machine à 12,5 kg, pas machine de
+    // 5 kg. 12,5 + 5 = 17,5 tombe pile entre 15 et 20 ; l'arrondi vers le haut
+    // proposait 20 kg (+60 %). Le cran retenu est celui du côté de la charge.
+    expect(nextLoad(12.5, 5, 'weight_reps')).toBe(15);
+    expect(nextLoad(47.5, 5, 'weight_reps')).toBe(50);
+    // Assistance : progresser, c'est retirer de l'aide — même règle, sens inverse.
+    expect(nextLoad(12.5, 5, 'assisted_weight_reps')).toBe(10);
+  });
+
   it('leaves time_only and distance_time unchanged (no weight role)', () => {
     expect(nextLoad(60, 2.5, 'time_only')).toBe(60);
     expect(nextLoad(1000, 2.5, 'distance_time')).toBe(1000);
@@ -149,6 +160,11 @@ describe('previousLoad', () => {
     expect(previousLoad(100.4, 2.5, 'weight_reps')).toBe(97.5);
   });
 
+  it('never steps more than one increment down from a half-step load', () => {
+    expect(previousLoad(12.5, 5, 'weight_reps')).toBe(10);
+    expect(previousLoad(12.5, 5, 'assisted_weight_reps')).toBe(15);
+  });
+
   it('leaves a type with no weight field alone', () => {
     expect(previousLoad(60, 2.5, 'time_only')).toBe(60);
   });
@@ -159,5 +175,43 @@ describe('previousLoad', () => {
     expect(
       previousLoad(nextLoad(start, 5, 'assisted_weight_reps'), 5, 'assisted_weight_reps'),
     ).toBe(start);
+  });
+});
+
+describe('resolveLoadStep', () => {
+  it('prend le cran renseigné sur la fiche, tel quel', () => {
+    expect(resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 })).toEqual({
+      kg: 1.125,
+      onGrid: false,
+    });
+  });
+
+  it('retombe sur la table du matériel quand la fiche est vide, et garde sa grille', () => {
+    expect(resolveLoadStep({ equipment: 'machine' })).toEqual({ kg: 5, onGrid: true });
+    expect(resolveLoadStep({ equipment: 'machine', loadIncrementKg: 0 })).toEqual({
+      kg: 5,
+      onGrid: true,
+    });
+  });
+});
+
+describe('cran renseigné : ajouté tel quel, sans grille', () => {
+  const microload = resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 });
+
+  it('ajoute le micro-chargement à la charge du jour', () => {
+    // Poulie à 5 kg + plaque de 1,125 : 6,125. Ramené sur la grille des multiples
+    // de 1,125, le calcul tombait à 5,625 — une charge qui n'existe pas sur la poulie.
+    expect(nextLoad(5, microload, 'weight_reps')).toBe(6.125);
+    expect(previousLoad(6.125, microload, 'weight_reps')).toBe(5);
+  });
+
+  it('garde l’inversion de l’assistance et le plancher à zéro', () => {
+    const step = resolveLoadStep({ equipment: 'machine', loadIncrementKg: 2.5 });
+    expect(nextLoad(31, step, 'assisted_weight_reps')).toBe(28.5);
+    expect(previousLoad(1, step, 'weight_reps')).toBe(0);
+  });
+
+  it('ne laisse pas traîner d’écart flottant', () => {
+    expect(nextLoad(0.1, resolveLoadStep({ equipment: 'band', loadIncrementKg: 0.2 }), 'weight_reps')).toBe(0.3);
   });
 });

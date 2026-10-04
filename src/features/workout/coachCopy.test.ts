@@ -203,3 +203,107 @@ describe('coachSignalMessage — phase intention copy', () => {
     expect(message).toContain('Fourchette respectée');
   });
 });
+
+describe('coachSignalMessage — notes du coach v2', () => {
+  it('signale la marge d’une série à l’échec sans toucher au constat', () => {
+    const plain = coachSignalMessage(rangeCeiling(10, 12.5));
+    const withMargin = coachSignalMessage(
+      rangeCeiling(10, 12.5, 'range_ceiling_reached', [{ label: 'failure_reps_over_ceiling', value: 3 }]),
+    );
+    expect(withMargin.startsWith(plain)).toBe(true);
+    expect(withMargin).toContain(t('coach.failureMargin', { reps: 3 }));
+  });
+
+  it('n’ajoute rien quand aucune de ces preuves n’est là', () => {
+    expect(coachSignalMessage(rangeCeiling(47.5, 50))).toBe(
+      t('coach.range_ceiling_reached', { current: '47,5', weight: '50', sets: 3, reps: 12 }),
+    );
+  });
+});
+
+describe('coachSignalMessage — effort (R1)', () => {
+  it('raconte une consolidation avec la charge et les deux RPE', () => {
+    const message = coachSignalMessage({
+      code: 'consolidating',
+      evidence: [
+        { label: 'current_load_kg', value: 70 },
+        { label: 'rpe_before', value: 9 },
+        { label: 'rpe_after', value: 8.5 },
+      ],
+    });
+    expect(message).toBe(t('coach.consolidating', { weight: '70', before: '9', after: '8,5' }));
+    // Une observation ne porte pas de flèche : « → » veut dire « fais ça ».
+    expect(message).not.toContain('→');
+  });
+
+  it('dit pourquoi un plafond arraché ne fait pas monter', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'session_rpe', value: 9.8 },
+        { label: 'current_load_kg', value: 100 },
+      ],
+    });
+    expect(message).toBe(t('coach.ceilingGrinding', { sets: 3, reps: 12, rpe: '9,8' }));
+  });
+
+  it('ajoute au plateau à l’échec la piste de la décharge', () => {
+    const plateau: CoachSignal = {
+      exerciseId: 'fly',
+      code: 'plateau',
+      severity: 30,
+      evidence: [
+        { label: 'sessions', value: 3 },
+        { label: 'best_1rm_kg', value: 14 },
+      ],
+    };
+    const plain = coachSignalMessage(plateau);
+    const atFailure = coachSignalMessage({
+      ...plateau,
+      evidence: [...plateau.evidence, { label: 'at_failure', value: 1 }],
+    });
+    expect(atFailure).toBe(`${plain} ${t('coach.plateauAtFailure')}`);
+  });
+});
+
+describe('coachSignalMessage — reprise (R5)', () => {
+  it('dit depuis combien de jours, et pourquoi on ne monte pas', () => {
+    const message = coachSignalMessage({
+      code: 'returning',
+      evidence: [{ label: 'gap_days', value: 21 }],
+    });
+    expect(message).toBe(t('coach.returning', { days: 21 }));
+  });
+});
+
+describe('coachSignalMessage — cran à absorber (R3.2)', () => {
+  it('dit combien de répétitions viser avant le cran, et ce qu’il pèse', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'current_load_kg', value: 10 },
+        { label: 'step_needs_reps', value: 18 },
+        { label: 'next_step_kg', value: 12 },
+        { label: 'target_reps', value: 10 },
+      ],
+    });
+    expect(message).toBe(
+      t('coach.stepNeedsReps', {
+        sets: 3,
+        reps: 12,
+        weight: '12',
+        percent: 20,
+        needed: 18,
+        current: '10',
+        floor: 10,
+      }),
+    );
+    // Une consigne de répétitions, pas de charge : pas de flèche.
+    expect(message).not.toContain('→');
+  });
+});

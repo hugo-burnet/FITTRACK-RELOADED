@@ -38,6 +38,33 @@ export function resolveLoadIncrementKg(exercise: {
 }
 
 /**
+ * The step the coach and the targets move a load by, and whether results are
+ * snapped onto its grid.
+ *
+ * A step the user typed on the exercise sheet is the truth about their gym and
+ * is added as is: a cable stack at 5 kg plus a 1,125 kg microplate is 6,125 —
+ * snapped onto multiples of 1,125, it became 5,625, a load that does not exist
+ * on that stack. The equipment table is a guess, so its results stay on its grid,
+ * which is what keeps an odd load from drifting off it.
+ */
+export interface LoadStep {
+  kg: number;
+  onGrid: boolean;
+}
+
+/** Exercise sheet first (« Vide = défaut selon le matériel »), then the table. */
+export function resolveLoadStep(exercise: {
+  equipment: Equipment;
+  loadIncrementKg?: number;
+}): LoadStep {
+  const override = exercise.loadIncrementKg;
+  if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
+    return { kg: override, onGrid: false };
+  }
+  return { kg: defaultLoadIncrementKg(exercise.equipment), onGrid: true };
+}
+
+/**
  * Rounds a proposed load to the nearest available gym increment.
  *
  * This is deliberately independent of measurement type: callers that may put
@@ -60,10 +87,12 @@ export function roundLoadToIncrement(load: number, increment: number): number | 
 
 function shiftLoad(
   current: number,
-  increment: number,
+  step: number | LoadStep,
   measurementType: MeasurementType,
   towards: 'harder' | 'easier',
 ): number {
+  // A bare number is a table-like step: snapped onto its grid, as before.
+  const { kg: increment, onGrid } = typeof step === 'number' ? { kg: step, onGrid: true } : step;
   if (!(increment > 0) || !Number.isFinite(increment) || !Number.isFinite(current)) {
     return current;
   }
@@ -76,7 +105,17 @@ function shiftLoad(
   const roleSign = role === 'assist' ? -1 : 1;
   const directionSign = towards === 'harder' ? 1 : -1;
   const raw = current + roleSign * directionSign * increment;
-  const rounded = Math.round(raw / increment) * increment;
+  if (!onGrid) return Math.max(0, Math.round(raw * 1000) / 1000);
+  // Une charge posée sur un demi-pas (12,5 kg sur une machine réglée à 5) fait
+  // tomber le pas pile entre deux crans : 17,5 est à égale distance de 15 et 20.
+  // `Math.round` tranche toujours vers le haut, donc vers 20 en montant — un pas
+  // de 7,5 kg, +60 % sur un oiseau à 12,5 kg. L'égalité se tranche vers la charge
+  // de départ : on ne s'éloigne jamais de plus d'un incrément.
+  const ratio = raw / increment;
+  const lower = Math.floor(ratio);
+  const isTie = Math.abs(ratio - lower - 0.5) < 1e-9;
+  const steps = isTie ? (raw > current ? lower : lower + 1) : Math.round(ratio);
+  const rounded = steps * increment;
   // Float hygiene: 102.5 / 2.5 * 2.5 can still land at 102.50000000000001.
   const cleaned = Math.round(rounded * 1000) / 1000;
   return Math.max(0, cleaned);
@@ -89,7 +128,7 @@ function shiftLoad(
  */
 export function nextLoad(
   current: number,
-  increment: number,
+  increment: number | LoadStep,
   measurementType: MeasurementType,
 ): number {
   return shiftLoad(current, increment, measurementType, 'harder');
@@ -101,7 +140,7 @@ export function nextLoad(
  */
 export function previousLoad(
   current: number,
-  increment: number,
+  increment: number | LoadStep,
   measurementType: MeasurementType,
 ): number {
   return shiftLoad(current, increment, measurementType, 'easier');

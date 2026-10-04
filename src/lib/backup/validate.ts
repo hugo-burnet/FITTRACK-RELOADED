@@ -146,6 +146,8 @@ const COACH_CODES = [
   'intra_session_drop',
   'plateau',
   'long_rest',
+  'consolidating',
+  'returning',
 ] as const satisfies readonly CoachSignalCode[];
 const COACH_STATUSES = [
   'pending',

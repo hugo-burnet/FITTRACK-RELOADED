@@ -1,4 +1,4 @@
-import { resolveLoadIncrementKg, nextLoad } from '@/lib/loadIncrement';
+import { resolveLoadStep, nextLoad } from '@/lib/loadIncrement';
 import { measurementShape, type WeightRole } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import type {
@@ -278,8 +278,9 @@ function reviewLine(
     return { kind: 'unchanged', reason: 'effort_too_high' };
   }
 
-  const incrementKg = resolveLoadIncrementKg(line);
-  const proposedWeight = nextLoad(currentWeight, incrementKg, line.measurementType);
+  const step = resolveLoadStep(line);
+  const incrementKg = step.kg;
+  const proposedWeight = nextLoad(currentWeight, step, line.measurementType);
   // Une assistance déjà à zéro n'a plus de pas à retirer : ne rien proposer
   // vaut mieux qu'une ligne qui ne change rien.
   if (!isHarder(proposedWeight, currentWeight, role)) {

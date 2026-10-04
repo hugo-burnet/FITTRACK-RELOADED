@@ -1,5 +1,5 @@
 import type { ProgramPhase, ProgramWeek, RoutineSet } from '@/data/types';
-import { previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
+import { previousLoad, resolveLoadStep } from '@/lib/loadIncrement';
 import type {
   ProgramPrescriptionExerciseInput,
   ProgramPrescriptionProjection,
@@ -56,7 +56,7 @@ export function createDeloadTargets(input: {
     const working = ordered.filter((set) => !isWarmup(set));
     const dropId =
       working.length > 1 ? working[working.length - 1]!.id : undefined;
-    const increment = resolveLoadIncrementKg(exercise);
+    const increment = resolveLoadStep(exercise);
 
     for (const set of ordered) {
       if (dropId !== undefined && set.id === dropId) continue;

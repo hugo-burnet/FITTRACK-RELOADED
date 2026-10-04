@@ -1,5 +1,5 @@
 import type { Exercise, ProgramWeek, RoutineSet } from '@/data/types';
-import { nextLoad, previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
+import { nextLoad, previousLoad, resolveLoadStep, type LoadStep } from '@/lib/loadIncrement';
 import { createDeloadTargets } from './deloadTargets';
 import { loadIndexSteps } from './phaseSuggestions';
 
@@ -40,7 +40,7 @@ const isWarmup = (set: Pick<RoutineSet, 'setType'>): boolean => set.setType === 
 function shiftWorkingLoad(
   weight: number,
   steps: number,
-  increment: number,
+  increment: LoadStep,
   measurementType: Exercise['measurementType'],
 ): number {
   let value = weight;
@@ -98,7 +98,7 @@ export function projectProgramPrescription(input: {
   const steps = loadIndexSteps(input.week.loadIndex);
   const sets: ProjectedProgramSet[] = [];
   for (const { exercise, sets: routineSets } of input.exercises) {
-    const increment = resolveLoadIncrementKg(exercise);
+    const increment = resolveLoadStep(exercise);
     for (const set of orderedSets(routineSets)) {
       const projected = routineTargets(set);
       if (steps !== 0 && !isWarmup(set) && projected.targetWeight !== undefined) {

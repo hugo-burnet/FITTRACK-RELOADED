@@ -3,7 +3,169 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**v2.10.0 — le cycle des programmes, « À lancer » sur plusieurs dossiers, un dossier d'un coup dans le split, l'échauffement qu'on ne recopie plus ni n'écrase, le cadenas d'ordre dans la séance**).
+**Dernière mise à jour :** 2026-10-04 (**coach v2 : le cran est celui de la fiche de l'exercice, ajouté tel quel** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2 : le cran de la fiche, tel quel (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma : le champ « Incrément de charge » de la fiche existe déjà.
+
+**Décision de l'utilisateur** : « sur une poulie tu peux micro-charger à +1,125 — on va plutôt respecter les
+incrémentations que l'utilisateur renseigne déjà dans la fiche de l'exo ».
+
+- **Pas déduit retiré.** R3.1 (tranche 1) lisait le cran dans les charges soulevées ; il ne voyait pas le
+  micro-chargement 3,5 / 5 / 6,125 de la poulie, et contournait en silence ce que la fiche promet (« Vide =
+  défaut selon le matériel »). `inferLoadIncrementKg`, l'évidence `inferred_increment_kg` et la note de carte
+  `coach.inferredIncrement` sont supprimés.
+- **Défaut trouvé en traçant le cas, et corrigé.** `nextLoad` arrondissait toujours au multiple du cran : avec
+  1,125 renseigné, 5 kg devenait 5,625 et non 6,125. `resolveLoadStep` rend `{ kg, onGrid }` : un cran
+  renseigné s'ajoute tel quel, la table du matériel garde sa grille. Branché aux **quatre** appelants — coach,
+  revue des cibles de routine, prescription et décharge des programmes —, qui avaient tous le défaut.
+- **Saisie vérifiée** : le champ avance par 0,25 aux boutons, mais taper « 1,125 » enregistre bien 1,125.
+- **Rejeu** : rowing et leg curl reviennent au cran machine de 5 kg tant que leur fiche est vide, et R3.2 y
+  demande alors 13 à 14 répétitions. 25 → 17 hausses proposées sur l'historique.
+- **Fiches à renseigner** — l'historique y montre un cran plus fin que la table : développé épaules à la
+  machine, développé à la machine, oiseau à la machine, leg curl allongé, leg curl assis, leg extension,
+  rowing buste appuyé (2,5 kg au lieu de 5) ; élévations latérales, rotation externe, extension triceps corde
+  unilatérale (micro-chargement de poulie).
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
+
+## Coach v2, tranche 4 : les répétitions absorbent le cran (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+**La règle a changé avant d'être codée.** La spec prévoyait un saut maximal de 10 % et 3 répétitions au-delà
+de la fourchette ; l'utilisateur l'a arrêtée : « les haltères c'est +2 kg, t'as pas le choix ». Le cran est
+celui du matériel ; ce qui s'adapte, c'est le nombre de répétitions exigé avant de le prendre — assez pour
+retomber au bas de la fourchette après le cran.
+
+- `repsToAbsorbStep(charge, suivante, plancher)` (`lib/oneRepMax`) : inverse d'Epley, **arrondi au plus
+  proche**. L'arrondi supérieur réclamait 13 répétitions au leg curl (45 × 12 annonce 9,8 à 47,5 kg) : une
+  répétition entière pour 0,2, sous la précision d'Epley. Charges seulement : un lest s'ajoute au poids du
+  corps, une assistance se retire.
+- Moteur : tant que toutes les séries n'atteignent pas le compte, le plafond reste affiché **sans charge
+  proposée**, avec le compte visé ; seule `increase_reps` est autorisée. Carte : « Le prochain cran (12 kg)
+  pèse +20 % : vise 18 répétitions à 10 kg pour retomber à 10 au moins après la hausse. » Récap vocal sur
+  « progrès », jamais « une hausse de charge est prévue ».
+- **Rejeu** : 69 propositions de hausse sur l'historique → 25 (18 avec l'arrondi supérieur). Charges lourdes
+  inchangées (rowing 70 → 72,5). Vérifié sur un cas réel : au développé incliné, 18 × 12 × 3 puis 20 × 8 × 3,
+  pile le plancher — la règle demande ces 12 répétitions ; le coach v1 proposait 20 kg dès 18 × 10/11/11.
+  Contre-exemple honnête : rowing 45 × 12 → 50 × 12, mieux qu'Epley ne le prévoyait (14 répétitions
+  demandées). Epley est prudent aux répétitions hautes ; à juger en salle.
+- **Sept tests existants** dont le sujet était ailleurs (arrondi du demi-pas, pas déduit, fenêtre du plateau,
+  écran de fin de séance) ont reçu assez de répétitions ou une charge plus lourde, commentaire à l'appui. Aucune
+  assertion sur leur sujet n'a changé.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
+
+## Coach v2, tranche 3 : même fourchette, retour de pause (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+- **R4 — même contrat.** `contractKey` : les paires `targetReps–targetRepsMax` des séries de travail. Le bas
+  manqué, le plateau et la consolidation ne comparent plus que des séances du même contrat ; les séances sans
+  cible forment leur flux. Le pas déduit, lui, lit tout l'historique.
+- **R5 — retour de pause.** 14 jours ou plus depuis la séance précédente de l'exercice, quelle qu'en soit la
+  fourchette : signal `returning` (« Reprise après 21 jours : on consolide avant de monter »), au-dessus du
+  plafond, sans charge proposée, ni `increase_load` ni `add_set` ; les fenêtres du plateau et du bas manqué
+  repartent de la reprise. Code ajouté à la validation des sauvegardes.
+- **Récap vocal, défaut de la tranche 2 corrigé.** Un plafond arraché passait encore par « Une hausse de
+  charge est prévue ». Un plafond arraché et une reprise ne produisent plus de phrase ; « Le plan reste
+  inchangé » n'est dit que si aucun autre constat ne l'est, pour ne jamais côtoyer « la charge sera ajustée ».
+- **Rejeu** : 23 lignes. Quinze reprises — exactement les quinze pauses de 14 jours relevées dans
+  l'historique (presse à cuisses après 21 jours : plus de 120 kg proposé). Le faux plateau du pec fly sur la
+  séance de reprise disparaît : il ne reste qu'un plateau affiché sur tout l'historique, le vrai (pec fly à
+  RPE 9–10). Quelques consolidations tombent, parce qu'elles comparaient deux fourchettes.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
+
+## Coach v2, tranche 2 : le coach lit le RPE (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma : `rpe` existe depuis RF-30, il n'était simplement pas transmis au moteur.
+
+- **Effort de séance** : moyenne des RPE des séries jugées (séries à l'échec exclues, elles sont à 10 par
+  construction), définie seulement si la moitié au moins en porte un. Sinon, le moteur se comporte exactement
+  comme avant — un test le verrouille.
+- **Plafond arraché** (≥ 9,5, décision Q1) : le constat reste, sans charge proposée ; ni `increase_load` ni
+  `add_set`. Carte : « … mais à l'échec (RPE moyen 9,8) : on refait cette charge plus facilement avant de monter ».
+- **Consolidation**, nouveau code `consolidating` : même charge, au moins autant de répétitions, RPE moyen en
+  baisse d'un demi-point. Sévérité 38, entre le plafond et la fourchette tenue. Récap vocal : le son
+  « progrès » existant, aucune phrase à générer. Ajouté à la liste des codes que la validation des
+  sauvegardes accepte — sans quoi une sauvegarde contenant ce code serait refusée à la restauration.
+- **Plateau** : levé si l'effort baisse d'un demi-point sur la fenêtre ; drapeau `at_failure` quand chaque
+  séance est à 9,5 ou plus, et la carte suggère une décharge.
+- **Rejeu** : 11 lignes changent. Un plafond arraché (oiseau 10 × 15 @9,5 : plus de 12,5 kg proposé), dix
+  consolidations (développé incliné 20 kg de RPE 9,3 à 8,8, élévations latérales, rotation externe…), dont
+  quatre deviennent le message affiché. Aucun plateau ne change.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
+
+## Coach v2 : décisions, banc de rejeu et tranche 1 (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+**Décisions de l'utilisateur** (spec § 9) : consolider un plafond atteint à l'échec ; pas relatif de 10 % et
+3 répétitions ; retour de pause à 14 jours ; série à l'échec au-delà du plafond en simple information ; bornes
+de volume **adaptées à l'utilisateur** — plafond tiré de son historique, plancher seulement s'il le pose.
+Plan : `docs/design/plans/2026-10-04-coach-v2.md`.
+
+- **Tranche 0 — banc de rejeu.** `coachLinesFromBackup`, `replayCoach`, `formatReplay` (purs, testés) et
+  `COACH_REPLAY_BACKUP=… npm run coach:replay`. Le lanceur est un test sauté sans sauvegarde, comme les
+  `bench:*`. `.gitignore` écarte `fittrack-sauvegarde-*.json` et `coach-replay*.txt`.
+- **Tranche 1 — R2.** La série à l'échec ne juge plus le bas de fourchette ni la baisse de reps ; elle
+  **compte pour le plafond**. La première version l'écartait aussi du plafond : le rejeu inventait un plafond
+  au pec fly (`5 × 15 · F 5 × 14` sur 12–15) et l'utilisateur l'a corrigé (« je plafonne pas sur le pec
+  fly »). Le test de la séance réelle du 23/08 (élévations latérales) attendait « 5 → 2,5 kg » sur la foi de
+  la série à l'échec : il attend maintenant `range_satisfied`, et son sujet d'origine — alléger depuis la
+  charge du haut, pas depuis la dégressive — est gardé par une variante en série normale. Évidence
+  `failure_reps_over_ceiling` (Q5).
+- **Tranche 1 — R3.1.** `inferLoadIncrementKg` : le plus petit écart entre charges distinctes, s'il revient
+  deux fois et vaut au moins 0,5 kg. Ordre : réglage de l'exercice → pas déduit s'il est plus fin → table.
+  Évidence `inferred_increment_kg`, et la carte le dit (`coach.inferredIncrement`).
+- **Rejeu avant / après** sur la sauvegarde : 23 lignes changent, toutes relues. Fausses alertes supprimées
+  (élévations 5 → 2,5 kg deux fois, pec fly, curl marteau, tractions…) ; pas déduit (rowing 70 → 72,5,
+  leg curl 45 → 47,5, oiseau 10 → 12,5). Aucun plafond nouveau.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
+
+## Le coach rejoué sur un historique réel : trois correctifs et la spec v2 (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée** : la v2.10.0 reste la dernière version.
+Aucune table, aucun index, aucune version de schéma.
+
+L'utilisateur trouvait le coach « trop simpliste » et a fourni une sauvegarde (28 séances, ~8 semaines, 164
+recommandations journalisées). Le moteur a été rejoué séance par séance (`evaluatePerformance` sur les lignes de
+la sauvegarde) et comparé à ce qu'il avait réellement affiché. **La sauvegarde n'est pas dans le dépôt** et ne
+doit pas y entrer.
+
+**Trois correctifs, chacun avec un test tiré du cas réel, vu rouge avant le correctif**
+
+- **`fix(coach): un pas de charge ne dépasse jamais un incrément`** (`118354d`). Depuis un demi-pas (12,5 kg sur
+  une machine au pas de 5), `shiftLoad` tombait pile entre deux crans et `Math.round` tranchait vers le haut :
+  12,5 → 20 kg (+60 %) sur l'oiseau, 47,5 → 55 kg sur le leg curl. L'égalité se tranche vers la charge de départ.
+  Touche aussi `routineTargets` et `programs`, qui passent par `nextLoad` / `previousLoad`.
+- **`fix(coach): consolider une charge n'est plus un plateau`** (`0777aea`). Une séance plafonnée ne peut pas
+  faire monter le 1RM estimé ; trois plafonds à la même charge passaient pour un plateau, et le plateau retirait
+  `increase_load`. Rowing à 70 × 12 × 3, RPE en baisse : « Plateau » trois fois. Le test
+  `plateau strips add_set as well as increase_*` **verrouillait ce défaut** : il affirme maintenant l'inverse, le
+  retrait par le plateau étant testé sur une fourchette tenue sans plafond. Même chose pour le test de dépôt
+  `progression target + plateau` (10 sur 8–12 au lieu de 12). Spec du coach d'intention amendée (§ 4.2, § 10).
+- **`fix(coach): un record de répétitions à la même charge n'est pas un plateau`** (`33ee159`). Révélé par le
+  précédent : `estimateOneRepMax` ne lit rien au-delà de 12 répétitions, donc un 12,5 × 13 était jugé sur sa
+  série à 11. La séance plafonnée à 15 que le correctif précédent écarte rendait la règle muette par accident.
+
+**Après les trois**, le rejeu de tout l'historique ne montre plus que deux plateaux : un vrai (pec fly à RPE 9–10
+trois fois) et un faux sur une séance de reprise plus légère — cas couvert par R4 de la spec.
+
+**Spec : `docs/design/specs/2026-10-04-coach-v2-design.md`**, validée depuis (section au-dessus). Constat central : le RPE est noté sur **84 %** des séries de travail et le coach n'en lit aucun.
+Règles R1 (effort), R2 (série à l'échec), R3 (pas déduit de l'historique, pas relatif), R4 (même contrat de
+répétitions), R5 (retour de pause), R6 (volume par muscle), R7 reportée faute de cas réel. Pas de plan
+d'exécution tant que les questions ne sont pas tranchées.
+
+**Vérification.** `typecheck`, `lint`, `test:run` (**271 fichiers, 3 009 tests**) et `build` verts.
+
+**Piège rencontré.** En comparant deux versions du moteur par `git stash` / `git checkout -- fichier`, un
+correctif non encore commité a été écrasé, puis réécrit. Commiter avant de comparer.
 
 ## « Appliquer à toutes les séries » ne touche plus à l'échauffement (2026-10-04, suite)
 
@@ -903,6 +1065,19 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
 
 ## Checkpoints téléphone encore dus
 
+- **Coach** (2026-10-04, branche de session, une fois fusionnée) — au plafond sur une machine où tu charges
+   par 2,5 kg, la carte propose +2,5 kg et dit « Pas de 2,5 kg, lu dans les charges que tu as déjà chargées ».
+   Rowing tenu en haut de fourchette : la carte propose la hausse au lieu de « Plateau ». Une série à l'échec
+   finie sous le bas de fourchette ne déclenche plus ni « Baisse de reps » ni allègement ; finie sous le haut,
+   elle empêche le plafond.
+   Tranche 2 : un plafond atteint à RPE 9,5 ou plus ne propose pas de charge et dit pourquoi ; une séance à
+   même charge avec un RPE plus bas affiche « la charge se consolide ».
+   Tranche 3 : reprendre un exercice après deux semaines affiche « Reprise après N jours » et ne propose pas
+   de charge ; le récap vocal ne dit pas « une hausse de charge est prévue ».
+   Tranche 4 : un curl aux haltères à 10 kg × 12 sur 10–12 ne propose pas 12 kg mais « vise 18 répétitions » ;
+   à 18 partout, il propose 12 kg. Sur une barre lourde, rien ne change.
+   Cran de la fiche : renseigner 1,125 sur les élévations latérales ; au plafond avec assez de répétitions,
+   la charge proposée depuis 5 kg est 6,125 (pas 5,625, pas 7,5).
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »

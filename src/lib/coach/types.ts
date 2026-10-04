@@ -32,6 +32,8 @@ export interface CoachSetInput {
   weight?: number;
   targetReps?: number;
   targetRepsMax?: number;
+  /** RF-30, 6 to 10 by 0.5. Often absent: the rules that read it fall silent then. */
+  rpe?: number;
   performedAt: number;
   order: number;
 }
