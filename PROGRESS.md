@@ -3,7 +3,28 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 2 : le coach lit le RPE** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 3 : même fourchette et retour de pause** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2, tranche 3 : même fourchette, retour de pause (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+- **R4 — même contrat.** `contractKey` : les paires `targetReps–targetRepsMax` des séries de travail. Le bas
+  manqué, le plateau et la consolidation ne comparent plus que des séances du même contrat ; les séances sans
+  cible forment leur flux. Le pas déduit, lui, lit tout l'historique.
+- **R5 — retour de pause.** 14 jours ou plus depuis la séance précédente de l'exercice, quelle qu'en soit la
+  fourchette : signal `returning` (« Reprise après 21 jours : on consolide avant de monter »), au-dessus du
+  plafond, sans charge proposée, ni `increase_load` ni `add_set` ; les fenêtres du plateau et du bas manqué
+  repartent de la reprise. Code ajouté à la validation des sauvegardes.
+- **Récap vocal, défaut de la tranche 2 corrigé.** Un plafond arraché passait encore par « Une hausse de
+  charge est prévue ». Un plafond arraché et une reprise ne produisent plus de phrase ; « Le plan reste
+  inchangé » n'est dit que si aucun autre constat ne l'est, pour ne jamais côtoyer « la charge sera ajustée ».
+- **Rejeu** : 23 lignes. Quinze reprises — exactement les quinze pauses de 14 jours relevées dans
+  l'historique (presse à cuisses après 21 jours : plus de 120 kg proposé). Le faux plateau du pec fly sur la
+  séance de reprise disparaît : il ne reste qu'un plateau affiché sur tout l'historique, le vrai (pec fly à
+  RPE 9–10). Quelques consolidations tombent, parce qu'elles comparaient deux fourchettes.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
 
 ## Coach v2, tranche 2 : le coach lit le RPE (2026-10-04, suite)
 
@@ -998,6 +1019,8 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
    elle empêche le plafond.
    Tranche 2 : un plafond atteint à RPE 9,5 ou plus ne propose pas de charge et dit pourquoi ; une séance à
    même charge avec un RPE plus bas affiche « la charge se consolide ».
+   Tranche 3 : reprendre un exercice après deux semaines affiche « Reprise après N jours » et ne propose pas
+   de charge ; le récap vocal ne dit pas « une hausse de charge est prévue ».
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »

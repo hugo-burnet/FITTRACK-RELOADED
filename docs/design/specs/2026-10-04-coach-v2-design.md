@@ -149,10 +149,11 @@ séances « reprise »). Le moteur lit tout comme une seule suite : une reprise 
 légère au pec fly devient un plateau.
 
 **Règle.** L'historique d'une règle de séance à séance (`range_missed`, `plateau`, R1-2) est
-restreint aux séances qui ont le **même contrat de répétitions** que la dernière
-(`targetReps`, `targetRepsMax`). Les séances sans contrat forment leur propre flux, lu par le
-plateau seulement (comme les imports Hevy). Le 1RM et les records ne changent pas : ils restent
-lus sur tout l'historique.
+restreint aux séances qui ont le **même contrat de répétitions** que la dernière : l'ensemble des
+paires `targetReps–targetRepsMax` de ses séries de travail. Les séances sans cible forment leur
+propre flux (comme les imports Hevy) ; les règles de fourchette n'y trouvent rien à lire, le plateau
+et la consolidation si. Le pas déduit (R3.1), le 1RM et les records restent lus sur tout
+l'historique.
 
 *Alternative écartée* : la clé « même routine ». Elle casse au premier renommage, et deux routines
 peuvent prescrire le même contrat — ce qui est comparable, c'est la prescription.
@@ -162,10 +163,12 @@ peuvent prescrire le même contrat — ce qui est comparable, c'est la prescript
 **Constat.** 15 retours après ≥ 14 jours en 8 semaines. Après 21 jours sans presse, le coach
 propose +5 kg comme si les séances s'enchaînaient.
 
-**Règle.** Si l'écart avec la séance comparable précédente atteint `RETURN_GAP_DAYS` (14, décision
-Q4) :
-- pas d'`increase_load` ni d'`add_set` sur la séance de retour ; signal `returning`
-  (« Reprise après N jours : on consolide avant de monter ») ;
+**Règle.** Si l'écart avec la séance précédente de l'exercice — **quelle qu'en soit la
+fourchette** : une semaine en 12–15 entre deux semaines en 8–12 n'est pas une pause — atteint
+`RETURN_GAP_DAYS` (14, décision Q4) :
+- pas d'`increase_load` ni d'`add_set` sur la séance de retour, et pas de charge proposée par le
+  plafond ; signal `returning` (« Reprise après N jours : on consolide avant de monter »), rangé
+  au-dessus du plafond pour expliquer son silence ; récap vocal sans phrase de hausse ;
 - la fenêtre du plateau et de `range_missed` repart de la séance de retour.
 
 Aucune baisse automatique : c'est un constat, pas une décharge imposée.
