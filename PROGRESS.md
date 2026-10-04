@@ -3,7 +3,72 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**cycle des programmes sur plusieurs semaines, « À lancer » sur plusieurs dossiers**).
+**Dernière mise à jour :** 2026-10-04 (**ajouter un dossier au split, l'échauffement qu'on ne marque pas ; avant : cycle des programmes, « À lancer » sur plusieurs dossiers**).
+
+## Ajouter un dossier au split, et l'échauffement qu'on ne marque pas (2026-10-04, suite)
+
+Publication : **aucune**, comme la section d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
+2.9.0. Deux demandes de l'utilisateur après la livraison du cycle : « quand tu as fait une série
+d'échauffement, à la séance d'après tu vois les poids de ta série d'échauffement en suggestions (place order)
+d'une série normale », et « oui je veux bien le bouton » — celui que la section d'en dessous proposait en
+sortie. Spec et plan : `2026-10-04-split-ajouter-un-dossier`. Aucune table, aucun index, aucune version de
+schéma.
+
+**Le bouton « Ajouter un dossier »**
+
+- Chaque semaine du cycle (et la semaine unique d'un split hebdomadaire) a, sous « Ajouter à la semaine N »,
+  un bouton qui ouvre la liste des dossiers (« UL — 4 routines »). En toucher un pose **une séance par
+  routine**, dans l'ordre du dossier, sur des jours qui se suivent : lundi, mardi… ; les jours se corrigent
+  ensuite. Avec le cycle de deux semaines, deux appuis posent les dix séances.
+- Les séances **sans routine de la semaine visée sont remplacées** — c'est l'emplacement du départ : sans
+  cela, le premier usage laisserait une « Séance 1 » vide que « Continuer » refuse. Ce qui est déjà rempli
+  reste, le dossier s'ajoute derrière ; après le dimanche on repart du lundi.
+- « Sans dossier » ne se propose qu'une fois des dossiers existants (sans eux c'est la bibliothèque entière).
+  Aucun dossier utile, aucun bouton. Le nom accessible dit la semaine (« … à la semaine 2 ») ; le texte visible
+  reste « Ajouter un dossier », parce qu'un libellé plus long passait à la ligne.
+- `useProgramEditorData` lit les dossiers avec les routines. **Le modèle du split a quitté
+  `programEditorModel.ts`** (309 lignes, deux métiers) pour `programSplitModel.ts` (182) ; ses tests ont suivi.
+
+**L'échauffement qui ressort en suggestion — analysé, pas corrigé**
+
+- **Marqué « Échauffement », il ne fuit pas.** `matchPreviousSets` apparie échauffements et séries de travail
+  séparément, et un test le garde depuis la v2.5.0. Rejoué dans Chromium (séance 1 avec une montée marquée,
+  séance 2 ouverte) : la première série normale affiche « Précédent 100 × 5 ».
+- **Non marqué, il fuit — et l'app ne peut pas le savoir.** Une première série plus légère laissée en
+  « normale » est, pour l'app, la série 1 de la dernière fois : la séance suivante en propose les chiffres
+  (**40 × 5**). Rien dans le code ne distingue cette série d'une série de travail légère voulue, une pyramide
+  par exemple. « Ajouter une série » ajoute **en fin de liste**, donc on ne peut pas ajouter un échauffement en
+  tête avec lui ; marquer passe par le menu de la série puis « Type de série ».
+- **Aucun code changé.** Deviner par la charge a été écarté (une pyramide serait mal lue, en silence, dans la
+  colonne qui doit rester vraie). Question restée ouverte avec l'utilisateur : comment ajoute-t-il son
+  échauffement ? Selon la réponse : proposer de marquer, en fin de séance, les séries qui y ressemblent, ou un
+  geste « échauffement » direct sur la carte. Détail dans `docs/progress/decisions-et-pieges.md`.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**266 fichiers, 2 974 tests**, 14 de plus que la
+  section d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,56 Kio.
+- Les tests de `programSplitModel` ont été écrits et vus rouges avant le code ; les deux parcours d'intégration
+  (UL puis PPL de la feuille à l'activation, l'absence du bouton sans dossier) ont passé du premier coup.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, base amorcée à l'image de la sienne (4 + 6 routines dans deux
+  dossiers, une libre) : la feuille liste « UL — 4 routines », « PPL 45' — 6 routines », « Sans dossier —
+  1 routine » ; deux appuis posent dix séances, UL du lundi au jeudi et PPL du lundi au samedi, dans l'ordre
+  des dossiers ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Le titre de la feuille, « Ajouter les routines d'un dossier », était **tronqué** avec la police du terminal
+  (vingt caractères tiennent) : le même défaut que le titre de la feuille de l'accueil, deux fois dans la
+  journée. Un titre de feuille se mesure dans TTY1, pas seulement en Sombre.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Planifier › Programmes › « + », puis au Split **2 semaines**.
+2. Sous la semaine 1 : « Ajouter un dossier » › **UL** — les quatre séances arrivent, du lundi au jeudi. Sous
+   la semaine 2 : « Ajouter un dossier » › **PPL 45'** — les six, du lundi au samedi.
+3. Corriger un jour si le plan n'est pas celui-là, puis continuer.
 
 ## Cycle des programmes et « À lancer » sur plusieurs dossiers (2026-10-04)
 

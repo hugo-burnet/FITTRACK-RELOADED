@@ -140,8 +140,8 @@ vient y lire.
 
 ## Hors périmètre
 
-- Ajouter d'un coup toutes les routines d'un dossier à une semaine du cycle (une commodité, pas une
-  capacité : chaque séance se place aujourd'hui une à une).
+- Ajouter d'un coup toutes les routines d'un dossier à une semaine du cycle : demandé et livré dans la
+  foulée, voir `docs/design/specs/2026-10-04-split-ajouter-un-dossier-design.md`.
 - Un cycle de plus de quatre semaines, ou un cycle qui ne démarre pas à sa première semaine : on choisit
   l'ordre des semaines du cycle, pas un décalage.
 - Une prescription (phase, niveau) propre à chaque semaine du cycle : elle reste par semaine du bloc.

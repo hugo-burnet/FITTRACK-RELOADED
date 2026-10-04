@@ -7,6 +7,38 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-04 — Un échauffement qu'on ne marque pas est une série de travail
+
+**Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de
+ta série d'échauffement en suggestion d'une série normale — par place, par ordre. »
+
+**Ce que le code répond.** Une série marquée « Échauffement » **ne fuit jamais** : `matchPreviousSets`
+apparie les échauffements entre eux et les séries de travail entre elles, par rang **dans leur type**
+(`lib/previousSets.ts`, testé). Rejoué de bout en bout — séance 1 avec une montée marquée, séance 2 lue dans
+Chromium — la colonne « Précédent » de la première série normale affiche **100 × 5**, pas 40 × 5. La fuite a
+une seule cause possible : une série qui **n'est pas marquée**. Rejouée avec une première série plus légère
+laissée en « normale » (la routine n'a qu'une série, on y fait son échauffement, on ajoute les séries de
+travail), la séance suivante propose **40 × 5** à la première série normale — et l'app ne peut pas savoir
+que c'était un échauffement : pour elle, c'est la série 1 de la dernière fois, très exactement ce que la
+colonne est faite pour montrer.
+
+**Pourquoi c'est facile de ne pas la marquer.** « Ajouter une série » **ajoute en fin de liste** : on ne peut
+pas ajouter un échauffement en tête avec lui. La montée calculée (menu de l'exercice, ou la proposition de
+reprendre celle de la dernière fois) insère bien des séries d'échauffement, **marquées**, avant les autres —
+mais la proposition ne se montre que si la première série de travail du jour a déjà une charge saisie ou
+prescrite, et le calculateur est un détour pour une seule série légère. Marquer à la main passe par le menu
+de la série (toucher son numéro) puis « Type de série ».
+
+**Ce qui est écarté.** Deviner : traiter comme échauffement toute série de tête nettement plus légère que les
+suivantes. Une pyramide (60 / 80 / 100) ou une routine qui prévoit une série de montée *normale* seraient
+alors mal lues, en silence, dans la colonne qui doit rester vraie — et l'app a toujours préféré un type
+explicite à une heuristique.
+
+**Décision.** Aucune encore : la bonne réponse dépend de la façon dont l'utilisateur ajoute son échauffement
+(marqué par le menu ou la montée calculée, ou simple première série plus légère). Pistes : proposer, en fin
+de séance, de marquer les séries qui ressemblent à un échauffement ; ou ajouter un geste « échauffement »
+direct sur la carte de l'exercice. **Aucun code n'a été changé pour ce sujet.**
+
 ### 2026-10-04 — Une relecture externe du schéma d'entraînement : un point juste, deux à ne pas suivre
 
 **Ce qui a été dit.** Le 29 septembre, un lecteur du dépôt a relu les index de `workouts`,
@@ -430,9 +462,11 @@ _(Raccourcis pris volontairement, à rembourser plus tard.)_
   (502), `ProgramEditorScreen.tsx` (411) et `home.ts` (312, dépôt). Chacun garde **une** responsabilité —
   les écritures d'un split, la fiche d'un bloc, l'éditeur d'un bloc, la projection de l'accueil — et les
   trois premiers l'étaient déjà avant ce travail. Ce qui faisait deux métiers a été découpé :
-  `ProgramSplitStep` (245 → 213 lignes) a rendu la séance du split à son propre composant
-  (`ProgramSplitSession`, 173), et la forme du contexte de dossiers, sa lecture et ses conversions vivent dans un
-  module pur (`lib/routineContext.ts`, 101) plutôt que dans le dépôt. **À rouvrir** si l'un d'eux reçoit une
+  `ProgramSplitStep` (245 → 269 lignes, sous le repère) a rendu la séance du split à son propre composant
+  (`ProgramSplitSession`, 173) ; le modèle du split a quitté `programEditorModel` (309 lignes) pour
+  `programSplitModel` (182) quand l'ajout d'un dossier l'a fait dépasser 300 ; et la forme du contexte de
+  dossiers, sa lecture et ses conversions vivent dans un module pur (`lib/routineContext.ts`, 101) plutôt que
+  dans le dépôt. **À rouvrir** si l'un d'eux reçoit une
   troisième capacité : la lecture de la projection du bloc, dans `ProgramDetailScreen`, est la première
   candidate à sortir en module.
 
