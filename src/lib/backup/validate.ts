@@ -95,6 +95,8 @@ const isStamp: Check = (value) => isNumber(value) && (value as number) >= 0;
 const isCount = isStamp;
 /** Un rang ou un index : entier, et positif. */
 const isRank: Check = (value) => typeof value === 'number' && Number.isInteger(value) && value >= 0;
+/** Un nombre de semaines, de jours… : entier, et au moins 1. */
+const isLength: Check = (value) => isRank(value) && (value as number) >= 1;
 const isFlag: Check = (value) => value === 0 || value === 1;
 const isList: Check = (value) => Array.isArray(value);
 
@@ -410,6 +412,9 @@ const SPECS: Record<BackupTable, TableSpec> = {
     since: 6,
     key: 'id',
     required: { ...SYNCABLE, programId: isId, effectiveFromWeekIndex: isRank },
+    // Un cycle de plusieurs semaines ; une sauvegarde d'avant n'en porte pas et
+    // se lit comme une semaine qui se répète.
+    optional: { cycleWeeks: isLength },
     links: [{ field: 'programId', table: 'programs' }],
   },
   programScheduleEntries: {
@@ -422,6 +427,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       dayOfWeek: isRank,
       order: isRank,
     },
+    optional: { cycleWeek: isRank },
     links: [
       { field: 'revisionId', table: 'programScheduleRevisions' },
       { field: 'routineId', table: 'routines' },

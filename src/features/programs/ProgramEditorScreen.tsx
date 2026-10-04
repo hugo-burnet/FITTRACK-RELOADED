@@ -21,7 +21,7 @@ import { ProgramBasicsStep } from './ProgramBasicsStep';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
 import { ProgramEffectiveWeekSelect } from './ProgramEffectiveWeekSelect';
 import { ProgramSplitStep } from './ProgramSplitStep';
-import type { ProgramSplitDraftEntry } from './ProgramSplitStep';
+import type { ProgramSplitDraft } from './ProgramSplitStep';
 import { ProgramStepNav } from './ProgramStepNav';
 import type { ProgramEditorStep } from './ProgramStepNav';
 import { ProgramWeeksStep } from './ProgramWeeksStep';
@@ -30,17 +30,14 @@ import {
   basicsIssue,
   defaultWeeks,
   effectiveWeekOptions,
-  emptySplit,
   formatLocalDate,
-  orderedSplit,
   parseLocalDate,
   repositoryErrorKey,
   resizeWeeks,
-  splitForWeek,
-  splitIssue,
   weeksForBlock,
   weeksIssue,
 } from './programEditorModel';
+import { emptySplit, orderedSplit, splitForWeek, splitIssue } from './programSplitModel';
 import { useProgramEditorData } from './useProgramEditorData';
 
 export function ProgramEditorScreen() {
@@ -55,7 +52,7 @@ export function ProgramEditorScreen() {
     durationWeeks: 8,
   });
   const [dateValue, setDateValue] = useState('');
-  const [split, setSplit] = useState<ProgramSplitDraftEntry[]>(emptySplit);
+  const [split, setSplit] = useState<ProgramSplitDraft>(emptySplit);
   const [weeks, setWeeks] = useState<ProgramWeekDraft[]>(() => defaultWeeks(8));
   const [programId, setProgramId] = useState(routeProgramId ?? '');
   const [hydratedId, setHydratedId] = useState('');
@@ -69,7 +66,7 @@ export function ProgramEditorScreen() {
   // des questions est la seule chose qui rende le formulaire tenable.
   const stacked = routeProgramId !== undefined;
 
-  const { existing, routines, routinesReadFailed, splitBlocked } =
+  const { existing, routines, folders, routinesReadFailed, splitBlocked } =
     useProgramEditorData(routeProgramId);
 
   if (routeProgramId !== undefined && existing?.status === 'found' && hydratedId !== routeProgramId) {
@@ -179,7 +176,7 @@ export function ProgramEditorScreen() {
     }
     await runSave(async () => {
       await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
-      await createScheduleRevision(programId, 0, orderedSplit(split));
+      await createScheduleRevision(programId, 0, orderedSplit(split.entries), split.cycleWeeks);
       await replaceProgramWeeks(programId, weeks);
       settleOnProgram(programId);
     });
@@ -200,7 +197,12 @@ export function ProgramEditorScreen() {
       return;
     }
     await runSave(async () => {
-      await createScheduleRevision(programId, effectiveFromWeekIndex, orderedSplit(split));
+      await createScheduleRevision(
+        programId,
+        effectiveFromWeekIndex,
+        orderedSplit(split.entries),
+        split.cycleWeeks,
+      );
       await replaceProgramWeeksFrom(programId, effectiveFromWeekIndex, weeks);
       settleOnProgram(programId);
     });
@@ -233,8 +235,8 @@ export function ProgramEditorScreen() {
         }
         setStep('split');
       } else if (step === 'split') {
-        const entries = orderedSplit(split);
-        await createScheduleRevision(programId, 0, entries);
+        const entries = orderedSplit(split.entries);
+        await createScheduleRevision(programId, 0, entries, split.cycleWeeks);
         tutorial?.report({ type: 'program-split-saved', programId, entries: entries.length });
         setStep('weeks');
       } else {
@@ -285,10 +287,16 @@ export function ProgramEditorScreen() {
     </p>
   ) : (
     <ProgramSplitStep
-      entries={split}
+      split={split}
       routines={routines}
+      folders={folders}
       onChange={setSplit}
       onCreateRoutine={createSplitRoutine}
+      // Un bloc lancé réécrit son split à partir d'une semaine : le cycle y
+      // repart de sa première semaine, et l'écran le dit.
+      restartsAtWeek={
+        activeEdit && effectiveFromWeekIndex !== null ? effectiveFromWeekIndex + 1 : undefined
+      }
     />
   );
 

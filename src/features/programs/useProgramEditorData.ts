@@ -2,9 +2,10 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { getProgramDetail } from '@/data/repositories/programs';
 import type { ProgramDetail } from '@/data/repositories/programs';
 import { listCompletedWorkouts } from '@/data/repositories/history';
-import { listRoutineSummaries } from '@/data/repositories/routines';
+import { listFolders, listRoutineSummaries } from '@/data/repositories/routines';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import { getActiveWorkout } from '@/data/repositories/workouts';
+import type { RoutineFolder } from '@/data/types';
 
 export type ExistingProgramQuery =
   | { status: 'not_requested' }
@@ -12,11 +13,15 @@ export type ExistingProgramQuery =
   | { status: 'not_found' }
   | { status: 'error' };
 
-type RoutinesQuery = { status: 'ready'; routines: RoutineSummary[] } | { status: 'error' };
+type RoutinesQuery =
+  | { status: 'ready'; routines: RoutineSummary[]; folders: RoutineFolder[] }
+  | { status: 'error' };
 
 export interface ProgramEditorData {
   existing: ExistingProgramQuery | undefined;
   routines: RoutineSummary[] | undefined;
+  /** Les dossiers de la bibliothèque, dans son ordre — pour ajouter les routines de l'un d'eux d'un coup. */
+  folders: RoutineFolder[] | undefined;
   routinesReadFailed: boolean;
   /**
    * No split can be composed yet: still reading, or the read failed.
@@ -63,17 +68,20 @@ export function useProgramEditorData(routeProgramId: string | undefined): Progra
 
   const routinesQuery = useLiveQuery<RoutinesQuery>(async () => {
     try {
-      return { status: 'ready', routines: await listRoutineSummaries() };
+      const [routines, folders] = await Promise.all([listRoutineSummaries(), listFolders()]);
+      return { status: 'ready', routines, folders };
     } catch {
       return { status: 'error' };
     }
   });
   const routines = routinesQuery?.status === 'ready' ? routinesQuery.routines : undefined;
+  const folders = routinesQuery?.status === 'ready' ? routinesQuery.folders : undefined;
   const routinesReadFailed = routinesQuery?.status === 'error';
 
   return {
     existing,
     routines,
+    folders,
     routinesReadFailed,
     splitBlocked: routinesQuery === undefined || routinesReadFailed,
   };

@@ -6,7 +6,12 @@ import type {
   ProgramWeek,
   Workout,
 } from '@/data/types';
-import { programPosition, resolveSchedule } from '@/lib/programs';
+import {
+  MAX_CYCLE_WEEKS,
+  programPosition,
+  resolveRevision,
+  resolveSplitFrom,
+} from '@/lib/programs';
 import { alive, newEntity, touch } from './base';
 import { supersedePendingLoadRecommendations } from './coachRecommendations';
 import { ProgramRepositoryError } from './programLifecycle';
@@ -22,6 +27,8 @@ export interface ProgramScheduleEntryDraft {
   routineId: string;
   dayOfWeek: number;
   order: number;
+  /** Semaine du cycle, à partir de 0 ; absente = la première. */
+  cycleWeek?: number;
 }
 
 export async function replaceProgramWeeks(
@@ -131,11 +138,14 @@ function validateScheduleInput(
   effectiveFromWeekIndex: number,
   durationWeeks: number,
   entries: readonly ProgramScheduleEntryDraft[],
+  cycleWeeks: number,
 ): void {
   const hasValidWeek =
     Number.isInteger(effectiveFromWeekIndex) &&
     effectiveFromWeekIndex >= 0 &&
     effectiveFromWeekIndex < durationWeeks;
+  const hasValidCycle =
+    Number.isInteger(cycleWeeks) && cycleWeeks >= 1 && cycleWeeks <= MAX_CYCLE_WEEKS;
   const hasValidEntries =
     entries.length > 0 &&
     entries.every(
@@ -144,11 +154,20 @@ function validateScheduleInput(
         entry.dayOfWeek >= 1 &&
         entry.dayOfWeek <= 7 &&
         Number.isInteger(entry.order) &&
-        entry.order >= 0,
+        entry.order >= 0 &&
+        // Une séance rangée sous une semaine que le cycle n'a pas ne serait
+        // jamais jouée : mieux vaut refuser que l'écrire en silence.
+        Number.isInteger(entry.cycleWeek ?? 0) &&
+        (entry.cycleWeek ?? 0) >= 0 &&
+        (entry.cycleWeek ?? 0) < cycleWeeks,
     );
-  const placements = new Set(entries.map((entry) => `${entry.dayOfWeek}:${entry.order}`));
+  // Le même jour au même rang est une collision **dans une semaine du cycle** :
+  // d'une semaine à l'autre, lundi est un autre lundi.
+  const placements = new Set(
+    entries.map((entry) => `${entry.cycleWeek ?? 0}:${entry.dayOfWeek}:${entry.order}`),
+  );
 
-  if (!hasValidWeek || !hasValidEntries || placements.size !== entries.length) {
+  if (!hasValidWeek || !hasValidCycle || !hasValidEntries || placements.size !== entries.length) {
     throw new ProgramRepositoryError('program_invalid');
   }
 }
@@ -226,12 +245,13 @@ export async function writeScheduleRevisionInTransaction(
   programId: string,
   effectiveFromWeekIndex: number,
   entries: readonly ProgramScheduleEntryDraft[],
+  cycleWeeks = 1,
 ): Promise<ProgramScheduleRevision> {
   const program = await db.programs.get(programId);
   if (program === undefined || program.deletedAt !== 0) {
     throw new ProgramRepositoryError('program_not_found');
   }
-  validateScheduleInput(effectiveFromWeekIndex, program.durationWeeks, entries);
+  validateScheduleInput(effectiveFromWeekIndex, program.durationWeeks, entries, cycleWeeks);
 
   const routines = await db.routines.bulkGet([...new Set(entries.map((entry) => entry.routineId))]);
   if (routines.some((routine) => routine === undefined || routine.deletedAt !== 0)) {
@@ -249,7 +269,9 @@ export async function writeScheduleRevisionInTransaction(
   const workouts = alive(await db.workouts.toArray());
   assertForwardOnlyRevision(program, effectiveFromWeekIndex, revisions, allEntries, workouts);
 
-  const previousEntries = resolveSchedule(revisions, allEntries, effectiveFromWeekIndex);
+  // Tout le cycle précédent, pas la seule semaine qui se joue : une routine de
+  // l'autre semaine n'est pas « introduite » parce qu'on réécrit le split.
+  const previousEntries = resolveRevision(revisions, allEntries, effectiveFromWeekIndex)?.entries ?? [];
   const [previousExerciseIds, nextExerciseIds] = await Promise.all([
     exerciseIdsForRoutines(previousEntries.map((entry) => entry.routineId)),
     exerciseIdsForRoutines(entries.map((entry) => entry.routineId)),
@@ -278,9 +300,14 @@ export async function writeScheduleRevisionInTransaction(
   const revision = newEntity<ProgramScheduleRevision>({
     programId,
     effectiveFromWeekIndex,
+    cycleWeeks,
   });
   const scheduleEntries = entries.map((entry) =>
-    newEntity<ProgramScheduleEntry>({ ...entry, revisionId: revision.id }),
+    newEntity<ProgramScheduleEntry>({
+      ...entry,
+      cycleWeek: entry.cycleWeek ?? 0,
+      revisionId: revision.id,
+    }),
   );
   await db.programScheduleRevisions.add(revision);
   await db.programScheduleEntries.bulkAdd(scheduleEntries);
@@ -295,6 +322,7 @@ export async function createScheduleRevision(
   programId: string,
   effectiveFromWeekIndex: number,
   entries: readonly ProgramScheduleEntryDraft[],
+  cycleWeeks = 1,
 ): Promise<ProgramScheduleRevision> {
   return db.transaction(
     'rw',
@@ -307,7 +335,8 @@ export async function createScheduleRevision(
       db.workouts,
       db.coachRecommendations,
     ],
-    () => writeScheduleRevisionInTransaction(programId, effectiveFromWeekIndex, entries),
+    () =>
+      writeScheduleRevisionInTransaction(programId, effectiveFromWeekIndex, entries, cycleWeeks),
   );
 }
 
@@ -348,8 +377,12 @@ export async function replaceMissingProgramRoutine(
         revisionIds.length === 0
           ? []
           : alive(await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray());
-      const resolved = resolveSchedule(revisions, allEntries, effectiveFromWeekIndex);
-      const target = resolved.find((entry) => entry.id === entryId);
+      // Le split entier, tourné pour commencer à cette semaine : la révision
+      // écrite repart de la première semaine de son cycle, et c'est cette
+      // rotation qui lui fait jouer, semaine pour semaine, ce que jouait
+      // l'ancienne. Sans elle la réparation décalerait le cycle d'une semaine.
+      const split = resolveSplitFrom(revisions, allEntries, effectiveFromWeekIndex);
+      const target = split.entries.find((entry) => entry.id === entryId);
       if (target === undefined) throw new ProgramRepositoryError('program_invalid');
 
       const [missingRoutine, replacementRoutine] = await Promise.all([
@@ -366,11 +399,13 @@ export async function replaceMissingProgramRoutine(
       await writeScheduleRevisionInTransaction(
         programId,
         effectiveFromWeekIndex,
-        resolved.map((entry) => ({
+        split.entries.map((entry) => ({
           routineId: entry.id === entryId ? replacementRoutineId : entry.routineId,
           dayOfWeek: entry.dayOfWeek,
           order: entry.order,
+          cycleWeek: entry.cycleWeek,
         })),
+        split.cycleWeeks,
       );
     },
   );

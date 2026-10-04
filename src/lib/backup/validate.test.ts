@@ -240,3 +240,85 @@ describe('validateBackupTables', () => {
     expect(result.tables.milestones).toHaveLength(1);
   });
 });
+
+describe('validateBackupTables — un split sur plusieurs semaines', () => {
+  const STAMPS = { createdAt: 1, updatedAt: 1, deletedAt: 0 };
+
+  /** Un bloc d'un cycle de deux semaines, écrit à la main : la fixture n'a pas de bloc. */
+  function accountWithCycle() {
+    const tables = account();
+    tables.programs = [
+      {
+        id: 'p-1',
+        ...STAMPS,
+        name: 'Haut / bas puis PPL',
+        startsAt: 1,
+        durationWeeks: 4,
+        status: 'draft',
+      },
+    ];
+    tables.programScheduleRevisions = [
+      { id: 'rev-1', ...STAMPS, programId: 'p-1', effectiveFromWeekIndex: 0, cycleWeeks: 2 },
+    ];
+    tables.programScheduleEntries = [
+      {
+        id: 'entry-1',
+        ...STAMPS,
+        revisionId: 'rev-1',
+        routineId: 'r-1',
+        dayOfWeek: 1,
+        order: 0,
+        cycleWeek: 1,
+      },
+    ];
+    return tables;
+  }
+
+  it('accepte la longueur du cycle et la semaine de chaque séance', () => {
+    const result = validateBackupTables(accountWithCycle(), NOW_SCHEMA);
+
+    if (!result.ok) throw new Error(`refusé : ${JSON.stringify(result.flaws)}`);
+    expect(result.orphans).toEqual([]);
+  });
+
+  it('accepte une sauvegarde écrite avant les cycles, sans l’un ni l’autre', () => {
+    const tables = accountWithCycle();
+    delete tables.programScheduleRevisions[0]!.cycleWeeks;
+    delete tables.programScheduleEntries[0]!.cycleWeek;
+
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+  });
+
+  it.each([0, -1, 1.5, '2'])('refuse une longueur de cycle de %s', (cycleWeeks) => {
+    const tables = accountWithCycle();
+    tables.programScheduleRevisions[0]!.cycleWeeks = cycleWeeks as number;
+
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'programScheduleRevisions',
+      index: 0,
+      field: 'cycleWeeks',
+    });
+  });
+
+  it.each([-1, 0.5, '1'])('refuse une semaine de cycle de %s', (cycleWeek) => {
+    const tables = accountWithCycle();
+    tables.programScheduleEntries[0]!.cycleWeek = cycleWeek as number;
+
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'programScheduleEntries',
+      index: 0,
+      field: 'cycleWeek',
+    });
+  });
+});
+

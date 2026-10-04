@@ -20,7 +20,14 @@ import { getActiveWorkout } from '@/data/repositories/workouts';
 import type { Program, ProgramWeek } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { pickProgramSession, programPosition, resolveSchedule } from '@/lib/programs';
+import {
+  cycleLength,
+  cyclePosition,
+  pickProgramSession,
+  programPosition,
+  resolveRevision,
+  resolveSchedule,
+} from '@/lib/programs';
 import type { ProgramPosition } from '@/lib/programs';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
@@ -42,6 +49,8 @@ interface DetailProjection {
   /** A draft is only activable once it has a split to run and a week for each. */
   draftReady: boolean;
   displayWeekIndex: number;
+  /** Où en est le cycle du split, quand il dure plus d'une semaine ; `null` sinon. */
+  cycle: { length: number; position: number } | null;
 }
 
 type DetailQuery =
@@ -198,13 +207,20 @@ async function readProjection(programId: string): Promise<DetailQuery> {
       repairUnavailableReason,
     }));
 
-    // Le brouillon se juge sur la semaine 1 : c'est celle par laquelle le bloc
-    // démarrera, quelle que soit la date du jour.
-    const initialSchedule = resolveSchedule(
-      detail.revisions.map(({ revision }) => revision),
-      detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
-      0,
-    );
+    // Le brouillon se juge sur la révision par laquelle le bloc démarrera, quelle
+    // que soit la date du jour, et sur **tout** son cycle : une semaine de repos
+    // en tête n'en fait pas un bloc sans séance.
+    const revisions = detail.revisions.map(({ revision }) => revision);
+    const allEntries = detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries);
+    const initialSchedule = resolveRevision(revisions, allEntries, 0)?.entries ?? [];
+    const displayed = resolveRevision(revisions, allEntries, weekIndex);
+    const cycle =
+      displayed !== null && cycleLength(displayed.revision) > 1
+        ? {
+            length: cycleLength(displayed.revision),
+            position: cyclePosition(displayed.revision, weekIndex),
+          }
+        : null;
 
     return {
       status: 'ready',
@@ -217,6 +233,7 @@ async function readProjection(programId: string): Promise<DetailQuery> {
         draftReady:
           initialSchedule.length > 0 && detail.weeks.length === detail.program.durationWeeks,
         displayWeekIndex: weekIndex,
+        cycle,
       },
     };
   } catch {
@@ -267,8 +284,16 @@ export function ProgramDetailScreen() {
     );
   }
 
-  const { detail, position, week, sessions, activeWorkoutExists, draftReady, displayWeekIndex } =
-    query.value;
+  const {
+    detail,
+    position,
+    week,
+    sessions,
+    activeWorkoutExists,
+    draftReady,
+    displayWeekIndex,
+    cycle,
+  } = query.value;
   const isDraft = detail.program.status === 'draft';
   const candidates = sessions
     .filter((session) => session.routineName !== null)
@@ -410,9 +435,17 @@ export function ProgramDetailScreen() {
           La condition d'avant — bloc commencé ou terminé — laissait un bloc à
           venir sans aucun split à l'écran.
         */}
-        {sessions.length > 0 && (
+        {/* Une semaine de repos complet d'un cycle n'a aucune séance : sans
+            la liste, la fiche n'en dirait rien — or c'est justement ce qu'on
+            vient y lire. */}
+        {(sessions.length > 0 || cycle !== null) && (
           <ProgramSessionList
             sessions={sessions}
+            cycleReading={
+              cycle === null
+                ? null
+                : t('program.cycleReading', { position: cycle.position + 1, length: cycle.length })
+            }
             selectedEntryId={effectiveSelected?.entryId ?? null}
             startDisabled={activeWorkoutExists || detail.program.status !== 'active'}
             onSelect={(entryId) => {

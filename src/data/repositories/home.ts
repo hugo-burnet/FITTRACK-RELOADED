@@ -9,6 +9,7 @@ import { listFolders } from './routineFolders';
 import { getRoutineDetail, listRoutineSummaries } from './routines';
 import { pickSuggestedRoutine } from '@/lib/home';
 import { pickProgramSession } from '@/lib/programs';
+import { routineContextValues, type RoutineContextValue } from '@/lib/routineContext';
 import type { WeeklyTrainingGoal } from '@/lib/history';
 import type { ProgramLoadIndex, ProgramPhase } from '@/data/types';
 
@@ -78,6 +79,11 @@ export type HomeRoutineContextOption =
       routineCount: number;
     };
 
+/** La ligne de la feuille de choix à laquelle appartient une routine. */
+function contextValueOf(folderId: string): RoutineContextValue {
+  return folderId === '' ? 'root' : `folder:${folderId}`;
+}
+
 export interface HomeDashboardData {
   /** Toutes les dates de séances terminées — la matière de `calculateWeeklyRegularity`. */
   completedWorkoutTimestamps: number[];
@@ -86,7 +92,11 @@ export interface HomeDashboardData {
   routineCount: number;
   routineContext: {
     required: boolean;
-    selected: string | null;
+    /**
+     * Les lignes cochées, dans l'ordre de la bibliothèque et non celui où elles
+     * l'ont été ; vide tant que rien de valide n'est choisi.
+     */
+    selected: RoutineContextValue[];
     options: HomeRoutineContextOption[];
   };
   activeProgram: HomeProgramProjection | null;
@@ -235,29 +245,37 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     }
   }
 
-  const selectedValue =
-    context === null
-      ? null
-      : context.kind === 'root'
-        ? 'root'
-        : (`folder:${context.folderId}` as const);
-  const validSelected = options.some((option) => option.value === selectedValue)
-    ? selectedValue
-    : null;
-  const candidates =
+  // Seul ce qui existe encore, dans l'ordre de la bibliothèque : un dossier
+  // supprimé sort de la sélection sans invalider les autres, et ne la remplace
+  // jamais par un dossier qu'on n'a pas choisi.
+  const selectedValues = routineContextValues(context);
+  const validSelected = options
+    .map((option) => option.value)
+    .filter((value) => selectedValues.includes(value));
+
+  // Un cycle qui traverse deux dossiers se lit dossier après dossier, chacun
+  // dans l'ordre de ses routines. `Routine.order` est la place dans la liste
+  // entière : seul, il mêlerait les dossiers dans l'ordre où leurs routines ont
+  // été créées. Le rang part donc de l'ordre des dossiers.
+  const optionRank = new Map(options.map((option, index) => [option.value, index]));
+  const rankOf = ({ routine }: (typeof routines)[number]): number =>
+    optionRank.get(contextValueOf(routine.folderId)) ?? Number.MAX_SAFE_INTEGER;
+  const candidates = (
     folders.length === 0
-      ? routines
-      : validSelected === 'root'
-        ? rootRoutines
-        : validSelected?.startsWith('folder:')
-          ? routines.filter(({ routine }) => routine.folderId === validSelected.slice(7))
-          : [];
+      ? routines.slice()
+      : routines.filter(({ routine }) => validSelected.includes(contextValueOf(routine.folderId)))
+  ).sort(
+    (left, right) =>
+      rankOf(left) - rankOf(right) ||
+      left.routine.order - right.routine.order ||
+      left.routine.id.localeCompare(right.routine.id),
+  );
 
   const pick = pickSuggestedRoutine(
-    candidates.map(({ routine }) => ({
+    candidates.map(({ routine }, position) => ({
       routineId: routine.id,
       name: routine.name,
-      order: routine.order,
+      order: position,
     })),
     // Le nom voyage avec la séance : les séances importées n'ont pas de
     // `routineId`, c'est par leur titre que `pickSuggestedRoutine` les rattache.
@@ -271,7 +289,7 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     weeklyGoalHistory,
     routineCount: routines.length,
     routineContext: {
-      required: folders.length > 0 && validSelected === null,
+      required: folders.length > 0 && validSelected.length === 0,
       selected: validSelected,
       options,
     },

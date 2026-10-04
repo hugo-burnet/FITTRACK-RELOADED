@@ -1,55 +1,81 @@
 import { useState } from 'react';
 import type { RoutineSummary } from '@/data/repositories/routines';
+import type { RoutineFolder } from '@/data/types';
+import { MAX_CYCLE_WEEKS } from '@/lib/programs';
 import { t } from '@/i18n/fr';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
-import { Button, Card, Input, Sheet } from '@/ui';
+import { Button, Card, ChoiceChip, Input, OptionSheet, Sheet } from '@/ui';
+import {
+  addFolderSessions,
+  addSplitSession,
+  resizeCycle,
+  splitFolderChoices,
+  type SplitFolderChoice,
+} from './programSplitModel';
+import { ProgramSplitSession } from './ProgramSplitSession';
 
 export interface ProgramSplitDraftEntry {
   routineId: string;
   dayOfWeek: number;
   order: number;
+  /** Semaine du cycle, à partir de 0. */
+  cycleWeek: number;
+}
+
+/** Le split tel que l'éditeur le tient : un cycle de `cycleWeeks` semaines et ses séances. */
+export interface ProgramSplitDraft {
+  cycleWeeks: number;
+  /** Triées par semaine du cycle : le numéro d'une séance suit sa place à l'écran. */
+  entries: ProgramSplitDraftEntry[];
 }
 
 interface Props {
-  entries: ProgramSplitDraftEntry[];
+  split: ProgramSplitDraft;
   routines: RoutineSummary[] | undefined;
-  onChange: (entries: ProgramSplitDraftEntry[]) => void;
+  /** Les dossiers de la bibliothèque : ce qui permet d'ajouter les routines de l'un d'eux d'un coup. */
+  folders?: readonly RoutineFolder[] | undefined;
+  onChange: (split: ProgramSplitDraft) => void;
   /** Crée une routine vide et rend son identifiant, pour la sélectionner aussitôt. */
   onCreateRoutine?: (name: string) => Promise<string>;
+  /** Semaine du bloc (à partir de 1) où le split sera écrit, quand ce n'est pas la première. */
+  restartsAtWeek?: number;
 }
 
-const selectClass = `min-h-12 w-full rounded-lg bg-[var(--surface-2)] px-3 text-base
-  text-[var(--text-1)] outline-none focus:ring-2 focus:ring-[var(--accent-ink)]`;
+const CYCLE_LENGTHS = Array.from({ length: MAX_CYCLE_WEEKS }, (_, index) => index + 1);
 
-const DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
-
-const dayLabel = (day: number) =>
-  t(`program.weekday${day}` as
-    | 'program.weekday1'
-    | 'program.weekday2'
-    | 'program.weekday3'
-    | 'program.weekday4'
-    | 'program.weekday5'
-    | 'program.weekday6'
-    | 'program.weekday7');
+const choiceValue = (choice: SplitFolderChoice): string =>
+  choice.folderId === '' ? 'root' : `folder:${choice.folderId}`;
 
 /**
- * Trois lettres, sur quatre colonnes.
+ * Le rythme du bloc : un cycle de une à quatre semaines, rejoué en boucle.
  *
- * Sept pastilles sur une ligne mesuraient 32 px de large sur un téléphone de
- * 375 px — mesuré dans le navigateur — là où la charte en exige 48 pour une
- * main en sueur. Quatre colonnes donnent 74 px, et de la place pour trois
- * lettres au lieu d'initiales dont trois jours se partagent la première.
+ * Une semaine répétée ne dit pas « haut / bas une semaine, push / pull / jambes
+ * la suivante ». Avec un cycle d'une semaine l'écran est celui d'avant : une
+ * seule liste de séances, sans titre de semaine. Au-delà, chaque semaine du
+ * cycle a sa liste — c'est la forme qu'on est en train de poser, comme les
+ * sept jours d'une séance.
  */
-const DAY_SHORT = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as const;
-
-export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine }: Props) {
-  const tutorial = useTutorialControls();
+export function ProgramSplitStep({
+  split,
+  routines,
+  folders,
+  onChange,
+  onCreateRoutine,
+  restartsAtWeek,
+}: Props) {
   const [creatingFor, setCreatingFor] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
+  // La semaine du cycle à laquelle la feuille « dossier » est en train d'ajouter.
+  const [folderFor, setFolderFor] = useState<number | null>(null);
+  const { cycleWeeks, entries } = split;
+  const folderChoices = splitFolderChoices(folders ?? [], routines ?? []);
 
   const updateEntry = (index: number, changes: Partial<ProgramSplitDraftEntry>) => {
-    onChange(entries.map((entry, entryIndex) => (entryIndex === index ? { ...entry, ...changes } : entry)));
+    onChange({
+      ...split,
+      entries: entries.map((entry, entryIndex) =>
+        entryIndex === index ? { ...entry, ...changes } : entry,
+      ),
+    });
   };
 
   const openCreate = (index: number) => {
@@ -66,152 +92,150 @@ export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine 
     updateEntry(index, { routineId });
   };
 
-  return (
-    <div className="flex flex-col gap-5">
-      <p className="text-base leading-relaxed text-[var(--text-2)]">{t('program.splitIntro')}</p>
+  const renderWeek = (week: number) => {
+    const rows = entries
+      .map((entry, index) => ({ entry, index }))
+      .filter(({ entry }) => entry.cycleWeek === week);
+
+    return (
       <Card>
         <div className="divide-y divide-[var(--border)]">
-          {entries.map((entry, index) => {
-            const number = index + 1;
-            // Un jour déjà pris par une autre séance se signale, il ne se
-            // bloque pas : deux séances le même jour est un choix légitime.
-            const takenElsewhere = new Set(
-              entries.filter((_, other) => other !== index).map((other) => other.dayOfWeek),
-            );
-            return (
-              <section key={index} className="flex flex-col gap-4 p-4">
-                <div className="flex min-h-12 items-center justify-between gap-3">
-                  <h2 className="label-xs font-semibold text-[var(--text-2)]">
-                    {t('program.session', { number })}
-                  </h2>
-                  {entries.length > 1 && (
-                    <button
-                      type="button"
-                      aria-label={t('program.removeSession', { number })}
-                      onClick={() => onChange(entries.filter((_, entryIndex) => entryIndex !== index))}
-                      className="min-h-12 rounded-xl px-3 text-sm font-semibold text-[var(--danger-ink)]
-                        active:bg-[var(--surface-2)]"
-                    >
-                      {t('program.removeSession', { number })}
-                    </button>
-                  )}
-                </div>
-
-                {/*
-                  Sept pastilles plutôt qu'un menu déroulant : la semaine est une
-                  forme, et c'est cette forme qu'on est en train de poser. Un
-                  menu la cachait derrière un mot à la fois — on choisissait
-                  « Jeudi » sans jamais voir que jeudi tombait la veille de la
-                  séance suivante. Même traitement plein/creux que les niveaux
-                  et les recettes de l'étape des semaines.
-                */}
-                <div className="flex flex-col gap-2">
-                  <span className="label-xs font-semibold text-[var(--text-2)]">
-                    {t('program.sessionDayLabel', { number })}
-                  </span>
-                  <div
-                    role="group"
-                    aria-label={t('program.sessionDayLabel', { number })}
-                    /* Seule la première séance porte l'ancre : une consigne qui
-                       dit « choisis le jour » doit désigner une rangée, pas
-                       toutes celles de la liste. */
-                    data-tutorial-id={index === 0 ? 'program-split-day' : undefined}
-                    className="grid grid-cols-4 gap-2"
-                  >
-                    {DAYS.map((day, dayIndex) => {
-                      const active = entry.dayOfWeek === day;
-                      return (
-                        <button
-                          key={day}
-                          type="button"
-                          aria-pressed={active}
-                          aria-label={dayLabel(day)}
-                          onClick={() => {
-                            updateEntry(index, { dayOfWeek: day });
-                            tutorial?.report({
-                              type: 'program-split-day-set',
-                              index,
-                              dayOfWeek: day,
-                            });
-                          }}
-                          className={`min-h-12 rounded-xl text-sm font-semibold
-                            transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                            ${
-                              active
-                                ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                                : takenElsewhere.has(day)
-                                  ? 'bg-[var(--surface-2)] text-[var(--accent-ink)]'
-                                  : 'bg-[var(--surface-2)] text-[var(--text-1)]'
-                            }`}
-                        >
-                          {DAY_SHORT[dayIndex]}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <label className="flex flex-col gap-2">
-                  <span className="label-xs font-semibold text-[var(--text-2)]">
-                    {t('program.sessionRoutineLabel', { number })}
-                  </span>
-                  <select
-                    aria-label={t('program.sessionRoutineLabel', { number })}
-                    data-tutorial-id={index === 0 ? 'program-split-routine' : undefined}
-                    value={entry.routineId}
-                    disabled={routines === undefined}
-                    onChange={(event) => {
-                      updateEntry(index, { routineId: event.target.value });
-                      tutorial?.report({
-                        type: 'program-split-routine-set',
-                        index,
-                        routineId: event.target.value,
-                      });
-                    }}
-                    className={selectClass}
-                  >
-                    <option value="">
-                      {routines === undefined ? t('program.routinesLoading') : t('program.chooseRoutine')}
-                    </option>
-                    {(routines ?? []).map(({ routine }) => (
-                      <option key={routine.id} value={routine.id}>{routine.name}</option>
-                    ))}
-                  </select>
-                </label>
-
-                {/*
-                  La sortie de secours de l'étape : composer un bloc supposait
-                  une bibliothèque déjà faite, et sans routine cet écran était
-                  une impasse — sortir, composer, revenir. Le bloc pose la forme
-                  de la semaine, la routine se remplit après.
-                */}
-                {onCreateRoutine !== undefined && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    fullWidth
-                    onClick={() => openCreate(index)}
-                  >
-                    {t('program.newRoutine')}
-                  </Button>
-                )}
-              </section>
-            );
-          })}
-          <div className="p-2" data-tutorial-id="program-split-add">
+          {rows.length === 0 && (
+            <p className="p-4 text-sm leading-relaxed text-[var(--text-2)]">
+              {t('program.cycleWeekEmpty')}
+            </p>
+          )}
+          {rows.map(({ entry, index }) => (
+            <ProgramSplitSession
+              key={index}
+              index={index}
+              entry={entry}
+              routines={routines}
+              // Un jour déjà pris par une autre séance se signale, il ne se
+              // bloque pas : deux séances le même jour est un choix légitime.
+              takenDays={
+                new Set(
+                  rows
+                    .filter((other) => other.index !== index)
+                    .map((other) => other.entry.dayOfWeek),
+                )
+              }
+              removable={entries.length > 1}
+              onChange={(changes) => updateEntry(index, changes)}
+              onRemove={() =>
+                onChange({
+                  ...split,
+                  entries: entries.filter((_, entryIndex) => entryIndex !== index),
+                })
+              }
+              onCreateRoutine={onCreateRoutine === undefined ? undefined : () => openCreate(index)}
+            />
+          ))}
+          {/* Seule la première semaine porte l'ancre du tutoriel. */}
+          <div className="p-2" data-tutorial-id={week === 0 ? 'program-split-add' : undefined}>
             <Button
               type="button"
               variant="ghost"
               fullWidth
-              onClick={() =>
-                onChange([...entries, { routineId: '', dayOfWeek: 1, order: 0 }])
-              }
+              onClick={() => onChange(addSplitSession(split, week))}
             >
-              {t('program.addSession')}
+              {cycleWeeks === 1
+                ? t('program.addSession')
+                : t('program.addSessionToWeek', { number: week + 1 })}
             </Button>
           </div>
+          {folderChoices.length > 0 && (
+            <div className="p-2">
+              <Button
+                type="button"
+                variant="ghost"
+                fullWidth
+                aria-label={
+                  cycleWeeks === 1
+                    ? t('program.addFolder')
+                    : t('program.addFolderToWeek', { number: week + 1 })
+                }
+                onClick={() => setFolderFor(week)}
+              >
+                {t('program.addFolder')}
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <span className="label-xs font-semibold text-[var(--text-2)]">
+          {t('program.cycleLabel')}
+        </span>
+        <div
+          role="group"
+          aria-label={t('program.cycleLabel')}
+          data-tutorial-id="program-split-cycle"
+          className="grid grid-cols-2 gap-2"
+        >
+          {CYCLE_LENGTHS.map((length) => (
+            <ChoiceChip
+              key={length}
+              fill
+              label={
+                length === 1 ? t('program.cycleOne') : t('program.cycleMany', { count: length })
+              }
+              active={cycleWeeks === length}
+              onClick={() => onChange(resizeCycle(split, length))}
+            />
+          ))}
+        </div>
+      </div>
+
+      <p className="text-base leading-relaxed text-[var(--text-2)]">
+        {cycleWeeks === 1
+          ? t('program.splitIntro')
+          : t('program.cycleHintMany', { count: cycleWeeks })}
+      </p>
+      {cycleWeeks > 1 && restartsAtWeek !== undefined && restartsAtWeek > 1 && (
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('program.cycleRestartHint', { number: restartsAtWeek })}
+        </p>
+      )}
+
+      {cycleWeeks === 1
+        ? renderWeek(0)
+        : Array.from({ length: cycleWeeks }, (_, week) => (
+            <section key={week} className="flex flex-col gap-2">
+              <h2 className="label-xs px-1 font-semibold text-[var(--text-2)]">
+                {t('program.cycleWeekTitle', { number: week + 1 })}
+              </h2>
+              {renderWeek(week)}
+            </section>
+          ))}
+
+      <OptionSheet
+        open={folderFor !== null}
+        onClose={() => setFolderFor(null)}
+        title={t('program.addFolderTitle')}
+        options={folderChoices.map((choice) => ({
+          value: choiceValue(choice),
+          label: choice.name ?? t('routines.rootFolder'),
+          hint: t(
+            choice.routineIds.length === 1
+              ? 'program.folderRoutineCountOne'
+              : 'program.folderRoutineCount',
+            { count: choice.routineIds.length },
+          ),
+        }))}
+        // Rien n'est présélectionné : on ne « choisit » pas un dossier, on en prend un.
+        value=""
+        onSelect={(value) => {
+          const choice = folderChoices.find((candidate) => choiceValue(candidate) === value);
+          if (folderFor === null || choice === undefined) return;
+          onChange(addFolderSessions(split, folderFor, choice.routineIds));
+        }}
+      />
 
       <Sheet
         open={creatingFor !== null}

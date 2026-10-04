@@ -14,10 +14,11 @@ import {
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
 import * as routinesRepository from '@/data/repositories/routines';
-import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
+import { addExercisesToRoutine, createFolder, createRoutine } from '@/data/repositories/routines';
 import { finishWorkout, getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
 import * as programWorkoutRepository from '@/data/repositories/programWorkout';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
+import { resolveSchedule } from '@/lib/programs';
 import { resetDb } from '@/test/resetDb';
 import { ProgramDetailScreen } from './ProgramDetailScreen';
 import { ProgramEditorScreen } from './ProgramEditorScreen';
@@ -236,6 +237,270 @@ describe('parcours de création d’un programme', () => {
       ]),
     );
     await expectRoute(`/programs/${programId}`);
+  });
+
+  it('active un bloc dont le split tient sur deux semaines, une liste de séances par semaine', async () => {
+    const upper = await createRoutine('UPPER A');
+    const push = await createRoutine('PUSH A');
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Haut / bas puis PPL');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Durée' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    // Le split d'une semaine est le défaut : pas de titre de semaine, l'écran
+    // d'avant. Deux semaines, et chacune a sa liste et son propre bouton d'ajout.
+    expect(await screen.findByRole('button', { name: 'Chaque semaine' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.queryByRole('heading', { name: /du cycle/ })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '2 semaines' }));
+    expect(screen.getByRole('button', { name: '2 semaines' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByRole('heading', { name: 'Semaine 1 du cycle' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Semaine 2 du cycle' })).toBeVisible();
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de la séance 1' }),
+      upper.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Ajouter à la semaine 2' }));
+    await user.click(
+      within(screen.getByRole('group', { name: 'Jour de la séance 2' })).getByRole('button', {
+        name: 'Mercredi',
+      }),
+    );
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de la séance 2' }),
+      push.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+
+    const programs = await waitFor(async () => {
+      const stored = await listPrograms();
+      expect(stored[0]?.program.status).toBe('active');
+      return stored;
+    });
+    const detail = await getProgramDetail(programs[0]!.program.id);
+
+    expect(detail?.revisions).toHaveLength(1);
+    expect(detail?.revisions[0]?.revision.cycleWeeks).toBe(2);
+    expect(
+      detail?.revisions[0]?.entries.map(({ routineId, cycleWeek, dayOfWeek }) => [
+        routineId,
+        cycleWeek,
+        dayOfWeek,
+      ]),
+    ).toEqual([
+      [upper.id, 0, 1],
+      [push.id, 1, 3],
+    ]);
+  });
+
+  it('pose d’un coup toutes les routines d’un dossier dans une semaine du cycle', async () => {
+    const ul = await createFolder('UL');
+    const ppl = await createFolder("PPL 45'");
+    const upperA = await createRoutine('UPPER A', ul.id);
+    const lowerA = await createRoutine('LOWER A', ul.id);
+    const pushA = await createRoutine('PUSH A', ppl.id);
+    const pullA = await createRoutine('PULL A', ppl.id);
+    const legsA = await createRoutine('LEGS A', ppl.id);
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'UL puis PPL');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: '2 semaines' }));
+
+    await user.click(screen.getByRole('button', { name: 'Ajouter un dossier à la semaine 1' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Ajouter un dossier' });
+    // Chaque dossier dit combien de routines il apporte.
+    expect(within(sheet).getByRole('radio', { name: /UL.*2 routines/ })).toBeVisible();
+    expect(within(sheet).getByRole('radio', { name: /PPL 45'.*3 routines/ })).toBeVisible();
+    await user.click(within(sheet).getByRole('radio', { name: /^UL/ }));
+
+    // Les deux routines remplacent la séance vide du départ, sans en laisser de troisième.
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveValue(upperA.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 2' })).toHaveValue(lowerA.id);
+    expect(screen.queryByRole('combobox', { name: 'Routine de la séance 3' })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Ajouter un dossier à la semaine 2' }));
+    await user.click(
+      within(await screen.findByRole('dialog', { name: 'Ajouter un dossier' })).getByRole(
+        'radio',
+        { name: /^PPL 45'/ },
+      ),
+    );
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 3' })).toHaveValue(pushA.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 5' })).toHaveValue(legsA.id);
+
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+
+    const programs = await waitFor(async () => {
+      const stored = await listPrograms();
+      expect(stored[0]?.program.status).toBe('active');
+      return stored;
+    });
+    const detail = await getProgramDetail(programs[0]!.program.id);
+
+    expect(detail?.revisions[0]?.revision.cycleWeeks).toBe(2);
+    expect(
+      detail?.revisions[0]?.entries.map(({ routineId, cycleWeek, dayOfWeek }) => [
+        routineId,
+        cycleWeek,
+        dayOfWeek,
+      ]),
+    ).toEqual([
+      [upperA.id, 0, 1],
+      [lowerA.id, 0, 2],
+      [pushA.id, 1, 1],
+      [pullA.id, 1, 2],
+      [legsA.id, 1, 3],
+    ]);
+  });
+
+  it('ne propose pas d’ajouter un dossier quand la bibliothèque n’en a aucun', async () => {
+    await createRoutine('Libre');
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Sans dossier');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    expect(await screen.findByRole('button', { name: 'Ajouter une séance' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Ajouter un dossier/ })).not.toBeInTheDocument();
+  });
+
+  it('ne perd aucune séance quand on raccourcit le cycle, et le dit en repassant à chaque semaine', async () => {
+    const upper = await createRoutine('UPPER A');
+    const push = await createRoutine('PUSH A');
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Cycle');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    await user.click(await screen.findByRole('button', { name: '2 semaines' }));
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de la séance 1' }),
+      upper.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Ajouter à la semaine 2' }));
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de la séance 2' }),
+      push.id,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Chaque semaine' }));
+
+    expect(screen.queryByRole('heading', { name: /du cycle/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveValue(upper.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 2' })).toHaveValue(push.id);
+    expect(screen.getByRole('button', { name: 'Ajouter une séance' })).toBeVisible();
+  });
+
+  it('dit sur la fiche quelle semaine du cycle se joue, et n’en liste que les séances', async () => {
+    const upper = await createRoutine('UPPER A');
+    const push = await createRoutine('PUSH A');
+    const program = await createProgramDraft({
+      name: 'Haut / bas puis PPL',
+      startsAt: mondayWeeksAgo(1),
+      durationWeeks: 8,
+    });
+    await createScheduleRevision(
+      program.id,
+      0,
+      [
+        { routineId: upper.id, dayOfWeek: 1, order: 0, cycleWeek: 0 },
+        { routineId: push.id, dayOfWeek: 2, order: 0, cycleWeek: 1 },
+      ],
+      2,
+    );
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 8 }, (_, weekIndex) => ({
+        weekIndex,
+        loadIndex: 100,
+        phase: 'construction' as const,
+      })),
+    );
+    await activateProgram(program.id);
+
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // Le bloc a commencé la semaine dernière : on est dans la semaine 2 du bloc,
+    // donc dans la semaine 2 du cycle.
+    expect(await screen.findByText('Semaine 2 du cycle de 2 semaines')).toBeVisible();
+    // La ligne d'une séance porte « nom, état » : le bouton « Démarrer PUSH A »
+    // du pied de page n'est pas une ligne de la semaine.
+    expect(screen.getByRole('button', { name: /^PUSH A, / })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^UPPER A, / })).not.toBeInTheDocument();
+  });
+
+  it('réécrit un bloc actif à cycle sans décaler ses semaines', async () => {
+    const upper = await createRoutine('UPPER A');
+    const push = await createRoutine('PUSH A');
+    const program = await createProgramDraft({
+      name: 'Haut / bas puis PPL',
+      startsAt: mondayWeeksAgo(1),
+      durationWeeks: 8,
+    });
+    await createScheduleRevision(
+      program.id,
+      0,
+      [
+        { routineId: upper.id, dayOfWeek: 1, order: 0, cycleWeek: 0 },
+        { routineId: push.id, dayOfWeek: 2, order: 0, cycleWeek: 1 },
+      ],
+      2,
+    );
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 8 }, (_, weekIndex) => ({
+        weekIndex,
+        loadIndex: 100,
+        phase: 'construction' as const,
+      })),
+    );
+    await activateProgram(program.id);
+    const user = userEvent.setup();
+
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    // L'éditeur s'ouvre sur la semaine courante du bloc, la 2 : elle joue PUSH A.
+    // Le cycle y est donc lu à partir d'elle — PUSH A en première semaine — et
+    // la page le dit, sans quoi les deux semaines se liraient comme échangées.
+    expect(
+      await screen.findByText(
+        'Le cycle repart à la semaine 2 du bloc : sa semaine 1 est celle qu’on y jouera.',
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveValue(push.id);
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 2' })).toHaveValue(upper.id);
+
+    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 2' }));
+    await expectRoute(`/programs/${program.id}`);
+
+    const detail = await getProgramDetail(program.id);
+    const revisions = detail!.revisions.map(({ revision }) => revision);
+    const entries = detail!.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries);
+    const played = (weekIndex: number) =>
+      resolveSchedule(revisions, entries, weekIndex).map((entry) => entry.routineId);
+
+    // Rien n'a bougé : la semaine 1 reste celle d'avant, et le cycle continue.
+    expect(played(0)).toEqual([upper.id]);
+    expect(played(1)).toEqual([push.id]);
+    expect(played(2)).toEqual([upper.id]);
+    expect(played(3)).toEqual([push.id]);
   });
 
   it('repersiste le cadre après un retour depuis le split', async () => {

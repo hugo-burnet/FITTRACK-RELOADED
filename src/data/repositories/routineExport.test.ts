@@ -161,10 +161,11 @@ describe('le document markdown d’une routine', () => {
 
     const line = (await getRoutineDetail(created.id))?.exercises[0];
     if (line === undefined) throw new Error('ligne de routine absente');
-    // La seconde série d'abord : `addRoutineSet` recopie la précédente, type
-    // compris, et marquer l'échauffement avant l'ajout en produirait deux.
-    await addRoutineSet(line.row.id);
+    // L'ordre naturel : on marque l'échauffement, puis on ajoute la série de
+    // travail. `addRoutineSet` ne recopie plus un échauffement — avant, il en
+    // aurait fait deux, et le document aurait annoncé « 0 + 2 échauffements ».
     await updateRoutineSet(line.sets[0]!.id, { setType: 'warmup' });
+    await addRoutineSet(line.row.id);
 
     expect(await documentOf({ kind: 'routine', routineId: created.id })).toContain(
       '1 + 1 échauffement',

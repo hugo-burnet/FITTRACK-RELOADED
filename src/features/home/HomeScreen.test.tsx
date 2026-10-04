@@ -15,7 +15,7 @@ vi.mock('./useHomeDashboard', () => ({
       routineCount: 0,
       routineContext: {
         required: true,
-        selected: null,
+        selected: [],
         options: [{ value: 'folder:push', label: 'Salle', routineCount: 2 }],
       },
       recentWorkouts: [],

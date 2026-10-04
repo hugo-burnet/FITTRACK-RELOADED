@@ -154,13 +154,15 @@ export function WorkoutSheets({
         onClose={() => setSheet(null)}
         title={t('workout.workoutMenu')}
         /*
-         * Les outils avancés de la séance, sous leur nom.
+         * Les outils avancés de la séance, sous leur nom : chacun dit ce qu'il
+         * fait et pourquoi il est grisé. Une bascule « 80 % » dans le bandeau
+         * n'a jamais expliqué qu'il n'y avait rien à alléger ; le deload ne vit
+         * donc qu'ici, et le bandeau n'en montre que l'état, une fois la
+         * décharge appliquée.
          *
-         * Ils vivaient dans le bandeau, en icônes : un cadenas et une bascule
-         * « 80 % » occupaient à demeure la barre qu'on lit entre deux séries,
-         * pour deux gestes qu'on ne fait presque jamais. Ici, chacun dit ce
-         * qu'il fait et pourquoi il est grisé — un cadenas gris n'a jamais
-         * expliqué qu'il n'y avait rien à réordonner.
+         * Le cadenas, lui, est aussi dans le bandeau : c'est là qu'on le cherche
+         * en séance. Son entrée reste ici pour qui ne sait pas ce que l'icône
+         * fait ; les deux lisent et écrivent le même verrou.
          */
         actions={[
           {

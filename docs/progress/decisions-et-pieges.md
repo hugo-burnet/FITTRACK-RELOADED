@@ -7,6 +7,110 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-04 — Le cadenas d'ordre revient dans le bandeau de la séance
+
+**Ce qui a été dit.** « Et fais réapparaître le cadenas quand la routine est en cours. »
+
+**Ce que le code répond.** Le cadenas n'avait pas disparu par accident : le 2026-09-06, « alléger la séance »
+(`660fc61`) l'a sorti du bandeau avec la commande de deload pour le ranger dans le menu « Options de la séance »,
+sous son libellé. La raison valait pour le deload — un geste qu'on fait presque jamais, qui pouvait être grisé et
+devait dire pourquoi — et pas pour le cadenas : on s'aperçoit **en cours de séance** qu'on a pris les exercices
+dans le mauvais ordre, jamais en dehors, et un geste qu'on cherche dans un menu est un geste dont on a oublié
+l'existence. Le cadenas n'avait d'ailleurs aucun état grisé à expliquer (`OrderLockButton` n'a pas de `disabled`).
+
+**Décision.** Le cadenas retrouve sa place d'avant, entre l'état « 80 % » et le bouton de repli, à 48 px ; le
+deload reste dans le menu, où personne n'a demandé de le reprendre. **L'entrée du menu est conservée** : un seul
+verrou (`useExerciseOrderLock`), deux commandes, la seconde pour qui ne sait pas lire l'icône. À retirer si la
+redondance gêne — une ligne dans `WorkoutSheets`, plus la clé `workout.reorderMenuHint`. **Le piège :** ranger une
+commande dans un menu parce qu'elle est rare suppose de savoir *quand* elle sert. Avant d'en sortir une de l'écran
+où on l'emploie, regarder à quel moment on la cherche.
+
+### 2026-10-04 — « Ajouter une série » recopiait l'échauffement, et ses chiffres devenaient la suggestion du travail
+
+**Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de ta
+série d'échauffement en suggestions (place order) d'une série normale. » Puis, à la question de savoir s'il
+marque ses échauffements : « Je mets systématiquement le marqueur échauffement. » Message dicté : je l'ai lu
+« à la **série** d'après », la seule lecture que le code confirme (ci-dessous) — **confirmée ensuite** par
+l'utilisateur.
+
+**Ce que le code répond.**
+
+- **Ce n'était pas la colonne « Précédent ».** `matchPreviousSets` apparie les échauffements entre eux et les
+  séries de travail entre elles, par rang **dans leur type** (`lib/previousSets.ts`, testé depuis la v2.5.0).
+  Rejoué dans Chromium — séance 1 avec une montée marquée, séance 2 ouverte — la première série normale
+  affiche « Précédent 100 × 5 », pas 40 × 5.
+- **La première lecture était juste et hors sujet.** Un échauffement **non marqué** fuit bel et bien : une
+  première série plus légère laissée en « normale » est, pour l'app, la série 1 de la dernière fois, et rien
+  ne la distingue d'une série de travail légère voulue (une pyramide). Deviner par la charge reste écarté,
+  l'app préférant un type explicite à une heuristique. Mais l'utilisateur marque toujours : ce n'était pas
+  son cas, et cette note l'avait pris pour la cause.
+- **La cause : l'ajout recopiait la dernière série, quelle qu'elle soit.** `duplicateLastSet` (« Ajouter
+  une série » en séance) et `addRoutineSet` (l'éditeur de routine) prenaient `siblings.at(-1)` : son type
+  **et** ses chiffres. Après un échauffement validé à 40 × 5, la série ajoutée était « Série 2 —
+  Échauffement » avec 40 / 5 en gris. La repasser en normale ne touche pas aux chiffres (changer le type
+  n'y touche jamais, voulu), donc les 40 / 5 restaient, offerts comme suggestion d'une série de travail. Et
+  une cible passe **devant** la suggestion de la séance précédente (`ghost = cible ?? précédent`,
+  `WorkoutSetRow`) : le bon chiffre, 100 × 8, n'apparaissait jamais.
+- **Dans une routine c'est pire** : la copie s'écrit en base et se rejoue à chaque séance, au lieu de
+  disparaître avec la séance.
+- **Pourquoi les tests ne l'ont pas vu.** Ceux de `programWorkout` et de `routineExport` la contournaient —
+  type posé explicitement, ordre d'ajout inversé « parce que `addRoutineSet` recopie le type » — au lieu de
+  s'étonner qu'il le recopie. Un contournement écrit dans un test est une question qu'on n'a pas posée.
+
+**Décision.** Corrigé. `lastWorkingSet` (`lib/records.ts`, à côté d'`isWorkingSet`) rend la dernière série qui
+compte ; `duplicateLastSet` et `addRoutineSet` recopient celle-là. Après un échauffement seul, la série ajoutée
+est une série **normale, vierge**, et la séance précédente suggère le reste. Un échauffement posé après le
+travail est sauté ; une série de travail d'un autre type (dégressive) se recopie comme avant, type compris.
+Ce qu'on y perd : ajouter un second échauffement identique en un appui — rare, une montée change de charge, et
+la montée calculée de l'exercice existe.
+
+**Voisin, corrigé ensuite.** « Appliquer à toutes les séries » (éditeur de routine) envoyait **tout le brouillon
+de la feuille, type compris** (`RoutineSetSheet`, `onApplyToAll(draft)`) à `applyToAllSets`, qui l'écrivait sur
+chaque série. Constaté : une routine `[échauffement 40 × 5, travail 100 × 8]`, « Appliquer à toutes » depuis la
+série de travail à 105 kg donnait `[normal 105 × 8, normal 105 × 8]` — l'échauffement planifié aplati en série de
+travail. L'utilisateur a demandé qu'on le corrige ; le choix de sens, c'était : appliquer aux séries **du même
+genre** que celle qu'on ouvre, **ne jamais écrire le type**, dire le genre dans le libellé. `applyToAllSets` lit
+donc le `setType` du brouillon comme le genre de la source et non comme un chiffre à copier ; des chiffres sans
+type sont des chiffres de travail. Depuis un échauffement, seuls les autres échauffements changent (« Appliquer
+aux échauffements »). Le plan du Lot 4 disait « n'écrase que les champs fournis » : la feuille en fournissait six.
+
+### 2026-10-04 — Une relecture externe du schéma d'entraînement : un point juste, deux à ne pas suivre
+
+**Ce qui a été dit.** Le 29 septembre, un lecteur du dépôt a relu les index de `workouts`,
+`workoutExercises` et `workoutSets` (`db.ts`, `version(1)` et `version(3)`) et en a tiré trois
+remarques : `workoutSets` porte un `workoutId` qu'on retrouve par `workoutExerciseId` ; `[workoutId+order]`
+ne lui dit pas à quoi il sert, puisque l'ordre « se calcule sans le stocker » ; et `workoutSets` pourrait
+se passer d'`id` en prenant `[workoutExerciseId+order]` pour clé.
+
+**Ce que le code répond.**
+
+- **`workoutSets.workoutId` est lu, partout.** Douze requêtes font
+  `db.workoutSets.where('workoutId')` — l'historique, l'export CSV, la décharge, les records
+  (`recordSources`, `recordTimeline`), la fin et l'abandon d'une séance. C'est une redondance de
+  normalisation voulue pour la lecture : toutes les séries d'une séance en **une** requête indexée, au lieu
+  de deux (les lignes d'exercice, puis les séries par `anyOf`). Le retirer ajouterait du code et des
+  lectures à chacun de ces endroits, pour rien gagné.
+- **Les deux index composés `[workoutId+order]` et `[workoutExerciseId+order]` ne sont lus par aucune
+  requête.** Le code lit par `workoutId` ou `workoutExerciseId` et **trie en mémoire** (`byOrder`,
+  `sortBy('order')`). Seuls `db.ts`, une fixture de migration et le plan d'architecture les nomment. La
+  remarque est juste ; la raison ne l'est pas : `order` n'est pas calculable, c'est une donnée de
+  l'utilisateur (réordonner, supersets, verrou d'ordre). Ce qui est inutile, c'est **l'index**, pas le
+  champ.
+- **Une clé `[workoutExerciseId+order]` sans `id` casserait l'app.** Toute table est `Syncable` (UUID,
+  ADR-005). `personalRecords.workoutSetId` désigne une série par son `id`. La sauvegarde identifie et
+  dédoublonne les lignes par `id`. La suppression douce garde une série effacée à sa place : une clé de
+  position entrerait en collision avec celle qui la remplace. Et renuméroter après un retrait deviendrait un
+  changement de clé (supprimer puis réécrire) au lieu d'un champ qu'on met à jour — au milieu d'une séance
+  où chaque série validée est écrite aussitôt (règle n° 4).
+
+**Décision.** Aucune. Aucun changement de schéma n'a été fait, ni demandé. Retirer les deux index
+inutilisés économiserait un index à maintenir par écriture sur chacune des deux tables : négligeable
+pour une base personnelle, et non mesuré sur un vrai téléphone (le banc `fake-indexeddb` n'y dit rien).
+Le coût, lui, est réel : une version de schéma fait monter `db.verno`, et une sauvegarde écrite ensuite
+est **refusée** par une version plus ancienne (`unsupported-schema`) — alors que la PWA et l'APK peuvent
+ne pas être sur la même construction. **À rouvrir seulement** dans une version de schéma qu'une autre
+raison rend nécessaire, jamais seule.
+
 ### 2026-08-28 — Le mouvement de l'app a désormais des sorties, et un mode réduit qui réduit
 
 **Ce qui change.** Toute navigation passe par `startViewTransition` (`app/navigation.ts`,
@@ -387,6 +491,28 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Assumée le 2026-10-04 — `workoutSets.ts` (dépôt) est remonté à 399 lignes**, après avoir été remboursé à
+  266 le 2026-07-27 : il a grandi depuis, jusqu'à 393, sans que l'écart soit consigné (l'historique de ce clone
+  est trop court pour dire ajout par ajout), et le correctif de l'échauffement y a ajouté six lignes — surtout
+  du commentaire — et un import. Il garde **une**
+  responsabilité — les séries de la séance en cours — et ses écritures partagent la même machinerie privée
+  (`appendSet`, `mutateWithRecordsIfCompleted`, `liveSetsOf`) : les séparer obligerait à l'exporter. **À rouvrir**
+  si une capacité de plus s'y ajoute : `completeFirstSide` et `resetUnilateralProgress` (une quarantaine de lignes,
+  sans aucun des assistants privés) sont la sortie toute désignée.
+
+- **Assumée le 2026-10-04 — quatre fichiers touchés par le cycle des programmes et le contexte
+  multi-dossiers restent au-dessus des ~300 lignes** : `programSchedules.ts` (412), `ProgramDetailScreen.tsx`
+  (502), `ProgramEditorScreen.tsx` (411) et `home.ts` (312, dépôt). Chacun garde **une** responsabilité —
+  les écritures d'un split, la fiche d'un bloc, l'éditeur d'un bloc, la projection de l'accueil — et les
+  trois premiers l'étaient déjà avant ce travail. Ce qui faisait deux métiers a été découpé :
+  `ProgramSplitStep` (245 → 269 lignes, sous le repère) a rendu la séance du split à son propre composant
+  (`ProgramSplitSession`, 173) ; le modèle du split a quitté `programEditorModel` (309 lignes) pour
+  `programSplitModel` (182) quand l'ajout d'un dossier l'a fait dépasser 300 ; et la forme du contexte de
+  dossiers, sa lecture et ses conversions vivent dans un module pur (`lib/routineContext.ts`, 101) plutôt que
+  dans le dépôt. **À rouvrir** si l'un d'eux reçoit une
+  troisième capacité : la lecture de la projection du bloc, dans `ProgramDetailScreen`, est la première
+  candidate à sortir en module.
 
 - **Assumée le 2026-10-03 — `src/styles/tty1.css` dépasse la règle des ~300 lignes (environ 790).**
   Une feuille de style qui habille un thème est une seule responsabilité, comme `index.css`

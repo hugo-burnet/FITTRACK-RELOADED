@@ -258,6 +258,8 @@ const fr = {
     suggestionSection: 'À lancer',
     /** La règle, écrite : une suggestion qu'on ne peut pas expliquer s'ignore. */
     suggestionRule: 'La plus ancienne de tes routines.',
+    /** Plusieurs dossiers cochés : la règle ne change pas, son périmètre si — et c'est ce qui fait suivre un cycle. */
+    suggestionRuleFolders: 'La plus ancienne de tes routines, tous ces dossiers confondus.',
     neverPerformed: 'Jamais réalisée',
     lastToday: 'Réalisée aujourd’hui',
     lastYesterday: 'Réalisée hier',
@@ -266,10 +268,17 @@ const fr = {
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
-    chooseRoutineFolder: 'Choisir un dossier',
+    chooseRoutineFolder: 'Choisir les dossiers',
     changeRoutineFolder: 'Changer de dossier',
     rootRoutineFolder: 'Sans dossier',
     emptyRoutineFolder: 'Aucune routine dans ce dossier.',
+    emptyRoutineFolders: 'Aucune routine dans ces dossiers.',
+    // Dit à quoi sert de cocher plus d'un dossier : sans cette phrase, la feuille
+    // se lit comme un choix unique, et le cycle qui traverse deux dossiers ne sait
+    // pas qu'il peut les suivre ensemble.
+    routineFolderHint:
+      'Coche plusieurs dossiers si ton cycle les traverse : la suggestion suit alors toutes leurs routines.',
+    routineFolderPickOne: 'Coche au moins un dossier.',
     routineFolderWriteError: 'Impossible de changer de dossier.',
     programSection: 'Bloc en cours',
     programWeek: 'Semaine {current} sur {total}',
@@ -1010,6 +1019,41 @@ const fr = {
     effectiveWeekHint:
       'La semaine courante apparaît seulement si aucune séance du bloc n’y est enregistrée.',
     splitIntro: 'Ce rythme se répète chaque semaine du bloc.',
+    /**
+     * Un split peut tenir sur plusieurs semaines : un cycle, rejoué en boucle
+     * pendant tout le bloc. « Chaque semaine » est le cas d'un cycle d'une
+     * semaine — le split des premières versions, qui reste le défaut.
+     */
+    cycleLabel: 'Durée du cycle',
+    cycleOne: 'Chaque semaine',
+    cycleMany: '{count} semaines',
+    cycleHintMany:
+      'Les {count} semaines du cycle se rejouent dans l’ordre, en boucle, jusqu’à la fin du bloc.',
+    // Sur un bloc déjà lancé, la révision repart de la première semaine de son
+    // cycle : sans cette phrase, les semaines d'un cycle tourné par rapport à
+    // celui qu'on avait posé se liraient comme échangées.
+    cycleRestartHint:
+      'Le cycle repart à la semaine {number} du bloc : sa semaine 1 est celle qu’on y jouera.',
+    cycleWeekTitle: 'Semaine {number} du cycle',
+    cycleWeekEmpty: 'Aucune séance : cette semaine du cycle est un repos complet.',
+    // Court : « Ajouter une séance à la semaine 1 » passait à la ligne et laissait
+    // le « 1 » seul. La carte de la semaine dit déjà ce qu'on y ajoute.
+    addSessionToWeek: 'Ajouter à la semaine {number}',
+    cycleReading: 'Semaine {position} du cycle de {length} semaines',
+    /**
+     * Un dossier est souvent déjà la forme d'une semaine : un tap pose toutes ses
+     * routines, une par séance, sur des jours qui se suivent. Le libellé du bouton
+     * reste court (il passait à la ligne) ; c'est le nom accessible qui dit la
+     * semaine quand le cycle en a plusieurs.
+     */
+    addFolder: 'Ajouter un dossier',
+    addFolderToWeek: 'Ajouter un dossier à la semaine {number}',
+    // Court, comme le bouton : « Ajouter les routines d'un dossier » était tronqué
+    // dans la feuille avec la police du terminal. La ligne de chaque dossier dit
+    // déjà combien de séances il apporte.
+    addFolderTitle: 'Ajouter un dossier',
+    folderRoutineCountOne: '1 routine',
+    folderRoutineCount: '{count} routines',
     session: 'Séance {number}',
     sessionDayLabel: 'Jour de la séance {number}',
     sessionRoutineLabel: 'Routine de la séance {number}',
@@ -1174,6 +1218,11 @@ const fr = {
     targetDistanceLabel: 'Distance visée',
     targetDistanceHint: 'En mètres. 1 000 m s’affiche « 1 km ».',
     applyToAll: 'Appliquer à toutes les séries',
+    /**
+     * Sur un échauffement, le bouton ne répercute que sur les autres échauffements
+     * (`applyToAllSets`) : il le dit, au lieu de promettre toutes les séries.
+     */
+    applyToAllWarmups: 'Appliquer aux échauffements',
     deleteSet: 'Supprimer la série',
     /**
      * Le mot gravé sous la ligne, découvert par le balayage — même geste et même

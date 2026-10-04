@@ -6,7 +6,12 @@ import type {
   ProgramWeek,
   Workout,
 } from '@/data/types';
-import { programPosition, resolveSchedule, type ProgramPosition } from '@/lib/programs';
+import {
+  entryCycleWeek,
+  programPosition,
+  resolveSchedule,
+  type ProgramPosition,
+} from '@/lib/programs';
 import { alive } from './base';
 
 export {
@@ -53,7 +58,10 @@ const compareById = (left: { id: string }, right: { id: string }): number =>
   left.id.localeCompare(right.id);
 
 const compareEntries = (left: ProgramScheduleEntry, right: ProgramScheduleEntry): number =>
-  left.dayOfWeek - right.dayOfWeek || left.order - right.order || compareById(left, right);
+  entryCycleWeek(left) - entryCycleWeek(right) ||
+  left.dayOfWeek - right.dayOfWeek ||
+  left.order - right.order ||
+  compareById(left, right);
 
 const compareRevisions = (left: ProgramScheduleRevision, right: ProgramScheduleRevision): number =>
   left.effectiveFromWeekIndex - right.effectiveFromWeekIndex ||

@@ -3,7 +3,352 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-03 (**TTY1 à débloquer, ouverture complète, succès noclip**).
+**Dernière mise à jour :** 2026-10-04 (**« Appliquer à toutes les séries » ne touche plus à l'échauffement ; avant : le cadenas d'ordre revient dans la séance, « Ajouter une série » ne recopie plus l'échauffement, ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+
+## « Appliquer à toutes les séries » ne touche plus à l'échauffement (2026-10-04, suite)
+
+Publication : **aucune** pour l'instant, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`,
+toujours en 2.9.0. C'est le défaut voisin que la section d'en dessous avait consigné sans le corriger, et que
+l'utilisateur a demandé de corriger. Aucune table, aucun index, aucune version de schéma.
+
+**La cause.** La feuille d'une série envoie **tout son brouillon**, type compris (`onApplyToAll(draft)`), et
+`applyToAllSets` l'écrivait sur chaque série de l'exercice. Depuis une série de travail montée à 105 kg, un
+échauffement planifié devenait une série de travail à 105 kg : `[échauffement 40 × 5, travail 100 × 8]` donnait
+deux séries normales à 105 × 8. Le plan du Lot 4 disait que le geste « n'écrase que les champs fournis » : la
+feuille en fournissait six, dont celui qu'il ne fallait pas.
+
+**Le correctif**
+
+- `applyToAllSets` lit le `setType` du brouillon comme le **genre de la série dont viennent les chiffres**
+  (travail ou échauffement) : les chiffres vont aux séries de ce genre, et **le type lui-même n'est plus jamais
+  écrit**. Depuis un échauffement, seuls les autres échauffements changent. Des chiffres sans type sont des
+  chiffres de travail — la lecture sûre, puisque la seule chose à ne jamais faire sans qu'on le demande est de
+  déplacer un échauffement. Une routine sans échauffement se comporte comme avant.
+- Sur un échauffement, le bouton dit **« Appliquer aux échauffements »** au lieu de promettre toutes les séries, et
+  le libellé suit le type quand on le change dans la feuille. Il compte 27 caractères : la première version,
+  « …à tous les échauffements » (34), passait sur deux lignes dans la police du terminal de TTY1, alors que
+  « …à toutes les séries » (29) tient.
+- Inchangé : le rapport au tutoriel (`routine-target-updated`) garde l'identité de la première série, personne
+  ne lit cet identifiant ; le plan du Lot 4 reçoit une phrase datée.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**271 fichiers, 3 001 tests**, 9 de plus que la section
+  d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,96 Kio.
+- Quatre des cinq tests de `applyToAllSets.test.ts` vus **rouges** avant le code (le cinquième fixe ce qui ne change
+  pas : une fourchette que la feuille ne montre plus est effacée partout), trois des quatre de `RoutineSetSheet.test.tsx`
+  (le libellé d'une série de travail, lui, ne change pas). **Mutation** : réécrire le type fait tomber « ne réécrit
+  jamais le type d'une série », et lui seul.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, une routine `[échauffement 40 × 5, travail 100 × 8, travail 100 × 8]` :
+  la série 2 montée à 105 kg avec le pas de la feuille, « Appliquer à toutes les séries » donne
+  `[échauffement 40 × 5, travail 105 × 8, travail 105 × 8]` ; la feuille de l'échauffement dit « Appliquer aux
+  échauffements » sur une ligne ; l'appuyer ne change rien d'autre ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Un libellé qui tient en Sombre peut passer sur deux lignes dans TTY1 : la police du terminal est à chasse fixe, et
+  les crochets du bouton prennent de la place. Mesurer dans TTY1 — c'est la troisième fois de la journée.
+- `pkill -f <motif>` a de nouveau tué le shell de la session, alors que la section de la v2.9.0 l'avait consigné : le
+  motif figure dans la ligne de commande du shell. `pgrep -f "[m]otif"`, ou tuer par PID.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Éditeur d'une routine qui porte un échauffement planifié (série 1, « Échauffement », 40 kg) et deux séries de
+   travail : ouvrir une série de travail, monter la charge, « Appliquer à toutes les séries ».
+2. L'échauffement n'a pas bougé (« ÉCH. », 40 kg) ; les séries de travail ont la nouvelle charge.
+3. Ouvrir l'échauffement : le bouton dit « Appliquer aux échauffements ».
+
+## Le cadenas d'ordre revient dans la séance en cours (2026-10-04, suite)
+
+Publication : **aucune**, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
+2.9.0. Demande de l'utilisateur : « fais réapparaître le cadenas quand la routine est en cours ». Aucune table,
+aucun index, aucune version de schéma.
+
+**Ce qui s'était passé.** Le 2026-09-06, la passe « alléger la séance » (`660fc61`) a sorti le cadenas d'ordre
+**et** la commande de deload du bandeau pour les ranger dans le menu « Options de la séance ». Le bandeau n'a
+gardé que l'avancement, le repli et l'état « 80 % » une fois la décharge appliquée. Un utilisateur qui connaît le
+cadenas à l'œil ne le cherche pas dans un menu : il a cru qu'il avait disparu.
+
+**Ce qui change**
+
+- `OrderLockButton` revient dans le bandeau de `WorkoutScreen`, **à sa place d'avant** : entre l'état « 80 % »
+  (quand il est affiché) et le bouton de repli, cible de 48 px. Fermé au lancement ; un appui fait apparaître les
+  poignées, le suivant les retire. Il commande le verrou de la **séance** (`useExerciseOrderLock`), jamais celui de
+  l'éditeur de routine.
+- **L'entrée du menu reste**, avec son libellé et son explication : un seul verrou, deux commandes. Je ne l'ai pas
+  retirée sans qu'on me le demande ; si la redondance gêne, c'est une ligne dans `WorkoutSheets` (et la clé
+  `workout.reorderMenuHint`).
+- La commande de **deload reste dans le menu** : personne n'a demandé de l'en sortir.
+- `persiste le réordonnancement autorisé pendant la session` retrouve sa forme d'avant le déplacement : il passe par
+  le cadenas et non plus par le menu. Les commentaires qui disaient que le cadenas avait quitté le bandeau sont
+  corrigés, ainsi que la spec d'origine (`2026-08-10-exercise-order-lock-design`), qui reçoit une note datée.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**269 fichiers, 2 992 tests**, 5 de plus que la section
+  d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,79 Kio.
+- Quatre des cinq tests de `WorkoutScreen.orderLock.test.tsx` ont été écrits et **vus rouges** avant le code
+  (« Unable to find role="button" and name "Déverrouiller l'ordre des exercices" ») : cadenas fermé dès l'ouverture
+  sans passer par le menu, poignées après un appui et retirées au suivant, verrou de la routine intact, cohabitation
+  avec « 80 % ». Le cinquième fixe ce qui existait déjà — l'entrée du menu commande le même verrou ; sa requête passe
+  par la boîte de dialogue, puisque les deux boutons portent le même nom. **Mutation** : un cadenas branché sur le
+  verrou de la routine fait tomber trois tests.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, une séance de deux exercices : le bandeau lit « 0 série sur 2 », cadenas
+  de 48 × 48, repli de 48 × 48, rien ne déborde ; un appui, les deux poignées apparaissent ; la poignée du premier
+  exercice descendue au clavier **réordonne pour de bon** (lu en base) ; un second appui retire les poignées ; avec la
+  décharge appliquée, « 80 % » (92 px en Sombre, 82 en TTY1), le cadenas et le repli tiennent sans que l'avancement soit
+  tronqué ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Garder l'entrée du menu a un coût de test : les deux boutons s'appellent pareil, et l'ancien test, qui cliquait le
+  libellé dans le menu, trouvait deux éléments. Il passe par le cadenas, comme avant le déplacement ; le test du menu
+  cible sa boîte de dialogue.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Lancer une séance de deux exercices au moins : le **cadenas fermé** est dans la barre d'avancement, à gauche du
+   bouton « Tout replier ».
+2. Le toucher : le cadenas s'ouvre et les poignées apparaissent sur les cartes. Déplacer un exercice, puis retoucher le
+   cadenas : les poignées partent.
+3. Appliquer la décharge (menu ⋮ › deload) : « 80 % » apparaît dans la barre, le cadenas reste à côté.
+
+## « Ajouter une série » ne recopie plus l'échauffement (2026-10-04, suite)
+
+Publication : **aucune**, comme les deux sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours
+en 2.9.0. C'est la demande de la section d'en dessous (l'échauffement qui ressort en suggestion), reprise après
+la précision de l'utilisateur : « je mets systématiquement le marqueur échauffement ». Le diagnostic d'alors
+(un échauffement non marqué) ne tenait donc pas. Aucune table, aucun index, aucune version de schéma.
+
+**La cause**
+
+- « Ajouter une série » recopiait **la dernière série, quelle qu'elle soit** : son type et ses chiffres.
+  Après un échauffement validé à 40 × 5, la série ajoutée était « Série 2 — Échauffement » avec 40 / 5 en
+  gris. La repasser en normale ne touche pas aux chiffres : les 40 / 5 restaient, offerts comme suggestion
+  d'une série de travail. Et une cible passe **devant** la suggestion de la séance précédente
+  (`ghost = cible ?? précédent`) : le bon chiffre, 100 × 8, n'apparaissait jamais.
+- L'éditeur de routine faisait pareil (`addRoutineSet`) — en pire, parce que cette copie-là s'écrit en base et
+  se rejoue à chaque séance.
+- La colonne « Précédent » n'y était pour rien : `matchPreviousSets` apparie bien échauffements et travail
+  séparément.
+- **Lecture du message** : « à la séance d'après » a été lu « à la **série** d'après » (message dicté), la seule
+  lecture que le code confirme. **Confirmé ensuite par l'utilisateur** : c'est bien la série d'après.
+
+**Le correctif**
+
+- `lastWorkingSet` (`lib/records.ts`, à côté d'`isWorkingSet`) rend la dernière série qui compte ;
+  `duplicateLastSet` et `addRoutineSet` recopient celle-là. Après un échauffement seul : une série **normale,
+  vierge**, et la séance précédente suggère le reste. Un échauffement posé après le travail est sauté ; une
+  série de travail d'un autre type (dégressive…) se recopie comme avant, type compris.
+- **Perdu en route** : ajouter un second échauffement identique en un appui. Rare — une montée change de
+  charge — et la montée calculée de l'exercice existe.
+- Les tests de `programWorkout` et `routineExport` qui contournaient la copie sont laissés, sauf une phrase qui
+  n'était plus vraie : `routineExport` retrouve l'ordre naturel (marquer, puis ajouter), et devient une garde —
+  l'ancien code y faisait écrire « 0 + 2 échauffements ».
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**268 fichiers, 2 987 tests**, 13 de plus que la
+  section d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,73 Kio.
+- Tests écrits et **vus rouges** avant le code : l'aide pure (3), six des neuf tests de dépôt (les trois autres
+  fixent ce qui ne change pas : la série de travail et la dégressive se recopient), et l'écran
+  (`WorkoutScreen.addSet.test.tsx` : `placeholder="40"` là où 100 est attendu — exactement le symptôme).
+  **Mutation** : une aide qui rend la première série de travail au lieu de la dernière fait tomber deux tests.
+- **Chromium à 390 px, gestes réels**, deux séances de suite : séance 1, échauffement marqué puis validé, « Ajouter
+  une série » donne « Série 2 » normale, vierge (avant : « Série 2 — Échauffement » 40 / 5) ; séance 2, même
+  geste : la série ajoutée affiche « Précédent 100 × 8 » et 100 / 8 en gris. La routine à échauffement planifié
+  et la séance complète rejouées : rien de changé.
+
+**Pièges rencontrés**
+
+- Le diagnostic d'abord retenu tenait à ce que j'avais rejoué des **séances** (montée marquée ou non) sans
+  rejouer le geste de la personne : marquer, valider, puis « Ajouter une série ». C'est ce geste qui montrait la
+  fuite. Rejouer d'abord la suite exacte de gestes décrite, avant de chercher une cause dans les données.
+- La carte d'un exercice **se replie** quand toutes ses séries sont validées : « Ajouter une série » disparaît
+  tant qu'on ne l'a pas rouverte. Le test d'écran et le rejeu la rouvrent, comme sur le téléphone.
+
+**Resté ouvert, depuis réglé**
+
+- **« Appliquer à toutes les séries » aplatissait l'échauffement planifié d'une routine** : corrigé à la demande de
+  l'utilisateur, section d'au-dessus.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Une séance, un exercice : toucher le numéro de la série 1 › « Type de série » › Échauffement ; saisir
+   40 × 5 et valider.
+2. Rouvrir la carte (elle s'est repliée), « Ajouter une série » : la série 2 n'a **pas** de flamme, elle est vide,
+   et ses chiffres en gris sont ceux de la séance d'avant (rien si c'est la première).
+3. Dans l'éditeur d'une routine qui porte un échauffement : « Ajouter une série » ajoute une série normale
+   vierge, pas un second échauffement.
+
+## Ajouter un dossier au split (2026-10-04, suite)
+
+Publication : **aucune**, comme la section d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
+2.9.0. « Oui je veux bien le bouton » : celui que la section d'en dessous proposait en sortie. (Le même message
+signalait l'échauffement qui ressort en suggestion : traité dans la section d'au-dessus.) Spec et plan :
+`2026-10-04-split-ajouter-un-dossier`. Aucune table, aucun index, aucune version de schéma.
+
+**Le bouton « Ajouter un dossier »**
+
+- Chaque semaine du cycle (et la semaine unique d'un split hebdomadaire) a, sous « Ajouter à la semaine N »,
+  un bouton qui ouvre la liste des dossiers (« UL — 4 routines »). En toucher un pose **une séance par
+  routine**, dans l'ordre du dossier, sur des jours qui se suivent : lundi, mardi… ; les jours se corrigent
+  ensuite. Avec le cycle de deux semaines, deux appuis posent les dix séances.
+- Les séances **sans routine de la semaine visée sont remplacées** — c'est l'emplacement du départ : sans
+  cela, le premier usage laisserait une « Séance 1 » vide que « Continuer » refuse. Ce qui est déjà rempli
+  reste, le dossier s'ajoute derrière ; après le dimanche on repart du lundi.
+- « Sans dossier » ne se propose qu'une fois des dossiers existants (sans eux c'est la bibliothèque entière).
+  Aucun dossier utile, aucun bouton. Le nom accessible dit la semaine (« … à la semaine 2 ») ; le texte visible
+  reste « Ajouter un dossier », parce qu'un libellé plus long passait à la ligne.
+- `useProgramEditorData` lit les dossiers avec les routines. **Le modèle du split a quitté
+  `programEditorModel.ts`** (309 lignes, deux métiers) pour `programSplitModel.ts` (182) ; ses tests ont suivi.
+
+**L'échauffement qui ressort en suggestion — mal diagnostiqué ici, corrigé dans la section d'au-dessus**
+
+- Cette section avait conclu à un échauffement **non marqué**, sans code changé. L'utilisateur a répondu qu'il
+  le marque toujours : la cause était ailleurs (« Ajouter une série » recopiait l'échauffement). Ce qui reste
+  vrai — un échauffement non marqué fuit dans « Précédent », l'app ne peut pas le savoir, deviner par la
+  charge est écarté — est dans `docs/progress/decisions-et-pieges.md`, avec la vraie cause.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**266 fichiers, 2 974 tests**, 14 de plus que la
+  section d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,56 Kio.
+- Les tests de `programSplitModel` ont été écrits et vus rouges avant le code ; les deux parcours d'intégration
+  (UL puis PPL de la feuille à l'activation, l'absence du bouton sans dossier) ont passé du premier coup.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, base amorcée à l'image de la sienne (4 + 6 routines dans deux
+  dossiers, une libre) : la feuille liste « UL — 4 routines », « PPL 45' — 6 routines », « Sans dossier —
+  1 routine » ; deux appuis posent dix séances, UL du lundi au jeudi et PPL du lundi au samedi, dans l'ordre
+  des dossiers ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Le titre de la feuille, « Ajouter les routines d'un dossier », était **tronqué** avec la police du terminal
+  (vingt caractères tiennent) : le même défaut que le titre de la feuille de l'accueil, deux fois dans la
+  journée. Un titre de feuille se mesure dans TTY1, pas seulement en Sombre.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Planifier › Programmes › « + », puis au Split **2 semaines**.
+2. Sous la semaine 1 : « Ajouter un dossier » › **UL** — les quatre séances arrivent, du lundi au jeudi. Sous
+   la semaine 2 : « Ajouter un dossier » › **PPL 45'** — les six, du lundi au samedi.
+3. Corriger un jour si le plan n'est pas celui-là, puis continuer.
+
+## Cycle des programmes et « À lancer » sur plusieurs dossiers (2026-10-04)
+
+Publication : **aucune**. Le travail est sur la branche `ccr-4e58be64-spej04`, ni fusionné dans `master`
+ni tagué, et la version reste **2.9.0**. Une release se fait sur demande explicite, comme les précédentes.
+
+Deux demandes, une session : « j'ai pas une routine sur 1 semaine mais sur 2 semaines, ce qui fait que
+Programmes ne peut pas fonctionner » et « j'ai 10 séances réparties dans 2 dossiers, du coup le
+lancement rapide ne peut pas non plus fonctionner ». Le cas : quatre séances « haut / bas » dans un
+dossier, six « push / pull / jambes » dans l'autre, une semaine sur deux. Les deux causes étaient dans le
+code : un split de bloc est **une** semaine qui se répète (`dayOfWeek` de 1 à 7), et le contexte de
+l'accueil est **un** dossier. Aucune table, aucun index, aucune version de schéma, aucun réglage migré.
+Les specs et les plans (`docs/design/`, `programme-cycle-multi-semaines` et
+`accueil-contexte-multi-dossiers`) disent le détail.
+
+**Le cycle des programmes**
+
+- Un split est un **cycle de une à quatre semaines**, rejoué en boucle. `ProgramScheduleRevision.cycleWeeks`
+  et `ProgramScheduleEntry.cycleWeek` sont **facultatifs et non indexés** : absents, ils valent 1 et 0, donc
+  tout bloc existant se lit comme avant sans migration. `lib/backup/validate` les déclare.
+- La semaine du cycle jouée par une semaine du bloc est `(semaine − semaine d'entrée de la révision) mod
+  longueur` : le cycle se compte **depuis la révision**, pas depuis le début du bloc. Trois lectures pures
+  dans `lib/programs/schedule.ts` : `resolveSchedule` (ce qui se joue cette semaine — l'accueil, la fiche, le
+  démarrage et le Coach n'ont pas changé d'un caractère), `resolveRevision` (tout le cycle — ce que le bloc
+  **possède**), `resolveSplitFrom` (le cycle **tourné** pour commencer à une semaine).
+- **Propriété sur tout le cycle** : l'activation valide les routines des deux semaines et périme les
+  recommandations de charge de leurs exercices ; réécrire un cycle à l'identique n'« introduit » rien.
+- **La réparation d'une routine supprimée tourne le cycle** : elle écrit une révision à la semaine affichée,
+  et sans rotation elle aurait décalé le cycle d'une semaine pour tout le reste du bloc. L'éditeur lit lui
+  aussi le split à partir de la semaine d'effet, et le dit : « Le cycle repart à la semaine N du bloc ».
+- **L'éditeur** : « Durée du cycle » (quatre pastilles, « Chaque semaine » par défaut — l'écran d'avant, sans
+  titre de semaine), puis une liste de séances par semaine du cycle. Raccourcir le cycle replie les séances
+  des semaines qui disparaissent dans la dernière : un appui ne doit pas effacer ce qui en a demandé une
+  douzaine. Une semaine peut rester vide (repos complet). La séance du split est devenue son propre
+  composant (`ProgramSplitSession`). La fiche dit « Semaine 2 du cycle de 2 semaines ».
+- Reste **par semaine du bloc**, et ne connaît pas le cycle : la prescription (phase, niveau).
+
+**« À lancer » sur plusieurs dossiers**
+
+- Le contexte est un **ensemble** : un ou plusieurs dossiers, avec ou sans « Sans dossier ». La règle ne
+  change pas — la routine réalisée le moins récemment — mais son périmètre est l'union. Pour un cycle suivi
+  dans l'ordre, c'est exactement la séance suivante, et une séance manquée remonte d'elle-même.
+- Le classement part de l'ordre **des dossiers**, puis de `Routine.order` : seul, ce dernier — la place dans
+  la liste entière — mêlerait les dossiers dans l'ordre de création de leurs routines. Un test crée les
+  routines à l'envers pour le garder.
+- Réglage `homeRoutineFolderContext` : une troisième forme `{ kind: 'folders', folderIds, root }`. Les deux
+  anciennes restent **lues et écrites pour un choix unique** (`lib/routineContext.ts`, pur : forme, lecture
+  défensive, conversions). Un dossier supprimé sort de la sélection sans l'invalider ; tous supprimés, l'accueil
+  redemande ; un dossier créé après n'y entre pas.
+- La feuille passe en **cases à cocher sur un brouillon**, écrit **une fois** au « Terminé » : fermer sans
+  « Terminé » ne choisit rien, et « Terminé » est grisé tant que rien n'est coché. La carte liste les dossiers
+  suivis (« UL + PPL 45' ») et écrit « tous ces dossiers confondus » sous le bouton.
+- `HomeDashboardData.routineContext.selected` passe de `string | null` à un **tableau** (vide = aucun choix).
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**266 fichiers, 2 960 tests**, contre 263 et
+  2 854 à la v2.9.0) et `build` verts. Précache de 243 entrées, 8 307,92 Kio.
+- **Un contrôle de mutation** : remettre `resolveSchedule` dans le calcul des exercices introduits fait
+  échouer le test « pas introduits » ; rétabli, il passe. Les tests écrits avant le code — le résolveur, le
+  dépôt, le modèle de l'éditeur, le module du contexte — ont tous été vus rouges d'abord.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, sur le serveur de développement, une base amorcée à l'image
+  de la sienne (deux dossiers de 4 et 6 routines, deux routines libres, des séances sur cinq semaines) :
+  l'accueil sans choix ouvre la feuille d'elle-même ; deux dossiers cochés puis « Terminé », la carte annonce
+  `UL + PPL 45'` et propose `PUSH A - 45'`, la plus ancienne des deux dossiers ; l'éditeur à deux semaines ;
+  la fiche « Semaine 2 du cycle de 2 semaines ». Aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Compter le cycle depuis le début du bloc paraissait plus simple, et décalait le cycle à la première
+  réparation ou à la première révision. La semaine d'effet est l'origine, et il faut tourner le split pour
+  qu'une révision réécrite rejoue exactement l'ancienne.
+- `resolveSchedule(…, 0)` servait à valider l'activation et à calculer les exercices que le bloc possède :
+  avec un cycle, il ne voit que la première semaine. Ce qui est **possédé** se lit sur la révision entière,
+  ce qui se **joue** sur la semaine.
+- La carte de l'accueil est recomposée (clé sur la sélection) à chaque changement de contexte : écrire à
+  chaque case aurait refermé la feuille avant la deuxième. D'où le brouillon et l'écriture unique.
+- Un test qui active un bloc puis écrit une révision doit **figer l'horloge** : sur l'horloge réelle, le bloc
+  est déjà terminé et l'écriture est refusée (`retroactive_revision`).
+- Deux défauts que seul le navigateur a montrés : le titre de la feuille, trop long, était tronqué à 390 px,
+  et « Ajouter une séance à la semaine 1 » passait à la ligne en laissant le « 1 » seul.
+
+- Un test du tutoriel, `TutorialProvider` « attend que la commande décrite existe avant de parler », a
+  échoué **une fois**, dans un worktree jetable qui rejouait 1 800 tests d'un coup pour vérifier un commit
+  intermédiaire : ses `findByText` n'ont que le délai par défaut. Il passe cinq fois sur cinq seul, au commit
+  comme à `HEAD`, et la suite complète de l'arbre final est verte. Sensible à la charge, pas à ce travail ; à
+  surveiller s'il revient.
+
+**Question posée en cours de session, sans suite dans le code** : une relecture externe du schéma
+(`workoutSets.workoutId`, `[workoutId+order]`, clé sans `id`). Un point juste, deux à ne pas suivre ; aucun
+changement de schéma. L'analyse est dans `docs/progress/decisions-et-pieges.md` (2026-10-04).
+
+**Non vérifié** : le rendu sur un téléphone, l'APK, et le tutoriel guidé du chapitre Programmes (son texte
+n'a pas changé et ses tests passent, mais il n'a pas été rejoué en navigateur).
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Planifier › Programmes › « + » : nom, lundi, huit semaines. Au Split, **2 semaines** : les quatre
+   séances de la première, les six de la seconde, jours et routines posés. Activer.
+2. La fiche dit « Semaine N du cycle de 2 semaines » et ne liste que cette semaine-là ; la semaine d'après,
+   c'est l'autre. L'accueil propose la séance du jour du bloc.
+3. ⋯ › Modifier à partir de… : le split s'ouvre lu à partir de la semaine d'effet, avec sa phrase ;
+   enregistrer sans rien toucher ne change aucune semaine.
+4. Accueil, sans bloc actif : l'icône de dossier, cocher les deux dossiers, « Terminé ». La carte annonce
+   `UL + PPL …` et propose la routine la plus ancienne des deux.
+5. Faire cette séance, revenir : la suivante ; en fin de semaine, la carte passe d'un dossier à l'autre.
+6. Fermer et rouvrir l'app : le choix des dossiers est resté. Rouvrir la feuille, décocher, la fermer
+   **sans** « Terminé » : rien n'a changé.
 
 ## TTY1 à débloquer, ouverture complète (2026-10-03)
 

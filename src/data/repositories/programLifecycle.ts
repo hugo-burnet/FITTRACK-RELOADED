@@ -2,7 +2,7 @@ import { db } from '@/data/db';
 import type { Program } from '@/data/types';
 import {
   isoDayOfWeek,
-  resolveSchedule,
+  resolveRevision,
   shiftLocalDate,
   validateProgramDraft,
 } from '@/lib/programs';
@@ -78,7 +78,10 @@ async function prepareProgramActivation(programId: string): Promise<PreparedProg
   const availableRoutineIds = new Set(
     alive(await db.routines.toArray()).map((routine) => routine.id),
   );
-  const initialSchedule = resolveSchedule(revisions, entries, 0);
+  // Tout le cycle de la première révision, pas sa seule première semaine : une
+  // routine de la seconde semaine doit exister, et le bloc la possède dès
+  // l'activation autant que celles de la première.
+  const initialSchedule = resolveRevision(revisions, entries, 0)?.entries ?? [];
   const issues = validateProgramDraft(
     {
       startsAt: program.startsAt,

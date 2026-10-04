@@ -213,8 +213,7 @@ describe('WorkoutScreen — persistance', () => {
       screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
-    await user.click(screen.getByRole('button', { name: /Déverrouiller l’ordre des exercices/ }));
+    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }));
     const firstHandle = await screen.findByRole('button', {
       name: 'Déplacer Développé couché',
     });
@@ -232,8 +231,7 @@ describe('WorkoutScreen — persistance', () => {
     renderWorkout();
     expect(await screen.findByRole('button', { name: `Déplacer ${second.name}` })).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
-    await user.click(screen.getByRole('button', { name: /Verrouiller l’ordre des exercices/ }));
+    await user.click(screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }));
     expect(useExerciseOrderLock.getState().unlocked).toEqual({
       routine: true,
       workout: false,

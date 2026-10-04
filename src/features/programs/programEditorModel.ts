@@ -6,19 +6,13 @@ import {
   MIN_LOAD_INDEX,
   applyProgramRecipe,
   programPosition,
-  resolveSchedule,
 } from '@/lib/programs';
 import { ProgramRepositoryError } from '@/data/repositories/programs';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
-import type { ProgramSplitDraftEntry } from './ProgramSplitStep';
 import type { ProgramWeekDraft } from './ProgramWeeksStep';
 
 const MIN_DURATION_WEEKS = 4;
 const MAX_DURATION_WEEKS = 12;
-
-export const emptySplit = (): ProgramSplitDraftEntry[] => [
-  { routineId: '', dayOfWeek: 1, order: 0 },
-];
 
 /**
  * Le trajet de départ : une recette, pas une ligne plate.
@@ -59,27 +53,6 @@ export function parseLocalDate(value: string): number {
   const date = new Date(year, month, day);
   if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return 0;
   return date.getTime();
-}
-
-/** Renumbers `order` per weekday so two sessions on the same day never collide. */
-export function orderedSplit(entries: readonly ProgramSplitDraftEntry[]): ProgramSplitDraftEntry[] {
-  const orders = new Map<number, number>();
-  return entries.map((entry) => {
-    const order = orders.get(entry.dayOfWeek) ?? 0;
-    orders.set(entry.dayOfWeek, order + 1);
-    return { ...entry, order };
-  });
-}
-
-export function splitForWeek(detail: ProgramDetail, weekIndex: number): ProgramSplitDraftEntry[] {
-  const entries = resolveSchedule(
-    detail.revisions.map(({ revision }) => revision),
-    detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
-    weekIndex,
-  );
-  return entries.length === 0
-    ? emptySplit()
-    : entries.map(({ routineId, dayOfWeek, order }) => ({ routineId, dayOfWeek, order }));
 }
 
 export function weeksForBlock(detail: ProgramDetail): ProgramWeekDraft[] {
@@ -137,13 +110,6 @@ export function basicsIssue(basics: ProgramBasicsDraft): TranslationKey | null {
     return 'program.errorBasicsDuration';
   }
   return null;
-}
-
-export function splitIssue(split: readonly ProgramSplitDraftEntry[]): TranslationKey | null {
-  const invalid =
-    split.length === 0 ||
-    split.some((entry) => entry.routineId === '' || entry.dayOfWeek < 1 || entry.dayOfWeek > 7);
-  return invalid ? 'program.errorSplit' : null;
 }
 
 export function weeksIssue(
