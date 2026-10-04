@@ -3,7 +3,64 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**« Ajouter une série » ne recopie plus l'échauffement ; avant : ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+**Dernière mise à jour :** 2026-10-04 (**le cadenas d'ordre revient dans la séance en cours ; avant : « Ajouter une série » ne recopie plus l'échauffement, ajouter un dossier au split, cycle des programmes, « À lancer » sur plusieurs dossiers**).
+
+## Le cadenas d'ordre revient dans la séance en cours (2026-10-04, suite)
+
+Publication : **aucune**, comme les sections d'en dessous — même branche `ccr-4e58be64-spej04`, toujours en
+2.9.0. Demande de l'utilisateur : « fais réapparaître le cadenas quand la routine est en cours ». Aucune table,
+aucun index, aucune version de schéma.
+
+**Ce qui s'était passé.** Le 2026-09-06, la passe « alléger la séance » (`660fc61`) a sorti le cadenas d'ordre
+**et** la commande de deload du bandeau pour les ranger dans le menu « Options de la séance ». Le bandeau n'a
+gardé que l'avancement, le repli et l'état « 80 % » une fois la décharge appliquée. Un utilisateur qui connaît le
+cadenas à l'œil ne le cherche pas dans un menu : il a cru qu'il avait disparu.
+
+**Ce qui change**
+
+- `OrderLockButton` revient dans le bandeau de `WorkoutScreen`, **à sa place d'avant** : entre l'état « 80 % »
+  (quand il est affiché) et le bouton de repli, cible de 48 px. Fermé au lancement ; un appui fait apparaître les
+  poignées, le suivant les retire. Il commande le verrou de la **séance** (`useExerciseOrderLock`), jamais celui de
+  l'éditeur de routine.
+- **L'entrée du menu reste**, avec son libellé et son explication : un seul verrou, deux commandes. Je ne l'ai pas
+  retirée sans qu'on me le demande ; si la redondance gêne, c'est une ligne dans `WorkoutSheets` (et la clé
+  `workout.reorderMenuHint`).
+- La commande de **deload reste dans le menu** : personne n'a demandé de l'en sortir.
+- `persiste le réordonnancement autorisé pendant la session` retrouve sa forme d'avant le déplacement : il passe par
+  le cadenas et non plus par le menu. Les commentaires qui disaient que le cadenas avait quitté le bandeau sont
+  corrigés, ainsi que la spec d'origine (`2026-08-10-exercise-order-lock-design`), qui reçoit une note datée.
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**269 fichiers, 2 992 tests**, 5 de plus que la section
+  d'en dessous) et `build` verts. Précache de 243 entrées, 8 309,79 Kio.
+- Quatre des cinq tests de `WorkoutScreen.orderLock.test.tsx` ont été écrits et **vus rouges** avant le code
+  (« Unable to find role="button" and name "Déverrouiller l'ordre des exercices" ») : cadenas fermé dès l'ouverture
+  sans passer par le menu, poignées après un appui et retirées au suivant, verrou de la routine intact, cohabitation
+  avec « 80 % ». Le cinquième fixe ce qui existait déjà — l'entrée du menu commande le même verrou ; sa requête passe
+  par la boîte de dialogue, puisque les deux boutons portent le même nom. **Mutation** : un cadenas branché sur le
+  verrou de la routine fait tomber trois tests.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, une séance de deux exercices : le bandeau lit « 0 série sur 2 », cadenas
+  de 48 × 48, repli de 48 × 48, rien ne déborde ; un appui, les deux poignées apparaissent ; la poignée du premier
+  exercice descendue au clavier **réordonne pour de bon** (lu en base) ; un second appui retire les poignées ; avec la
+  décharge appliquée, « 80 % » (92 px en Sombre, 82 en TTY1), le cadenas et le repli tiennent sans que l'avancement soit
+  tronqué ; aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Garder l'entrée du menu a un coût de test : les deux boutons s'appellent pareil, et l'ancien test, qui cliquait le
+  libellé dans le menu, trouvait deux éléments. Il passe par le cadenas, comme avant le déplacement ; le test du menu
+  cible sa boîte de dialogue.
+
+**Non vérifié** : le rendu sur un téléphone, l'APK.
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Lancer une séance de deux exercices au moins : le **cadenas fermé** est dans la barre d'avancement, à gauche du
+   bouton « Tout replier ».
+2. Le toucher : le cadenas s'ouvre et les poignées apparaissent sur les cartes. Déplacer un exercice, puis retoucher le
+   cadenas : les poignées partent.
+3. Appliquer la décharge (menu ⋮ › deload) : « 80 % » apparaît dans la barre, le cadenas reste à côté.
 
 ## « Ajouter une série » ne recopie plus l'échauffement (2026-10-04, suite)
 

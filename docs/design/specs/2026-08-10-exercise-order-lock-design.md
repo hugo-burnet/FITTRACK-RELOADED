@@ -36,6 +36,11 @@ Dans la séance en cours, le cadenas se place dans la barre d’avancement immé
 contrôle « 80 % ». Dans l’éditeur de routine, il se place après le résumé « X exercices · Y séries »,
 au-dessus de la liste qu’il contrôle.
 
+*(Historique : le cadenas de séance a quitté la barre pour le menu « Options de la séance » le 2026-09-06, avec
+la commande de deload, puis est revenu à cette place le 2026-10-04, à la demande de l’utilisateur. L’entrée du menu
+a été conservée — un seul verrou, deux commandes. La commande de deload est restée dans le menu : la barre ne
+montre « 80 % » que lorsque la décharge est appliquée, et le cadenas vient alors juste après.)*
+
 Deux SVG distincts représentent les états :
 
 - un cadenas fermé lorsque le réordonnancement est bloqué ;

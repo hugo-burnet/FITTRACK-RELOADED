@@ -7,6 +7,24 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-04 — Le cadenas d'ordre revient dans le bandeau de la séance
+
+**Ce qui a été dit.** « Et fais réapparaître le cadenas quand la routine est en cours. »
+
+**Ce que le code répond.** Le cadenas n'avait pas disparu par accident : le 2026-09-06, « alléger la séance »
+(`660fc61`) l'a sorti du bandeau avec la commande de deload pour le ranger dans le menu « Options de la séance »,
+sous son libellé. La raison valait pour le deload — un geste qu'on fait presque jamais, qui pouvait être grisé et
+devait dire pourquoi — et pas pour le cadenas : on s'aperçoit **en cours de séance** qu'on a pris les exercices
+dans le mauvais ordre, jamais en dehors, et un geste qu'on cherche dans un menu est un geste dont on a oublié
+l'existence. Le cadenas n'avait d'ailleurs aucun état grisé à expliquer (`OrderLockButton` n'a pas de `disabled`).
+
+**Décision.** Le cadenas retrouve sa place d'avant, entre l'état « 80 % » et le bouton de repli, à 48 px ; le
+deload reste dans le menu, où personne n'a demandé de le reprendre. **L'entrée du menu est conservée** : un seul
+verrou (`useExerciseOrderLock`), deux commandes, la seconde pour qui ne sait pas lire l'icône. À retirer si la
+redondance gêne — une ligne dans `WorkoutSheets`, plus la clé `workout.reorderMenuHint`. **Le piège :** ranger une
+commande dans un menu parce qu'elle est rare suppose de savoir *quand* elle sert. Avant d'en sortir une de l'écran
+où on l'emploie, regarder à quel moment on la cherche.
+
 ### 2026-10-04 — « Ajouter une série » recopiait l'échauffement, et ses chiffres devenaient la suggestion du travail
 
 **Ce qui a été dit.** « Quand tu as fait une série d'échauffement, à la séance d'après tu vois les poids de ta
