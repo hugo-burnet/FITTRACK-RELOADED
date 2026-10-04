@@ -3,7 +3,47 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**v2.10.0 — le cycle des programmes, « À lancer » sur plusieurs dossiers, un dossier d'un coup dans le split, l'échauffement qu'on ne recopie plus ni n'écrase, le cadenas d'ordre dans la séance**).
+**Dernière mise à jour :** 2026-10-04 (**trois correctifs du coach trouvés en rejouant un historique réel, et la spec du coach v2** — sur la branche de session, non publiés ; la dernière version publiée reste la v2.10.0).
+
+## Le coach rejoué sur un historique réel : trois correctifs et la spec v2 (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée** : la v2.10.0 reste la dernière version.
+Aucune table, aucun index, aucune version de schéma.
+
+L'utilisateur trouvait le coach « trop simpliste » et a fourni une sauvegarde (28 séances, ~8 semaines, 164
+recommandations journalisées). Le moteur a été rejoué séance par séance (`evaluatePerformance` sur les lignes de
+la sauvegarde) et comparé à ce qu'il avait réellement affiché. **La sauvegarde n'est pas dans le dépôt** et ne
+doit pas y entrer.
+
+**Trois correctifs, chacun avec un test tiré du cas réel, vu rouge avant le correctif**
+
+- **`fix(coach): un pas de charge ne dépasse jamais un incrément`** (`118354d`). Depuis un demi-pas (12,5 kg sur
+  une machine au pas de 5), `shiftLoad` tombait pile entre deux crans et `Math.round` tranchait vers le haut :
+  12,5 → 20 kg (+60 %) sur l'oiseau, 47,5 → 55 kg sur le leg curl. L'égalité se tranche vers la charge de départ.
+  Touche aussi `routineTargets` et `programs`, qui passent par `nextLoad` / `previousLoad`.
+- **`fix(coach): consolider une charge n'est plus un plateau`** (`0777aea`). Une séance plafonnée ne peut pas
+  faire monter le 1RM estimé ; trois plafonds à la même charge passaient pour un plateau, et le plateau retirait
+  `increase_load`. Rowing à 70 × 12 × 3, RPE en baisse : « Plateau » trois fois. Le test
+  `plateau strips add_set as well as increase_*` **verrouillait ce défaut** : il affirme maintenant l'inverse, le
+  retrait par le plateau étant testé sur une fourchette tenue sans plafond. Même chose pour le test de dépôt
+  `progression target + plateau` (10 sur 8–12 au lieu de 12). Spec du coach d'intention amendée (§ 4.2, § 10).
+- **`fix(coach): un record de répétitions à la même charge n'est pas un plateau`** (`33ee159`). Révélé par le
+  précédent : `estimateOneRepMax` ne lit rien au-delà de 12 répétitions, donc un 12,5 × 13 était jugé sur sa
+  série à 11. La séance plafonnée à 15 que le correctif précédent écarte rendait la règle muette par accident.
+
+**Après les trois**, le rejeu de tout l'historique ne montre plus que deux plateaux : un vrai (pec fly à RPE 9–10
+trois fois) et un faux sur une séance de reprise plus légère — cas couvert par R4 de la spec.
+
+**Spec : `docs/design/specs/2026-10-04-coach-v2-design.md`**, statut « à valider », cinq questions ouvertes à
+l'utilisateur. Constat central : le RPE est noté sur **84 %** des séries de travail et le coach n'en lit aucun.
+Règles R1 (effort), R2 (série à l'échec), R3 (pas déduit de l'historique, pas relatif), R4 (même contrat de
+répétitions), R5 (retour de pause), R6 (volume par muscle), R7 reportée faute de cas réel. Pas de plan
+d'exécution tant que les questions ne sont pas tranchées.
+
+**Vérification.** `typecheck`, `lint`, `test:run` (**271 fichiers, 3 009 tests**) et `build` verts.
+
+**Piège rencontré.** En comparant deux versions du moteur par `git stash` / `git checkout -- fichier`, un
+correctif non encore commité a été écrasé, puis réécrit. Commiter avant de comparer.
 
 ## « Appliquer à toutes les séries » ne touche plus à l'échauffement (2026-10-04, suite)
 
@@ -903,6 +943,9 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
 
 ## Checkpoints téléphone encore dus
 
+- **Coach** (2026-10-04, branche de session, une fois fusionnée) — oiseau à la machine à 12,5 kg × 15 sur 12–15 :
+   la prochaine charge proposée est **15 kg**, plus 20. Rowing tenu à la même charge en haut de fourchette : la
+   carte propose la hausse au lieu de « Plateau ».
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »
