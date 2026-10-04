@@ -1010,6 +1010,27 @@ const fr = {
     effectiveWeekHint:
       'La semaine courante apparaît seulement si aucune séance du bloc n’y est enregistrée.',
     splitIntro: 'Ce rythme se répète chaque semaine du bloc.',
+    /**
+     * Un split peut tenir sur plusieurs semaines : un cycle, rejoué en boucle
+     * pendant tout le bloc. « Chaque semaine » est le cas d'un cycle d'une
+     * semaine — le split des premières versions, qui reste le défaut.
+     */
+    cycleLabel: 'Durée du cycle',
+    cycleOne: 'Chaque semaine',
+    cycleMany: '{count} semaines',
+    cycleHintMany:
+      'Les {count} semaines du cycle se rejouent dans l’ordre, en boucle, jusqu’à la fin du bloc.',
+    // Sur un bloc déjà lancé, la révision repart de la première semaine de son
+    // cycle : sans cette phrase, les semaines d'un cycle tourné par rapport à
+    // celui qu'on avait posé se liraient comme échangées.
+    cycleRestartHint:
+      'Le cycle repart à la semaine {number} du bloc : sa semaine 1 est celle qu’on y jouera.',
+    cycleWeekTitle: 'Semaine {number} du cycle',
+    cycleWeekEmpty: 'Aucune séance : cette semaine du cycle est un repos complet.',
+    // Court : « Ajouter une séance à la semaine 1 » passait à la ligne et laissait
+    // le « 1 » seul. La carte de la semaine dit déjà ce qu'on y ajoute.
+    addSessionToWeek: 'Ajouter à la semaine {number}',
+    cycleReading: 'Semaine {position} du cycle de {length} semaines',
     session: 'Séance {number}',
     sessionDayLabel: 'Jour de la séance {number}',
     sessionRoutineLabel: 'Routine de la séance {number}',

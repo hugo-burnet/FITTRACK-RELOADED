@@ -19,6 +19,8 @@ export interface ProgramSessionReading {
 
 interface Props {
   sessions: ProgramSessionReading[];
+  /** « Semaine 2 du cycle de 2 semaines » — absent quand le split se répète chaque semaine. */
+  cycleReading?: string | null;
   selectedEntryId: string | null;
   startDisabled: boolean;
   onSelect: (entryId: string) => void;
@@ -195,6 +197,7 @@ function SessionRow({
 
 export function ProgramSessionList({
   sessions,
+  cycleReading = null,
   selectedEntryId,
   startDisabled,
   onSelect,
@@ -203,6 +206,9 @@ export function ProgramSessionList({
   return (
     <section data-tutorial-id="program-session-list">
       <SectionTitle>{t('program.sessionsTitle')}</SectionTitle>
+      {cycleReading !== null && (
+        <p className="-mt-1 mb-3 px-1 text-sm text-[var(--text-2)]">{cycleReading}</p>
+      )}
       <div className="border-y border-[var(--border)]">
         {WEEK_DAYS.map((dayOfWeek) => {
           const daySessions = sessions.filter((session) => session.dayOfWeek === dayOfWeek);
