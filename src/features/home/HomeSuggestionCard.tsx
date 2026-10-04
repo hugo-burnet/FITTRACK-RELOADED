@@ -7,7 +7,10 @@ import { routineSummaryLine } from '@/features/routines/summary';
 import { Button, Card } from '@/ui';
 import { FolderSwitchIcon } from '@/ui/icons';
 import { HomeRoutineContextSheet } from './HomeRoutineContextSheet';
-import { routineContextOptionLabel } from './homeRoutineContextPresentation';
+import {
+  routineContextLabel,
+  selectedRoutineContextOptions,
+} from './homeRoutineContextPresentation';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
@@ -77,11 +80,13 @@ function HomeSuggestionCardContent({
   const navigate = useAppNavigate();
   const [contextSheetOpen, setContextSheetOpen] = useState(() => routineContext.required);
 
-  const selectedContext = routineContext.options.find(
-    (option) => option.value === routineContext.selected,
-  );
+  const selectedOptions = selectedRoutineContextOptions(routineContext);
   const hasFolderPicker = routineContext.options.length > 0;
-  const selectedFolderIsEmpty = selectedContext?.routineCount === 0;
+  // Vide quand **aucune** des lignes cochées n'a de routine : un cycle dont un
+  // seul dossier est vide a encore de quoi proposer.
+  const selectedFoldersAreEmpty =
+    selectedOptions.length > 0 && selectedOptions.every((option) => option.routineCount === 0);
+  const followsSeveralFolders = selectedOptions.length > 1;
 
   const start = (routineId: string) => {
     void startWorkoutFromRoutine(routineId).then(() => navigate('/workout'));
@@ -95,9 +100,9 @@ function HomeSuggestionCardContent({
         </p>
         {hasFolderPicker && (
           <p className="mt-1 truncate text-sm font-semibold text-[var(--text-1)]">
-            {selectedContext === undefined
+            {selectedOptions.length === 0
               ? t('home.chooseRoutineFolder')
-              : routineContextOptionLabel(selectedContext)}
+              : routineContextLabel(selectedOptions)}
           </p>
         )}
       </div>
@@ -128,13 +133,13 @@ function HomeSuggestionCardContent({
           <div className="space-y-4">
             {contextHeader}
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
-              {selectedFolderIsEmpty
-                ? t('home.emptyRoutineFolder')
+              {selectedFoldersAreEmpty
+                ? t(followsSeveralFolders ? 'home.emptyRoutineFolders' : 'home.emptyRoutineFolder')
                 : routineContext.required
                   ? t('home.chooseRoutineFolder')
                   : t('home.noRoutines')}
             </p>
-            {!selectedFolderIsEmpty && !routineContext.required && (
+            {!selectedFoldersAreEmpty && !routineContext.required && (
               <Button variant="secondary" fullWidth onClick={() => void navigate('/routines')}>
                 {t('home.createRoutine')}
               </Button>
@@ -170,7 +175,7 @@ function HomeSuggestionCardContent({
             {/* La règle, écrite sous le bouton : une suggestion qu'on ne peut pas
                 expliquer en une phrase est une suggestion qu'on ignore. */}
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
-              {t('home.suggestionRule')}
+              {t(followsSeveralFolders ? 'home.suggestionRuleFolders' : 'home.suggestionRule')}
             </p>
           </div>
         )}

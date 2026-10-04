@@ -258,6 +258,8 @@ const fr = {
     suggestionSection: 'À lancer',
     /** La règle, écrite : une suggestion qu'on ne peut pas expliquer s'ignore. */
     suggestionRule: 'La plus ancienne de tes routines.',
+    /** Plusieurs dossiers cochés : la règle ne change pas, son périmètre si — et c'est ce qui fait suivre un cycle. */
+    suggestionRuleFolders: 'La plus ancienne de tes routines, tous ces dossiers confondus.',
     neverPerformed: 'Jamais réalisée',
     lastToday: 'Réalisée aujourd’hui',
     lastYesterday: 'Réalisée hier',
@@ -266,10 +268,17 @@ const fr = {
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
-    chooseRoutineFolder: 'Choisir un dossier',
+    chooseRoutineFolder: 'Choisir les dossiers',
     changeRoutineFolder: 'Changer de dossier',
     rootRoutineFolder: 'Sans dossier',
     emptyRoutineFolder: 'Aucune routine dans ce dossier.',
+    emptyRoutineFolders: 'Aucune routine dans ces dossiers.',
+    // Dit à quoi sert de cocher plus d'un dossier : sans cette phrase, la feuille
+    // se lit comme un choix unique, et le cycle qui traverse deux dossiers ne sait
+    // pas qu'il peut les suivre ensemble.
+    routineFolderHint:
+      'Coche plusieurs dossiers si ton cycle les traverse : la suggestion suit alors toutes leurs routines.',
+    routineFolderPickOne: 'Coche au moins un dossier.',
     routineFolderWriteError: 'Impossible de changer de dossier.',
     programSection: 'Bloc en cours',
     programWeek: 'Semaine {current} sur {total}',

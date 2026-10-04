@@ -12,11 +12,15 @@ vi.mock('@/data/repositories/settings', () => ({
 }));
 
 const options = [
-  { value: 'folder:push' as const, label: 'Salle', routineCount: 2 },
-  { value: 'root' as const, routineCount: 1 },
+  { value: 'folder:ul' as const, label: 'UL', routineCount: 4 },
+  { value: 'folder:ppl' as const, label: 'PPL', routineCount: 6 },
+  { value: 'root' as const, routineCount: 2 },
 ] satisfies HomeDashboardData['routineContext']['options'];
 
-function SessionHarness() {
+const TITLE = 'Choisir les dossiers';
+const done = () => screen.getByRole('button', { name: 'Terminé' });
+
+function SessionHarness({ value = [] }: { value?: HomeDashboardData['routineContext']['selected'] }) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -26,7 +30,7 @@ function SessionHarness() {
       </button>
       <HomeRoutineContextSheet
         open={open}
-        value={null}
+        value={value}
         options={options}
         onClose={() => setOpen(false)}
       />
@@ -39,7 +43,119 @@ describe('HomeRoutineContextSheet', () => {
     vi.mocked(setRoutineFolderContext).mockReset();
   });
 
-  it('persists a folder and closes only after the write succeeds', async () => {
+  it('writes nothing while folders are ticked, and one choice when it is done', async () => {
+    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={onClose} />);
+
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(screen.getByRole('checkbox', { name: 'PPL' }));
+
+    expect(setRoutineFolderContext).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+
+    await user.click(done());
+
+    expect(setRoutineFolderContext).toHaveBeenCalledOnce();
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
+  });
+
+  it('persists a single folder in its historical shape', async () => {
+    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
+    const user = userEvent.setup();
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={vi.fn()} />);
+
+    await user.click(screen.getByRole('checkbox', { name: 'PPL' }));
+    await user.click(done());
+
+    expect(setRoutineFolderContext).toHaveBeenCalledWith({ kind: 'folder', folderId: 'ppl' });
+  });
+
+  it('maps the root option alone to the persisted root context', async () => {
+    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
+    const user = userEvent.setup();
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={vi.fn()} />);
+
+    await user.click(screen.getByRole('checkbox', { name: t('home.rootRoutineFolder') }));
+    await user.click(done());
+
+    expect(setRoutineFolderContext).toHaveBeenCalledWith({ kind: 'root' });
+  });
+
+  it('persists several folders in library order, whatever order they were ticked in', async () => {
+    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
+    const user = userEvent.setup();
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={vi.fn()} />);
+
+    await user.click(screen.getByRole('checkbox', { name: t('home.rootRoutineFolder') }));
+    await user.click(screen.getByRole('checkbox', { name: 'PPL' }));
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(done());
+
+    expect(setRoutineFolderContext).toHaveBeenCalledWith({
+      kind: 'folders',
+      folderIds: ['ul', 'ppl'],
+      root: true,
+    });
+  });
+
+  it('starts from the saved selection and lets a folder be unticked', async () => {
+    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
+    const user = userEvent.setup();
+    render(
+      <HomeRoutineContextSheet
+        open
+        value={['folder:ul', 'folder:ppl']}
+        options={options}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('checkbox', { name: 'UL' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('checkbox', { name: 'PPL' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('checkbox', { name: t('home.rootRoutineFolder') })).toHaveAttribute(
+      'aria-checked',
+      'false',
+    );
+
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(done());
+
+    expect(setRoutineFolderContext).toHaveBeenCalledWith({ kind: 'folder', folderId: 'ppl' });
+  });
+
+  it('does not let an empty selection through, and says why', async () => {
+    const user = userEvent.setup();
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={vi.fn()} />);
+
+    expect(done()).toBeDisabled();
+    expect(screen.getByText(t('home.routineFolderPickOne'))).toBeVisible();
+
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+
+    expect(done()).toBeEnabled();
+    expect(screen.queryByText(t('home.routineFolderPickOne'))).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+
+    expect(done()).toBeDisabled();
+    expect(setRoutineFolderContext).not.toHaveBeenCalled();
+  });
+
+  it('explains the point of ticking several folders when there are several to tick', () => {
+    const { rerender } = render(
+      <HomeRoutineContextSheet open value={[]} options={options} onClose={vi.fn()} />,
+    );
+    expect(screen.getByText(t('home.routineFolderHint'))).toBeVisible();
+
+    rerender(
+      <HomeRoutineContextSheet open value={[]} options={options.slice(0, 1)} onClose={vi.fn()} />,
+    );
+    expect(screen.queryByText(t('home.routineFolderHint'))).not.toBeInTheDocument();
+  });
+
+  it('closes only after the write succeeds, and blocks a second action meanwhile', async () => {
     let finishWrite: (() => void) | undefined;
     vi.mocked(setRoutineFolderContext).mockImplementationOnce(
       () =>
@@ -49,89 +165,71 @@ describe('HomeRoutineContextSheet', () => {
     );
     const user = userEvent.setup();
     const onClose = vi.fn();
-    render(
-      <HomeRoutineContextSheet open value={null} options={options} onClose={onClose} />,
-    );
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={onClose} />);
 
-    await user.click(screen.getByRole('radio', { name: /Salle/ }));
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(done());
 
-    expect(setRoutineFolderContext).toHaveBeenCalledWith({
-      kind: 'folder',
-      folderId: 'push',
-    });
     expect(onClose).not.toHaveBeenCalled();
-    for (const radio of screen.getAllByRole('radio')) expect(radio).toBeDisabled();
+    for (const checkbox of screen.getAllByRole('checkbox')) expect(checkbox).toBeDisabled();
+    expect(done()).toBeDisabled();
 
     finishWrite?.();
     await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
   });
 
-  it('maps the root option to the persisted root context', async () => {
-    vi.mocked(setRoutineFolderContext).mockResolvedValueOnce();
-    const user = userEvent.setup();
-    render(
-      <HomeRoutineContextSheet open value={null} options={options} onClose={vi.fn()} />,
-    );
-
-    await user.click(
-      screen.getByRole('radio', { name: t('home.rootRoutineFolder') }),
-    );
-
-    expect(setRoutineFolderContext).toHaveBeenCalledWith({ kind: 'root' });
-  });
-
-  it('keeps the sheet open and reports a failed local write', async () => {
+  it('keeps the sheet open, with the ticks, and reports a failed local write', async () => {
     vi.mocked(setRoutineFolderContext).mockRejectedValueOnce(new Error('disk full'));
     const user = userEvent.setup();
     const onClose = vi.fn();
-    render(
-      <HomeRoutineContextSheet open value={null} options={options} onClose={onClose} />,
-    );
+    render(<HomeRoutineContextSheet open value={[]} options={options} onClose={onClose} />);
 
-    await user.click(screen.getByRole('radio', { name: /Salle/ }));
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(done());
 
     expect(await screen.findByRole('status')).toHaveTextContent(
       'Impossible de changer de dossier.',
     );
     expect(onClose).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog', { name: 'Choisir un dossier' })).toBeVisible();
-    expect(screen.getByRole('radio', { name: /Salle/ })).toBeEnabled();
+    expect(screen.getByRole('dialog', { name: TITLE })).toBeVisible();
+    expect(screen.getByRole('checkbox', { name: 'UL' })).toBeEnabled();
+    expect(screen.getByRole('checkbox', { name: 'UL' })).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('clears failed feedback after dismissal before a new sheet session', async () => {
+  it('forgets the draft and the failure when the sheet is closed without being done', async () => {
     vi.mocked(setRoutineFolderContext).mockRejectedValueOnce(new Error('disk full'));
     const user = userEvent.setup();
-    render(<SessionHarness />);
+    render(<SessionHarness value={['folder:ppl']} />);
 
-    await user.click(screen.getByRole('radio', { name: /Salle/ }));
+    await user.click(screen.getByRole('checkbox', { name: 'UL' }));
+    await user.click(done());
     expect(await screen.findByRole('status')).toBeVisible();
 
-    const dialog = screen.getByRole('dialog', { name: 'Choisir un dossier' });
+    const dialog = screen.getByRole('dialog', { name: TITLE });
     await user.click(screen.getAllByRole('button', { name: 'Fermer' }).at(-1)!);
     fireEvent.transitionEnd(dialog);
     await user.click(screen.getByRole('button', { name: 'Rouvrir' }));
 
-    expect(await screen.findByRole('dialog', { name: 'Choisir un dossier' })).toBeVisible();
+    expect(await screen.findByRole('dialog', { name: TITLE })).toBeVisible();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    // Le coche posé sans valider n'est pas resté : on repart de ce qui est enregistré.
+    expect(screen.getByRole('checkbox', { name: 'UL' })).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByRole('checkbox', { name: 'PPL' })).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('exposes checked radio rows with 56px touch targets', () => {
+  it('exposes checkbox rows with 56px touch targets', () => {
     render(
-      <HomeRoutineContextSheet open value="root" options={options} onClose={vi.fn()} />,
+      <HomeRoutineContextSheet open value={['root']} options={options} onClose={vi.fn()} />,
     );
 
-    const radios = screen.getAllByRole('radio');
-    expect(radios).toHaveLength(2);
-    for (const radio of radios) expect(radio).toHaveClass('min-h-14');
-
-    const selected = screen.getByRole('radio', {
-      name: t('home.rootRoutineFolder'),
-    });
-    expect(selected).toHaveAttribute('aria-checked', 'true');
-    expect(selected.querySelector('svg')).not.toBeNull();
-    expect(screen.getByRole('radio', { name: /Salle/ })).toHaveAttribute(
+    const checkboxes = screen.getAllByRole('checkbox');
+    expect(checkboxes).toHaveLength(3);
+    for (const checkbox of checkboxes) expect(checkbox).toHaveClass('min-h-14');
+    expect(screen.queryAllByRole('radio')).toHaveLength(0);
+    expect(screen.getByRole('checkbox', { name: t('home.rootRoutineFolder') })).toHaveAttribute(
       'aria-checked',
-      'false',
+      'true',
     );
+    expect(screen.getByRole('checkbox', { name: 'UL' })).toHaveAttribute('aria-checked', 'false');
   });
 });

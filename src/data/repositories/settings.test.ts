@@ -178,6 +178,25 @@ describe('home routine folder context setting', () => {
     expect(await getRoutineFolderContext()).toEqual({ kind: 'folder', folderId: 'push' });
   });
 
+  it('persists several folders, with the root, as one choice', async () => {
+    await setRoutineFolderContext({ kind: 'folders', folderIds: ['ul', 'ppl'], root: true });
+
+    expect(await getRoutineFolderContext()).toEqual({
+      kind: 'folders',
+      folderIds: ['ul', 'ppl'],
+      root: true,
+    });
+  });
+
+  it.each([
+    { kind: 'folders', folderIds: [], root: false },
+    { kind: 'folders', folderIds: ['ul', 3], root: false },
+    { kind: 'folders', root: true },
+  ])('normalizes an invalid stored selection to no choice: %j', async (value) => {
+    await db.settings.put({ key: 'homeRoutineFolderContext', value, updatedAt: 1 });
+    expect(await getRoutineFolderContext()).toBeNull();
+  });
+
   it.each([null, '', { kind: 'folder', folderId: '' }, { kind: 'other' }])(
     'normalizes an invalid stored context to no choice: %j',
     async (value) => {

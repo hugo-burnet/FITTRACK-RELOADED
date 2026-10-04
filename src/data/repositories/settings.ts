@@ -6,7 +6,13 @@ import {
   type WeeklyTrainingGoal,
 } from '@/lib/history';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
+import {
+  normalizeRoutineFolderContext,
+  type RoutineFolderContext,
+} from '@/lib/routineContext';
 import { DEFAULT_REP_SECONDS, clampRepSeconds, normalizeRepSeconds } from '@/lib/tempo';
+
+export type { RoutineFolderContext };
 
 const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
 const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
@@ -175,20 +181,6 @@ export async function setDefaultRepSeconds(seconds: number): Promise<number> {
   const value = clampRepSeconds(seconds);
   await db.settings.put({ key: REP_SECONDS_KEY, value, updatedAt: Date.now() });
   return value;
-}
-
-export type RoutineFolderContext =
-  | { kind: 'root' }
-  | { kind: 'folder'; folderId: string };
-
-function normalizeRoutineFolderContext(value: unknown): RoutineFolderContext | null {
-  if (typeof value !== 'object' || value === null) return null;
-  const candidate = value as Record<string, unknown>;
-  if (candidate.kind === 'root') return { kind: 'root' };
-  return candidate.kind === 'folder' &&
-    typeof candidate.folderId === 'string' && candidate.folderId.length > 0
-    ? { kind: 'folder', folderId: candidate.folderId }
-    : null;
 }
 
 export async function getRoutineFolderContext(): Promise<RoutineFolderContext | null> {

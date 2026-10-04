@@ -101,7 +101,7 @@ describe('getHomeDashboard', () => {
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toEqual({ required: false, selected: null, options: [] });
+    expect(dashboard.routineContext).toEqual({ required: false, selected: [], options: [] });
     expect(dashboard.suggestedRoutine?.routineId).toBe(push.id);
   });
 
@@ -121,9 +121,166 @@ describe('getHomeDashboard', () => {
       value: 'root',
       routineCount: 1,
     });
-    expect(dashboard.routineContext.selected).toBe(`folder:${folder.id}`);
+    expect(dashboard.routineContext.selected).toEqual([`folder:${folder.id}`]);
     expect(dashboard.suggestedRoutine?.routineId).toBe(inside.id);
     expect(dashboard.suggestedRoutine?.routineId).not.toBe(root.id);
+  });
+
+  describe('a cycle that crosses several folders', () => {
+    const DAY = 86_400_000;
+
+    /** Une séance terminée, rattachée à sa routine par son `routineId`. */
+    async function seedCompleted(routineId: string, name: string, startedAt: number) {
+      await db.workouts.add(
+        newEntity<Workout>({
+          routineId,
+          name,
+          status: 'completed',
+          startedAt,
+          endedAt: startedAt + 3_600_000,
+          durationSeconds: 3600,
+        }),
+      );
+    }
+
+    /** Deux dossiers : « UL » (haut / bas) puis « PPL », chacun avec deux routines. */
+    async function seedTwoFolders() {
+      const ul = await createFolder('UL');
+      const ppl = await createFolder('PPL');
+      // Créées dans l'ordre inverse du rangement : leur `order` global n'est
+      // donc pas celui qu'on lit dans la bibliothèque, dossier après dossier.
+      const pushA = await createRoutine('PUSH A', ppl.id);
+      const upperA = await createRoutine('UPPER A', ul.id);
+      const pullA = await createRoutine('PULL A', ppl.id);
+      const lowerA = await createRoutine('LOWER A', ul.id);
+      return { ul, ppl, pushA, upperA, pullA, lowerA };
+    }
+
+    it('suggests the routine done longest ago among all the selected folders', async () => {
+      const { ul, ppl, pushA, upperA, pullA, lowerA } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
+      const now = Date.now();
+      // Le cycle va « haut, bas, push » : « pull » est le plus ancien.
+      await seedCompleted(pullA.id, 'PULL A', now - 9 * DAY);
+      await seedCompleted(upperA.id, 'UPPER A', now - 3 * DAY);
+      await seedCompleted(lowerA.id, 'LOWER A', now - 2 * DAY);
+      await seedCompleted(pushA.id, 'PUSH A', now - 1 * DAY);
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.suggestedRoutine).toMatchObject({
+        routineId: pullA.id,
+        lastPerformedAt: now - 9 * DAY,
+      });
+    });
+
+    it('follows the cycle from one folder into the next', async () => {
+      const { ul, ppl, upperA, lowerA, pushA } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
+      const now = Date.now();
+      // La semaine « haut / bas » vient de finir, la semaine PPL est à venir.
+      await seedCompleted(upperA.id, 'UPPER A', now - 4 * DAY);
+      await seedCompleted(lowerA.id, 'LOWER A', now - 3 * DAY);
+
+      const dashboard = await getHomeDashboard();
+
+      // Jamais faites, les routines de PPL passent devant, dans l'ordre du dossier.
+      expect(dashboard.suggestedRoutine?.routineId).toBe(pushA.id);
+    });
+
+    it('starts a cycle that has never been done with the first routine of the first folder', async () => {
+      const { ul, ppl, upperA } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ppl.id, ul.id], root: false });
+
+      const dashboard = await getHomeDashboard();
+
+      // « UL » est le premier dossier de la bibliothèque, même si « PPL » a été
+      // coché le premier et que sa routine a le plus petit `order`.
+      expect(dashboard.suggestedRoutine?.routineId).toBe(upperA.id);
+    });
+
+    it('lists the selection in library order, whatever order it was ticked in', async () => {
+      const { ul, ppl } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ppl.id, ul.id], root: false });
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.routineContext).toMatchObject({
+        required: false,
+        selected: [`folder:${ul.id}`, `folder:${ppl.id}`],
+      });
+    });
+
+    it('leaves out the folders that were not selected, even with a routine never done', async () => {
+      const { ul, ppl, upperA, lowerA, pushA, pullA } = await seedTwoFolders();
+      const home = await createFolder('Maison');
+      await createRoutine('Gainage', home.id);
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
+      const now = Date.now();
+      for (const [routine, days] of [
+        [upperA, 8],
+        [lowerA, 7],
+        [pushA, 6],
+        [pullA, 5],
+      ] as const) {
+        await seedCompleted(routine.id, routine.name, now - days * DAY);
+      }
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.suggestedRoutine?.routineId).toBe(upperA.id);
+    });
+
+    it('adds the routines without folder when the root is part of the selection', async () => {
+      const { ul, upperA, lowerA } = await seedTwoFolders();
+      const free = await createRoutine('Libre');
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id], root: true });
+      const now = Date.now();
+      await seedCompleted(upperA.id, 'UPPER A', now - 3 * DAY);
+      await seedCompleted(lowerA.id, 'LOWER A', now - 2 * DAY);
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.routineContext.selected).toEqual([`folder:${ul.id}`, 'root']);
+      expect(dashboard.suggestedRoutine?.routineId).toBe(free.id);
+    });
+
+    it('drops a deleted folder from the selection and keeps following the others', async () => {
+      const { ul, ppl, upperA } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
+      await deleteFolder(ppl.id);
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.routineContext).toMatchObject({
+        required: false,
+        selected: [`folder:${ul.id}`],
+      });
+      expect(dashboard.suggestedRoutine?.routineId).toBe(upperA.id);
+    });
+
+    it('asks again, without falling back, when every selected folder is gone', async () => {
+      const { ul, ppl } = await seedTwoFolders();
+      await createFolder('Maison');
+      await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
+      await deleteFolder(ul.id);
+      await deleteFolder(ppl.id);
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.routineContext).toMatchObject({ required: true, selected: [] });
+      expect(dashboard.suggestedRoutine).toBeNull();
+    });
+
+    it('keeps a single saved folder working exactly as before', async () => {
+      const { ul, upperA } = await seedTwoFolders();
+      await setRoutineFolderContext({ kind: 'folder', folderId: ul.id });
+
+      const dashboard = await getHomeDashboard();
+
+      expect(dashboard.routineContext.selected).toEqual([`folder:${ul.id}`]);
+      expect(dashboard.suggestedRoutine?.routineId).toBe(upperA.id);
+    });
   });
 
   it('requires a routine context when folders exist without a saved choice', async () => {
@@ -132,7 +289,7 @@ describe('getHomeDashboard', () => {
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toMatchObject({ required: true, selected: null });
+    expect(dashboard.routineContext).toMatchObject({ required: true, selected: [] });
     expect(dashboard.suggestedRoutine).toBeNull();
   });
 
@@ -145,7 +302,7 @@ describe('getHomeDashboard', () => {
 
     expect(dashboard.routineContext).toMatchObject({
       required: false,
-      selected: `folder:${emptyFolder.id}`,
+      selected: [`folder:${emptyFolder.id}`],
     });
     expect(dashboard.suggestedRoutine).toBeNull();
   });
@@ -161,7 +318,7 @@ describe('getHomeDashboard', () => {
 
     expect(dashboard.routineContext).toMatchObject({
       required: true,
-      selected: null,
+      selected: [],
       options: expect.arrayContaining([
         expect.objectContaining({ value: `folder:${survivingFolder.id}` }),
       ]),
@@ -177,7 +334,7 @@ describe('getHomeDashboard', () => {
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toEqual({ required: false, selected: null, options: [] });
+    expect(dashboard.routineContext).toEqual({ required: false, selected: [], options: [] });
     expect(dashboard.suggestedRoutine?.routineId).toBe(routine.id);
   });
 
