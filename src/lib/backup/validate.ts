@@ -147,6 +147,7 @@ const COACH_CODES = [
   'plateau',
   'long_rest',
   'consolidating',
+  'returning',
 ] as const satisfies readonly CoachSignalCode[];
 const COACH_STATUSES = [
   'pending',

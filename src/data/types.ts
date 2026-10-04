@@ -459,7 +459,9 @@ export type CoachSignalCode =
   | 'plateau'
   | 'long_rest'
   /** Coach v2, R1 — same load, at least as many reps, clearly less effort. */
-  | 'consolidating';
+  | 'consolidating'
+  /** Coach v2, R5 — first session after a break of 14 days or more. */
+  | 'returning';
 
 export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed' | 'superseded';
 

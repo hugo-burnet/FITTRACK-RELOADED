@@ -141,6 +141,8 @@ function constatMessage(signal: SignalLike): string {
         before: formatNumber(evidenceValue(signal, 'rpe_before') ?? 0),
         after: formatNumber(evidenceValue(signal, 'rpe_after') ?? 0),
       });
+    case 'returning':
+      return t('coach.returning', { days: evidenceValue(signal, 'gap_days') ?? 0 });
     case 'long_rest':
       return t('coach.long_rest', {
         seconds: evidenceValue(signal, 'max_rest_seconds') ?? 0,

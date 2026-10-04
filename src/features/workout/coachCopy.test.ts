@@ -276,3 +276,13 @@ describe('coachSignalMessage — effort (R1)', () => {
     expect(atFailure).toBe(`${plain} ${t('coach.plateauAtFailure')}`);
   });
 });
+
+describe('coachSignalMessage — reprise (R5)', () => {
+  it('dit depuis combien de jours, et pourquoi on ne monte pas', () => {
+    const message = coachSignalMessage({
+      code: 'returning',
+      evidence: [{ label: 'gap_days', value: 21 }],
+    });
+    expect(message).toBe(t('coach.returning', { days: 21 }));
+  });
+});

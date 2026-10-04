@@ -12,14 +12,25 @@ type RecapCue =
   | 'coach-recap-fatigue'
   | 'coach-recap-plateau';
 
-function signalCue(signal: CoachSignal): RecapCue {
+/**
+ * `null`: the finding asks for nothing — the plan stays as it is. It must not
+ * say « plan inchangé » on its own, or a recap that also says « la charge sera
+ * ajustée » would contradict itself; it only stops being read as a change.
+ */
+function signalCue(signal: CoachSignal): RecapCue | null {
   switch (signal.code) {
     case 'range_satisfied':
     case 'consolidating':
       return 'coach-recap-progress';
     case 'range_ceiling_reached':
     case 'range_completed':
-      return 'coach-recap-increase';
+      // Plafond arraché (R1) : la carte ne propose pas de charge, la voix non plus.
+      return signal.evidence.some((item) => item.label === 'ceiling_grinding' && item.value === 1)
+        ? null
+        : 'coach-recap-increase';
+    // Reprise (R5) : on refait la séance, le plan ne bouge pas.
+    case 'returning':
+      return null;
     case 'range_missed':
       return 'coach-recap-adjust';
     case 'intra_session_drop':
@@ -32,8 +43,10 @@ function signalCue(signal: CoachSignal): RecapCue {
 
 /** One concise conclusion per distinct finding, in the coach's display order. */
 export function workoutRecapCues(signals: readonly CoachSignal[]): CueId[] {
-  if (signals.length === 0) return ['workout-recap-start', 'coach-recap-steady'];
-  const findings = [...new Set(signals.map(signalCue))];
+  const findings = [
+    ...new Set(signals.map(signalCue).filter((cue): cue is RecapCue => cue !== null)),
+  ];
+  if (findings.length === 0) return ['workout-recap-start', 'coach-recap-steady'];
   return ['workout-recap-start', ...findings];
 }
 

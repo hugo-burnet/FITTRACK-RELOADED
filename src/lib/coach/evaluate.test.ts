@@ -1233,6 +1233,167 @@ describe('effort de séance (R1)', () => {
   });
 });
 
+describe('même contrat de répétitions (R4)', () => {
+  const day = 86_400_000;
+  const contractSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    weight: number,
+    range: { targetReps?: number; targetRepsMax?: number },
+    rpe: (number | undefined)[] = [],
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'fly',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      equipment: 'machine',
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          rpe: rpe[order],
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+  const usual = { targetReps: 12, targetRepsMax: 15 };
+  const lighter = { targetReps: 10, targetRepsMax: 12 };
+  const none = { targetReps: undefined, targetRepsMax: undefined };
+
+  it('ne compare pas une séance de reprise plus légère aux séances habituelles', () => {
+    // Pec fly, historique réel : une routine « reprise » en 10–12 à 7,5 kg après des
+    // séances en 12–15 à 10 kg. Le coach y lisait un plateau.
+    const signals = collectCoachSignals([
+      contractSession('w3', 14, [10, 9], 7.5, lighter),
+      contractSession('w2', 7, [12, 12], 10, usual),
+      contractSession('w1', 0, [12, 12], 10, usual),
+    ]);
+    expect(signals.map((s) => s.code)).not.toContain('plateau');
+  });
+
+  it('ne cumule pas deux manques pris sous des fourchettes différentes', () => {
+    const ev = evaluatePerformance(contractSession('w2', 7, [11, 11], 10, usual), [
+      contractSession('w1', 0, [9, 9], 10, lighter),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+  });
+
+  it('enjambe une séance d’une autre fourchette pour retrouver la précédente comparable', () => {
+    const ev = evaluatePerformance(contractSession('w3', 14, [11, 11], 10, usual), [
+      contractSession('w2', 7, [12, 12], 10, lighter),
+      contractSession('w1', 0, [11, 11], 10, usual),
+    ]);
+    expect(ev.signals.map((s) => s.code)).toContain('range_missed');
+  });
+
+  it('fait des séances sans cible un flux à part, que le plateau lit', () => {
+    const signals = collectCoachSignals([
+      contractSession('w4', 21, [12, 12], 10, none),
+      contractSession('w3', 14, [15, 15], 10, usual),
+      contractSession('w2', 7, [12, 12], 10, none),
+      contractSession('w1', 0, [12, 12], 10, none),
+    ]);
+    expect(signals.map((s) => s.code)).toContain('plateau');
+  });
+
+  it('ne lit une consolidation qu’entre deux séances du même contrat', () => {
+    const ev = evaluatePerformance(
+      contractSession('w2', 7, [12, 12], 10, lighter, [8, 8]),
+      [contractSession('w1', 0, [12, 12], 10, usual, [9, 9])],
+    );
+    expect(ev.signals.map((s) => s.code)).not.toContain('consolidating');
+  });
+
+  it('déduit toujours le pas de toutes les séances, quel que soit leur contrat', () => {
+    const ev = evaluatePerformance(contractSession('w3', 14, [15, 15], 15, usual), [
+      contractSession('w2', 7, [12, 12], 12.5, lighter),
+      contractSession('w1', 0, [12, 12], 10, lighter),
+    ]);
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(17.5);
+  });
+});
+
+describe('retour de pause (R5)', () => {
+  const day = 86_400_000;
+  const pauseSession = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    range: { targetReps?: number; targetRepsMax?: number } = { targetReps: 8, targetRepsMax: 12 },
+    weight = 115,
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'leg-press',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      equipment: 'machine',
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...range,
+        }),
+      ),
+    });
+
+  it('consolide au retour après 14 jours, sans proposer de monter', () => {
+    // Presse à cuisses, historique réel : 21 jours sans, puis 115 × 12 × 3 sur
+    // 8–12 — le coach proposait 120 kg comme si les séances s'enchaînaient.
+    const ev = evaluatePerformance(pauseSession('w2', 21, [12, 12, 12]), [
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    const returning = ev.signals.find((s) => s.code === 'returning');
+    expect(returning?.evidence).toContainEqual({ label: 'gap_days', value: 21 });
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBeUndefined();
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(pickSignals(ev.signals)[0]!.code).toBe('returning');
+  });
+
+  it('ne parle pas de reprise sous 14 jours', () => {
+    const ev = evaluatePerformance(pauseSession('w2', 13, [12, 12, 12]), [
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('mesure la pause depuis la dernière séance de l’exercice, quelle qu’en soit la fourchette', () => {
+    const ev = evaluatePerformance(pauseSession('w3', 20, [12, 12, 12]), [
+      pauseSession('w2', 10, [15, 15, 15], { targetReps: 12, targetRepsMax: 15 }),
+      pauseSession('w1', 0, [10, 10, 10]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+  });
+
+  it('ne parle pas de reprise à la toute première séance', () => {
+    const ev = evaluatePerformance(pauseSession('w1', 0, [12, 12, 12]));
+    expect(ev.signals.map((s) => s.code)).not.toContain('returning');
+  });
+
+  it('fait repartir de zéro la fenêtre du bas manqué', () => {
+    const ev = evaluatePerformance(pauseSession('w2', 20, [7, 7, 7]), [
+      pauseSession('w1', 0, [7, 7, 7]),
+    ]);
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_missed');
+  });
+
+  it('fait repartir de zéro la fenêtre du plateau', () => {
+    const flat = (workoutId: string, dayIndex: number) => pauseSession(workoutId, dayIndex, [10, 10, 10]);
+    const history = [flat('w4', 35), flat('w3', 14), flat('w2', 7), flat('w1', 0)];
+    const afterReturn = evaluatePerformance(flat('w5', 42), history);
+    expect(afterReturn.signals.map((s) => s.code)).not.toContain('plateau');
+
+    const later = evaluatePerformance(flat('w6', 49), [flat('w5', 42), ...history]);
+    expect(later.signals.map((s) => s.code)).toContain('plateau');
+  });
+});
+
 describe('pickSignals', () => {
   it('keeps one signal per exercise, highest severity first', () => {
     const signals: CoachSignal[] = [

@@ -32,12 +32,18 @@ export const CONSOLIDATION_RPE_DROP = 0.5;
 export const AT_FAILURE_RPE = 9.5;
 /** RPE comes by halves; a mean can land a hair under a threshold in floats. */
 const RPE_EPSILON = 1e-9;
+/** Spec coach v2, R5 (décision Q4): from this gap on, a session is a comeback. */
+export const RETURN_GAP_DAYS = 14;
+const DAY_MS = 86_400_000;
 
 /** Severity ladder — UI keeps one signal per exercise; higher wins. */
 const SEVERITY: Record<CoachSignalCode, number> = {
   // Above range success: failing twice is more urgent than succeeding once,
   // and range_satisfied / range_ceiling_reached never fire together.
   range_missed: 50,
+  // Au-dessus du plafond : c'est elle qui explique pourquoi le plafond ne
+  // propose pas de charge à la séance de reprise.
+  returning: 45,
   range_ceiling_reached: 40,
   /** Read alias for legacy journal rows; same weight as ceiling. */
   range_completed: 40,
@@ -52,6 +58,7 @@ const SEVERITY: Record<CoachSignalCode, number> = {
 
 const CODE_ORDER: CoachSignalCode[] = [
   'range_missed',
+  'returning',
   'range_ceiling_reached',
   'range_completed',
   'consolidating',
@@ -266,6 +273,7 @@ function rangeFlags(
 function rangePartitionSignal(
   line: CoachExerciseLine,
   increment: CoachIncrement,
+  returning: boolean,
 ): CoachSignal | undefined {
   if (isDeloadLine(line)) return undefined;
 
@@ -321,7 +329,8 @@ function rangePartitionSignal(
   if (lastWeight !== undefined) {
     evidence.push({ label: 'current_load_kg', value: lastWeight });
   }
-  if (lastWeight !== undefined && !grinding) {
+  // Reprise (R5) : le constat reste, la charge attend la séance d'après.
+  if (lastWeight !== undefined && !grinding && !returning) {
     const proposed = nextLoad(lastWeight, increment.kg, line.measurementType);
     if (proposed !== lastWeight) {
       nextLoadKg = proposed;
@@ -368,6 +377,11 @@ function buildAllowedActions(signals: readonly CoachSignal[]): CoachAction[] {
     for (const action of ['increase_reps', 'increase_load', 'add_set'] as const) {
       allowed.delete(action);
     }
+  }
+  // Reprise : ni charge ni série de plus. Les répétitions, elles, peuvent monter.
+  if (codes.has('returning')) {
+    allowed.delete('increase_load');
+    allowed.delete('add_set');
   }
 
   return [...allowed];
@@ -822,6 +836,64 @@ export function pickSignals(signals: readonly CoachSignal[]): CoachSignal[] {
 }
 
 /**
+ * The rep contract a session was prescribed (spec coach v2, R4): its distinct
+ * `targetReps–targetRepsMax` pairs. Sessions without any target share the
+ * empty contract — the stream Hevy imports and free sessions live in.
+ *
+ * Half the exercises of the measured history are trained under two ranges or
+ * more (A/B variants, « reprise » routines). Read as one sequence, a lighter
+ * comeback day in 10–12 after weeks in 12–15 became a plateau. What is
+ * comparable is the prescription, not the routine: two routines can prescribe
+ * the same contract, and a renamed routine is still the same one.
+ */
+function contractKey(line: CoachExerciseLine): string {
+  const pairs = new Set(
+    completedWorkingSets(line.sets).map(
+      (set) => `${set.targetReps ?? ''}-${set.targetRepsMax ?? ''}`,
+    ),
+  );
+  return [...pairs].sort().join('|');
+}
+
+/**
+ * The sessions since the latest comeback, and the gap that opened it when the
+ * comeback is the session under review (spec coach v2, R5).
+ *
+ * The gap is measured from the previous session of the exercise *whatever its
+ * contract*: a week in 12–15 between two weeks in 8–12 is not a break. Rules
+ * that compare sessions do not reach across a break — three weeks off is not
+ * the same lifter, and a plateau or a missed floor from before says nothing
+ * about after.
+ */
+function sinceLatestReturn(newestFirst: readonly CoachExerciseLine[]): {
+  lines: CoachExerciseLine[];
+  gapDays: number | undefined;
+} {
+  for (let i = 0; i + 1 < newestFirst.length; i += 1) {
+    const gap = newestFirst[i]!.workoutStartedAt - newestFirst[i + 1]!.workoutStartedAt;
+    if (gap >= RETURN_GAP_DAYS * DAY_MS) {
+      return {
+        lines: newestFirst.slice(0, i + 1),
+        gapDays: i === 0 ? Math.floor(gap / DAY_MS) : undefined,
+      };
+    }
+  }
+  return { lines: [...newestFirst], gapDays: undefined };
+}
+
+function returningSignal(line: CoachExerciseLine, gapDays: number): CoachSignal {
+  return {
+    code: 'returning',
+    exerciseId: line.exerciseId,
+    evidence: [
+      { label: 'gap_days', value: gapDays },
+      { label: 'threshold_days', value: RETURN_GAP_DAYS },
+    ],
+    severity: SEVERITY.returning,
+  };
+}
+
+/**
  * Performance engine for one exercise: exclusive range partition, history
  * rules, and the independent `allowedActions` set (spec §4).
  *
@@ -845,12 +917,19 @@ export function evaluatePerformance(
 
   const signals: CoachSignal[] = [];
 
+  // Le pas se lit sur tout l'historique : une charge soulevée prouve un cran,
+  // quelle que soit la fourchette du jour et même avant une pause.
   const increment = coachIncrement(newestFirst);
+  const { lines: sinceReturn, gapDays } = sinceLatestReturn(newestFirst);
+  const contract = contractKey(latest);
+  const comparable = sinceReturn.filter((entry) => contractKey(entry) === contract);
 
-  const range = rangePartitionSignal(latest, increment);
+  if (gapDays !== undefined) signals.push(returningSignal(latest, gapDays));
+
+  const range = rangePartitionSignal(latest, increment, gapDays !== undefined);
   if (range) signals.push(range);
 
-  const missed = rangeMissedSignal(newestFirst, increment);
+  const missed = rangeMissedSignal(comparable, increment);
   if (missed) signals.push(missed);
 
   const drop = intraSessionDropSignal(latest, dropReps);
@@ -859,10 +938,10 @@ export function evaluatePerformance(
   const rest = longRestSignal(latest, drop, longRestMs);
   if (rest) signals.push(rest);
 
-  const plateau = plateauSignal(newestFirst, formula, plateauSessions);
+  const plateau = plateauSignal(comparable, formula, plateauSessions);
   if (plateau) signals.push(plateau);
 
-  const consolidating = consolidationSignal(newestFirst);
+  const consolidating = consolidationSignal(comparable);
   if (consolidating) signals.push(consolidating);
 
   return {
