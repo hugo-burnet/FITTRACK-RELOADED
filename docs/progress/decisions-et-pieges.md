@@ -7,6 +7,43 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-04 — Une relecture externe du schéma d'entraînement : un point juste, deux à ne pas suivre
+
+**Ce qui a été dit.** Le 29 septembre, un lecteur du dépôt a relu les index de `workouts`,
+`workoutExercises` et `workoutSets` (`db.ts`, `version(1)` et `version(3)`) et en a tiré trois
+remarques : `workoutSets` porte un `workoutId` qu'on retrouve par `workoutExerciseId` ; `[workoutId+order]`
+ne lui dit pas à quoi il sert, puisque l'ordre « se calcule sans le stocker » ; et `workoutSets` pourrait
+se passer d'`id` en prenant `[workoutExerciseId+order]` pour clé.
+
+**Ce que le code répond.**
+
+- **`workoutSets.workoutId` est lu, partout.** Douze requêtes font
+  `db.workoutSets.where('workoutId')` — l'historique, l'export CSV, la décharge, les records
+  (`recordSources`, `recordTimeline`), la fin et l'abandon d'une séance. C'est une redondance de
+  normalisation voulue pour la lecture : toutes les séries d'une séance en **une** requête indexée, au lieu
+  de deux (les lignes d'exercice, puis les séries par `anyOf`). Le retirer ajouterait du code et des
+  lectures à chacun de ces endroits, pour rien gagné.
+- **Les deux index composés `[workoutId+order]` et `[workoutExerciseId+order]` ne sont lus par aucune
+  requête.** Le code lit par `workoutId` ou `workoutExerciseId` et **trie en mémoire** (`byOrder`,
+  `sortBy('order')`). Seuls `db.ts`, une fixture de migration et le plan d'architecture les nomment. La
+  remarque est juste ; la raison ne l'est pas : `order` n'est pas calculable, c'est une donnée de
+  l'utilisateur (réordonner, supersets, verrou d'ordre). Ce qui est inutile, c'est **l'index**, pas le
+  champ.
+- **Une clé `[workoutExerciseId+order]` sans `id` casserait l'app.** Toute table est `Syncable` (UUID,
+  ADR-005). `personalRecords.workoutSetId` désigne une série par son `id`. La sauvegarde identifie et
+  dédoublonne les lignes par `id`. La suppression douce garde une série effacée à sa place : une clé de
+  position entrerait en collision avec celle qui la remplace. Et renuméroter après un retrait deviendrait un
+  changement de clé (supprimer puis réécrire) au lieu d'un champ qu'on met à jour — au milieu d'une séance
+  où chaque série validée est écrite aussitôt (règle n° 4).
+
+**Décision.** Aucune. Aucun changement de schéma n'a été fait, ni demandé. Retirer les deux index
+inutilisés économiserait un index à maintenir par écriture sur chacune des deux tables : négligeable
+pour une base personnelle, et non mesuré sur un vrai téléphone (le banc `fake-indexeddb` n'y dit rien).
+Le coût, lui, est réel : une version de schéma fait monter `db.verno`, et une sauvegarde écrite ensuite
+est **refusée** par une version plus ancienne (`unsupported-schema`) — alors que la PWA et l'APK peuvent
+ne pas être sur la même construction. **À rouvrir seulement** dans une version de schéma qu'une autre
+raison rend nécessaire, jamais seule.
+
 ### 2026-08-28 — Le mouvement de l'app a désormais des sorties, et un mode réduit qui réduit
 
 **Ce qui change.** Toute navigation passe par `startViewTransition` (`app/navigation.ts`,
@@ -387,6 +424,17 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Assumée le 2026-10-04 — quatre fichiers touchés par le cycle des programmes et le contexte
+  multi-dossiers restent au-dessus des ~300 lignes** : `programSchedules.ts` (412), `ProgramDetailScreen.tsx`
+  (502), `ProgramEditorScreen.tsx` (411) et `home.ts` (312, dépôt). Chacun garde **une** responsabilité —
+  les écritures d'un split, la fiche d'un bloc, l'éditeur d'un bloc, la projection de l'accueil — et les
+  trois premiers l'étaient déjà avant ce travail. Ce qui faisait deux métiers a été découpé :
+  `ProgramSplitStep` (245 → 213 lignes) a rendu la séance du split à son propre composant
+  (`ProgramSplitSession`, 173), et la forme du contexte de dossiers, sa lecture et ses conversions vivent dans un
+  module pur (`lib/routineContext.ts`, 101) plutôt que dans le dépôt. **À rouvrir** si l'un d'eux reçoit une
+  troisième capacité : la lecture de la projection du bloc, dans `ProgramDetailScreen`, est la première
+  candidate à sortir en module.
 
 - **Assumée le 2026-10-03 — `src/styles/tty1.css` dépasse la règle des ~300 lignes (environ 790).**
   Une feuille de style qui habille un thème est une seule responsabilité, comme `index.css`

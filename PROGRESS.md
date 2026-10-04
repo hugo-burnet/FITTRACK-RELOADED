@@ -3,7 +3,115 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-03 (**TTY1 à débloquer, ouverture complète, succès noclip**).
+**Dernière mise à jour :** 2026-10-04 (**cycle des programmes sur plusieurs semaines, « À lancer » sur plusieurs dossiers**).
+
+## Cycle des programmes et « À lancer » sur plusieurs dossiers (2026-10-04)
+
+Publication : **aucune**. Le travail est sur la branche `ccr-4e58be64-spej04`, ni fusionné dans `master`
+ni tagué, et la version reste **2.9.0**. Une release se fait sur demande explicite, comme les précédentes.
+
+Deux demandes, une session : « j'ai pas une routine sur 1 semaine mais sur 2 semaines, ce qui fait que
+Programmes ne peut pas fonctionner » et « j'ai 10 séances réparties dans 2 dossiers, du coup le
+lancement rapide ne peut pas non plus fonctionner ». Le cas : quatre séances « haut / bas » dans un
+dossier, six « push / pull / jambes » dans l'autre, une semaine sur deux. Les deux causes étaient dans le
+code : un split de bloc est **une** semaine qui se répète (`dayOfWeek` de 1 à 7), et le contexte de
+l'accueil est **un** dossier. Aucune table, aucun index, aucune version de schéma, aucun réglage migré.
+Les specs et les plans (`docs/design/`, `programme-cycle-multi-semaines` et
+`accueil-contexte-multi-dossiers`) disent le détail.
+
+**Le cycle des programmes**
+
+- Un split est un **cycle de une à quatre semaines**, rejoué en boucle. `ProgramScheduleRevision.cycleWeeks`
+  et `ProgramScheduleEntry.cycleWeek` sont **facultatifs et non indexés** : absents, ils valent 1 et 0, donc
+  tout bloc existant se lit comme avant sans migration. `lib/backup/validate` les déclare.
+- La semaine du cycle jouée par une semaine du bloc est `(semaine − semaine d'entrée de la révision) mod
+  longueur` : le cycle se compte **depuis la révision**, pas depuis le début du bloc. Trois lectures pures
+  dans `lib/programs/schedule.ts` : `resolveSchedule` (ce qui se joue cette semaine — l'accueil, la fiche, le
+  démarrage et le Coach n'ont pas changé d'un caractère), `resolveRevision` (tout le cycle — ce que le bloc
+  **possède**), `resolveSplitFrom` (le cycle **tourné** pour commencer à une semaine).
+- **Propriété sur tout le cycle** : l'activation valide les routines des deux semaines et périme les
+  recommandations de charge de leurs exercices ; réécrire un cycle à l'identique n'« introduit » rien.
+- **La réparation d'une routine supprimée tourne le cycle** : elle écrit une révision à la semaine affichée,
+  et sans rotation elle aurait décalé le cycle d'une semaine pour tout le reste du bloc. L'éditeur lit lui
+  aussi le split à partir de la semaine d'effet, et le dit : « Le cycle repart à la semaine N du bloc ».
+- **L'éditeur** : « Durée du cycle » (quatre pastilles, « Chaque semaine » par défaut — l'écran d'avant, sans
+  titre de semaine), puis une liste de séances par semaine du cycle. Raccourcir le cycle replie les séances
+  des semaines qui disparaissent dans la dernière : un appui ne doit pas effacer ce qui en a demandé une
+  douzaine. Une semaine peut rester vide (repos complet). La séance du split est devenue son propre
+  composant (`ProgramSplitSession`). La fiche dit « Semaine 2 du cycle de 2 semaines ».
+- Reste **par semaine du bloc**, et ne connaît pas le cycle : la prescription (phase, niveau).
+
+**« À lancer » sur plusieurs dossiers**
+
+- Le contexte est un **ensemble** : un ou plusieurs dossiers, avec ou sans « Sans dossier ». La règle ne
+  change pas — la routine réalisée le moins récemment — mais son périmètre est l'union. Pour un cycle suivi
+  dans l'ordre, c'est exactement la séance suivante, et une séance manquée remonte d'elle-même.
+- Le classement part de l'ordre **des dossiers**, puis de `Routine.order` : seul, ce dernier — la place dans
+  la liste entière — mêlerait les dossiers dans l'ordre de création de leurs routines. Un test crée les
+  routines à l'envers pour le garder.
+- Réglage `homeRoutineFolderContext` : une troisième forme `{ kind: 'folders', folderIds, root }`. Les deux
+  anciennes restent **lues et écrites pour un choix unique** (`lib/routineContext.ts`, pur : forme, lecture
+  défensive, conversions). Un dossier supprimé sort de la sélection sans l'invalider ; tous supprimés, l'accueil
+  redemande ; un dossier créé après n'y entre pas.
+- La feuille passe en **cases à cocher sur un brouillon**, écrit **une fois** au « Terminé » : fermer sans
+  « Terminé » ne choisit rien, et « Terminé » est grisé tant que rien n'est coché. La carte liste les dossiers
+  suivis (« UL + PPL 45' ») et écrit « tous ces dossiers confondus » sous le bouton.
+- `HomeDashboardData.routineContext.selected` passe de `string | null` à un **tableau** (vide = aucun choix).
+
+**Vérifié**
+
+- `typecheck`, `lint` (**zéro avertissement**), `test:run` (**266 fichiers, 2 960 tests**, contre 263 et
+  2 854 à la v2.9.0) et `build` verts. Précache de 243 entrées, 8 307,92 Kio.
+- **Un contrôle de mutation** : remettre `resolveSchedule` dans le calcul des exercices introduits fait
+  échouer le test « pas introduits » ; rétabli, il passe. Les tests écrits avant le code — le résolveur, le
+  dépôt, le modèle de l'éditeur, le module du contexte — ont tous été vus rouges d'abord.
+- **Chromium à 390 px, thèmes Sombre et TTY1**, sur le serveur de développement, une base amorcée à l'image
+  de la sienne (deux dossiers de 4 et 6 routines, deux routines libres, des séances sur cinq semaines) :
+  l'accueil sans choix ouvre la feuille d'elle-même ; deux dossiers cochés puis « Terminé », la carte annonce
+  `UL + PPL 45'` et propose `PUSH A - 45'`, la plus ancienne des deux dossiers ; l'éditeur à deux semaines ;
+  la fiche « Semaine 2 du cycle de 2 semaines ». Aucune erreur de console.
+
+**Pièges rencontrés**
+
+- Compter le cycle depuis le début du bloc paraissait plus simple, et décalait le cycle à la première
+  réparation ou à la première révision. La semaine d'effet est l'origine, et il faut tourner le split pour
+  qu'une révision réécrite rejoue exactement l'ancienne.
+- `resolveSchedule(…, 0)` servait à valider l'activation et à calculer les exercices que le bloc possède :
+  avec un cycle, il ne voit que la première semaine. Ce qui est **possédé** se lit sur la révision entière,
+  ce qui se **joue** sur la semaine.
+- La carte de l'accueil est recomposée (clé sur la sélection) à chaque changement de contexte : écrire à
+  chaque case aurait refermé la feuille avant la deuxième. D'où le brouillon et l'écriture unique.
+- Un test qui active un bloc puis écrit une révision doit **figer l'horloge** : sur l'horloge réelle, le bloc
+  est déjà terminé et l'écriture est refusée (`retroactive_revision`).
+- Deux défauts que seul le navigateur a montrés : le titre de la feuille, trop long, était tronqué à 390 px,
+  et « Ajouter une séance à la semaine 1 » passait à la ligne en laissant le « 1 » seul.
+
+- Un test du tutoriel, `TutorialProvider` « attend que la commande décrite existe avant de parler », a
+  échoué **une fois**, dans un worktree jetable qui rejouait 1 800 tests d'un coup pour vérifier un commit
+  intermédiaire : ses `findByText` n'ont que le délai par défaut. Il passe cinq fois sur cinq seul, au commit
+  comme à `HEAD`, et la suite complète de l'arbre final est verte. Sensible à la charge, pas à ce travail ; à
+  surveiller s'il revient.
+
+**Question posée en cours de session, sans suite dans le code** : une relecture externe du schéma
+(`workoutSets.workoutId`, `[workoutId+order]`, clé sans `id`). Un point juste, deux à ne pas suivre ; aucun
+changement de schéma. L'analyse est dans `docs/progress/decisions-et-pieges.md` (2026-10-04).
+
+**Non vérifié** : le rendu sur un téléphone, l'APK, et le tutoriel guidé du chapitre Programmes (son texte
+n'a pas changé et ses tests passent, mais il n'a pas été rejoué en navigateur).
+
+**Checkpoint téléphone**, en salle ou à défaut à bout de bras :
+
+1. Planifier › Programmes › « + » : nom, lundi, huit semaines. Au Split, **2 semaines** : les quatre
+   séances de la première, les six de la seconde, jours et routines posés. Activer.
+2. La fiche dit « Semaine N du cycle de 2 semaines » et ne liste que cette semaine-là ; la semaine d'après,
+   c'est l'autre. L'accueil propose la séance du jour du bloc.
+3. ⋯ › Modifier à partir de… : le split s'ouvre lu à partir de la semaine d'effet, avec sa phrase ;
+   enregistrer sans rien toucher ne change aucune semaine.
+4. Accueil, sans bloc actif : l'icône de dossier, cocher les deux dossiers, « Terminé ». La carte annonce
+   `UL + PPL …` et propose la routine la plus ancienne des deux.
+5. Faire cette séance, revenir : la suivante ; en fin de semaine, la carte passe d'un dossier à l'autre.
+6. Fermer et rouvrir l'app : le choix des dossiers est resté. Rouvrir la feuille, décocher, la fermer
+   **sans** « Terminé » : rien n'a changé.
 
 ## TTY1 à débloquer, ouverture complète (2026-10-03)
 
