@@ -463,6 +463,16 @@ function topWorkingLoad(line: CoachExerciseLine): number | undefined {
  * engine is not given — so the rule says nothing rather than reading progress
  * as stagnation.
  */
+/** Most reps a session's working sets reached at exactly `load`. */
+function mostRepsAtLoad(line: CoachExerciseLine, load: number): number | undefined {
+  let most: number | undefined;
+  for (const set of completedWorkingSets(line.sets)) {
+    if (set.weight !== load || set.reps === undefined) continue;
+    if (most === undefined || set.reps > most) most = set.reps;
+  }
+  return most;
+}
+
 /**
  * Une séance dont chaque série a touché le haut de sa prescription.
  *
@@ -525,6 +535,22 @@ function plateauSignal(
   const oldestLoad = loads[loads.length - 1];
   if (newestLoad !== undefined && oldestLoad !== undefined && newestLoad > oldestLoad) {
     return undefined;
+  }
+
+  // **Une répétition de plus à la même charge est un progrès, elle aussi.** Le
+  // 1RM estimé ne lit rien au-delà de 12 répétitions (`estimateOneRepMax`) : un
+  // 12,5 × 13 après deux 12,5 × 12 — record de répétitions sur un oiseau en
+  // 12–15 — passait pour une séance plate, jugée sur sa seule série à 11.
+  // Toute fourchette d'hypertrophie au-dessus de 12 tombe dans cet angle mort.
+  if (newestLoad !== undefined) {
+    const newestReps = mostRepsAtLoad(window[0]!, newestLoad);
+    const priorReps = window
+      .slice(1)
+      .map((line) => mostRepsAtLoad(line, newestLoad))
+      .filter((reps): reps is number => reps !== undefined);
+    if (newestReps !== undefined && priorReps.length > 0 && newestReps > Math.max(...priorReps)) {
+      return undefined;
+    }
   }
 
   return {

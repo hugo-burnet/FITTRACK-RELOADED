@@ -857,6 +857,27 @@ describe('plateau', () => {
     expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
   });
 
+  it('ne parle pas de plateau sur un record de répétitions au-delà de 12', () => {
+    // Oiseau à la machine, historique réel : 12,5 × 12, 12,5 × 12, puis 12,5 × 13
+    // et 12,5 × 11. Le 1RM estimé ignore la série à 13 et ne juge que celle à 11.
+    const twoSets = (workoutId: string, day: number, reps: [number, number]) =>
+      line({
+        exerciseId: 'reverse-fly',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        equipment: 'machine',
+        sets: reps.map((value, order) =>
+          set({ order, reps: value, weight: 12.5, targetReps: undefined, targetRepsMax: undefined }),
+        ),
+      });
+    const signals = evaluateCoach([
+      twoSets('w3', 14, [13, 11]),
+      twoSets('w2', 7, [12, 12]),
+      twoSets('w1', 0, [12, 12]),
+    ]);
+    expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
   it('garde le plateau quand la charge, elle non plus, ne bouge pas', () => {
     const signals = evaluateCoach([
       session('w3', 14, 100, 5),
