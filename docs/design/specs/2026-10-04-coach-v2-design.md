@@ -114,9 +114,13 @@ série à l'échec à 10 sous un plancher de 12 déclenche `range_missed` et pro
 - `intra_session_drop` ignore les séries à l'échec (comme référence et comme série jugée).
 - `floorMiss` (donc `range_missed`) juge le plancher sur les séries hors échec. Une séance dont
   toutes les séries de progression sont à l'échec ne témoigne de rien pour le plancher.
-- La partition plafond / fourchette se lit sur les séries hors échec. Une série à l'échec qui
-  dépasse le plafond ajoute une évidence `failure_reps_over_ceiling` (marge disponible), sans
-  changer la partition. *Décision Q5 : information seulement.*
+- **Le plafond se lit sur toutes les séries, échec compris** ; la fourchette tenue
+  (`range_satisfied`) se lit hors échec. Une série à l'échec qui s'arrête sous le haut dit que la
+  charge n'est pas maîtrisée : pec fly `5 × 15 · F 5 × 14` sur 12–15 n'est pas un plafond.
+  *Corrigé le 2026-10-04 sur remarque de l'utilisateur* : la première version écartait la série
+  à l'échec de toute la partition, et le rejeu inventait ce plafond.
+- Une série à l'échec qui dépasse le plafond ajoute une évidence `failure_reps_over_ceiling`
+  (marge disponible), sans changer la partition. *Décision Q5 : information seulement.*
 - Le 1RM estimé et le plateau **continuent** de lire les séries à l'échec : ce sont les mieux
   mesurées de la séance.
 
@@ -262,6 +266,7 @@ Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test
 - R1 : RPE noté sur moins de la moitié des séries → sortie identique au moteur actuel.
 - R2 : `12 @8,5 · F 8 @9,5` → aucun `intra_session_drop`.
 - R2 : `5 × 12 · F 5 × 10` deux fois sur 12–15 → aucun `range_missed`.
+- R2 : `5 × 15 · F 5 × 14` sur 12–15 → `range_satisfied`, pas de plafond.
 - R3 : charges historiques 10 / 12,5 / 15 sur machine → pas déduit 2,5.
 - R3 : élévations à 5 kg, pas 2,5 (+50 %) au plafond 15 → `increase_reps` jusqu'à 18, pas
   d'`increase_load`.

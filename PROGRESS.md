@@ -3,7 +3,35 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**trois correctifs du coach trouvés en rejouant un historique réel, et la spec du coach v2** — sur la branche de session, non publiés ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**coach v2 : spec validée, banc de rejeu, tranche 1 — série à l'échec et pas déduit de l'historique** — sur la branche de session, non publiés ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2 : décisions, banc de rejeu et tranche 1 (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma.
+
+**Décisions de l'utilisateur** (spec § 9) : consolider un plafond atteint à l'échec ; pas relatif de 10 % et
+3 répétitions ; retour de pause à 14 jours ; série à l'échec au-delà du plafond en simple information ; bornes
+de volume **adaptées à l'utilisateur** — plafond tiré de son historique, plancher seulement s'il le pose.
+Plan : `docs/design/plans/2026-10-04-coach-v2.md`.
+
+- **Tranche 0 — banc de rejeu.** `coachLinesFromBackup`, `replayCoach`, `formatReplay` (purs, testés) et
+  `COACH_REPLAY_BACKUP=… npm run coach:replay`. Le lanceur est un test sauté sans sauvegarde, comme les
+  `bench:*`. `.gitignore` écarte `fittrack-sauvegarde-*.json` et `coach-replay*.txt`.
+- **Tranche 1 — R2.** La série à l'échec ne juge plus le bas de fourchette ni la baisse de reps ; elle
+  **compte pour le plafond**. La première version l'écartait aussi du plafond : le rejeu inventait un plafond
+  au pec fly (`5 × 15 · F 5 × 14` sur 12–15) et l'utilisateur l'a corrigé (« je plafonne pas sur le pec
+  fly »). Le test de la séance réelle du 23/08 (élévations latérales) attendait « 5 → 2,5 kg » sur la foi de
+  la série à l'échec : il attend maintenant `range_satisfied`, et son sujet d'origine — alléger depuis la
+  charge du haut, pas depuis la dégressive — est gardé par une variante en série normale. Évidence
+  `failure_reps_over_ceiling` (Q5).
+- **Tranche 1 — R3.1.** `inferLoadIncrementKg` : le plus petit écart entre charges distinctes, s'il revient
+  deux fois et vaut au moins 0,5 kg. Ordre : réglage de l'exercice → pas déduit s'il est plus fin → table.
+  Évidence `inferred_increment_kg`, et la carte le dit (`coach.inferredIncrement`).
+- **Rejeu avant / après** sur la sauvegarde : 23 lignes changent, toutes relues. Fausses alertes supprimées
+  (élévations 5 → 2,5 kg deux fois, pec fly, curl marteau, tractions…) ; pas déduit (rowing 70 → 72,5,
+  leg curl 45 → 47,5, oiseau 10 → 12,5). Aucun plafond nouveau.
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
 
 ## Le coach rejoué sur un historique réel : trois correctifs et la spec v2 (2026-10-04, suite)
 
@@ -34,8 +62,7 @@ doit pas y entrer.
 **Après les trois**, le rejeu de tout l'historique ne montre plus que deux plateaux : un vrai (pec fly à RPE 9–10
 trois fois) et un faux sur une séance de reprise plus légère — cas couvert par R4 de la spec.
 
-**Spec : `docs/design/specs/2026-10-04-coach-v2-design.md`**, statut « à valider », cinq questions ouvertes à
-l'utilisateur. Constat central : le RPE est noté sur **84 %** des séries de travail et le coach n'en lit aucun.
+**Spec : `docs/design/specs/2026-10-04-coach-v2-design.md`**, validée depuis (section au-dessus). Constat central : le RPE est noté sur **84 %** des séries de travail et le coach n'en lit aucun.
 Règles R1 (effort), R2 (série à l'échec), R3 (pas déduit de l'historique, pas relatif), R4 (même contrat de
 répétitions), R5 (retour de pause), R6 (volume par muscle), R7 reportée faute de cas réel. Pas de plan
 d'exécution tant que les questions ne sont pas tranchées.
@@ -943,9 +970,11 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
 
 ## Checkpoints téléphone encore dus
 
-- **Coach** (2026-10-04, branche de session, une fois fusionnée) — oiseau à la machine à 12,5 kg × 15 sur 12–15 :
-   la prochaine charge proposée est **15 kg**, plus 20. Rowing tenu à la même charge en haut de fourchette : la
-   carte propose la hausse au lieu de « Plateau ».
+- **Coach** (2026-10-04, branche de session, une fois fusionnée) — au plafond sur une machine où tu charges
+   par 2,5 kg, la carte propose +2,5 kg et dit « Pas de 2,5 kg, lu dans les charges que tu as déjà chargées ».
+   Rowing tenu en haut de fourchette : la carte propose la hausse au lieu de « Plateau ». Une série à l'échec
+   finie sous le bas de fourchette ne déclenche plus ni « Baisse de reps » ni allègement ; finie sous le haut,
+   elle empêche le plafond.
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »
