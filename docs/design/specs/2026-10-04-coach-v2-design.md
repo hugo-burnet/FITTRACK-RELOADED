@@ -131,11 +131,15 @@ série à l'échec à 10 sous un plancher de 12 déclenche `range_missed` et pro
 kilos est conçue pour des charges où le pas est petit devant la charge.
 
 **Règle.**
-1. **Pas réel déduit de l'historique.** `inferLoadIncrementKg(lines)` : le plus petit écart non nul
-   entre deux charges distinctes réellement soulevées sur l'exercice, s'il est plus fin que le
-   pas par défaut et qu'il apparaît au moins deux fois. Priorité : réglage explicite de
-   l'exercice → pas déduit → table par équipement. Sur l'historique mesuré, cela donne 2,5 kg aux
-   machines où l'on charge 12,5 ou 47,5 — la cause du bug corrigé au § 2.1.
+1. **Le cran est celui de la fiche de l'exercice.** Champ « Incrément de charge » déjà présent
+   (« Vide = défaut selon le matériel ») : renseigné, il s'ajoute **tel quel**, sans arrondi à sa
+   grille — 5 kg + une plaque de 1,125 kg sur une poulie font 6,125, quand l'arrondi aux multiples
+   de 1,125 donnait 5,625, une charge qui n'existe pas. Vide, la table par matériel, dont les
+   résultats restent sur sa grille. Vaut pour le coach, la revue des cibles, la prescription et
+   la décharge des programmes (`resolveLoadStep`). *Révisée le 2026-10-04 : la première version
+   déduisait le cran des charges soulevées ; elle ne savait pas lire un micro-chargement de
+   1,125 kg, et contournait en silence un réglage que la fiche promet de respecter. Retirée sur
+   décision de l'utilisateur.*
 2. **Assez de répétitions pour absorber le cran.** Le cran est celui du matériel — +2 kg sur des
    haltères, on n'a pas le choix. Ce qui s'adapte, c'est le nombre de répétitions exigé avant de
    monter : assez pour que, une fois le cran posé, on retombe encore au moins sur le bas de la
@@ -256,7 +260,7 @@ combinaison avec un autre.
 | Tranche | Contenu | Pourquoi dans cet ordre |
 |---|---|---|
 | 0 | Banc de rejeu | Mesurer avant de changer |
-| 1 | R2 (échec) + R3.1 (pas déduit) | Petits, sans UI nouvelle, suppriment les pires alertes |
+| 1 | R2 (échec) + R3.1 (cran de la fiche) | Petits, sans UI nouvelle, suppriment les pires alertes |
 | 2 | R1 (RPE) | Le plus gros gain ; la donnée est là à 84 % |
 | 3 | R4 (comparabilité) + R5 (pause) | Ferment les faux plateaux restants |
 | 4 | R3.2 (répétitions pour absorber le cran) | Change la forme des recommandations, à valider en salle |
@@ -286,7 +290,8 @@ Chaque tranche : tests contrat d'abord, rejeu avant / après, `typecheck`, `test
 - R2 : `12 @8,5 · F 8 @9,5` → aucun `intra_session_drop`.
 - R2 : `5 × 12 · F 5 × 10` deux fois sur 12–15 → aucun `range_missed`.
 - R2 : `5 × 15 · F 5 × 14` sur 12–15 → `range_satisfied`, pas de plafond.
-- R3 : charges historiques 10 / 12,5 / 15 sur machine → pas déduit 2,5.
+- R3 : poulie à 5 kg, cran renseigné 1,125 → 6,125 (jamais 5,625). Fiche vide, charges
+  historiques 10 / 12,5 / 15 sur machine → cran de la table (5), rien n'est déduit.
 - R3 : curl haltères 10 kg × 12 sur 10–12 → plafond sans charge, 18 répétitions visées ; à 18 →
   12 kg. Barre à 100 kg × 12 sur 8–12 → 102,5 kg, comme avant. Lest et assistance : inchangés.
 - R4 : séance « reprise » 7,5 × 10 sur 10–12 après des 10 × 12 sur 12–15 → pas de plateau.

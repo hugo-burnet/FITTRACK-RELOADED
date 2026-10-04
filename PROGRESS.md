@@ -3,7 +3,32 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**coach v2, tranche 4 : on monte quand les répétitions absorbent le cran** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+**Dernière mise à jour :** 2026-10-04 (**coach v2 : le cran est celui de la fiche de l'exercice, ajouté tel quel** — sur la branche de session, non publiée ; la dernière version publiée reste la v2.10.0).
+
+## Coach v2 : le cran de la fiche, tel quel (2026-10-04, suite)
+
+Branche de session `ccr-5ffd8e9e-uazeho`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune
+version de schéma : le champ « Incrément de charge » de la fiche existe déjà.
+
+**Décision de l'utilisateur** : « sur une poulie tu peux micro-charger à +1,125 — on va plutôt respecter les
+incrémentations que l'utilisateur renseigne déjà dans la fiche de l'exo ».
+
+- **Pas déduit retiré.** R3.1 (tranche 1) lisait le cran dans les charges soulevées ; il ne voyait pas le
+  micro-chargement 3,5 / 5 / 6,125 de la poulie, et contournait en silence ce que la fiche promet (« Vide =
+  défaut selon le matériel »). `inferLoadIncrementKg`, l'évidence `inferred_increment_kg` et la note de carte
+  `coach.inferredIncrement` sont supprimés.
+- **Défaut trouvé en traçant le cas, et corrigé.** `nextLoad` arrondissait toujours au multiple du cran : avec
+  1,125 renseigné, 5 kg devenait 5,625 et non 6,125. `resolveLoadStep` rend `{ kg, onGrid }` : un cran
+  renseigné s'ajoute tel quel, la table du matériel garde sa grille. Branché aux **quatre** appelants — coach,
+  revue des cibles de routine, prescription et décharge des programmes —, qui avaient tous le défaut.
+- **Saisie vérifiée** : le champ avance par 0,25 aux boutons, mais taper « 1,125 » enregistre bien 1,125.
+- **Rejeu** : rowing et leg curl reviennent au cran machine de 5 kg tant que leur fiche est vide, et R3.2 y
+  demande alors 13 à 14 répétitions. 25 → 17 hausses proposées sur l'historique.
+- **Fiches à renseigner** — l'historique y montre un cran plus fin que la table : développé épaules à la
+  machine, développé à la machine, oiseau à la machine, leg curl allongé, leg curl assis, leg extension,
+  rowing buste appuyé (2,5 kg au lieu de 5) ; élévations latérales, rotation externe, extension triceps corde
+  unilatérale (micro-chargement de poulie).
+- **Vérification.** `typecheck`, `lint`, `test:run`, `build` verts.
 
 ## Coach v2, tranche 4 : les répétitions absorbent le cran (2026-10-04, suite)
 
@@ -1051,6 +1076,8 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
    de charge ; le récap vocal ne dit pas « une hausse de charge est prévue ».
    Tranche 4 : un curl aux haltères à 10 kg × 12 sur 10–12 ne propose pas 12 kg mais « vise 18 répétitions » ;
    à 18 partout, il propose 12 kg. Sur une barre lourde, rien ne change.
+   Cran de la fiche : renseigner 1,125 sur les élévations latérales ; au plafond avec assez de répétitions,
+   la charge proposée depuis 5 kg est 6,125 (pas 5,625, pas 7,5).
 0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
    séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
    affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »
