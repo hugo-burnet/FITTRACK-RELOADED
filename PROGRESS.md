@@ -3,12 +3,13 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-13 (**une fonction qui nomme la situation d'un exercice** ; dernière version publiée : v2.11.0 — le coach v2 : rejoué sur un historique réel, il lit le RPE, la série à l'échec, la fourchette, la reprise après une pause, et le cran de la fiche de l'exercice).
+**Dernière mise à jour :** 2026-10-13 (**v2.11.1 — une fonction qui nomme la situation d'un exercice, sans changement visible** ; version précédente : v2.11.0 — le coach v2 : rejoué sur un historique réel, il lit le RPE, la série à l'échec, la fourchette, la reprise après une pause, et le cran de la fiche de l'exercice).
 
 ## Coach : la situation d'un exercice en un mot (2026-10-13)
 
-Branche de session `ccr-449df1c1-etmya3`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune version de
-schéma, aucune chaîne d'interface : le moteur n'est pas touché.
+Branche de session `ccr-449df1c1-etmya3`, fusionnée dans `master` (`5da8888`) et préparée en **v2.11.1** — un correctif
+de numéro : la fonction n'est branchée nulle part, l'APK ne change rien de visible. Aucune table, aucun index, aucune
+version de schéma, aucune chaîne d'interface : le moteur n'est pas touché.
 
 **D'où ça vient.** Un développeur qui lisait `evaluate.ts` n'y trouvait pas « dans quelle situation on est » : le moteur
 rend des signaux, et c'est `pickSignals` qui en garde un, sans jamais le nommer. Demande : un `switch` qui sépare les cas.
