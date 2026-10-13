@@ -3,7 +3,37 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-04 (**v2.11.0 — le coach v2 : rejoué sur un historique réel, il lit le RPE, la série à l'échec, la fourchette, la reprise après une pause, et le cran de la fiche de l'exercice**).
+**Dernière mise à jour :** 2026-10-13 (**une fonction qui nomme la situation d'un exercice** ; dernière version publiée : v2.11.0 — le coach v2 : rejoué sur un historique réel, il lit le RPE, la série à l'échec, la fourchette, la reprise après une pause, et le cran de la fiche de l'exercice).
+
+## Coach : la situation d'un exercice en un mot (2026-10-13)
+
+Branche de session `ccr-449df1c1-etmya3`, **non fusionnée, non publiée**. Aucune table, aucun index, aucune version de
+schéma, aucune chaîne d'interface : le moteur n'est pas touché.
+
+**D'où ça vient.** Un développeur qui lisait `evaluate.ts` n'y trouvait pas « dans quelle situation on est » : le moteur
+rend des signaux, et c'est `pickSignals` qui en garde un, sans jamais le nommer. Demande : un `switch` qui sépare les cas.
+
+- **`lib/coach/situation.ts`** — `situationOfCode(code)`, un `switch` exhaustif (le `never` du `default` fait échouer le
+  typecheck si un code est ajouté sans situation), et `evaluateSituation(ligne, historique)`, qui lit la situation du
+  signal que la carte afficherait. Prend le **code**, pas le signal : le journal (`CoachRecommendation.code`) s'en sert aussi.
+- **Neuf codes, sept situations, plus « rien à dire »** : `returning`, `floor_missed`, `ceiling_reached`, `consolidating`,
+  `in_range`, `plateau`, `rep_drop`, `no_signal`. `range_completed` est l'ancien nom du plafond ; `long_rest` n'existe
+  qu'à côté d'une chute de reps et ne peut jamais être la carte affichée (gravité 10 contre 20), donc il lit `rep_drop`.
+- **Pas de « régression » parmi elles**, et c'est dit en toutes lettres dans le type : une baisse nette se lit `plateau`
+  (la règle demande l'absence de progrès, pas l'absence de baisse). Un état de régression serait une règle nouvelle, pas
+  un nom de plus.
+- **Ce que ça ne fait pas.** `evaluateSituation` lit le moteur seul. En semaine de programme, l'écran de fin de séance
+  passe par `evaluateCoachForWorkout`, qui applique en plus la phase ; pour la situation de la carte réellement montrée,
+  il faut donner le code du signal final à `situationOfCode`. **Rien n'est branché** : ni l'écran, ni le journal.
+- **Tests** : 22, dont un par code (un `Record<CoachSignalCode, …>` : un code de plus casse la compilation) et un cas par
+  situation sur le vrai moteur, avec la frontière de la reprise (13 jours : non ; 21 jours : oui).
+- **Vérification.** `typecheck`, `lint`, `test:run` (3 097), `build` verts.
+
+Ce que l'audit du même jour a laissé, **sans y toucher** (spec à rouvrir avant tout code) : une cible unique (5×5, 3×10) ne
+déclenche jamais de hausse de charge, R3.2 demandant plus de répétitions que la cible ; le seuil de 14 jours est un
+couperet pour un exercice fait tous les 14 jours ; une baisse nette s'appelle « plateau » ; une seule série à −1 rep deux
+séances de suite suffit à `range_missed` ; la moyenne du RPE dilue la dernière série ; la fusion de deux blocs du même
+exercice entrelace les séries (`order` repart de 0 dans chaque bloc).
 
 ## Publication de la v2.11.0 — le coach v2 (2026-10-04, suite)
 
