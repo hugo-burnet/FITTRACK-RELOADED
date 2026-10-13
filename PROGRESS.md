@@ -7,7 +7,7 @@
 
 ## Coach : la situation d'un exercice en un mot (2026-10-13)
 
-Branche de session `ccr-449df1c1-etmya3`, fusionnée dans `master` (`5da8888`) et préparée en **v2.11.1** — un correctif
+Branche de session `ccr-449df1c1-etmya3`, fusionnée dans `master` (`5da8888`) et publiée en **v2.11.1** — un correctif
 de numéro : la fonction n'est branchée nulle part, l'APK ne change rien de visible. Aucune table, aucun index, aucune
 version de schéma, aucune chaîne d'interface : le moteur n'est pas touché.
 
@@ -29,6 +29,17 @@ rend des signaux, et c'est `pickSignals` qui en garde un, sans jamais le nommer.
 - **Tests** : 22, dont un par code (un `Record<CoachSignalCode, …>` : un code de plus casse la compilation) et un cas par
   situation sur le vrai moteur, avec la frontière de la reprise (13 jours : non ; 21 jours : oui).
 - **Vérification.** `typecheck`, `lint`, `test:run` (3 097), `build` verts.
+
+**Publication de la v2.11.1.** La voie de la v2.11.0 : fusion `--no-ff` (`5da8888`), `chore: prepare release v2.11.1`
+(`5cb015d`, `package.json`, le lock et ce fichier), `master` poussé sans force, le déploiement et le build Android du
+commit verts (runs 185 et 174), puis la release par le `workflow_dispatch` d'`android.yml` avec `release_tag` (run 175).
+La page : `releases/tag/v2.11.1`, l'asset `FitTrack-v2.11.1.apk` (11 081 544 octets, SHA-256 `dcd6c29c…baf1`, la somme que
+GitHub annonce et celle du fichier téléchargé). Lu dans l'APK publié : la version 2.11.1 au manifeste (et plus la 2.11.0)
+et dans le paquet web. Un correctif de numéro, donc : rien de visible ne change sur le téléphone.
+
+**Branches.** Les neuf de la liste de la v2.11.0 sont supprimées (constaté au `ls-remote` du 2026-10-13). Reste
+`ccr-449df1c1-etmya3`, fusionnée, à supprimer à la main — le refus de supprimer une branche distante vaut toujours pour une
+session d'agent. **Garder les trois `archive/*`.**
 
 Ce que l'audit du même jour a laissé, **sans y toucher** (spec à rouvrir avant tout code) : une cible unique (5×5, 3×10) ne
 déclenche jamais de hausse de charge, R3.2 demandant plus de répétitions que la cible ; le seuil de 14 jours est un
