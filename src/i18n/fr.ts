@@ -265,6 +265,22 @@ const fr = {
     lastYesterday: 'Réalisée hier',
     lastDays: 'Réalisée il y a {count} jours',
     lastDate: 'Réalisée le {date}',
+
+    /**
+     * Le rappel de sauvegarde : rare, factuel, jamais une alarme. Il dit ce qui est en jeu
+     * (des séances qui ne vivent que dans ce téléphone) et laisse deux sorties.
+     */
+    backupTitle: 'Sauvegarde ton historique',
+    backupNever:
+      'Rien n’existe hors de ce téléphone : si tu le perds ou désinstalles l’app, tes {count} séances disparaissent.',
+    backupSince:
+      'Dernière sauvegarde : {ago}. {sessions} depuis, que rien ne protège hors de ce téléphone.',
+    backupSessionsOne: '1 séance',
+    backupSessionsMany: '{count} séances',
+    backupAction: 'Sauvegarder',
+    backupLater: 'Plus tard',
+    backupFailed:
+      'La sauvegarde n’a pas pu être enregistrée. Réessaie, ou passe par les Réglages.',
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
@@ -2010,6 +2026,24 @@ const fr = {
     backupExportTitle: 'Sauvegarde complète FitTrack',
     backupExportDownloaded: 'Sauvegarde téléchargée.',
     backupExportFailed: 'La sauvegarde n’a pas pu être enregistrée.',
+    /**
+     * Où en est la protection : la date de la dernière sauvegarde et ce qu'elle ne
+     * contient pas. Une phrase par cas plutôt qu'un pluriel calculé — « 1 séances »
+     * se lit mal, et c'est le cas qu'on relit.
+     */
+    backupStatusNever: 'Aucune sauvegarde faite depuis cet appareil.',
+    backupStatusNeverOne: 'Aucune sauvegarde faite depuis cet appareil. 1 séance à protéger.',
+    backupStatusNeverMany:
+      'Aucune sauvegarde faite depuis cet appareil. {count} séances à protéger.',
+    /** Le compte des séances n'est pas encore lu : la date seule, sans « à jour » qu'on ignore. */
+    backupLastOnly: 'Dernière sauvegarde : {ago}.',
+    backupStatusUpToDate: 'Dernière sauvegarde : {ago}. À jour.',
+    backupStatusSinceOne: 'Dernière sauvegarde : {ago}. 1 séance depuis.',
+    backupStatusSinceMany: 'Dernière sauvegarde : {ago}. {count} séances depuis.',
+    backupAgoToday: 'aujourd’hui',
+    backupAgoYesterday: 'hier',
+    backupAgoDays: 'il y a {count} jours',
+    backupAgoDate: 'le {date}',
     backupImportLink: 'Restaurer une sauvegarde',
     backupImportHint:
       'Remplace tout le contenu de l’app par celui du fichier. À faire sur un téléphone neuf, ou après une perte.',
@@ -2154,6 +2188,9 @@ const fr = {
     storageQuota: 'sur {quota} Mo disponibles',
     storageUnit: 'Mo',
     storageUnavailable: 'Le navigateur ne donne pas d’estimation de stockage.',
+    storagePersisted: 'Stockage protégé : le navigateur ne l’efface pas de lui-même.',
+    storageNotPersisted:
+      'Stockage non protégé : le navigateur peut l’effacer si la place manque. Une sauvegarde reste la seule vraie protection.',
 
     tablesSection: 'Tables',
     rows: 'lignes',

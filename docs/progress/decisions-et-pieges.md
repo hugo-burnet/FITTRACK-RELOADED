@@ -7,6 +7,47 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — Protéger l'historique : un rappel qui compte les séances, pas un export silencieux
+
+**Constat.** La règle n° 4 garde une séance d'un crash, pas d'un téléphone perdu, réinitialisé ou
+d'une app désinstallée (« Désinstaller l'app les efface », dit le README). La seule parade était un
+export JSON à la main, et rien dans l'app ne se souvenait de l'avoir fait : ni date, ni rappel.
+
+**Ce qui est fait.**
+
+- **`lib/backupNudge`** (pur, testé, mutation vérifiée) : le rappel part de **trois séances** que la
+  dernière sauvegarde ne contient pas, ou d'**une** quand elle date de quatorze jours ; rien à
+  protéger, rien à dire, quel que soit l'âge du fichier ; « Plus tard » le fait taire sept jours.
+  Quinze jours sans séance ne mettent rien en danger, trois séances jamais sauvegardées si.
+- **`stores/backupMemory`** : deux dates dans `localStorage`, **hors sauvegarde** (préfixe
+  `fittrack.` et non `fittrack:`, comme le déblocage de TTY1). Une date de sauvegarde dans la
+  sauvegarde dirait toujours la précédente.
+- **`data/repositories/backupStatus`** : une séance terminée compte si elle a été **créée ou finie**
+  après la dernière sauvegarde — pas « modifiée » : `updatedAt` bouge au recalcul des records et
+  annoncerait des dizaines de séances qui n'ont pas changé. Une séance Hevy importée aujourd'hui,
+  de date ancienne, compte (`createdAt`).
+- **Une seule porte d'export** (`features/settings/exportBackup`) pour les Réglages et la carte de
+  l'accueil : la date retenue ne dépend pas de la porte empruntée. On retient l'instant où le
+  fichier a été **construit** (`exportedAt`), pas celui où la feuille se referme ; rien quand elle
+  est fermée sans choix ou que l'écriture échoue. Une **restauration** retient « maintenant » : le
+  téléphone est alors exactement ce fichier, qu'il ait une date, qu'elle manque ou qu'elle soit
+  dans le futur.
+- **La carte de l'accueil** (`HomeBackupNudge`) : sous la séance à lancer, jamais au-dessus ; rien
+  n'est rendu sans séance à protéger. Une ligne d'état dans Réglages ; le stockage persistant
+  est demandé au démarrage (`platform/storagePersistence`) et son état lu dans Dépannage.
+
+**Ce qui n'est pas fait, et pourquoi.** Un **export automatique silencieux**. Sur Android une web-app
+n'écrit pas où elle veut : ses propres dossiers disparaissent **avec** elle (précisément la panne à
+couvrir), l'écriture dans les dossiers publics demande le Storage Access Framework — un sélecteur de
+dossier natif, donc un plugin que le projet n'a pas et qu'une session sans téléphone ne peut pas
+essayer — et la feuille de partage réclame un geste. Le rappel suivi d'un seul appui est le
+compromis qui marche partout. **À rouvrir** avec un plugin SAF et un essai sur appareil.
+
+**À savoir.** `AndroidManifest.xml` déclare `allowBackup="true"` sans règle : la sauvegarde
+automatique d'Android peut déjà restaurer les données à la réinstallation. Rien ne le vérifie
+(IndexedDB est un LevelDB ouvert pendant la copie) — ne pas s'y fier, l'essayer un jour avec un
+téléphone de test.
+
 ### 2026-10-14 — Dépendances : le minimum corrigé en production, et un outil de moins
 
 **Constat.** `npm audit` : 23 avis, dont 3 en production (`@capacitor/android` 8.5.0, critique,

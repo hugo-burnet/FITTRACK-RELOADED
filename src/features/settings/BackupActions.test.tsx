@@ -9,6 +9,7 @@ import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { serializeBackup } from '@/lib/backup';
 import type { SaveOutcome } from '@/platform/saveFile';
+import { LAST_BACKUP_KEY } from '@/stores/backupMemory';
 import { resetDb } from '@/test/resetDb';
 import { BackupActions } from './BackupActions';
 
@@ -75,6 +76,71 @@ describe('BackupActions', () => {
     const payload = saveTextFileMock.mock.calls[0]?.[0] as { name: string; text: string };
     expect(payload.name).toMatch(/^fittrack-sauvegarde-\d{4}-\d{2}-\d{2}\.json$/);
     expect(JSON.parse(payload.text).tables.routines).toHaveLength(1);
+  });
+
+  describe('la mémoire des sauvegardes', () => {
+    it('dit que rien n’a jamais été sauvegardé sur un appareil neuf', async () => {
+      renderBackupActions();
+      expect(await screen.findByText(t('settings.backupStatusNever'))).toBeVisible();
+    });
+
+    it('retient la sauvegarde faite d’ici et le dit', async () => {
+      const user = userEvent.setup();
+      renderBackupActions();
+
+      await user.click(screen.getByRole('button', { name: /Exporter tout le compte/ }));
+
+      expect(
+        await screen.findByText(
+          t('settings.backupStatusUpToDate', { ago: t('settings.backupAgoToday') }),
+        ),
+      ).toBeVisible();
+      expect(Number(localStorage.getItem(LAST_BACKUP_KEY))).toBeGreaterThan(0);
+    });
+
+    it('ne retient rien quand la feuille de partage est fermée sans choix', async () => {
+      saveTextFileMock.mockResolvedValue('cancelled');
+      const user = userEvent.setup();
+      renderBackupActions();
+
+      await user.click(screen.getByRole('button', { name: /Exporter tout le compte/ }));
+
+      await waitFor(() => expect(saveTextFileMock).toHaveBeenCalled());
+      expect(localStorage.getItem(LAST_BACKUP_KEY)).toBeNull();
+      expect(screen.getByText(t('settings.backupStatusNever'))).toBeVisible();
+    });
+
+    it('ne retient rien quand l’écriture échoue', async () => {
+      saveTextFileMock.mockResolvedValue('failed');
+      const user = userEvent.setup();
+      renderBackupActions();
+
+      await user.click(screen.getByRole('button', { name: /Exporter tout le compte/ }));
+
+      expect(await screen.findByRole('status')).toHaveTextContent(
+        t('settings.backupExportFailed'),
+      );
+      expect(localStorage.getItem(LAST_BACKUP_KEY)).toBeNull();
+    });
+
+    it('retient le moment d’une restauration : le téléphone est alors ce fichier', async () => {
+      // Une mémoire plus récente que le fichier ne doit pas survivre : après la restauration
+      // le téléphone n'a plus rien de plus récent que le fichier.
+      await createRoutine('Poussée');
+      const text = serializeBackup(await backupRepository.buildBackup());
+      localStorage.setItem(LAST_BACKUP_KEY, '1');
+      const user = userEvent.setup();
+      renderBackupActions();
+
+      await chooseFile(user, jsonFile(text));
+      await user.click(
+        await screen.findByRole('button', { name: t('settings.restoreConfirmAction') }),
+      );
+
+      await waitFor(() =>
+        expect(Number(localStorage.getItem(LAST_BACKUP_KEY))).toBeGreaterThan(Date.now() - 60_000),
+      );
+    });
   });
 
   it('refuse un fichier qui n’est pas une sauvegarde, sans rien toucher', async () => {

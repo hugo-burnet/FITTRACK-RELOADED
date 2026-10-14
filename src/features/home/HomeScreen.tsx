@@ -6,6 +6,7 @@ import { t } from '@/i18n/fr';
 import { Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
 import { HomeMilestoneCard } from '@/features/milestones/HomeMilestoneCard';
+import { HomeBackupNudge } from './HomeBackupNudge';
 import { HomeBodyCard } from './HomeBodyCard';
 import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
 import { HomeProgramsRow } from './HomeProgramsRow';
@@ -94,6 +95,12 @@ export function HomeScreen() {
             <HomeProgramsRow program={state.data.activeProgram} />
           </>
         )}
+
+        {/* Le rappel de sauvegarde, sous la séance à lancer et jamais au-dessus :
+            la prochaine action reste en tête de l'écran. Il lit ses propres
+            tables comme le corps et le palier, et ne rend rien du tout tant que
+            des séances ne sont pas hors de ce téléphone. */}
+        <HomeBackupNudge />
 
         {/* Le corps ne dépend pas du tableau de bord — il lit son propre
             historique — donc il est rendu quoi qu'il arrive, y compris pendant

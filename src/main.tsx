@@ -21,6 +21,7 @@ import { isWorkoutStale } from './app/staleWorkout';
 import { watchAppUpdate } from './platform/appUpdate';
 import { watchInstall } from './platform/install';
 import { prefersReducedMotion } from './platform/reducedMotion';
+import { requestPersistentStorage } from './platform/storagePersistence';
 import { watchNavDirection } from './app/navigation';
 import { router } from './router';
 import {
@@ -45,6 +46,11 @@ applyTheme(theme);
 watchInstall();
 watchAppUpdate();
 watchNavDirection();
+
+// Demander que le navigateur n'efface pas la base de lui-même quand la place manque (règle n° 4).
+// Comme les trois appels ci-dessus : sans attendre l'initialisation, et sans que son échec arrête
+// quoi que ce soit — `requestPersistentStorage` ne lève jamais.
+void requestPersistentStorage();
 
 const bootStorage = getBootStorage();
 // La v2.8.0 a livré TTY1 ouvert : un thème mémorisé qui l'est déjà prouve que l'option était
