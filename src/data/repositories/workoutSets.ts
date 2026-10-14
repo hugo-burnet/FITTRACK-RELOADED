@@ -251,14 +251,55 @@ export async function updateSetType(setId: string, setType: SetType): Promise<vo
   await reconcileCompletedSetMutation(setId, () => ({ setType }));
 }
 
+export interface CompleteSetOptions {
+  /**
+   * Figures the screen **proposes** — the prescription, the previous session's — which the tick
+   * turns into something performed. They fill a blank and never replace anything typed.
+   */
+  proposed?: Partial<SetValues>;
+}
+
+const SET_VALUE_KEYS = ['weight', 'reps', 'durationSeconds', 'distanceMeters', 'rpe'] as const;
+
+/** `proposed`, restricted to what the stored set has no figure for. */
+function proposalsForBlanks(set: WorkoutSet, proposed: Partial<SetValues>): Partial<SetValues> {
+  const blanks: Partial<SetValues> = {};
+  for (const key of SET_VALUE_KEYS) {
+    const value = proposed[key];
+    if (set[key] === undefined && value !== undefined) blanks[key] = value;
+  }
+  return blanks;
+}
+
+/** `values` without the keys that carry nothing: `undefined` here means "no figure", not "erase". */
+function definedValues(values: Partial<SetValues>): Partial<SetValues> {
+  const defined: Partial<SetValues> = {};
+  for (const key of SET_VALUE_KEYS) {
+    const value = values[key];
+    if (value !== undefined) defined[key] = value;
+  }
+  return defined;
+}
+
 /**
  * RF-18 — the tick. `performedAt` is what makes the set visible to
  * `getLastPerformance`; until then it is 0 and sits below the index's lower
  * bound.
+ *
+ * **What is typed is read here, in the transaction — never taken from the screen.** The tick used
+ * to carry the figures its row had read, and the row reads the database a moment late: a weight
+ * typed and validated at once was already stored when the tick arrived, but not yet in the props
+ * it had read, and the tick wrote "nothing" over it — or the ghost of the previous session. Rule
+ * n°4 forbids losing what was typed, and nobody sees it happen.
+ *
+ * So the screen's figures are `proposed` and only fill blanks of the row read *here*. `values` is
+ * what the caller decides — the stopwatch's duration, which outranks a typed one — and a key left
+ * `undefined` carries nothing (`updateSetValues` is what clears a field, on purpose).
  */
 export async function completeSet(
   setId: string,
   values: Partial<SetValues> = {},
+  { proposed = {} }: CompleteSetOptions = {},
 ): Promise<void> {
   await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const set = await db.workoutSets.get(setId);
@@ -267,7 +308,8 @@ export async function completeSet(
     const newlyCompleted = set.isCompleted === 0;
     await db.workoutSets.put(
       touch(set, {
-        ...values,
+        ...proposalsForBlanks(set, proposed),
+        ...definedValues(values),
         isCompleted: 1,
         performedAt: newlyCompleted ? Date.now() : set.performedAt,
         // La progression des côtés est intermédiaire : une série validée n'a

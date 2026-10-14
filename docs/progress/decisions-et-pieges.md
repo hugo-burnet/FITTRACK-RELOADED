@@ -7,6 +7,40 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — La coche écrasait le poids qu'on venait de taper
+
+**Constat.** Trouvé par l'E2E du 5×5, qui échouait une fois sur trente sans qu'on sache pourquoi : l'écran
+de fin disait « 1 × 5 a atteint le haut de la fourchette » sans proposer de charge. La série était
+validée **sans poids**. Rejoué cent fois, jamais reproduit ; trouvé en lisant le code, puis reproduit
+**sans délai** avec un test.
+
+**Le mécanisme.** `WorkoutSetRow` calculait les chiffres de la coche à partir des propriétés de la
+ligne (`valueOf(champ) ?? valeurFantôme`), et ces propriétés viennent d'une requête vivante : elles
+arrivent un instant **après** l'écriture. `isSetRecordable` exclut la charge (« la seule valeur qu'une
+série peut ne pas avoir »), donc la coche est active alors que la saisie n'est pas encore revenue. Un
+poids tapé puis validé aussitôt était déjà en base quand `completeSet` écrivait par-dessus — avec
+`undefined` (la série partait sans charge) ou, après une première séance, avec la **valeur grise de la
+séance d'avant** (le mauvais poids, enregistré sans que rien ne le dise). C'est la règle n° 4.
+
+**Pourquoi c'est rare sur un téléphone, et pourquoi ça ne rassure pas.** Entre la dernière frappe et le
+toucher de la coche il y a le temps d'un doigt, plus de 150 ms ; la requête vivante répond en 10 à 30 ms.
+Mais l'écriture fait la queue derrière la transaction de records de la série précédente, qui grandit avec
+l'historique : sur un vieux téléphone et des années de séances, la marge n'est plus celle qu'on croit.
+
+**Le correctif est dans le dépôt, pas dans l'écran.** `completeSet(id, valeurs, { proposed })` relit la
+série **dans sa transaction** ; `proposed` — ce que l'écran propose : la cible, la séance d'avant — ne
+comble que les cases vides de cette ligne-là, et une valeur `undefined` ne signifie plus « effacer »
+(c'est `updateSetValues` qui efface, volontairement). Seul ce que l'appelant **décide** remplace : la
+durée du chrono, qui prime sur une durée tapée. La ligne n'envoie plus que ses propositions. Un test
+écrit dans la base par une seconde connexion (que Dexie n'entend pas) reproduit la course sans délai ;
+chacune des trois variantes du défaut — propositions qui écrasent, `undefined` qui efface, chiffres de
+l'écran renvoyés comme décisions — a été **vue rouge** en la réintroduisant.
+
+**À retenir.** Une valeur lue sur l'écran n'est jamais une donnée : c'est une photo, et la base a pu
+bouger depuis. Toute écriture qui part d'une photo doit se réduire à ce qu'elle décide, et relire le
+reste là où la transaction le garantit. Les autres écritures de la ligne (`updateSetValues`, frappe par
+frappe) ne partent pas d'une photo et n'étaient pas concernées.
+
 ### 2026-10-14 — Remplacer l'exercice en séance : une place qui change d'occupant
 
 **Constat.** « La machine est prise » est le cas le plus ordinaire d'une salle, et l'app n'offrait que

@@ -555,6 +555,65 @@ describe('completeSet', () => {
     expect(stored!.weight).toBe(60);
     expect(stored!.reps).toBe(12);
   });
+
+  /**
+   * Règle n° 4. La coche relit ses chiffres sur l'écran, et l'écran lit la base avec un temps de
+   * retard : un poids tapé puis validé aussitôt est déjà en base quand la coche arrive, mais pas
+   * encore dans les propriétés qu'elle a lues. Elle l'écrasait alors par « rien » — ou par la
+   * valeur fantôme de la séance d'avant —, sans que personne ne le voie : la série partait
+   * validée, sans charge. Trouvé par l'E2E du 5×5, qui y échouait une fois sur trente.
+   */
+  describe('quand la coche devance la relecture de ce qui vient d’être tapé', () => {
+    async function pendingSet() {
+      const workout = await startWorkout('', 'Séance libre');
+      const we = await addExercise(workout.id, 'bench');
+      return addSet(we.id);
+    }
+
+    it('remplit une case vide avec la valeur proposée', async () => {
+      const set = await pendingSet();
+
+      await completeSet(set.id, {}, { proposed: { weight: 100, reps: 5 } });
+
+      expect(await db.workoutSets.get(set.id)).toMatchObject({
+        weight: 100,
+        reps: 5,
+        isCompleted: 1,
+      });
+    });
+
+    it('ne remplace jamais ce qui a été tapé par ce qui est proposé', async () => {
+      const set = await pendingSet();
+      await updateSetValues(set.id, { weight: 102.5 });
+
+      // L'écran, en retard, propose encore le 100 kg de la séance d'avant.
+      await completeSet(set.id, {}, { proposed: { weight: 100, reps: 5 } });
+
+      expect(await db.workoutSets.get(set.id)).toMatchObject({
+        weight: 102.5,
+        reps: 5,
+        isCompleted: 1,
+      });
+    });
+
+    it('une valeur indéfinie n’efface pas ce qui est écrit', async () => {
+      const set = await pendingSet();
+      await updateSetValues(set.id, { weight: 100 });
+
+      await completeSet(set.id, { weight: undefined, reps: 5 });
+
+      expect((await db.workoutSets.get(set.id))!.weight).toBe(100);
+    });
+
+    it('une valeur fournie reste, elle, une décision : le chrono prime sur une durée tapée', async () => {
+      const set = await pendingSet();
+      await updateSetValues(set.id, { durationSeconds: 30 });
+
+      await completeSet(set.id, { durationSeconds: 45 }, { proposed: { durationSeconds: 60 } });
+
+      expect((await db.workoutSets.get(set.id))!.durationSeconds).toBe(45);
+    });
+  });
 });
 
 describe('deleteWorkout', () => {

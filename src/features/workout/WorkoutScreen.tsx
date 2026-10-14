@@ -400,7 +400,7 @@ export function WorkoutScreen() {
                     onWrite={(setId, values, recordable) =>
                       onWrite(line, setId, values, recordable)
                     }
-                    onComplete={(setId, values, set) => onComplete(line, setId, values, set)}
+                    onComplete={(setId, proposed, set) => onComplete(line, setId, proposed, set)}
                     onUncomplete={onUncomplete}
                     onDeleteSet={(setId) => void deleteSet(setId)}
                     onRestoreSet={(setId) => void restoreSet(setId)}
