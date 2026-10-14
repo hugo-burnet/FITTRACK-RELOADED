@@ -569,6 +569,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
+- **Remboursée le 2026-10-14 — `lib/coach/evaluate.ts` (1 051 lignes) n'a jamais été consigné.** Il avait
+  grandi tranche après tranche du coach v2 (994 lignes au 13 octobre, la plus grosse source hors
+  dictionnaire) sans que l'écart figure ici — « un écart non consigné est le seul qui pose problème »,
+  dit CLAUDE.md. Il faisait pourtant plusieurs métiers : lire les séries, remettre l'historique en
+  ordre, huit détecteurs, arbitrer, orchestrer ; et il a déjà coûté à un lecteur (« dans quelle
+  situation est-on ? », d'où `situation.ts`). Il est découpé en `constants`, `sets`, `history`,
+  `rules/{range,drop,plateau,returning}`, `arbitrate` (53 à 284 lignes) et `evaluate` (138), **sans un
+  caractère de corps de fonction changé** — vérifié par un script qui compare chaque déclaration à
+  l'original — et sans toucher aux 444 tests du coach, qui passent tels quels. Une doc de
+  `plateauSignal` s'était séparée de sa fonction (trois helpers glissés entre les deux) : remise
+  au-dessus. L'API publique de `evaluate.ts` est inchangée (ses exports d'avant y sont ré-exportés).
+
 - **Assumée le 2026-10-04 — `workoutSets.ts` (dépôt) est remonté à 399 lignes**, après avoir été remboursé à
   266 le 2026-07-27 : il a grandi depuis, jusqu'à 393, sans que l'écart soit consigné (l'historique de ce clone
   est trop court pour dire ajout par ajout), et le correctif de l'échauffement y a ajouté six lignes — surtout
