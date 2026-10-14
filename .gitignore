@@ -64,3 +64,7 @@ public/embed-lab.html
 # Banc de rejeu du coach : une sauvegarde réelle et son rejeu ne quittent jamais la machine.
 fittrack-sauvegarde-*.json
 coach-replay*.txt
+
+# Sorties de Playwright (traces et captures des échecs).
+test-results/
+playwright-report/
