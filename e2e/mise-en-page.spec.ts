@@ -4,6 +4,7 @@ import {
   findHorizontalOverflow,
   openApp,
   seedCompletedWorkouts,
+  seedMeasurements,
   settleLayout,
   startSuggestedWorkout,
   type ThemeName,
@@ -31,6 +32,11 @@ const ROUTES = [
   '/settings',
   '/programs',
   '/workout',
+  '/analytics/measurements',
+  '/analytics/measurements/waist',
+  // Un nom libre long, avec des espaces et un deux-points : le titre et les lignes ne doivent
+  // ni déborder ni pousser les commandes hors de l'écran.
+  `/analytics/measurements/${encodeURIComponent('custom:Tour de poignet gauche, au repos')}`,
 ] as const;
 
 const CASES: { theme: ThemeName; scale: number }[] = [
@@ -51,6 +57,13 @@ for (const { theme, scale } of CASES) {
     // Trois séances derrière soi : l'historique n'est pas vide et l'accueil porte le rappel de
     // sauvegarde — les écrans les plus chargés, pas leur état vide.
     await seedCompletedWorkouts(page, 3);
+    // Deux mesures par courbe : la carte complète (échelle, dates, écart), pas son état vide.
+    await seedMeasurements(page, [
+      { type: 'waist', value: 84, unit: 'cm', daysAgo: 30 },
+      { type: 'waist', value: 82.5, unit: 'cm', daysAgo: 2 },
+      { type: 'custom:Tour de poignet gauche, au repos', value: 17, unit: 'cm', daysAgo: 20 },
+      { type: 'custom:Tour de poignet gauche, au repos', value: 17.5, unit: 'cm', daysAgo: 3 },
+    ]);
     // Une séance en cours : l'écran qui compte le plus, et le rideau d'ouverture TTY1 (cinq
     // secondes) saute quand une séance tourne.
     await startSuggestedWorkout(page, '5×5 — A');

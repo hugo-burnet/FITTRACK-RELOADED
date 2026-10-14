@@ -9,7 +9,8 @@
 > **Ce que cette liste ne contient plus.** Les parcours E2E (`npm run test:e2e`) vérifient déjà,
 > dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
 > série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les trois
-> thèmes à 100, 130 et 200 % (TTY1 : 130 %), l'app qui démarre sans réseau, et la sauvegarde.
+> thèmes à 100, 130 et 200 % (TTY1 : 130 %), l'app qui démarre sans réseau, la sauvegarde, le
+> remplacement d'un exercice et les mensurations (hors sélecteur de date natif).
 > Reste ici **ce qu'un navigateur ne dit pas** : le toucher, le son, les notifications, le bouton
 > retour d'Android, la vraie WebView, une police de 16 px à bout de bras.
 >
@@ -115,6 +116,20 @@ Une séance de deux exercices au moins, dont un en barre.
       rien. *(v2.10.0)*
 - [ ] **Corpus d'un programme.** Ouvrir un bloc actif puis « Ce qu'en dit le corpus » : l'article du
       Guide correspondant à la phase s'ouvre, sans page d'erreur. *(30 août)*
+
+## 3 bis. Mensurations (3 min)
+
+- [ ] **Saisie rétrodatée.** Progression › Mensurations › Ajouter › Tour de taille : 84 cm, daté d'il y a
+      un mois (le sélecteur de date d'Android s'ouvre et refuse demain) ; puis 82,5 cm aujourd'hui.
+      La liste dit « −1,5 cm », la fiche a deux points et une courbe tracée. *(cette session)*
+- [ ] **Le poids est une seule mesure.** Le poids saisi sur l'accueil apparaît sous « Poids de corps » ; la
+      feuille du poids de l'accueil propose « Voir la courbe et l'historique » une fois pesé. Un poids
+      rétrodaté change le tonnage d'une traction faite ce jour-là. *(cette session)*
+- [ ] **Correction et suppression.** Toucher une ligne de l'historique : « Corriger la valeur » (la date
+      reste), « Supprimer » (une confirmation, et pour un poids : « les records sont recalculés »).
+      *(cette session)*
+- [ ] **Champ libre.** Ajouter › Autre mesure… › « Tour de poignet », cm : il apparaît dans la liste et se
+      propose ensuite à côté du catalogue. *(cette session)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 

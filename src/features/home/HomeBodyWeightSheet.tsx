@@ -31,6 +31,11 @@ function millisecondsUntilNextLocalDay(timestamp: number): number {
 interface Props {
   open: boolean;
   onClose: () => void;
+  /**
+   * Où mène « Voir la courbe ». Le parent la donne, la feuille ne connaît pas le routeur : sans
+   * elle, ou sans première pesée, le lien n'est pas proposé — il ouvrirait une page vide.
+   */
+  onOpenCurve?: () => void;
 }
 
 /**
@@ -51,7 +56,7 @@ interface Props {
  * ligne de texte sous un bouton. L'échec, lui, garde la feuille ouverte, avec
  * la valeur tapée intacte et le bouton réarmé.
  */
-export function HomeBodyWeightSheet({ open, onClose }: Props) {
+export function HomeBodyWeightSheet({ open, onClose, onOpenCurve }: Props) {
   const latest = useLiveQuery(async () => (await getLatestBodyWeight()) ?? null);
   const [draft, setDraft] = useState<number | undefined>();
   const [loadedMeasurement, setLoadedMeasurement] = useState<number | null | undefined>();
@@ -143,6 +148,19 @@ export function HomeBodyWeightSheet({ open, onClose }: Props) {
           <p role="alert" className="text-sm text-[var(--danger-ink)]">
             {t('home.bodyWeightError')}
           </p>
+        )}
+
+        {latest != null && onOpenCurve !== undefined && (
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              onOpenCurve();
+            }}
+            className="min-h-12 text-base font-semibold text-[var(--accent-ink)]"
+          >
+            {t('home.bodyWeightCurve')}
+          </button>
         )}
       </div>
     </Sheet>

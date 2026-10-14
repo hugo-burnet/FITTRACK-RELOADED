@@ -14,6 +14,11 @@ describe('androidBackDecision', () => {
     ['/history/workout-1', '/history'],
     ['/analytics/weekly', '/analytics'],
     ['/analytics/exercises/exercise-1', '/analytics'],
+    ['/analytics/measurements', '/analytics'],
+    ['/analytics/measurements/waist', '/analytics/measurements'],
+    // Un champ libre a un nom : le chemin le porte encodé, espaces et deux-points compris.
+    ['/analytics/measurements/custom%3ATour%20de%20poignet', '/analytics/measurements'],
+    ['/analytics/measurements/custom%3AA%2FB', '/analytics/measurements'],
     ['/exercises/new', '/exercises'],
     ['/exercises/exercise-1/edit', '/exercises'],
     ['/exercises/exercise-1', '/exercises'],

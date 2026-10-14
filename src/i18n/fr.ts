@@ -106,6 +106,7 @@ const fr = {
     seconds: 's',
     minutes: 'min',
     meters: 'm',
+    centimeters: 'cm',
     kilometers: 'km',
     reps: 'reps',
     hours: 'h',
@@ -330,6 +331,7 @@ const fr = {
     bodyWeightSaving: 'Enregistrement…',
     bodyWeightHint: 'Renseigne ton poids pour compter les exercices au poids du corps.',
     bodyWeightLatest: 'Dernière mesure : {date}',
+    bodyWeightCurve: 'Voir la courbe et l’historique',
     bodyWeightError: 'Le poids n’a pas pu être enregistré. Réessaie.',
   },
 
@@ -2523,6 +2525,87 @@ const fr = {
     singleSession: 'Une seule séance sur cette période : la courbe commencera à la suivante.',
     noMetric:
       'Cet exercice n’a pas de type de mesure connu, donc rien de comparable d’une séance à l’autre.',
+  },
+
+  /**
+   * Les mensurations (RF-37, RF-38) : le poids de corps, la masse grasse, les tours, et les champs
+   * que chacun ajoute. Les photos n'en font pas partie — cf. la décision du 2026-08-11.
+   */
+  measures: {
+    title: 'Mensurations',
+    /** L'entrée depuis l'écran des analyses. */
+    link: 'Mensurations',
+    subtitle: 'Poids, taille, bras… et leur courbe',
+
+    add: 'Ajouter une mesure',
+    followedSection: 'Suivies',
+    historySection: 'Historique',
+    empty:
+      'Aucune mesure pour l’instant. Ajoute ton poids, ton tour de taille ou celui de ton bras : la courbe commence à la deuxième mesure.',
+    notFound: 'Aucune mesure de ce type pour l’instant.',
+
+    /** La ligne sous le nom d'une mesure suivie : sa date, puis ce qu'elle a changé depuis la précédente. */
+    rowDateChange: '{date} · {change}',
+    unchanged: 'inchangé',
+    /** « −1,5 cm depuis le 14 sept. » — l'écart sur la période lue, daté de sa première mesure. */
+    changeSince: '{change} depuis le {date}',
+    singleReading:
+      'Une seule mesure sur cette période : la courbe commencera à la suivante.',
+    emptyPeriod: 'Aucune mesure sur cette période.',
+    periodHint: 'Une mesure par jour : en saisir une autre le même jour remplace la première.',
+
+    /** Ce que le graphique dit à un lecteur d'écran, en une phrase. */
+    chartSummary:
+      '{metric} sur {count} mesures, du {first} au {last}. Minimum {min}, maximum {max}, dernière valeur {current}.',
+    chartSummaryOne: '{metric} : une seule mesure, le {first} : {current}.',
+
+    /** La feuille de saisie. */
+    sheetTitle: 'Nouvelle mesure',
+    sheetTitleEdit: 'Corriger la mesure',
+    typeLabel: 'Mesure',
+    typeSheetTitle: 'Quelle mesure ?',
+    customOption: 'Autre mesure…',
+    customNameLabel: 'Nom de la mesure',
+    customNamePlaceholder: 'Tour de poignet',
+    customUnitLabel: 'Unité',
+    valueLabel: 'Valeur',
+    dateLabel: 'Date',
+    weightHint: 'Le poids sert à estimer le tonnage des exercices au poids du corps.',
+    replacesHint: 'Une mesure existe déjà ce jour-là ({value}) : elle sera remplacée.',
+    implausible: 'Cette valeur ne semble pas juste. Vérifie l’unité et la virgule.',
+    dateInvalid: 'Choisis un jour qui n’est pas dans le futur.',
+    save: 'Enregistrer',
+    saving: 'Enregistrement…',
+    saveError: 'La mesure n’a pas pu être enregistrée. Réessaie.',
+
+    /** Toucher une ligne de l'historique. */
+    correct: 'Corriger la valeur',
+    correctHint: 'La date reste celle de cette mesure.',
+    delete: 'Supprimer cette mesure',
+    deleteTitle: 'Supprimer cette mesure ?',
+    deleteBody: '{type} du {date} : {value}. La courbe est refaite sans elle.',
+    deleteBodyWeightNote: 'Les records au poids du corps sont recalculés.',
+    deleteConfirm: 'Supprimer',
+    deleteError: 'La mesure n’a pas pu être supprimée. Réessaie.',
+
+    /** Les quinze mesures du catalogue. La clé est celle de `PRESET_MEASUREMENTS`. */
+    type: {
+      body_weight: 'Poids de corps',
+      body_fat: 'Masse grasse',
+      neck: 'Tour de cou',
+      shoulders: 'Tour d’épaules',
+      chest: 'Tour de poitrine',
+      waist: 'Tour de taille',
+      hips: 'Tour de hanches',
+      left_biceps: 'Biceps gauche',
+      right_biceps: 'Biceps droit',
+      left_forearm: 'Avant-bras gauche',
+      right_forearm: 'Avant-bras droit',
+      left_thigh: 'Cuisse gauche',
+      right_thigh: 'Cuisse droite',
+      left_calf: 'Mollet gauche',
+      right_calf: 'Mollet droit',
+    },
   },
 
   /**

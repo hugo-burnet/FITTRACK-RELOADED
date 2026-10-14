@@ -28,6 +28,10 @@ export function androidBackDecision(pathname: string, canGoBack: boolean): BackD
   if (/^\/history\/[^/]+(?:\/edit)?$/.test(pathname)) {
     return { kind: 'navigate', to: '/history' };
   }
+  // Une fiche de mesure remonte à la liste des mesures, pas à la racine de Progression.
+  if (/^\/analytics\/measurements\/[^/]+$/.test(pathname)) {
+    return { kind: 'navigate', to: '/analytics/measurements' };
+  }
   if (pathname.startsWith('/analytics/')) return { kind: 'navigate', to: '/analytics' };
   if (/^\/exercises\/[^/]+(?:\/edit)?$/.test(pathname)) {
     return { kind: 'navigate', to: '/exercises' };

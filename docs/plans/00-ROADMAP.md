@@ -495,6 +495,10 @@ biométrique (recommandation transverse n°8), + saisie rétroactive (recommanda
 **Dépend de :** Lot 10.
 **Budget :** 2 sessions.
 
+> **Mise à jour du 2026-10-14.** Scindé le 2026-08-11 : **les mesures sont livrées** (saisie datée,
+> champs libres, courbe par mesure — `docs/design/specs/2026-10-14-mensurations-design.md`) ; les
+> **photos** et le verrouillage biométrique restent reportés.
+
 **Livrables :** saisie de mesures (poids, masse grasse, tour de taille/bras/cuisses/poitrine +
 champs personnalisés), avec **date modifiable** pour la saisie rétroactive ; graphique par mesure ;
 photos datées stockées **localement uniquement** avec vignettes, comparaison côte à côte,
@@ -506,7 +510,7 @@ sont redimensionnées avant stockage pour ne pas saturer le quota.
 
 **✅ Checkpoint :**
 
-- [ ] Tu saisis ton poids sur 5 dates, le graphique se dessine.
+- [ ] Tu saisis ton poids sur 5 dates, le graphique se dessine. *(livré : `docs/recette-telephone.md`)*
 - [ ] Tu ajoutes 2 photos et tu les compares côte à côte.
 - [ ] La section photos demande ton empreinte/code avant de s'ouvrir.
 

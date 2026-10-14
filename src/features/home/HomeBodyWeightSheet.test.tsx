@@ -19,6 +19,32 @@ describe('HomeBodyWeightSheet', () => {
     vi.useRealTimers();
   });
 
+  it('offers the curve once there is a reading, and closes before going there', async () => {
+    const user = userEvent.setup();
+    await bodyMeasurements.saveBodyWeight(82.4, Date.now());
+    const onClose = vi.fn();
+    const onOpenCurve = vi.fn();
+    render(<HomeBodyWeightSheet open onClose={onClose} onOpenCurve={onOpenCurve} />);
+
+    await user.click(await screen.findByRole('button', { name: 'Voir la courbe et l’historique' }));
+
+    expect(onOpenCurve).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('has no curve to offer before the first reading, nor without a destination', async () => {
+    const { rerender } = render(
+      <HomeBodyWeightSheet open onClose={vi.fn()} onOpenCurve={vi.fn()} />,
+    );
+    await screen.findByLabelText('Poids du corps');
+    expect(screen.queryByRole('button', { name: 'Voir la courbe et l’historique' })).toBeNull();
+
+    await bodyMeasurements.saveBodyWeight(82.4, Date.now());
+    rerender(<HomeBodyWeightSheet open onClose={vi.fn()} />);
+    await screen.findByText(/Dernière mesure :/);
+    expect(screen.queryByRole('button', { name: 'Voir la courbe et l’historique' })).toBeNull();
+  });
+
   it('opens empty before the first measurement, with the save refused', async () => {
     const { input } = renderSheet();
 

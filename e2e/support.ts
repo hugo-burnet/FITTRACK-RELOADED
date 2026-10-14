@@ -85,6 +85,56 @@ export async function seedCompletedWorkouts(page: Page, count: number): Promise<
 }
 
 /**
+ * Écrit des mensurations directement dans IndexedDB, comme `seedCompletedWorkouts` le fait des
+ * séances : un test de mise en page veut les avoir derrière lui, pas les saisir. `daysAgo` est
+ * compté en jours locaux du navigateur, à midi.
+ */
+export async function seedMeasurements(
+  page: Page,
+  rows: { type: string; value: number; unit: string; daysAgo: number }[],
+): Promise<void> {
+  await page.evaluate(async (entries) => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('fittrack');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const transaction = database.transaction('bodyMeasurements', 'readwrite');
+    const store = transaction.objectStore('bodyMeasurements');
+    for (const entry of entries) {
+      const day = new Date();
+      day.setDate(day.getDate() - entry.daysAgo);
+      day.setHours(12, 0, 0, 0);
+      store.put({
+        id: crypto.randomUUID(),
+        createdAt: day.getTime(),
+        updatedAt: day.getTime(),
+        deletedAt: 0,
+        type: entry.type,
+        value: entry.value,
+        unit: entry.unit,
+        measuredAt: day.getTime(),
+      });
+    }
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    database.close();
+  }, rows);
+}
+
+/** `AAAA-MM-JJ` d'il y a `days` jours, **dans le fuseau du navigateur** — celui de l'app. */
+export async function isoDaysAgo(page: Page, days: number): Promise<string> {
+  return page.evaluate((count) => {
+    const date = new Date();
+    date.setDate(date.getDate() - count);
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }, days);
+}
+
+/**
  * Ce qui dépasse de l'écran à droite ou à gauche, ou une page qui défile de côté.
  *
  * Les éléments dans un défilement horizontal volontaire (`overflow-x: auto|scroll`) sont exclus :

@@ -7,6 +7,59 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — Les mensurations : le Lot 11 sans les photos
+
+**Constat.** Le Lot 11 avait été scindé le 2026-08-11 (« les mesures restent, les photos sortent »), mais
+seul le poids avait été livré, par une tuile de l'accueil : ni courbe, ni saisie datée, ni autre mesure.
+Le schéma attendait pourtant du câblage et rien d'autre (`type` libre, `[type+measuredAt]`, `measuredAt`
+rétrodatable, table déjà validée par la sauvegarde). Spec : `docs/design/specs/2026-10-14-mensurations-design.md`.
+
+**Ce qui est fait.** Progression › Mensurations : quinze mesures (poids, masse grasse, tours, paires gauche
+et droite), des champs libres, une saisie à n'importe quelle date, une courbe par mesure, un historique où
+l'on corrige et supprime. Le poids de l'accueil est **la même mesure** et sa feuille mène à la courbe.
+
+**Les choix qui engagent.**
+
+- **Le poids reste le poids.** Il nourrit le tonnage au poids du corps, donc les records : toute écriture
+  (saisie, rétrodatage, correction) passe par `saveBodyWeight`, et la suppression par un `deleteBodyWeight`
+  neuf, qui refait les records des séances que la mesure couvrait. Vérifié contre une reconstruction
+  complète des records (première, médiane, dernière et unique mesure). Les autres types n'ont aucun effet
+  sur les records et ont un dépôt plus simple.
+- **Un champ libre est rangé sous `custom:<nom>`**, pas sous son nom nu : un champ appelé « body_weight »
+  se serait rangé sous la clé du poids — et aurait touché aux records — avec l'unité qu'on lui aurait
+  donnée. Le préfixe est invisible à l'écran.
+- **Une mesure par type et par jour**, la règle du poids étendue : saisir un jour déjà mesuré remplace la
+  valeur et garde l'instant. La feuille le dit **avant** l'enregistrement.
+- **Aujourd'hui = maintenant, un autre jour = début de ce jour local.** La tuile de l'accueil écrit à
+  l'instant présent ; le poids du 3 octobre doit valoir pour toutes les séances du 3, pas celles d'après
+  midi. Jamais demain, jamais un jour que le calendrier n'a pas (`new Date(2026, 1, 30)` glisse au 2 mars).
+- **L'abscisse de la courbe est la date.** Une séance se compte, une mesure se date : trois semaines sans
+  pesée doivent se voir. `plotTimedPoints` ne remplace que le x de `plotPoints`.
+- **Aucun point n'est « le record »** : un tour de taille plus petit n'est pas meilleur qu'un tour de bras
+  plus grand. Au-delà de trente points, seul le point touché reste dessiné ; le trait dit la tendance.
+- **Plausible, pas arbitraire.** 825 cm de tour de taille écraserait l'échelle d'une courbe dont les bornes
+  sont celles des données : pourcentage sous 100, longueur jusqu'à 300 cm, kilos jusqu'à 1 000. **Le poids de
+  corps garde « aucun maximum » (spec du 2026-08-10)**, parce que c'est la règle de `saveBodyWeight`.
+- **Le type se choisit avant la saisie, pas dedans** : deux feuilles empilées se disputent le focus et le
+  défilement. « Quelle mesure ? », puis la feuille de saisie.
+
+**Pièges rencontrés.**
+
+- **L'échelle gravée tombait à côté des dates.** La borne basse (« 81,7 kg ») s'alignait sur la ligne
+  « 11 août » au lieu du bas de la courbe, parce que la colonne de l'échelle s'étirait sur la hauteur du
+  graphique **et** des dates. Vu sur une capture, pas à la lecture du code ; corrigé par une grille.
+  `ProgressCard` (la courbe d'un exercice) a la même construction : **à vérifier sur son écran, non
+  touchée**.
+- **`−0`.** `Math.round(-5.5e-15) / 100` vaut −0, que `toBe(0)` refuse et que l'écran aurait écrit « −0 » :
+  un écart nul est nul. Et `1,005 × 100` vaut `100,49999999999999` en flottants : l'arrondi passe par la
+  chaîne (`1.005e2`) pour donner 1,01.
+- **Un test attendait un record qui n'existe plus.** La projection est une *progression* de records : une
+  séance qui ne fait qu'égaler la précédente n'en porte plus. Les chiffres du test ont changé, pas le code.
+
+**Ce qui n'est pas fait.** Les photos (RF-39) et leur verrouillage ; Health Connect (RF-40) ; une tendance
+lissée du poids (c'est une règle à juger, pas un défaut) ; l'indice de masse corporelle (il demande une
+taille) ; un objectif chiffré.
+
 ### 2026-10-14 — La coche écrasait le poids qu'on venait de taper
 
 **Constat.** Trouvé par l'E2E du 5×5, qui échouait une fois sur trente sans qu'on sache pourquoi : l'écran

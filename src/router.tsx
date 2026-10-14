@@ -32,6 +32,7 @@ import {
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
+import { MeasurementDetailRoute, MeasurementsRoute } from './features/measurements/routes';
 import { MilestonesRoute } from './features/milestones/routes';
 import {
   ExercisePickerRoute,
@@ -82,6 +83,10 @@ export const router = createHashRouter([
       { path: 'analytics', element: <AnalyticsRoute /> },
       { path: 'analytics/records', element: <RecordsRoute /> },
       { path: 'analytics/milestones', element: <MilestonesRoute /> },
+      // Les mensurations vivent sous Progression : pas de sixième onglet. Le type est encodé dans
+      // l'URL — un champ libre a un nom, avec des espaces.
+      { path: 'analytics/measurements', element: <MeasurementsRoute /> },
+      { path: 'analytics/measurements/:type', element: <MeasurementDetailRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
       { path: 'analytics/volume', element: <WeeklyVolumeRoute /> },
       { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },
