@@ -63,6 +63,89 @@ describe('mergeLinesForWorkout', () => {
     expect(merged).toHaveLength(1);
     expect(merged[0]!.sets).toHaveLength(2);
   });
+
+  describe('deux blocs du même exercice', () => {
+    // Chaque bloc repart de `order: 0` ; recollés tels quels ils s'entrelaçaient
+    // (A0, B0, A1, B1, A2) et toute règle qui lit la suite des séries lisait une
+    // séance qui n'a pas eu lieu.
+    const minute = 60_000;
+    const block = (
+      reps: number[],
+      startMinute: number,
+      extra: Partial<CoachExerciseLine> = {},
+    ): CoachExerciseLine =>
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: reps.map((value, order) =>
+          set({
+            order,
+            reps: value,
+            weight: 100,
+            targetReps: 8,
+            targetRepsMax: 12,
+            performedAt: t0 + (startMinute + order * 2) * minute,
+          }),
+        ),
+        ...extra,
+      });
+
+    const sequence = (merged: CoachExerciseLine) =>
+      [...merged.sets].sort((a, b) => a.order - b.order).map((s) => s.performedAt);
+
+    it('met les séries dans l’ordre où elles ont été faites', () => {
+      const [merged] = mergeLinesForWorkout([block([10, 10, 10], 0), block([7, 7], 6)]);
+      const times = sequence(merged!);
+      expect(times).toEqual([...times].sort((a, b) => a - b));
+      expect(merged!.sets.map((s) => s.order)).toEqual([0, 1, 2, 3, 4]);
+    });
+
+    it('range les blocs dans l’ordre où ils ont été faits, pas dans celui où ils arrivent', () => {
+      // Le bloc fait en second est lu en premier (l'ordre des lignes est celui de la
+      // carte dans la séance, que l'on réarrange) : c'est l'heure qui décide.
+      const [merged] = mergeLinesForWorkout([block([7, 7], 6), block([10, 10, 10], 0)]);
+      expect(sequence(merged!)).toEqual([0, 2, 4, 6, 8].map((m) => t0 + m * minute));
+    });
+
+    it('laisse intacte une ligne seule', () => {
+      const alone = block([10, 9, 8], 0);
+      const [merged] = mergeLinesForWorkout([alone]);
+      expect(merged!.sets).toEqual(alone.sets);
+      expect(merged!.sets).not.toBe(alone.sets);
+    });
+
+    it('ne prête pas au repos le temps qui sépare deux blocs enchaînés', () => {
+      // Deux minutes de repos partout, le second bloc enchaîné sur le premier.
+      // Entrelacées, les séries donnaient des écarts de six minutes (A0 → B0,
+      // A1 → B1) : « Repos long » sur une séance dont aucun repos ne l'était.
+      const signals = collectCoachSignals([block([10, 10, 10], 0), block([6, 6], 6)]);
+      expect(signals.map((s) => s.code)).toContain('intra_session_drop');
+      expect(signals.map((s) => s.code)).not.toContain('long_rest');
+    });
+
+    it('propose d’alléger depuis la charge du haut, celle de la dernière série faite', () => {
+      // Deux séances de deux blocs : 100 kg puis 105 kg, le bas de fourchette (8)
+      // manqué les deux fois. Entrelacée, la dernière série lue était celle du
+      // premier bloc : le coach proposait 97,5 kg depuis une séance finie à 105.
+      const day = 86_400_000;
+      const session = (workoutId: string, dayIndex: number): CoachExerciseLine[] => {
+        const at = (m: number) => t0 + dayIndex * day + m * minute;
+        const make = (reps: number[], startMinute: number, weight: number) =>
+          line({
+            exerciseId: 'bench',
+            workoutId,
+            workoutStartedAt: t0 + dayIndex * day,
+            sets: reps.map((value, order) =>
+              set({ order, reps: value, weight, performedAt: at(startMinute + order * 2) }),
+            ),
+          });
+        return [make([7, 7, 7], 0, 100), make([7, 7], 6, 105)];
+      };
+      const picked = evaluateCoach([...session('w2', 7), ...session('w1', 0)]);
+      expect(picked).toHaveLength(1);
+      expect(picked[0]).toMatchObject({ code: 'range_missed', nextLoadKg: 102.5 });
+    });
+  });
 });
 
 describe('evaluatePerformance — exclusive range partition + allowedActions', () => {
