@@ -389,8 +389,9 @@ couché » — recommandation audit M6).
 **Objectif :** personnaliser l'app et **pouvoir en sortir ses données**. À faire **avant** de
 commencer à accumuler des mois d'historique.
 
-**RF couverts :** RF-50 (unités), RF-51 (thème), RF-53 (notifications), RF-54 (réglages de séance
-centralisés), RF-66 (export CSV), RF-67 (import), export JSON (recommandation transverse n°5).
+**RF couverts :** ~~RF-50 (unités)~~ — **écarté le 2026-10-14**, cf. « Hors périmètre » —, RF-51
+(thème), RF-53 (notifications), RF-54 (réglages de séance centralisés), RF-66 (export CSV), RF-67
+(import), export JSON (recommandation transverse n°5).
 **Dépend de :** Lots 6, 7.
 **Budget :** 1 à 2 sessions.
 
@@ -398,8 +399,8 @@ centralisés), RF-66 (export CSV), RF-67 (import), export JSON (recommandation t
 
 - Écran de réglages **unique et structuré** — l'audit reproche explicitement à Hevy de les
   disperser (recommandation audit M10).
-- Unités kg/lb, poids de barre par défaut, plaques disponibles, incréments, comportement du
-  minuteur, affichage RPE, thème.
+- ~~Unités kg/lb~~ (écartées, cf. « Hors périmètre »), poids de barre par défaut, plaques
+  disponibles, incréments, comportement du minuteur, affichage RPE, thème.
 - **Export JSON complet** (toutes les tables, avec numéro de version de schéma) et **export CSV**
   des séances.
 - **Import JSON** avec écrasement ou fusion, testé unitairement sur un aller-retour
@@ -410,7 +411,8 @@ centralisés), RF-66 (export CSV), RF-67 (import), export JSON (recommandation t
 
 - [ ] Tu exportes un JSON, tu le récupères sur ton PC, tu l'ouvres : tes données sont lisibles.
 - [ ] Tu vides la base (bouton de debug), tu réimportes le JSON → tout est revenu à l'identique.
-- [ ] Tu passes en lb : tous les écrans affichent des livres, l'historique reste cohérent.
+- ~~Tu passes en lb : tous les écrans affichent des livres, l'historique reste cohérent.~~ *Écarté le
+      2026-10-14 : l'app est en kg, et le dit.*
 
 ---
 
@@ -753,6 +755,7 @@ main par `npm run voice:generate` et commités.
 | iOS / App Store                                        | 99 $/an, un Mac obligatoire pour compiler. À rouvrir seulement si tu changes de téléphone.                                                                                                    |
 | Publication sur le Play Store                          | 25 $, revue, politique de confidentialité, conformité. Le sideload suffit pour soi.                                                                                                           |
 | RF-05, RF-55, RF-61 à RF-65                            | Liés au compte multi-utilisateur, au social ou à la montre.                                                                                                                                   |
+| **RF-50 — unités kg/lb**                               | **Décision du 2026-10-14 (en autonomie, à rouvrir au besoin).** Jamais livrées alors que le checkpoint du Lot 8 les promettait : l'app est en kg partout, pour un utilisateur qui s'entraîne en kg. Les convertir toucherait chaque écran, chaque export et chaque règle du coach (crans, plaques, 1RM) pour un besoin que personne n'a. Mieux vaut une promesse retirée qu'une promesse oubliée. |
 
 ### L'enquête sur les illustrations d'exercices — 2026-07-22
 
@@ -793,7 +796,7 @@ que la correspondance avec les 168 slugs.
 | M7 Mesures & photos | 11             | Complète + verrouillage biométrique                                                                                                                                                                |
 | M8 Statistiques     | 12, 13         | Complète hors charge aiguë/chronique                                                                                                                                                               |
 | M9 Coaching         | 18, 19         | Complète, avec transparence des règles                                                                                                                                                             |
-| M10 Réglages        | 1, 8, 20       | Complète, centralisés + accessibilité                                                                                                                                                              |
+| M10 Réglages        | 1, 8, 20       | Complète, centralisés + accessibilité — **hors unités lb** (RF-50 écarté le 2026-10-14)                                                                                                            |
 | M11 Santé           | 15             | Complète (Android)                                                                                                                                                                                 |
 | M12 Widgets         | 16             | Widget + notification                                                                                                                                                                              |
 | M13 Montres         | —              | **Hors périmètre**                                                                                                                                                                                 |

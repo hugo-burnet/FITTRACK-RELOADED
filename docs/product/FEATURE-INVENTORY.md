@@ -435,7 +435,7 @@ plans KB et compléments v2.2.0.
 | SET-10 | Sauvegarde/restauration JSON complète | Livré | Action | Export réel puis ouverture de la confirmation, sans restaurer à la place de l'utilisateur. |
 | SET-11 | Recalcul des records et mise à jour des instantanés | Livré | Absent | Garder dans une aide dépannage, pas la visite initiale. |
 | SET-12 | État du stockage, tables, catalogue et reset | Livré | Absent | Ajouter des avertissements pédagogiques avant les actions destructrices. |
-| SET-13 | Unités kg/lb et unités individuelles | Absent | Absent | RF-50 : l'interface et les calculs sont aujourd'hui en kg. |
+| SET-13 | Unités kg/lb et unités individuelles | Hors périmètre | Absent | RF-50 écarté le 2026-10-14 (cf. roadmap) : l'interface et les calculs sont en kg. |
 | SET-14 | Taille de texte/police configurable | Absent | Absent | Partie non livrée de RF-51 ; préférer d'abord le support du zoom système. |
 | SET-15 | Langues autres que le français | Différé | Absent | RF-52 ; hors besoin personnel immédiat, mais l'i18n est centralisée. |
 
@@ -748,7 +748,7 @@ Ces sujets appartiennent à l'aide à la demande, jamais à l'orientation initia
 ### P2
 
 1. Ajouter les missions outils, programmes, historique, analyses et exercices.
-2. Livrer les unités configurables de RF-50.
+2. ~~Livrer les unités configurables de RF-50.~~ Écarté le 2026-10-14 (cf. roadmap, « Hors périmètre »).
 3. Cadrer les démonstrations d'exercices locales et licenciées manquantes de RF-06.
 4. Borner les lectures d'historique quand les benchmarks téléphone dépassent le seuil accepté.
 5. Fermer les parties restantes du coach déterministe liées au RPE et à la décharge.

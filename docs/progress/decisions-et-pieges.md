@@ -7,6 +7,43 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — Un E2E enfin commité, qui ne garde pas le déploiement, et la police du système
+
+**Constat.** CLAUDE.md affirmait « l'E2E Playwright couvre les parcours » ; le dépôt n'avait ni
+dépendance, ni configuration, ni test — la spec du skin TTY1 le disait elle-même (« le dépôt n'a pas de
+Playwright : il n'y a pas de test visuel automatique »). Les sessions refaisaient donc à la main les
+mêmes contrôles Chromium à 390 px, et un libellé qui déborde en TTY1 a été redécouvert **trois fois le
+même jour** (4 octobre).
+
+**Ce qui est fait.** `e2e/` (17 parcours, `npm run test:e2e`, 1 min 30) : le vrai build servi comme Pages,
+390 × 844 tactile, mouvement réduit, service worker bloqué sauf pour le test hors-ligne. Chacun a été
+**vu rouge** en réintroduisant le défaut qu'il garde. Deux passes complètes sans instabilité ; une seule
+flânerie rencontrée, et elle venait du test (un « Accueil » touché pendant la navigation tardive vers
+l'éditeur de routine) — `createRoutineFromTemplate` attend maintenant l'éditeur.
+
+**Pourquoi il ne garde pas le déploiement.** Les portes de `deploy.yml` et d'`android.yml` sont
+déterministes ; un navigateur ne l'est jamais tout à fait, et un parcours qui flanche ne doit pas
+empêcher un correctif d'être publié. `.github/workflows/e2e.yml` tourne à part, sur chaque push et
+chaque PR. **À promouvoir en porte** (ajouter `npm run test:e2e` à `deploy.yml`) quand il aura fait ses
+preuves. Il n'a pas encore tourné sur GitHub : seulement en local, y compris avec `CI=1` et un serveur
+démarré par Playwright lui-même.
+
+**La police du système.** Android applique sa taille de police à `rem`, donc aux cibles en `size-12`
+(3 rem) : 48 px à 100 %, 96 px à 200 %. À 200 %, trois cibles de l'en-tête de la séance repoussaient le
+bouton d'aide hors de l'écran (+13 px de défilement latéral, le titre écrasé à zéro). Une cible tactile
+est un nombre de pixels CSS, pas de rem : `Screen` (retour) et `HeaderAction` passent à `size-[48px]`.
+**Le reste de l'app garde `size-12` / `min-h-12`**, qui n'a pas posé de problème mesuré à 200 %.
+
+**Ce qui n'est pas corrigé : TTY1 à 200 %.** Son texte est une police bitmap à tailles fixes (12, 16, 24,
+32 px) ; à 200 % elle est étirée et la barre du bas déborde de 160 px (« Progression », « Exercices »).
+Un thème rétro dont le charme est la grille de pixels n'a pas de sens à deux fois sa taille : le test s'y
+arrête à 130 %. Si on veut le tenir, la sortie est de fixer en pixels les libellés de la barre du bas
+sous TTY1 (`tty1.css`, la règle `.text-[11px]` qui les passe en `0.75rem`).
+
+**Le piège de la session.** `pgrep -f "<motif>"` s'est une nouvelle fois trouvé dans sa propre ligne de
+commande et a tué le shell (déjà consigné le 2026-10-03 et le 2026-10-04). Arrêter un serveur par son
+PID relevé avec `ss -ltnp`, ou avec le motif entre crochets (`[v]ite`).
+
 ### 2026-10-14 — Protéger l'historique : un rappel qui compte les séances, pas un export silencieux
 
 **Constat.** La règle n° 4 garde une séance d'un crash, pas d'un téléphone perdu, réinitialisé ou
@@ -577,7 +614,7 @@ _(Raccourcis pris volontairement, à rembourser plus tard.)_
   situation est-on ? », d'où `situation.ts`). Il est découpé en `constants`, `sets`, `history`,
   `rules/{range,drop,plateau,returning}`, `arbitrate` (53 à 284 lignes) et `evaluate` (138), **sans un
   caractère de corps de fonction changé** — vérifié par un script qui compare chaque déclaration à
-  l'original — et sans toucher aux 444 tests du coach, qui passent tels quels. Une doc de
+  l'original — et sans toucher aux 444 tests du coach et de ses consommateurs, qui passent tels quels. Une doc de
   `plateauSignal` s'était séparée de sa fonction (trois helpers glissés entre les deux) : remise
   au-dessus. L'API publique de `evaluate.ts` est inchangée (ses exports d'avant y sont ré-exportés).
 
