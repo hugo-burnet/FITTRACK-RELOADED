@@ -1,0 +1,44 @@
+name: E2E
+
+# Les parcours dans un vrai navigateur, à la taille d'un téléphone : le vrai build, servi comme
+# Pages le sert (cf. `playwright.config.ts`).
+#
+# **Un workflow à part, qui ne garde pas le déploiement.** Les portes de `deploy.yml` et d'`android.yml`
+# (lint, typecheck, tests unitaires, build) sont déterministes ; un navigateur ne l'est jamais tout
+# à fait, et un parcours qui flanche ne doit pas empêcher un correctif d'être publié. Il est visible
+# sur chaque push et chaque PR. À promouvoir en porte quand il aura fait ses preuves : ajouter alors
+# `npm run test:e2e` à `deploy.yml`, après `npm run build`.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # La version du navigateur suit celle de @playwright/test du lock : rien à régler ici.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      # Traces et captures des échecs : `npx playwright show-trace` les rejoue.
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-test-results
+          path: test-results
+          retention-days: 7
