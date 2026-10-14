@@ -71,6 +71,11 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Bilan de fin** d'une séance à deux charges différentes (20 × 8 puis 30 × 6) : la ligne de
       l'exercice dit « 2 série(s) · dernière : 6 reps · 30 kg » et non « 2 × 6 reps · 30 kg ».
       *(v2.5.0)*
+- [ ] **Remplacer l'exercice.** Menu ⋮ d'un exercice dont aucune série n'est validée › « Remplacer
+      l'exercice » › toucher un autre exercice : la carte prend son nom sur place, même rang, séries vides.
+      Avec une série **déjà validée** : elle reste sous l'ancien nom, une carte du nouvel exercice
+      s'ouvre juste dessous avec les séries restantes. Une fois tout validé, l'entrée est grisée et dit
+      pourquoi. Le retour d'Android depuis la liste revient à la séance. *(cette session)*
 - [ ] **Coach, cible unique.** Un 5×5 (modèle « 5×5 — A ») fait en entier à la même charge : l'écran de
       fin propose **le cran** (par exemple 100 → 102,5 kg), sans réclamer 6 répétitions. *(cette
       session)*

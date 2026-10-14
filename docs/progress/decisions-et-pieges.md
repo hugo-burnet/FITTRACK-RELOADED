@@ -7,6 +7,44 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — Remplacer l'exercice en séance : une place qui change d'occupant
+
+**Constat.** « La machine est prise » est le cas le plus ordinaire d'une salle, et l'app n'offrait que
+deux sorties : retirer l'exercice (et perdre son rang, son superset, ses notes, ses séries à faire) ou
+l'ajouter ailleurs en fin de séance. Hevy a la fonction ; le cahier des charges ne la numérote pas.
+
+**Ce qui est fait.** Menu ⋮ d'un exercice › « Remplacer l'exercice » › la bibliothèque, où l'on **touche**
+l'exercice (un seul, pas de case à cocher ni de bouton de confirmation : entre deux séries, un appui de
+trop). Le noyau est `replaceWorkoutExercise`, dans une transaction sur les tables de la projection des
+records ; la logique pure (ce qui reste d'une série quand l'exercice change) est dans
+`src/lib/exerciseReplacement.ts`.
+
+**La règle : on remplace ce qu'il reste à faire, jamais ce qui a été fait.**
+
+- **Aucune série validée** : la ligne devient le nouvel exercice, sur place — même rang, même superset,
+  mêmes notes.
+- **Des séries validées** : elles restent sur l'ancienne ligne, sous le nom de l'exercice qui les a vues ;
+  une **nouvelle ligne** (même groupe de superset) prend la suite, juste dessous, avec les séries
+  restantes. Un squat dont deux séries sont faites ne devient pas un leg press rétroactivement.
+- **Tout est validé**, **même exercice**, **exercice inconnu ou supprimé** : refusé, sans rien écrire. Le
+  menu dit pourquoi (« Toutes les séries sont validées : rien à remplacer. ») au lieu d'une entrée muette.
+
+**Ce qui est effacé, et pourquoi.** Les chiffres saisis et **la charge visée** : « 100 kg » est un chiffre
+de développé couché, pas de la place. La fourchette de répétitions, la durée et la distance visées
+survivent **si le nouvel exercice les mesure** (8–12 répétitions ne valent pas pour un gainage chronométré).
+L'instantané (nom, muscles, matériel, unilatéral, facteur de poids du corps), la cadence en répétitions et
+le repos sont **recalculés** pour le nouvel exercice : les clés de l'ancien sont retirées et non écrasées,
+sinon un exercice sans muscle secondaire hériterait de ceux du précédent.
+
+**Ce que ça ne touche pas.** Les records (aucune série validée n'est modifiée ; la projection est dans la
+même transaction par prudence), le schéma (`version` inchangée), la routine d'origine (la séance seule
+change : « remplacer » n'est pas « modifier ma routine »).
+
+**Ce qui n'est pas fait.** Proposer des exercices proches (même muscle, autre matériel) en tête de liste :
+c'est une recommandation, donc une règle à juger — la recherche et les filtres de la bibliothèque
+suffisent pour l'instant. Remplacer dans l'éditeur de routine : la routine se modifie déjà en
+supprimant puis ajoutant, sans état à préserver.
+
 ### 2026-10-14 — Un E2E enfin commité, qui ne garde pas le déploiement, et la police du système
 
 **Constat.** CLAUDE.md affirmait « l'E2E Playwright couvre les parcours » ; le dépôt n'avait ni
@@ -18,7 +56,7 @@ même jour** (4 octobre).
 **Ce qui est fait.** `e2e/` (17 parcours, `npm run test:e2e`, 1 min 30) : le vrai build servi comme Pages,
 390 × 844 tactile, mouvement réduit, service worker bloqué sauf pour le test hors-ligne. Chacun a été
 **vu rouge** en réintroduisant le défaut qu'il garde. Deux passes complètes sans instabilité ; une seule
-flânerie rencontrée, et elle venait du test (un « Accueil » touché pendant la navigation tardive vers
+instabilité rencontrée, et elle venait du test (un « Accueil » touché pendant la navigation tardive vers
 l'éditeur de routine) — `createRoutineFromTemplate` attend maintenant l'éditeur.
 
 **Pourquoi il ne garde pas le déploiement.** Les portes de `deploy.yml` et d'`android.yml` sont

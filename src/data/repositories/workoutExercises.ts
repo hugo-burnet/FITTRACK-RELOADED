@@ -1,5 +1,6 @@
 import { db } from '@/data/db';
 import type { WorkoutExercise, WorkoutSet } from '@/data/types';
+import { rowWithoutExerciseIdentity, setForReplacement } from '@/lib/exerciseReplacement';
 import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
 import { alive, newEntity, softDelete, touch } from './base';
@@ -148,6 +149,93 @@ export async function removeWorkoutExercise(workoutExerciseId: string): Promise<
 
     await rewriteOrder(row.workoutId, (rows) => rows);
     await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
+  });
+}
+
+/**
+ * Ce qui s'est passé quand on a remplacé l'exercice d'une ligne de séance.
+ *
+ * `replaced` : aucune série n'était validée, la ligne est devenue l'autre exercice. `continued` :
+ * des séries l'étaient, l'autre exercice reprend derrière avec ce qu'il restait. Les trois autres
+ * ne changent rien.
+ */
+export type ReplaceOutcome =
+  | 'replaced'
+  | 'continued'
+  | 'nothing_left'
+  | 'same_exercise'
+  | 'unknown';
+
+/**
+ * « La machine est prise » : l'exercice d'une ligne de la séance en cours remplacé par un autre.
+ *
+ * **On remplace ce qu'il reste à faire, jamais ce qui est fait.** Une série validée dit ce qui a
+ * été soulevé sur une machine précise ; la réattribuer à une autre réécrirait la séance — et les
+ * records, qui se calculent sur ce que l'exercice a réellement fait. Deux cas :
+ *
+ * - **Aucune série validée** : la ligne garde sa place (rang, superset, notes) et devient l'autre
+ *   exercice, avec ses séries à faire. C'est le cas de la salle : on arrive devant la machine, elle
+ *   est prise.
+ * - **Des séries validées** : elles restent sur l'ancien exercice, et une nouvelle ligne pour
+ *   l'autre se glisse juste derrière — dans le même superset — avec les séries qu'il restait.
+ *
+ * Ce qui parlait de l'ancien exercice ne suit pas (`lib/exerciseReplacement`) : l'instantané, la
+ * cadence, le repos par défaut, les chiffres saisis, la charge visée. Ce qui est la place reste.
+ * Tout se fait dans une seule transaction : une séance en cours ne doit jamais se lire à moitié
+ * remplacée.
+ */
+export async function replaceWorkoutExercise(
+  workoutExerciseId: string,
+  newExerciseId: string,
+): Promise<ReplaceOutcome> {
+  const exercise = await db.exercises.get(newExerciseId);
+  if (exercise === undefined || exercise.deletedAt !== 0) return 'unknown';
+
+  return db.transaction('rw', RECORD_PROJECTION_TABLES, async (): Promise<ReplaceOutcome> => {
+    const row = await db.workoutExercises.get(workoutExerciseId);
+    if (row === undefined || row.deletedAt !== 0) return 'unknown';
+    if (row.exerciseId === newExerciseId) return 'same_exercise';
+
+    const sets = alive(
+      await db.workoutSets.where('workoutExerciseId').equals(row.id).toArray(),
+    ).sort(byOrder);
+    const todo = sets.filter((set) => set.isCompleted === 0);
+    if (todo.length === 0) return 'nothing_left';
+
+    const identity = {
+      exerciseId: newExerciseId,
+      restSeconds: resolveRestSeconds(undefined, exercise.defaultRestSeconds),
+      ...snapshotOf(exercise),
+    };
+    const restart = (set: WorkoutSet, order: number, rowId: string) =>
+      touch(
+        {
+          ...setForReplacement(set, exercise.measurementType),
+          workoutExerciseId: rowId,
+          exerciseId: newExerciseId,
+          order,
+        },
+        {},
+      );
+
+    if (todo.length === sets.length) {
+      await db.workoutExercises.put(touch({ ...rowWithoutExerciseIdentity(row), ...identity }, {}));
+      await db.workoutSets.bulkPut(todo.map((set) => restart(set, set.order, row.id)));
+      return 'replaced';
+    }
+
+    const continuation = newEntity<WorkoutExercise>({
+      workoutId: row.workoutId,
+      order: row.order + 1,
+      supersetGroup: row.supersetGroup,
+      ...identity,
+    });
+    await rewriteOrder(row.workoutId, (rows) => {
+      const index = rows.findIndex((candidate) => candidate.id === row.id);
+      return [...rows.slice(0, index + 1), continuation, ...rows.slice(index + 1)];
+    });
+    await db.workoutSets.bulkPut(todo.map((set, index) => restart(set, index, continuation.id)));
+    return 'continued';
   });
 }
 

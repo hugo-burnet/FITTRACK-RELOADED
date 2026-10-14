@@ -4,6 +4,7 @@ import { androidBackDecision } from './androidBack';
 describe('androidBackDecision', () => {
   it.each([
     ['/workout/add', '/workout'],
+    ['/workout/replace/row-1', '/workout'],
     ['/workout/finish', '/workout'],
     ['/workout', '/'],
     ['/routines/routine-1/add', '/routines/routine-1'],

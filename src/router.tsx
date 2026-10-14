@@ -41,6 +41,7 @@ import {
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
+import { WorkoutReplaceExerciseScreen } from './features/workout/WorkoutReplaceExerciseScreen';
 import { WorkoutFinishScreen } from './features/workout/WorkoutFinishScreen';
 import { WorkoutScreen } from './features/workout/WorkoutScreen';
 
@@ -70,6 +71,7 @@ export const router = createHashRouter([
       // Lot 7, and it will have its own route.
       { path: 'workout', element: <WorkoutScreen /> },
       { path: 'workout/add', element: <WorkoutAddExerciseScreen /> },
+      { path: 'workout/replace/:rowId', element: <WorkoutReplaceExerciseScreen /> },
       { path: 'workout/finish', element: <WorkoutFinishScreen /> },
       { path: 'history', element: <HistoryScreen /> },
       { path: 'history/import', element: <HevyImportRoute /> },

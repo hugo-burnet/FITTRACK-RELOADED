@@ -415,6 +415,17 @@ const fr = {
     deletedExercise: 'Exercice supprimé',
     notFound: 'Cette séance n’existe plus',
     addSetAction: 'Ajouter une série',
+    /**
+     * « La machine est prise » : un autre exercice pour ce qu'il reste à faire. L'indication dit
+     * ce que le geste ne fait pas — il ne touche jamais aux séries déjà validées — parce que c'est
+     * ce qu'on se demande avant de l'appuyer.
+     */
+    replaceExercise: 'Remplacer l’exercice',
+    replaceExerciseHint: 'Pour les séries qu’il reste à faire. Celles déjà validées restent.',
+    replaceExerciseNothingLeft: 'Toutes les séries sont validées : rien à remplacer.',
+    replaceFor: 'Pour les séries à faire de {name}. Touche l’exercice qui prend sa place.',
+    replaceFailed: 'Le remplacement n’a pas pu être fait.',
+    replaceGone: 'Cet exercice n’est plus dans la séance.',
     removeExercise: 'Retirer de la séance',
     removeExerciseConfirm:
       'Ses séries seront perdues, y compris celles déjà validées. Les autres exercices ne bougent pas.',
