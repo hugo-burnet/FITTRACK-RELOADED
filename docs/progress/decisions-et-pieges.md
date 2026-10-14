@@ -7,6 +7,42 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — Dépendances : le minimum corrigé en production, et un outil de moins
+
+**Constat.** `npm audit` : 23 avis, dont 3 en production (`@capacitor/android` 8.5.0, critique,
+CVSS 9.3 ; `react-router` / `react-router-dom` 7.18.1, élevé). Presque tout le reste venait de
+`@capacitor/assets`, un outil de dev qui n'a servi qu'**une fois** (générer les icônes, commande
+déjà écrite en `npx` dans le plan Android) et qui embarquait `sharp`, `tar@6`, `xmldom` et un
+`@capacitor/cli@5`.
+
+**Ce qui est fait.**
+
+- **`@capacitor/android`, `@capacitor/core`, `@capacitor/cli` → 8.5.1**, le correctif de l'avis
+  (la navigation ne peut plus atteindre le chemin du proxy HTTP interne), les trois alignés.
+  **Pas 8.5.2** : il touche aux zones sûres et au plugin SystemBars sur Android, que la session
+  ne peut pas essayer sur un téléphone — à prendre avec son propre checkpoint (icône, barres du
+  système, bas de l'écran de séance). 8.5.3 ne change que le CLI iOS.
+- **`react-router-dom` → 7.18.2**, la première version corrigée. L'avis ne concerne que les API
+  RSC instables ; l'app est en routeur hash côté client, donc exposée à rien — le correctif est là
+  pour que `npm audit` redevienne lisible. Production : **0 vulnérabilité**.
+- **`@capacitor/assets` retiré** des dépendances (292 paquets en moins). Les ressources générées
+  sont versionnées dans `android/app/src/main/res`, la CI ne l'appelle pas ; la commande `npx`
+  est dans `docs/ANDROID.md`, § 9.
+- **`vitest` → 4.1.11** (chemin de lecture arbitraire via `@vitest/mocker`, en dev) et les paquets
+  transitifs de build (`postcss`, `browserslist`, `nanoid`, `fast-uri`, `undici`…) mis à jour
+  dans le lock.
+
+**Ce qui reste, accepté.** Trois avis modérés, une seule chaîne, en outil de dev, rien dans le
+bundle : `uuid` < 11.1.1 via `xcode` via `@capacitor/cli` (en amont ; npm propose « un correctif »
+qui est un retour à 8.4.3).
+
+**Le piège.** `npm audit fix` et `npm install -D vitest@4.1.11` plantent avec npm 10.9.4
+(`Cannot read properties of null (reading 'edgesOut')`, dans la résolution des pairs optionnels de
+vitest). `--legacy-peer-deps` « marche » mais **retire `@testing-library/dom`**, pair requis de
+`@testing-library/react` : un lock qui passe et des tests qui ne se lancent plus. Ce qui a
+fonctionné : `npx npm@11 install -D vitest@4.1.11`, dont la différence de lock ne montre que la
+famille vitest. Toujours regarder le diff du lock après un `npm install`.
+
 ### 2026-10-04 — Le cadenas d'ordre revient dans le bandeau de la séance
 
 **Ce qui a été dit.** « Et fais réapparaître le cadenas quand la routine est en cours. »
