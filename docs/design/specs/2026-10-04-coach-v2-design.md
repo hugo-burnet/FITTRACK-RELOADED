@@ -161,6 +161,19 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
    version (10 % de saut maximal, 3 répétitions au-delà de la fourchette) a été écartée par
    l'utilisateur avant d'être codée — le cran ne se choisit pas.*
 
+   **Amendement du 2026-10-14 — la règle ne vaut que pour une fourchette.** « Retomber au bas
+   de la fourchette » suppose un bas distinct du haut. Une cible unique (5×5, 3×10, ou une paire
+   5–5) n'en a pas : le plancher est le plafond, et l'exigence d'Epley dépasse alors toujours la
+   cible — 6 répétitions pour un 5×5 de 40 à 160 kg, 14 pour un 3×10 à 20 kg aux haltères — que
+   le programme ne prescrit pas. Reproduit sur le moteur : aucun 5×5 sous 180 kg ne se voyait
+   proposer le cran, même réussi trois séances de suite, alors que l'application livre les
+   modèles « 5×5 — A/B ». Sans fourchette, R3.2 se tait : le plafond atteint propose le cran du
+   matériel, comme avant la tranche 4 (R1 garde la main : une cible arrachée à RPE 9,5 ou plus
+   ne propose toujours rien). C'était le premier des écarts laissés par l'audit du
+   2026-10-13. *Non rejoué sur l'historique réel (la sauvegarde n'est pas dans le dépôt) : à
+   passer par `npm run coach:replay` avec la sauvegarde avant de se fier aux chiffres
+   ci-dessus.*
+
 ### R4 — Ne comparer que ce qui est comparable
 
 **Constat.** La moitié des exercices est pratiquée sous plusieurs fourchettes (variantes A/B,

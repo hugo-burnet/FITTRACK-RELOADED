@@ -236,6 +236,13 @@ function rangeFlags(
  * rule says nothing new; on a 10 kg curl with a 2 kg step it is 18. Loads only:
  * a weighted vest sits on top of the body, an assistance comes off it, and the
  * ratio between two steps means nothing there.
+ *
+ * **Une cible unique n'a pas de bas de fourchette.** Un 5×5 ou un 3×10 prescrit
+ * un nombre de répétitions, pas un intervalle : « retomber au bas » après le cran
+ * y exigerait toujours une répétition de plus que la cible (6 pour un 5×5 de 40 à
+ * 160 kg), que le programme ne demande pas et que personne ne fera. Le coach
+ * réclamait l'impossible et ne proposait jamais la hausse. Sans fourchette, la
+ * progression du programme, c'est la charge : la règle se tait.
  */
 function repsNeededForStep(
   line: CoachExerciseLine,
@@ -247,6 +254,7 @@ function repsNeededForStep(
   const floor = working[0]?.targetReps;
   const ceilingReps = working[0] === undefined ? undefined : effectiveCeiling(working[0]);
   if (floor === undefined || ceilingReps === undefined) return undefined;
+  if (floor >= ceilingReps) return undefined;
   const absorb = repsToAbsorbStep(load, next, floor);
   if (absorb === undefined || absorb <= ceilingReps) return undefined;
   return working.every((set) => set.reps !== undefined && set.reps >= absorb) ? undefined : absorb;

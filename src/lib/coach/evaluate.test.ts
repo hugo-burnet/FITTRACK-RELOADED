@@ -1463,6 +1463,95 @@ describe('répétitions pour absorber le cran (R3.2)', () => {
   });
 });
 
+describe('cible unique, sans fourchette (R3.2)', () => {
+  // Un 5×5 ou un 3×10 n'a pas de « bas de fourchette » où retomber : le bas et le
+  // haut sont la même cible. R3.2 y exigeait toujours une répétition de plus que
+  // la cible (6 pour un 5×5 de 40 à 160 kg), que le programme ne prescrit pas — le
+  // coach réclamait l'impossible et ne proposait jamais la hausse. La progression
+  // d'un programme à cible unique, c'est la charge.
+  const single = (
+    reps: number[],
+    weight: number,
+    target: number,
+    extra: Partial<CoachExerciseLine> = {},
+    range: { targetReps: number; targetRepsMax: number | undefined } = {
+      targetReps: target,
+      targetRepsMax: undefined,
+    },
+  ) =>
+    line({
+      exerciseId: 'squat',
+      workoutId: 'w1',
+      sets: reps.map((value, order) => set({ order, reps: value, weight, ...range })),
+      ...extra,
+    });
+
+  it.each([40, 60, 100, 140, 160, 180])(
+    'propose le cran d’un 5×5 réussi à %s kg à la barre',
+    (weight) => {
+      const ev = evaluatePerformance(single([5, 5, 5, 5, 5], weight, 5));
+      const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+      expect(ceiling?.nextLoadKg).toBe(weight + 2.5);
+      expect(ceiling?.evidence.map((e) => e.label)).not.toContain('step_needs_reps');
+      expect(ev.allowedActions).toContain('increase_load');
+    },
+  );
+
+  it('propose le cran d’un 3×10 aux haltères, où il pèse pourtant +10 %', () => {
+    // Le cran est celui du matériel (« les haltères c'est +2 kg, t'as pas le
+    // choix ») ; sans fourchette il n'y a pas de répétitions à viser en plus.
+    const ev = evaluatePerformance(
+      single([10, 10, 10], 20, 10, { equipment: 'dumbbell', exerciseId: 'curl' }),
+    );
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(22);
+  });
+
+  it('lit une paire 5–5 comme une cible unique', () => {
+    const ev = evaluatePerformance(single([5, 5, 5], 100, 5, {}, { targetReps: 5, targetRepsMax: 5 }));
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+  });
+
+  it('propose encore le cran après trois séances réussies à la même charge', () => {
+    const session = (workoutId: string, dayIndex: number) =>
+      single([5, 5, 5, 5, 5], 100, 5, {
+        workoutId,
+        workoutStartedAt: t0 + dayIndex * 86_400_000,
+      });
+    const picked = evaluateCoach([session('w3', 4), session('w2', 2), session('w1', 0)]);
+    expect(picked).toHaveLength(1);
+    expect(picked[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 102.5 });
+  });
+
+  it('ne manque pas la cible : une série à 4 sur un 5×5 ne propose rien', () => {
+    const ev = evaluatePerformance(single([5, 5, 5, 4, 4], 100, 5));
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_ceiling_reached');
+  });
+
+  it('retient toujours la charge quand la cible est arrachée (RPE 9,5 ou plus)', () => {
+    const grinding = single([5, 5, 5], 100, 5).sets.map((s) => ({ ...s, rpe: 10 }));
+    const ev = evaluatePerformance(single([5, 5, 5], 100, 5, { sets: grinding }));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
+  it('garde l’exigence de répétitions d’une vraie fourchette', () => {
+    // Même charge, même cran : avec une fourchette 5–8, R3.2 s'applique comme avant
+    // (ici le plafond de 8 suffit, la charge est proposée) ; avec 10–12 sur un
+    // haltère léger, il réclame toujours 18 répétitions.
+    const ranged = evaluatePerformance(
+      single([8, 8, 8], 100, 5, {}, { targetReps: 5, targetRepsMax: 8 }),
+    );
+    expect(ranged.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+    const light = evaluatePerformance(
+      single([12, 12, 12], 10, 10, { equipment: 'dumbbell' }, { targetReps: 10, targetRepsMax: 12 }),
+    );
+    expect(light.signals.find((s) => s.code === 'range_ceiling_reached')?.evidence).toEqual(
+      expect.arrayContaining([{ label: 'step_needs_reps', value: 18 }]),
+    );
+  });
+});
+
 describe('pickSignals', () => {
   it('keeps one signal per exercise, highest severity first', () => {
     const signals: CoachSignal[] = [
