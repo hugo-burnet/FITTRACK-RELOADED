@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { barFractions, barLayout, plotBounds, plotPoints } from './plot';
+import { barFractions, barLayout, plotBounds, plotPoints, plotTimedPoints } from './plot';
 
 const box = { width: 300, height: 100 };
+const DAY = 86_400_000;
 
 describe('plotBounds', () => {
   it('borne sur les données et non sur zéro', () => {
@@ -46,6 +47,73 @@ describe('plotPoints', () => {
 
   it('garde chaque point dans la boîte', () => {
     for (const point of plotPoints([12, 400, 3, 87], box)) {
+      expect(point.x).toBeGreaterThanOrEqual(0);
+      expect(point.x).toBeLessThanOrEqual(box.width);
+      expect(point.y).toBeGreaterThanOrEqual(0);
+      expect(point.y).toBeLessThanOrEqual(box.height);
+    }
+  });
+});
+
+describe('plotTimedPoints', () => {
+  it('ne rend rien sans mesure', () => {
+    expect(plotTimedPoints([], box)).toEqual([]);
+  });
+
+  it('centre une mesure unique au lieu de diviser par zéro', () => {
+    const point = plotTimedPoints([{ at: 5 * DAY, value: 82 }], box)[0]!;
+    expect(point.x).toBe(150);
+    expect(Number.isFinite(point.y)).toBe(true);
+  });
+
+  it('place chaque point à l’abscisse de sa date, pas à son rang', () => {
+    const points = plotTimedPoints(
+      [
+        { at: 0, value: 80 },
+        { at: 1 * DAY, value: 81 },
+        { at: 10 * DAY, value: 82 },
+      ],
+      box,
+    );
+    // Avec un rang, le deuxième point serait au milieu : un trou de neuf jours se verrait à peine.
+    expect(points.map((point) => point.x)).toEqual([0, 30, 300]);
+  });
+
+  it('garde l’échelle verticale des données, maximum en haut', () => {
+    const values = [80, 90, 85];
+    const timed = plotTimedPoints(
+      values.map((value, index) => ({ at: index * DAY, value })),
+      box,
+    );
+    const ranked = plotPoints(values, box);
+    expect(timed.map((point) => point.y)).toEqual(ranked.map((point) => point.y));
+    expect(timed[1]!.y).toBeLessThan(timed[0]!.y);
+  });
+
+  it('étale à égalité des mesures prises au même instant plutôt que de les empiler', () => {
+    const points = plotTimedPoints(
+      [
+        { at: 7 * DAY, value: 80 },
+        { at: 7 * DAY, value: 81 },
+        { at: 7 * DAY, value: 82 },
+      ],
+      box,
+    );
+    expect(points.map((point) => point.x)).toEqual([0, 150, 300]);
+    expect(points.every((point) => Number.isFinite(point.y))).toBe(true);
+  });
+
+  it('garde chaque point dans la boîte, même reçu dans le désordre', () => {
+    const points = plotTimedPoints(
+      [
+        { at: 9 * DAY, value: 12 },
+        { at: 2 * DAY, value: 400 },
+        { at: 30 * DAY, value: 3 },
+        { at: 0, value: 87 },
+      ],
+      box,
+    );
+    for (const point of points) {
       expect(point.x).toBeGreaterThanOrEqual(0);
       expect(point.x).toBeLessThanOrEqual(box.width);
       expect(point.y).toBeGreaterThanOrEqual(0);

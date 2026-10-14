@@ -13,6 +13,7 @@ import type {
 import { resetDb } from '@/test/resetDb';
 import { rebuildAllRecords } from './personalRecords';
 import {
+  deleteBodyWeight,
   getLatestBodyWeight,
   resolveBodyWeightsAt,
   saveBodyWeight,
@@ -402,4 +403,164 @@ describe('body weight measurements', () => {
       expect(await db.bodyMeasurements.count()).toBe(0);
     },
   );
+});
+
+
+describe('deleting a body weight reading', () => {
+  beforeEach(resetDb);
+
+  /** The projection as a reader sees it: one figure per session record. */
+  async function sessionFigures(): Promise<Map<string, number>> {
+    return new Map(
+      (await liveRecords())
+        .filter((record) => record.type === 'max_volume_session')
+        .map((record) => [record.workoutId, record.value]),
+    );
+  }
+
+  async function seedPullUps(sessions: { id: string; startedAt: number; reps: number }[]) {
+    const pullUp = movement('pull-up', 'reps_only', 1);
+    await seedHistory(
+      [pullUp],
+      sessions.map((session) => ({ ...session, exercise: pullUp })),
+    );
+  }
+
+  it('marks the reading deleted, keeps the row, and falls back to the previous weight', async () => {
+    await db.bodyMeasurements.bulkAdd([bodyWeight(80, at(3)), bodyWeight(82, at(5))]);
+    const latest = (await db.bodyMeasurements.toArray()).find((row) => row.value === 82)!;
+
+    await deleteBodyWeight(latest.id);
+
+    const stored = await db.bodyMeasurements.get(latest.id);
+    expect(stored?.deletedAt).toBeGreaterThan(0);
+    expect(await getLatestBodyWeight()).toEqual({ valueKg: 80, measuredAt: at(3) });
+  });
+
+  it('re-reads the records of the sessions the reading covered, and leaves the others as they were', async () => {
+    await seedPullUps([
+      { id: 'before', startedAt: at(4), reps: 2 },
+      { id: 'covered', startedAt: at(6), reps: 3 },
+      { id: 'after', startedAt: at(9), reps: 3 },
+    ]);
+    await db.bodyMeasurements.bulkAdd([
+      bodyWeight(80, at(2, 8)),
+      bodyWeight(90, at(5, 8)),
+      bodyWeight(100, at(8, 8)),
+    ]);
+    await rebuildAllRecords();
+    const middle = (await db.bodyMeasurements.toArray()).find((row) => row.value === 90)!;
+    expect(await sessionFigures()).toEqual(
+      new Map([
+        ['workout-before', 160],
+        ['workout-covered', 270],
+        ['workout-after', 300],
+      ]),
+    );
+
+    await deleteBodyWeight(middle.id);
+
+    // La séance couverte lit désormais la mesure d'avant (3 × 80) ; les deux autres n'ont pas bougé.
+    expect(await sessionFigures()).toEqual(
+      new Map([
+        ['workout-before', 160],
+        ['workout-covered', 240],
+        ['workout-after', 300],
+      ]),
+    );
+  });
+
+  it('hands a session that preceded the first reading to the next one', async () => {
+    await seedPullUps([{ id: 'early', startedAt: at(3), reps: 2 }]);
+    await db.bodyMeasurements.bulkAdd([bodyWeight(80, at(5, 8)), bodyWeight(90, at(8, 8))]);
+    await rebuildAllRecords();
+    const first = (await db.bodyMeasurements.toArray()).find((row) => row.value === 80)!;
+    expect(await sessionFigures()).toEqual(new Map([['workout-early', 160]]));
+
+    await deleteBodyWeight(first.id);
+
+    expect(await sessionFigures()).toEqual(new Map([['workout-early', 180]]));
+  });
+
+  it('lets the sessions after the last reading read the one before it', async () => {
+    await seedPullUps([{ id: 'late', startedAt: at(9), reps: 2 }]);
+    await db.bodyMeasurements.bulkAdd([bodyWeight(80, at(2, 8)), bodyWeight(100, at(8, 8))]);
+    await rebuildAllRecords();
+    const last = (await db.bodyMeasurements.toArray()).find((row) => row.value === 100)!;
+    expect(await sessionFigures()).toEqual(new Map([['workout-late', 200]]));
+
+    await deleteBodyWeight(last.id);
+
+    expect(await sessionFigures()).toEqual(new Map([['workout-late', 160]]));
+  });
+
+  it.each(['first', 'middle', 'last', 'only'] as const)(
+    'leaves the projection exactly what a full rebuild gives, deleting the %s reading',
+    async (which) => {
+      await seedPullUps([
+        { id: 's1', startedAt: at(1), reps: 3 },
+        { id: 's2', startedAt: at(4), reps: 2 },
+        { id: 's3', startedAt: at(7), reps: 5 },
+        { id: 's4', startedAt: at(10), reps: 1 },
+      ]);
+      const readings =
+        which === 'only'
+          ? [bodyWeight(85, at(5, 8))]
+          : [bodyWeight(80, at(2, 8)), bodyWeight(90, at(5, 8)), bodyWeight(100, at(8, 8))];
+      await db.bodyMeasurements.bulkAdd(readings);
+      await rebuildAllRecords();
+      const index = { first: 0, middle: 1, last: 2, only: 0 }[which];
+      const target = [...readings].sort((a, b) => a.measuredAt - b.measuredAt)[index]!;
+
+      await deleteBodyWeight(target.id);
+
+      const reconciled = await sessionFigures();
+      await rebuildAllRecords();
+      expect(reconciled).toEqual(await sessionFigures());
+    },
+  );
+
+  it('does not touch a measurement of another type taken the same day', async () => {
+    const waist = {
+      ...newEntity<BodyMeasurement>({ type: 'waist', value: 84, unit: 'cm', measuredAt: at(3) }),
+    };
+    await db.bodyMeasurements.bulkAdd([bodyWeight(80, at(3)), waist]);
+    const weight = (await db.bodyMeasurements.toArray()).find((row) => row.type === 'body_weight')!;
+
+    await deleteBodyWeight(weight.id);
+
+    expect(await db.bodyMeasurements.get(waist.id)).toEqual(waist);
+  });
+
+  it('does nothing for an id it does not know, or a reading already deleted', async () => {
+    const gone = bodyWeight(70, at(1), at(2));
+    await db.bodyMeasurements.bulkAdd([gone, bodyWeight(80, at(3))]);
+    const before = await db.bodyMeasurements.toArray();
+
+    await deleteBodyWeight('no-such-reading');
+    await deleteBodyWeight(gone.id);
+
+    expect(await db.bodyMeasurements.toArray()).toEqual(before);
+  });
+
+  it('keeps the reading when the records cannot be re-read', async () => {
+    await seedPullUps([{ id: 'covered', startedAt: at(6), reps: 2 }]);
+    await db.bodyMeasurements.bulkAdd([bodyWeight(80, at(5)), bodyWeight(90, at(8))]);
+    await rebuildAllRecords();
+    const measurementsBefore = await db.bodyMeasurements.toArray();
+    const recordsBefore = await db.personalRecords.toArray();
+    const first = measurementsBefore.find((row) => row.value === 80)!;
+    const fail = vi
+      .spyOn(db.personalRecords, 'bulkPut')
+      .mockRejectedValueOnce(new Error('record reconciliation failed'));
+
+    try {
+      await expect(deleteBodyWeight(first.id)).rejects.toThrow('record reconciliation failed');
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await db.bodyMeasurements.toArray()).toEqual(measurementsBefore);
+    expect(await db.personalRecords.toArray()).toEqual(recordsBefore);
+  });
 });
