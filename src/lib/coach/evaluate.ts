@@ -91,9 +91,20 @@ export function evaluatePerformance(
   const consolidating = consolidationSignal(comparable);
   if (consolidating) signals.push(consolidating);
 
+  const allowed = buildAllowedActions(signals);
+
+  // R6 : le coach ne propose pas d'aller au-delà de ce que la personne a déjà tenu sur ce muscle.
+  // Une série de plus est la seule action retirée — la charge et les répétitions ne sont pas du
+  // volume — et on ne le dit que si elle était permise : un plateau, une reprise ou un plafond
+  // arraché l'ont déjà retirée, et la carte n'a rien à ajouter.
+  const volume = options.muscleVolume;
+  const withheld =
+    volume !== undefined && volume.rollingSets >= volume.ceiling && allowed.includes('add_set');
+
   return {
     signals,
-    allowedActions: buildAllowedActions(signals),
+    allowedActions: withheld ? allowed.filter((action) => action !== 'add_set') : allowed,
+    ...(withheld ? { volumeWithheld: true as const } : {}),
   };
 }
 

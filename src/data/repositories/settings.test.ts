@@ -5,10 +5,12 @@ import { estimateOneRepMax } from '@/lib/oneRepMax';
 import { resetDb } from '@/test/resetDb';
 import {
   getAvailablePlateWeightsKg,
+  getCoachVolumeBounds,
   getOneRepMaxFormula,
   getRoutineFolderContext,
   getWeeklyTrainingGoalHistory,
   setAvailablePlateWeightsKg,
+  setCoachVolumeBounds,
   setOneRepMaxFormula,
   setRoutineFolderContext,
   setWeeklyTrainingGoal,
@@ -311,5 +313,77 @@ describe('one-rep-max formula setting', () => {
     await expect(
       setOneRepMaxFormula(formula as import('@/lib/oneRepMax').OneRepMaxFormula),
     ).rejects.toThrow(RangeError);
+  });
+});
+
+describe('coach volume bounds setting', () => {
+  beforeEach(resetDb);
+
+  it('est vide tant que personne n’a rien posé : aucun plancher, aucun plafond', async () => {
+    expect(await getCoachVolumeBounds()).toEqual({});
+  });
+
+  it('retient le plancher et le plafond d’un muscle', async () => {
+    await setCoachVolumeBounds('hamstrings', { floor: 8, ceiling: 14 });
+
+    expect(await getCoachVolumeBounds()).toEqual({ hamstrings: { floor: 8, ceiling: 14 } });
+  });
+
+  it('change un muscle sans toucher aux autres', async () => {
+    await setCoachVolumeBounds('hamstrings', { floor: 8 });
+    await setCoachVolumeBounds('chest', { ceiling: 16 });
+    await setCoachVolumeBounds('hamstrings', { floor: 6, ceiling: 12 });
+
+    expect(await getCoachVolumeBounds()).toEqual({
+      hamstrings: { floor: 6, ceiling: 12 },
+      chest: { ceiling: 16 },
+    });
+  });
+
+  it('retire un muscle quand on n’en pose plus aucune borne', async () => {
+    await setCoachVolumeBounds('hamstrings', { floor: 8 });
+    await setCoachVolumeBounds('chest', { floor: 4 });
+
+    await setCoachVolumeBounds('hamstrings', {});
+
+    expect(await getCoachVolumeBounds()).toEqual({ chest: { floor: 4 } });
+  });
+
+  it('écrit dans la table des réglages, donc dans la sauvegarde : aucune version de schéma', async () => {
+    await setCoachVolumeBounds('chest', { floor: 4 });
+
+    expect(await db.settings.get('coachVolumeBounds')).toMatchObject({
+      key: 'coachVolumeBounds',
+      value: { chest: { floor: 4 } },
+    });
+  });
+
+  it.each([
+    ['un plancher décimal', 'chest', { floor: 8.5 }],
+    ['un plancher nul', 'chest', { floor: 0 }],
+    ['un plafond négatif', 'chest', { ceiling: -2 }],
+    ['un plafond de cent séries', 'chest', { ceiling: 100 }],
+    ['un plancher au-dessus du plafond', 'chest', { floor: 12, ceiling: 8 }],
+    ['un groupe qui n’est pas une région', 'cardio', { floor: 3 }],
+  ] as const)('refuse %s, sans rien écrire', async (_name, muscle, bounds) => {
+    await setCoachVolumeBounds('lats', { floor: 5 });
+
+    await expect(setCoachVolumeBounds(muscle, bounds)).rejects.toThrow(RangeError);
+
+    expect(await getCoachVolumeBounds()).toEqual({ lats: { floor: 5 } });
+  });
+
+  it('relit une valeur abîmée par une sauvegarde à la main sans casser, en gardant ce qui est juste', async () => {
+    await db.settings.put({
+      key: 'coachVolumeBounds',
+      value: { chest: { floor: 'beaucoup' }, lats: { floor: 6 }, wings: { floor: 4 } },
+      updatedAt: 1,
+    });
+
+    expect(await getCoachVolumeBounds()).toEqual({ lats: { floor: 6 } });
+
+    await db.settings.put({ key: 'coachVolumeBounds', value: 'abîmé', updatedAt: 2 });
+
+    expect(await getCoachVolumeBounds()).toEqual({});
   });
 });

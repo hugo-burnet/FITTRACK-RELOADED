@@ -214,6 +214,47 @@ describe('coachSignalMessage — notes du coach v2', () => {
     expect(withMargin).toContain(t('coach.failureMargin', { reps: 3 }));
   });
 
+  it('dit pourquoi aucune série n’est proposée : le plus que la personne a tenu, avec ce qui a été lu', () => {
+    const plain = coachSignalMessage(rangeCeiling(100, 102.5));
+    const capped = coachSignalMessage(
+      rangeCeiling(100, 102.5, 'range_ceiling_reached', [
+        { label: 'volume_at_ceiling', value: 1 },
+        { label: 'weekly_sets', value: 12 },
+        { label: 'weekly_ceiling', value: 10 },
+      ]),
+    );
+
+    expect(capped).toBe(`${plain} ${t('coach.volumeAtCeiling', { sets: 12, ceiling: 10 })}`);
+    expect(capped).toContain('12 séries sur sept jours');
+    expect(capped).toContain('le plus que tu aies tenu');
+  });
+
+  it('dit que le plafond est le sien quand c’est la personne qui l’a posé', () => {
+    const message = coachSignalMessage(
+      rangeCeiling(100, 102.5, 'range_ceiling_reached', [
+        { label: 'volume_at_ceiling', value: 1 },
+        { label: 'weekly_sets', value: 12 },
+        { label: 'weekly_ceiling', value: 10 },
+        { label: 'ceiling_set', value: 1 },
+      ]),
+    );
+
+    expect(message).toContain(t('coach.volumeAtCeilingSet', { sets: 12, ceiling: 10 }));
+    expect(message).toContain('ton plafond');
+    expect(message).not.toContain('le plus que tu aies tenu');
+  });
+
+  it('ne parle pas de volume sans la preuve : les chiffres seuls ne suffisent pas', () => {
+    const message = coachSignalMessage(
+      rangeCeiling(100, 102.5, 'range_ceiling_reached', [
+        { label: 'weekly_sets', value: 12 },
+        { label: 'weekly_ceiling', value: 10 },
+      ]),
+    );
+
+    expect(message).toBe(coachSignalMessage(rangeCeiling(100, 102.5)));
+  });
+
   it('n’ajoute rien quand aucune de ces preuves n’est là', () => {
     expect(coachSignalMessage(rangeCeiling(47.5, 50))).toBe(
       t('coach.range_ceiling_reached', { current: '47,5', weight: '50', sets: 3, reps: 12 }),

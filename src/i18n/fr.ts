@@ -613,6 +613,14 @@ const fr = {
      */
     failureMargin: 'Série à l’échec : {reps} rép. au-delà du plafond.',
     /**
+     * Coach v2, R6. La phase de surcharge aurait ajouté une série ; le volume du muscle est déjà au plus
+     * haut. Une règle de l'app, pas une vérité : la phrase dit ce qui a été lu, et à qui est le plafond.
+     */
+    volumeAtCeiling:
+      'Pas de série en plus : ce muscle en est à {sets} séries sur sept jours, le plus que tu aies tenu en six semaines ({ceiling}).',
+    volumeAtCeilingSet:
+      'Pas de série en plus : ce muscle en est à {sets} séries sur sept jours, ton plafond ({ceiling}).',
+    /**
      * Coach v2, R1. Le RPE est une règle de l'app, pas une vérité médicale :
      * les phrases disent ce qui a été lu, pas ce que « la science » prescrit.
      * Pas de flèche dans les constats : elle est réservée à la charge à mettre.

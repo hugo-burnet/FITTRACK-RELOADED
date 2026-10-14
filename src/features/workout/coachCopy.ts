@@ -36,6 +36,16 @@ function withEvidenceNotes(signal: SignalLike, message: string): string {
   if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {
     notes.push(t('coach.plateauAtFailure'));
   }
+  // R6 : pourquoi la surcharge n'ajoute pas de série. Le drapeau seul le dit — des chiffres sans
+  // lui ne suffisent pas : ils pourraient venir d'une autre règle.
+  if (hasFlag(signal, 'volume_at_ceiling')) {
+    notes.push(
+      t(hasFlag(signal, 'ceiling_set') ? 'coach.volumeAtCeilingSet' : 'coach.volumeAtCeiling', {
+        sets: evidenceValue(signal, 'weekly_sets') ?? 0,
+        ceiling: evidenceValue(signal, 'weekly_ceiling') ?? 0,
+      }),
+    );
+  }
   return notes.length === 0 ? message : [message, ...notes].join(' ');
 }
 

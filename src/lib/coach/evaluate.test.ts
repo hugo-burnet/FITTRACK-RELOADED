@@ -1734,3 +1734,104 @@ describe('mute cases', () => {
     expect(signals).toEqual([]);
   });
 });
+
+describe('R6 — le plafond de volume du muscle', () => {
+  /** Trois séries au plafond, 100 kg à la barre : `increase_load` et `add_set` sont permis. */
+  const atCeiling = () => line3x8to12([12, 12, 12]);
+
+  it('retire add_set quand la semaine du muscle est au plus haut de ce qui a été tenu, et garde la charge', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_ceiling_reached']);
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.allowedActions).toContain('increase_load');
+    expect(ev.volumeWithheld).toBe(true);
+  });
+
+  it('le retire aussi au-delà du plafond', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 14, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBe(true);
+  });
+
+  it('laisse add_set sous le plafond : le coach peut proposer d’aller jusqu’à ce qui a déjà été tenu', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 9, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne change rien sans contexte de volume — moins de trois semaines d’historique, aucun effet', () => {
+    const without = evaluatePerformance(atCeiling(), []);
+    const silent = evaluatePerformance(atCeiling(), [], {});
+
+    expect(silent).toEqual(without);
+    expect(without.allowedActions).toContain('add_set');
+    expect(without.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne touche pas aux signaux : le constat est le même avec ou sans plafond', () => {
+    const open = evaluatePerformance(atCeiling(), []);
+    const capped = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(capped.signals).toEqual(open.signals);
+  });
+
+  it('ne dit rien quand add_set n’était pas permis de toute façon : une reprise', () => {
+    const day = 86_400_000;
+    const previous = line({
+      exerciseId: 'bench',
+      workoutId: 'w0',
+      workoutStartedAt: t0,
+      sets: [set({ order: 0, reps: 12 }), set({ order: 1, reps: 12 }), set({ order: 2, reps: 12 })],
+    });
+    const returning = line({
+      exerciseId: 'bench',
+      workoutId: 'w1',
+      workoutStartedAt: t0 + 21 * day,
+      sets: [0, 1, 2].map((order) =>
+        set({ order, reps: 12, performedAt: t0 + 21 * day + order * 120_000 }),
+      ),
+    });
+
+    const ev = evaluatePerformance(returning, [previous], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.signals.map((s) => s.code)).toContain('returning');
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne dit rien quand add_set n’était pas permis de toute façon : un plafond arraché', () => {
+    const grinding = line({
+      exerciseId: 'bench',
+      workoutId: 'w1',
+      sets: [0, 1, 2].map((order) => set({ order, reps: 12, rpe: 9.5 })),
+    });
+
+    const ev = evaluatePerformance(grinding, [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne dit rien quand il n’y avait aucun plafond de fourchette à franchir', () => {
+    const ev = evaluatePerformance(line3x8to12([9, 9, 9]), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+});

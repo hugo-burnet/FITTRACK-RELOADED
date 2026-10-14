@@ -65,6 +65,12 @@ export interface CoachEvaluateOptions {
   dropReps?: number;
   /** Rest gap (ms) considered long when a drop is also present (default 180_000). */
   longRestMs?: number;
+  /**
+   * R6 — the exercise's muscle against the volume it has already sustained. Absent when the rule is
+   * silent (fewer than three weeks of history, no ceiling set, a group that is not a region): the
+   * engine then reads exactly as before.
+   */
+  muscleVolume?: { rollingSets: number; ceiling: number };
 }
 
 /** Concrete prescription moves the performance engine may authorize. */
@@ -82,6 +88,12 @@ export type CoachAction =
 export interface CoachEvaluation {
   signals: CoachSignal[];
   allowedActions: CoachAction[];
+  /**
+   * R6 — `add_set` would have been allowed, and the muscle's week is already at the most it has
+   * sustained. Lets the caller say why a set is not proposed, only where the phase would have
+   * proposed it.
+   */
+  volumeWithheld?: true;
 }
 
 /**
