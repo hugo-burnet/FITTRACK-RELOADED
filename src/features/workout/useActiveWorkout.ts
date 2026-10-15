@@ -68,6 +68,13 @@ export function useActiveWorkout(): ActiveWorkoutData {
 
   const pendingCoach = useLiveQuery(async () => {
     if (detail == null) return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
+    // Un benchmark ne répond à aucun objectif et n'en suit aucun (spec, §2 bis) : « Appliquer » y écraserait
+    // la charge d'essai que la personne choisit et marquerait l'objectif suivi avec un essai à fond pour
+    // issue ; « Ignorer » réduirait au silence cette proposition-là. Les objectifs restent en attente pour
+    // la séance suivante — et le benchmark pose le sien à son enregistrement.
+    if (detail.workout.kind === 'benchmark') {
+      return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
+    }
     const ids = detail.exercises.map((line) => line.row.exerciseId);
     const pending = await listPendingRecommendations(ids);
     return detail.workout.programId === undefined
