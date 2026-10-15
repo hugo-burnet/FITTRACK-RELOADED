@@ -183,8 +183,10 @@ périodicité : c'est un geste que la personne décide.
   que personne n'a montré qu'elle était fausse. Il en va de même du seuil d'écart de six répétitions et de la limite de 30, de la
   fatigue par série, de ses bornes de repos, du plafond de six séries et des séries par défaut.
 - **Le coach ne propose pas le nombre de séries.** Il dimensionne la charge sur celles que la routine porte (ou, à défaut, 3 / 2 par
-  classe) ; il n'écrit jamais « fais 3 séries ». À trancher avec la personne : la demande disait « extrapole la meilleure charge sur x
-  séries, par exemple 3 sur les poly-articulaires, 2 sur les isolations ».
+  classe) ; il n'écrit jamais « fais 3 séries ». *Tranché avec la personne* : la demande disait « extrapole la meilleure charge sur x
+  séries, par exemple 3 sur les poly-articulaires, 2 sur les isolations » ; interrogée, elle ne savait pas combien (« JSP, tu proposes
+  quoi ? ») et a validé la proposition — 3 / 2 en défaut seulement, jamais écrit. Le nombre de séries d'un muscle est déjà l'affaire de R6
+  (volume par muscle, bornes qui viennent de ce que la personne tient) ; une série à l'échec ne dit pas combien de séries elle récupère.
 - Pas de mesure de la fatigue réelle : la perte de 10 % par série est un modèle, pas la courbe de la personne. Une variante du
   benchmark à deux séries par exercice la mesurerait, au prix du principe « une série par exercice ».
 - Pas de fourchette affichée **pendant** la séance de benchmark : elle se lit sur le bilan et dans la feuille de lancement. La poser

@@ -43,8 +43,10 @@ Mes tests ne posaient que des routines à une ou deux séries et des essais proc
 **Choix de détail, à relire.**
 
 - **`x` est le nombre de séries de la routine**, pas « 3 et 2 » d'office. La demande disait « x » et « par exemple » ; le 3 / 2 ne sert que
-  quand la routine n'en dit rien. **Question restée ouverte** : le coach doit-il aussi *proposer* le nombre de séries par type d'exercice, et
-  l'écrire dans la routine ? Rien ne l'écrit aujourd'hui.
+  quand la routine n'en dit rien. **Tranché avec l'utilisateur** à qui j'ai demandé si le coach devait aussi *proposer* le nombre de séries
+  par type d'exercice et l'écrire dans la routine : « JSP, tu proposes quoi ? » — proposition : 3 / 2 en défaut seulement, rien d'écrit,
+  parce que le nombre de séries d'un muscle est déjà l'affaire de R6 et qu'une série à l'échec ne dit pas combien de séries on récupère.
+  Il a répondu « oui, publie la v2.13.0 ».
 - **Les constantes de fatigue sont au pif**, comme les « 3 et 2 ». 10 % de répétitions en moins par série est un ordre de grandeur courant,
   pas une mesure de la personne. Elles sont nommées, en un seul fichier ; le jour où un bilan paraît faux, on corrige là.
 - **Une pyramide compte pour une série** (la première est dimensionnée pour elle-même, les autres suivent du même écart). Pour une montée
