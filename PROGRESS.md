@@ -5,14 +5,14 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — branche de session `ccr-57f17af8-maxzqv`, à fusionner dans `master` et à
-publier en **v2.12.0** sur demande de l'utilisateur (« une fois fini, merge, push et versionne »).
-Dernière version publiée avant elle : **v2.11.1** (2026-10-13).
+**Dernière mise à jour :** 2026-10-15 — la branche de session `ccr-57f17af8-maxzqv` est **fusionnée dans `master`**
+(`--no-ff`) ; **v2.12.0** est préparée (`package.json` à 2.12.0) et se publie par le `workflow_dispatch` d'`android.yml`
+avec `release_tag`. Dernière version publiée avant elle : **v2.11.1** (2026-10-13).
 
 ## Où on en est
 
-- **Publié : v2.11.1** (PWA et APK) ; **v2.12.0** est préparée sur la branche de session.
-- **Portes**, sur la branche : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 527 tests**, 299 fichiers,
+- **Publié : v2.11.1** (PWA et APK) ; **v2.12.0** est en cours de publication.
+- **Portes**, sur `master` : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 527 tests**, 299 fichiers,
   1 ignoré), `build` et `test:e2e` (**34 parcours**, 8 fichiers, à 390 px).
 - **Branches distantes.** `ccr-449df1c1-etmya3`, fusionnée, est à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois
