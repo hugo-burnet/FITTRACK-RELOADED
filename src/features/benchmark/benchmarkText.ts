@@ -1,6 +1,11 @@
 import { t } from '@/i18n/fr';
 import { partReading } from '@/i18n/labels';
-import { BENCHMARK_MAX_REPS, type BenchmarkLine, type BenchmarkProposal } from '@/lib/benchmark';
+import {
+  BENCHMARK_MAX_REPS,
+  BENCHMARK_RESERVE_REPS,
+  type BenchmarkLine,
+  type BenchmarkProposal,
+} from '@/lib/benchmark';
 import { performedParts, repsReading } from '@/lib/measurement';
 
 /**
@@ -38,10 +43,31 @@ export function zoneReading(line: BenchmarkLine): string | undefined {
   return part === undefined ? undefined : t('benchmark.zone', { range: partReading(part) });
 }
 
-/** La mise en garde d'une estimation tirée d'un essai loin de la fourchette. */
+/** Les répétitions que la première série doit tenir : un nombre entier, la précision du modèle n'en dit pas plus. */
+const capacityReps = (line: BenchmarkLine): number | undefined =>
+  line.referenceReps === undefined ? undefined : Math.round(line.referenceReps);
+
+/**
+ * Sur quoi la charge conseillée est calculée : le nombre de séries, ce que la première tient à fond, ce que la
+ * dernière garde en réserve. Une seule série n'a pas de « dernière » à nommer.
+ */
+export function basisReading(line: BenchmarkLine): string | undefined {
+  const reps = capacityReps(line);
+  if (line.plannedSets === undefined || reps === undefined) return undefined;
+  return line.plannedSets === 1
+    ? t('benchmark.suggestedBasisOne', { reps })
+    : t('benchmark.suggestedBasis', {
+        sets: line.plannedSets,
+        reps,
+        reserve: BENCHMARK_RESERVE_REPS,
+      });
+}
+
+/** La mise en garde d'une estimation tirée d'un essai loin de ce que la première série doit tenir. */
 export function roughReading(line: BenchmarkLine): string | undefined {
-  if (line.rough !== true || line.tested?.reps === undefined) return undefined;
-  return t('benchmark.rough', { reps: line.tested.reps });
+  const target = capacityReps(line);
+  if (line.rough !== true || line.tested?.reps === undefined || target === undefined) return undefined;
+  return t('benchmark.rough', { reps: line.tested.reps, target });
 }
 
 /** Ce que la routine dit de cet exercice — ou rien, quand la ligne se suffit. */

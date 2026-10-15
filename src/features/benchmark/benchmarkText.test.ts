@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { BenchmarkLine } from '@/lib/benchmark';
 import {
   appliedReading,
+  basisReading,
   loadReading,
   oneRepMaxReading,
   proposalMark,
@@ -19,8 +20,9 @@ const line = (overrides: Partial<BenchmarkLine> = {}): BenchmarkLine => ({
   verdict: 'calibrated',
   tested: { weight: 80, reps: 9 },
   oneRepMax: 104,
-  referenceReps: 10,
-  suggestedKg: 77.5,
+  plannedSets: 3,
+  referenceReps: 12.3457,
+  suggestedKg: 72.5,
   currentKg: 70,
   ...overrides,
 });
@@ -90,11 +92,32 @@ describe('les lectures du bilan', () => {
     expect(zoneReading(line({ zone: undefined }))).toBeUndefined();
   });
 
-  it('met en garde contre une estimation tirée d’un essai loin de la fourchette, et d’elle seule', () => {
+  it('dit sur combien de séries la charge est calculée, ce que la première tient à fond et la réserve de la dernière', () => {
+    expect(basisReading(line())).toBe(
+      'Pour 3 séries : environ 12 répétitions à fond à la première, 2 en réserve à la dernière.',
+    );
+    expect(basisReading(line({ plannedSets: 6, referenceReps: 16.9351 }))).toBe(
+      'Pour 6 séries : environ 17 répétitions à fond à la première, 2 en réserve à la dernière.',
+    );
+  });
+
+  it('n’a pas de « dernière série » à nommer quand il n’y en a qu’une', () => {
+    expect(basisReading(line({ plannedSets: 1, referenceReps: 10 }))).toBe(
+      'Pour une série : environ 10 répétitions à fond.',
+    );
+  });
+
+  it('ne dit rien de la base d’une ligne qui n’a pas de charge conseillée', () => {
+    expect(basisReading(line({ plannedSets: undefined }))).toBeUndefined();
+    expect(basisReading(line({ referenceReps: undefined }))).toBeUndefined();
+  });
+
+  it('met en garde contre une estimation tirée d’un essai loin de ce que la première série doit tenir, et d’elle seule', () => {
     expect(roughReading(line({ rough: true, tested: { weight: 40, reps: 25 } }))).toMatch(
-      /Estimation approximative : 25 répétitions/,
+      /Estimation approximative : 25 répétitions, c’est loin des 12 que la première série doit tenir/,
     );
     expect(roughReading(line())).toBeUndefined();
+    expect(roughReading(line({ rough: true, referenceReps: undefined }))).toBeUndefined();
   });
 
   it('accorde le compte des exercices mis à jour', () => {

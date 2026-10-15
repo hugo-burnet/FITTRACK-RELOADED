@@ -8,6 +8,7 @@ import {
   type BenchmarkRoutineRow,
 } from '@/lib/benchmark';
 import type { CoachSignal } from '@/lib/coach/types';
+import { exerciseClass } from '@/lib/exerciseClass';
 import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { isWorkingSet } from '@/lib/records';
 import { alive, newEntity, touch } from './base';
@@ -198,6 +199,15 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
         ...(exercise?.loadIncrementKg === undefined
           ? {}
           : { loadIncrementKg: exercise.loadIncrementKg }),
+        // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
+        // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
+        // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
+        restSeconds: row.restSeconds,
+        exerciseClass: exerciseClass({
+          ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
+          ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
+          ...(identity.secondaryMuscles === undefined ? {} : { secondaryMuscles: identity.secondaryMuscles }),
+        }),
         sets: performed.map((set) => ({
           ...(set.weight === undefined ? {} : { weight: set.weight }),
           ...(set.reps === undefined ? {} : { reps: set.reps }),

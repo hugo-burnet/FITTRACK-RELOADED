@@ -170,13 +170,18 @@ function constatMessage(signal: SignalLike): string {
         targetReps: evidenceValue(signal, 'target_reps'),
         targetRepsMax: evidenceValue(signal, 'target_reps_max'),
       });
-      return t('coach.benchmark_calibrated', {
+      const sets = evidenceValue(signal, 'planned_sets') ?? 1;
+      const values = {
         reps: evidenceValue(signal, 'tested_reps') ?? 0,
         tested: formatNumber(evidenceValue(signal, 'tested_load_kg') ?? 0),
         max: formatNumber(evidenceValue(signal, 'one_rep_max_kg') ?? 0),
         range: range === undefined ? '' : partReading(range),
         weight: formatNumber(resolvedNextLoadKg(signal) ?? 0),
-      });
+      };
+      // Une seule série : « ta fourchette ». Plusieurs : on dit combien, c'est ce que la charge tient.
+      return sets > 1
+        ? t('coach.benchmarkCalibratedSets', { ...values, sets })
+        : t('coach.benchmark_calibrated', values);
     }
     case 'long_rest':
       return t('coach.long_rest', {

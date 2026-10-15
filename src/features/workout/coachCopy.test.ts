@@ -350,29 +350,42 @@ describe('coachSignalMessage — cran à absorber (R3.2)', () => {
 });
 
 describe('coachSignalMessage — benchmark', () => {
-  const calibrated = (range: [number, number]): CoachSignal => ({
+  const calibrated = (range: [number, number], plannedSets?: number, nextLoadKg = 77.5): CoachSignal => ({
     exerciseId: 'bench',
     code: 'benchmark_calibrated',
     severity: 36,
-    nextLoadKg: 77.5,
+    nextLoadKg,
     evidence: [
       { label: 'tested_load_kg', value: 80 },
       { label: 'tested_reps', value: 9 },
       { label: 'one_rep_max_kg', value: 104 },
       { label: 'target_reps', value: range[0] },
       { label: 'target_reps_max', value: range[1] },
+      ...(plannedSets === undefined ? [] : [{ label: 'planned_sets', value: plannedSets }]),
       { label: 'reference_reps', value: range[0] + 2 },
     ],
   });
 
   it('dit ce qui a été mesuré, et la charge pour la fourchette de l’exercice', () => {
-    expect(coachSignalMessage(calibrated([8, 12]))).toBe(
+    expect(coachSignalMessage(calibrated([8, 12], 1))).toBe(
       'Benchmark : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.',
     );
   });
 
+  it('dit sur combien de séries la charge est calculée dès qu’il y en a plusieurs', () => {
+    expect(coachSignalMessage(calibrated([8, 12], 3, 72.5))).toBe(
+      'Benchmark : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour 3 séries de 8 – 12 reps, démarre à 72,5 kg.',
+    );
+    expect(coachSignalMessage(calibrated([5, 5], 5, 95))).toContain('Pour 5 séries de 5 reps, démarre à 95 kg.');
+  });
+
+  it('lit un objectif sans nombre de séries comme une seule série : la fourchette, sans compte', () => {
+    expect(coachSignalMessage(calibrated([8, 12]))).toContain('Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.');
+  });
+
   it('écrit une cible unique comme telle, et une fourchette haute sans la tronquer', () => {
-    expect(coachSignalMessage(calibrated([20, 20]))).toContain('ta fourchette (20 reps)');
-    expect(coachSignalMessage(calibrated([15, 20]))).toContain('ta fourchette (15 – 20 reps)');
+    expect(coachSignalMessage(calibrated([20, 20], 1))).toContain('ta fourchette (20 reps)');
+    expect(coachSignalMessage(calibrated([15, 20], 1))).toContain('ta fourchette (15 – 20 reps)');
+    expect(coachSignalMessage(calibrated([15, 20], 2))).toContain('Pour 2 séries de 15 – 20 reps');
   });
 });

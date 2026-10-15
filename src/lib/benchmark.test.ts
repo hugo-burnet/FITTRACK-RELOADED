@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BENCHMARK_DEFAULT_SETS,
+  BENCHMARK_MAX_PLANNED_SETS,
   BENCHMARK_MAX_REPS,
   benchmarkLine,
   benchmarkSignal,
+  capacityForSets,
   floorLoad,
   loadForReps,
   oneRepMaxOf,
-  referenceReps,
+  plannedSets,
   repZone,
+  setFatigue,
   type BenchmarkLineInput,
 } from './benchmark';
 
@@ -37,9 +41,116 @@ describe('oneRepMaxOf / loadForReps', () => {
     expect(oneRepMaxOf(0, 5)).toBeUndefined();
     expect(oneRepMaxOf(-10, 5)).toBeUndefined();
     expect(oneRepMaxOf(Number.NaN, 5)).toBeUndefined();
-    expect(loadForReps(100, 0)).toBeUndefined();
+    expect(loadForReps(100, 0.5)).toBeUndefined();
     expect(loadForReps(100, BENCHMARK_MAX_REPS + 1)).toBeUndefined();
     expect(loadForReps(0, 5)).toBeUndefined();
+    expect(loadForReps(100, Number.NaN)).toBeUndefined();
+  });
+
+  it('lit une capacité qui n’est pas un nombre entier : une série n’en compte pas, la capacité qu’on vise, si', () => {
+    // 140 / (1 + 12,5/30) = 98,82 — la charge d'une série de douze répétitions et demie.
+    expect(loadForReps(140, 12.5)).toBeCloseTo(98.8235, 3);
+    expect(loadForReps(140, 12.5)!).toBeLessThan(loadForReps(140, 12)!);
+  });
+});
+
+describe('setFatigue — la part de la capacité perdue à chaque série de plus, à charge égale', () => {
+  it('vaut 10 % pour un polyarticulaire avec deux minutes de repos, 8 % pour une isolation', () => {
+    expect(setFatigue('compound', 120)).toBeCloseTo(0.1, 10);
+    expect(setFatigue('isolation', 120)).toBeCloseTo(0.08, 10);
+  });
+
+  it('monte quand le repos raccourcit, descend quand il s’allonge, et reste dans ses bornes', () => {
+    expect(setFatigue('compound', 60)).toBeCloseTo(0.2, 10);
+    expect(setFatigue('compound', 90)).toBeCloseTo(0.1333, 3);
+    expect(setFatigue('compound', 180)).toBeCloseTo(0.0667, 3);
+    // Les bornes : au plus le double, au moins six dixièmes.
+    expect(setFatigue('compound', 20)).toBeCloseTo(0.2, 10);
+    expect(setFatigue('compound', 600)).toBeCloseTo(0.06, 10);
+  });
+
+  it('compte deux minutes quand le repos n’est pas connu, ou n’a pas de sens', () => {
+    expect(setFatigue('compound', undefined)).toBeCloseTo(0.1, 10);
+    expect(setFatigue('compound', 0)).toBeCloseTo(0.1, 10);
+    expect(setFatigue('compound', -30)).toBeCloseTo(0.1, 10);
+    expect(setFatigue('compound', Number.NaN)).toBeCloseTo(0.1, 10);
+  });
+});
+
+describe('plannedSets — sur combien de séries la charge doit tenir', () => {
+  const sets = (...weights: (number | undefined)[]) => weights.map((targetWeight) => ({ targetWeight }));
+
+  it('compte les séries de travail de la routine', () => {
+    expect(plannedSets(sets(70, 70, 70), 'compound')).toBe(3);
+    expect(plannedSets(sets(70, 70), 'isolation')).toBe(2);
+    expect(plannedSets(sets(undefined, undefined, undefined, undefined), 'compound')).toBe(4);
+    expect(plannedSets(sets(70), 'compound')).toBe(1);
+  });
+
+  it('lit une pyramide comme une série seule : la première est dimensionnée pour elle-même, les autres suivent', () => {
+    expect(plannedSets(sets(60, 70, 80), 'compound')).toBe(1);
+    // Deux charges suffisent, dans un sens comme dans l'autre : une montée de 60 à 70, ou une série lourde
+    // suivie de séries plus légères.
+    expect(plannedSets(sets(60, 70), 'compound')).toBe(1);
+    expect(plannedSets(sets(80, 70, 70), 'compound')).toBe(1);
+    // Une série sans charge ne fait pas une pyramide.
+    expect(plannedSets(sets(70, undefined, 70), 'compound')).toBe(3);
+  });
+
+  it('plafonne : au-delà de six séries à charge égale, personne ne les mène toutes près de l’échec', () => {
+    expect(plannedSets(sets(...Array.from({ length: 10 }, () => 50)), 'compound')).toBe(
+      BENCHMARK_MAX_PLANNED_SETS,
+    );
+  });
+
+  it('retombe sur trois séries pour un polyarticulaire et deux pour une isolation quand la routine n’en dit rien', () => {
+    expect(plannedSets([], 'compound')).toBe(BENCHMARK_DEFAULT_SETS.compound);
+    expect(plannedSets([], 'isolation')).toBe(BENCHMARK_DEFAULT_SETS.isolation);
+    expect(BENCHMARK_DEFAULT_SETS).toEqual({ compound: 3, isolation: 2 });
+  });
+});
+
+describe('capacityForSets — ce que la première série doit pouvoir faire pour que la dernière tienne le bas de la fourchette', () => {
+  it('vaut le bas de fourchette plus la réserve pour une seule série', () => {
+    expect(capacityForSets(8, 1, 0.1)).toBe(10);
+    expect(capacityForSets(5, 1, 0.1)).toBe(7);
+    // Les fourchettes hautes : un 15 – 20 se dimensionne sur 17, un 18 sur 20, un 20 sur 22.
+    expect(capacityForSets(15, 1, 0.1)).toBe(17);
+    expect(capacityForSets(18, 1, 0.1)).toBe(20);
+    expect(capacityForSets(20, 1, 0.1)).toBe(22);
+  });
+
+  it('grandit à chaque série de plus : la dernière tient le bas, avec la réserve, malgré la fatigue des précédentes', () => {
+    // (8 + 2) / 0,9^(x − 1)
+    expect(capacityForSets(8, 2, 0.1)).toBeCloseTo(11.1111, 3);
+    expect(capacityForSets(8, 3, 0.1)).toBeCloseTo(12.3457, 3);
+    expect(capacityForSets(8, 4, 0.1)).toBeCloseTo(13.7174, 3);
+    expect(capacityForSets(5, 5, 0.1)).toBeCloseTo(10.6691, 3);
+  });
+
+  it('ne grandit pas sans fatigue', () => {
+    expect(capacityForSets(8, 5, 0)).toBe(10);
+  });
+
+  it('ne dépasse pas le domaine de la formule', () => {
+    expect(capacityForSets(29, 1, 0.1)).toBe(BENCHMARK_MAX_REPS);
+    expect(capacityForSets(40, 1, 0.1)).toBe(BENCHMARK_MAX_REPS);
+    expect(capacityForSets(25, 6, 0.2)).toBe(BENCHMARK_MAX_REPS);
+  });
+
+  it('ne compte pas plus de six séries', () => {
+    expect(capacityForSets(8, 10, 0.1)).toBeCloseTo(capacityForSets(8, BENCHMARK_MAX_PLANNED_SETS, 0.1), 10);
+    expect(capacityForSets(8, 7, 0.1)).toBeCloseTo(16.9351, 3);
+  });
+
+  it('lit un nombre de séries inutilisable comme une série, et un bas inutilisable comme le bas de 8 – 12', () => {
+    expect(capacityForSets(8, 0, 0.1)).toBe(10);
+    expect(capacityForSets(8, Number.NaN, 0.1)).toBe(10);
+    expect(capacityForSets(8, 2.5, 0.1)).toBe(10);
+    expect(capacityForSets(undefined, 1, 0.1)).toBe(10);
+    expect(capacityForSets(0, 1, 0.1)).toBe(10);
+    expect(capacityForSets(-3, 1, 0.1)).toBe(10);
+    expect(capacityForSets(6.5, 1, 0.1)).toBe(10);
   });
 });
 
@@ -64,31 +175,6 @@ describe('repZone', () => {
     expect(repZone(0, 5)).toEqual({ low: 8, high: 12 });
     expect(repZone(-3, undefined)).toEqual({ low: 8, high: 12 });
     expect(repZone(6.5, 8)).toEqual({ low: 8, high: 12 });
-  });
-});
-
-describe('referenceReps', () => {
-  it('garde deux répétitions en réserve au bas de la fourchette', () => {
-    expect(referenceReps(8)).toBe(10);
-    expect(referenceReps(5)).toBe(7);
-  });
-
-  it('suit les fourchettes hautes : un 15 – 20 se dimensionne sur 17, un 20 sur 22', () => {
-    expect(referenceReps(15)).toBe(17);
-    expect(referenceReps(18)).toBe(20);
-    expect(referenceReps(20)).toBe(22);
-  });
-
-  it('ne sort pas du domaine de la formule', () => {
-    expect(referenceReps(29)).toBe(BENCHMARK_MAX_REPS);
-    expect(referenceReps(40)).toBe(BENCHMARK_MAX_REPS);
-  });
-
-  it('retombe sur 8 quand la routine ne prescrit rien d’exploitable', () => {
-    expect(referenceReps(undefined)).toBe(10);
-    expect(referenceReps(0)).toBe(10);
-    expect(referenceReps(-3)).toBe(10);
-    expect(referenceReps(6.5)).toBe(10);
   });
 });
 
@@ -139,16 +225,18 @@ const bench = (overrides: Partial<BenchmarkLineInput> = {}): BenchmarkLineInput 
 });
 
 describe('benchmarkLine — une fourchette de 8 à 12', () => {
-  it('transforme un max en charge de travail qui garde deux répétitions en réserve au bas de la fourchette', () => {
+  it('transforme un max en charge de travail qui tient les séries de la routine, deux répétitions en réserve à la dernière', () => {
     const line = benchmarkLine(bench());
 
     expect(line.verdict).toBe('calibrated');
     expect(line.tested).toEqual({ weight: 80, reps: 9 });
     expect(line.zone).toEqual({ low: 8, high: 12 });
-    // 80 × (1 + 9/30) = 104 ; 104 / (1 + 10/30) = 78 → 77,5 sur une grille de 2,5.
+    // 80 × (1 + 9/30) = 104. Trois séries à 10 % de fatigue : la première doit pouvoir faire
+    // 10 / 0,9² = 12,35 répétitions, soit 104 / (1 + 12,35/30) = 73,7 → 72,5 sur une grille de 2,5.
     expect(line.oneRepMax).toBeCloseTo(104, 8);
-    expect(line.referenceReps).toBe(10);
-    expect(line.suggestedKg).toBe(77.5);
+    expect(line.plannedSets).toBe(3);
+    expect(line.referenceReps).toBeCloseTo(12.3457, 3);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.currentKg).toBe(70);
     expect(line.rough).toBeUndefined();
     expect(line.proposal).toEqual({
@@ -157,12 +245,30 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
       targetSetIds: ['s0', 's1', 's2'],
       anchorSetId: 's0',
       fromWeight: 70,
-      proposedWeight: 77.5,
-      deltaKg: 7.5,
+      proposedWeight: 72.5,
+      deltaKg: 2.5,
     });
   });
 
-  it('laisse en paix les séries d’échauffement de la routine', () => {
+  it('baisse la charge à chaque série de plus : la même série, une, deux, trois, quatre séries au programme', () => {
+    const suggestedFor = (count: number) =>
+      benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) })).suggestedKg;
+
+    // 104 / (1 + c / 30), c = 10, 11,11, 12,35, 13,72 : 78, 75,9, 73,7, 71,4 — sur une grille de 2,5.
+    expect([1, 2, 3, 4].map(suggestedFor)).toEqual([77.5, 75, 72.5, 70]);
+  });
+
+  it('n’en compte pas plus de six', () => {
+    const suggestedFor = (count: number) =>
+      benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) }));
+
+    expect(suggestedFor(10).plannedSets).toBe(BENCHMARK_MAX_PLANNED_SETS);
+    expect(suggestedFor(10).suggestedKg).toBe(suggestedFor(6).suggestedKg);
+    // 104 / (1 + 16,94/30) = 66,5 → 65.
+    expect(suggestedFor(6).suggestedKg).toBe(65);
+  });
+
+  it('laisse en paix les séries d’échauffement de la routine, et ne les compte pas', () => {
     const line = benchmarkLine(
       bench({
         routine: {
@@ -177,11 +283,16 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
     );
 
     expect(line.proposal?.targetSetIds).toEqual(['a', 'b']);
+    // Deux séries de travail, pas trois : 104 / (1 + 11,11/30) = 75,9 → 75.
+    expect(line.plannedSets).toBe(2);
+    expect(line.suggestedKg).toBe(75);
   });
 
-  it('décale une pyramide en bloc au lieu de l’aplatir', () => {
+  it('décale une pyramide en bloc au lieu de l’aplatir, la première série dimensionnée pour elle-même', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([60, 70, 80]) }));
 
+    expect(line.plannedSets).toBe(1);
+    expect(line.suggestedKg).toBe(77.5);
     expect(line.proposal?.deltaKg).toBe(17.5);
     expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2']);
     expect(line.currentKg).toBe(80);
@@ -195,10 +306,10 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
   });
 
   it('n’écrit rien quand la routine porte déjà la charge calibrée', () => {
-    const line = benchmarkLine(bench({ routine: workingRoutine([77.5, 77.5]) }));
+    const line = benchmarkLine(bench({ routine: workingRoutine([72.5, 72.5, 72.5]) }));
 
     expect(line.verdict).toBe('calibrated');
-    expect(line.suggestedKg).toBe(77.5);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.proposal).toBeUndefined();
     expect(line.aligned).toBe(true);
   });
@@ -212,17 +323,32 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
       exerciseId: 'bench',
       targetSetIds: ['s0', 's1'],
       anchorSetId: 's0',
-      proposedWeight: 77.5,
+      proposedWeight: 75,
     });
   });
 
-  it('donne la charge sans écrire quand l’exercice n’est plus dans la routine, sur la fourchette par défaut', () => {
+  it('donne la charge sans écrire quand l’exercice n’est plus dans la routine : fourchette et séries par défaut', () => {
     const line = benchmarkLine(bench({ routine: undefined }));
 
     expect(line.zone).toEqual({ low: 8, high: 12 });
-    expect(line.suggestedKg).toBe(77.5);
+    // Trois séries pour un polyarticulaire : la même charge que pour une routine de trois séries.
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.proposal).toBeUndefined();
     expect(line.aligned).toBeUndefined();
+  });
+
+  it('compte le défaut de la classe quand la routine ne porte que des échauffements : deux séries pour une isolation', () => {
+    const warmupOnly = {
+      routineExerciseId: 'row-1',
+      sets: [{ id: 'w', setType: 'warmup' as const, targetReps: 10, targetWeight: 40 }],
+    };
+
+    expect(benchmarkLine(bench({ routine: warmupOnly })).plannedSets).toBe(3);
+    const isolation = benchmarkLine(bench({ routine: warmupOnly, exerciseClass: 'isolation' }));
+    expect(isolation.plannedSets).toBe(2);
+    // Rien à réécrire : aucune série de travail à décaler.
+    expect(isolation.proposal).toBeUndefined();
   });
 
   it('retient la série au plus haut max estimé quand il y en a plusieurs', () => {
@@ -238,28 +364,31 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
 
     expect(line.tested).toEqual({ weight: 80, reps: 12 });
     expect(line.oneRepMax).toBeCloseTo(112, 8);
+    // 112 / (1 + 12,35/30) = 79,3 → 77,5.
+    expect(line.suggestedKg).toBe(77.5);
   });
 
   it('compte un pas saisi sur l’exercice à partir de la charge essayée', () => {
     const line = benchmarkLine(bench({ loadIncrementKg: 1.125 }));
 
-    // idéal 78 ; 80 − 1 × 1,125 = 78,875 est au-dessus, 80 − 2 × 1,125 = 77,75 en dessous.
-    expect(line.suggestedKg).toBe(77.75);
+    // idéal 73,68 ; 80 − 5 × 1,125 = 74,375 est au-dessus, 80 − 6 × 1,125 = 73,25 en dessous.
+    expect(line.suggestedKg).toBe(73.25);
   });
 
   it('lit un single comme le max lui-même', () => {
     const line = benchmarkLine(bench({ sets: [{ weight: 130, reps: 1 }] }));
 
     expect(line.oneRepMax).toBe(130);
-    // 130 / (1 + 10/30) = 97,5
-    expect(line.suggestedKg).toBe(97.5);
+    // 130 / (1 + 12,35/30) = 92,1 → 90.
+    expect(line.suggestedKg).toBe(90);
   });
 
   it('dimensionne sur le bas de la première série de travail de la routine', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([70], 5, 5) }));
 
-    // 104 / (1 + 7/30) = 84,3 → 82,5.
+    // Une seule série : 104 / (1 + 7/30) = 84,3 → 82,5.
     expect(line.zone).toEqual({ low: 5, high: 5 });
+    expect(line.plannedSets).toBe(1);
     expect(line.referenceReps).toBe(7);
     expect(line.suggestedKg).toBe(82.5);
   });
@@ -270,6 +399,7 @@ describe('benchmarkLine — les fourchettes hautes', () => {
     const line = benchmarkLine(
       bench({
         equipment: 'cable',
+        exerciseClass: 'isolation',
         sets: [{ weight: 40, reps: 22 }],
         routine: workingRoutine([35, 35], 15, 20),
       }),
@@ -277,15 +407,74 @@ describe('benchmarkLine — les fourchettes hautes', () => {
 
     expect(line.verdict).toBe('calibrated');
     expect(line.zone).toEqual({ low: 15, high: 20 });
-    expect(line.referenceReps).toBe(17);
-    // 40 × (1 + 22/30) = 69,33 ; 69,33 / (1 + 17/30) = 44,25 → 42,5 sur la grille du câble.
+    // Deux séries d'une isolation (8 % de fatigue) : la première doit pouvoir faire 17 / 0,92 = 18,48
+    // répétitions. 40 × (1 + 22/30) = 69,33 ; 69,33 / (1 + 18,48/30) = 42,9 → 42,5 sur la grille du câble.
+    expect(line.plannedSets).toBe(2);
+    expect(line.referenceReps).toBeCloseTo(18.4783, 3);
     expect(line.oneRepMax).toBeCloseTo(69.3333, 3);
     expect(line.suggestedKg).toBe(42.5);
     expect(line.rough).toBeUndefined();
     expect(line.proposal?.deltaKg).toBe(7.5);
   });
 
-  it('ne plafonne plus à 12 : la même série lue sur une fourchette de 8 à 12 donnerait bien plus lourd', () => {
+  it('retrouve l’exemple de la personne : 80 kg, 17 répétitions, un 15 – 20 sur trois séries', () => {
+    const input = (overrides: Partial<BenchmarkLineInput>) =>
+      bench({ sets: [{ weight: 80, reps: 17 }], routine: workingRoutine([70, 70, 70], 15, 20), ...overrides });
+
+    // 80 × (1 + 17/30) = 125,3. Polyarticulaire : 17 / 0,9² = 20,99 répétitions pour la première série,
+    // 125,3 / (1 + 20,99/30) = 73,7 → 72,5. L'essai en est à 4 répétitions : fiable.
+    const compound = benchmarkLine(input({}));
+    expect(compound.suggestedKg).toBe(72.5);
+    expect(compound.referenceReps).toBeCloseTo(20.9877, 3);
+    expect(compound.rough).toBeUndefined();
+
+    // Une isolation fatigue moins : 17 / 0,92² = 20,09 répétitions → 75,07 → 75.
+    const isolation = benchmarkLine(input({ exerciseClass: 'isolation' }));
+    expect(isolation.suggestedKg).toBe(75);
+    expect(isolation.referenceReps).toBeCloseTo(20.0851, 3);
+    expect(isolation.referenceReps!).toBeLessThan(compound.referenceReps!);
+  });
+
+  it('descend la charge quand le repos raccourcit, la monte quand il s’allonge', () => {
+    const withRest = (restSeconds: number) =>
+      benchmarkLine(
+        bench({
+          sets: [{ weight: 80, reps: 17 }],
+          routine: workingRoutine([70, 70, 70], 15, 20),
+          restSeconds,
+        }),
+      ).suggestedKg;
+
+    // Une minute : 20 % de fatigue, 17 / 0,8² = 26,6 répétitions → 66,5 → 65.
+    // Trois minutes : 6,7 %, 17 / 0,933² = 19,5 répétitions → 75,9 → 75.
+    expect([60, 120, 180].map(withRest)).toEqual([65, 72.5, 75]);
+  });
+
+  it('compte deux minutes sans repos connu : la même charge qu’un repos de 120 secondes', () => {
+    const sets = [{ weight: 80, reps: 17 }];
+    const routine = workingRoutine([70, 70, 70], 15, 20);
+
+    expect(benchmarkLine(bench({ sets, routine })).referenceReps).toBe(
+      benchmarkLine(bench({ sets, routine, restSeconds: 120 })).referenceReps,
+    );
+  });
+
+  it('plafonne la capacité exigée à 30 répétitions : six séries d’un 20 ne demandent pas plus que la formule ne sait dire', () => {
+    const line = benchmarkLine(
+      bench({
+        equipment: 'cable',
+        sets: [{ weight: 30, reps: 21 }],
+        routine: workingRoutine([25, 25, 25, 25, 25, 25], 20, 20),
+      }),
+    );
+
+    expect(line.plannedSets).toBe(6);
+    expect(line.referenceReps).toBe(BENCHMARK_MAX_REPS);
+    // 30 × 1,7 = 51 ; 51 / (1 + 30/30) = 25,5 → 25.
+    expect(line.suggestedKg).toBe(25);
+  });
+
+  it('ne plafonne pas à 12 : la même série lue sur une fourchette de 8 à 12 donnerait bien plus lourd', () => {
     const high = benchmarkLine(
       bench({ equipment: 'cable', sets: [{ weight: 40, reps: 16 }], routine: workingRoutine([35], 15, 20) }),
     );
@@ -306,6 +495,7 @@ describe('benchmarkLine — les fourchettes hautes', () => {
     );
 
     expect(line.zone).toEqual({ low: 20, high: 20 });
+    expect(line.plannedSets).toBe(1);
     expect(line.referenceReps).toBe(22);
     // 30 × 1,7 = 51 ; 51 / (1 + 22/30) = 29,42 → 27,5.
     expect(line.suggestedKg).toBe(27.5);
@@ -352,13 +542,24 @@ describe('benchmarkLine — les fourchettes hautes', () => {
 });
 
 describe('benchmarkLine — un essai loin de la fourchette', () => {
-  it('reste fiable jusqu’à six répétitions d’écart avec la référence, approximatif au-delà', () => {
-    // Fourchette 8 – 12, référence 10 : 16 est à six, 17 est à sept.
-    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 16 }] })).rough).toBeUndefined();
-    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 17 }] })).rough).toBe(true);
+  const single = workingRoutine([70]);
+
+  it('reste fiable jusqu’à six répétitions d’écart avec la capacité exigée, approximatif au-delà', () => {
+    // Une série d'un 8 – 12 : la capacité exigée est 10 ; 16 est à six, 17 est à sept.
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 16 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 17 }] })).rough).toBe(true);
     // Dans l'autre sens : 4 est à six, 3 est à sept.
-    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 4 }] })).rough).toBeUndefined();
-    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 3 }] })).rough).toBe(true);
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 4 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 3 }] })).rough).toBe(true);
+  });
+
+  it('juge l’écart sur la capacité de la première série, pas sur le bas de la fourchette plus la réserve', () => {
+    // Trois séries d'un 8 – 12 : la capacité exigée est 12,35, pas 10. 18 est à 5,65 : fiable ; 19 est à 6,65.
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 18 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 19 }] })).rough).toBe(true);
+    // Dans l'autre sens : 6 est à 6,35, 7 à 5,35.
+    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 7 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 6 }] })).rough).toBe(true);
   });
 
   it('propose quand même une charge, mais la dit approximative', () => {
@@ -458,7 +659,7 @@ describe('benchmarkSignal — ce que le coach lit', () => {
     expect(signal).toEqual({
       code: 'benchmark_calibrated',
       exerciseId: 'bench',
-      nextLoadKg: 77.5,
+      nextLoadKg: 72.5,
       severity: expect.any(Number),
       evidence: [
         { label: 'tested_load_kg', value: 80 },
@@ -466,13 +667,15 @@ describe('benchmarkSignal — ce que le coach lit', () => {
         { label: 'one_rep_max_kg', value: 104 },
         { label: 'target_reps', value: 8 },
         { label: 'target_reps_max', value: 12 },
-        { label: 'reference_reps', value: 10 },
+        { label: 'planned_sets', value: 3 },
+        // 12,3457 arrondi à une décimale : un chiffre de plus en dirait plus que le modèle n'en sait.
+        { label: 'reference_reps', value: 12.3 },
         { label: 'current_load_kg', value: 70 },
       ],
     });
   });
 
-  it('suit la fourchette de l’exercice : un 15 – 20 dit 15, 20 et 17', () => {
+  it('suit la fourchette de l’exercice : un 15 – 20 dit 15, 20, une série et 17', () => {
     const signal = benchmarkSignal(
       benchmarkLine(
         bench({
@@ -486,7 +689,17 @@ describe('benchmarkSignal — ce que le coach lit', () => {
     expect(signal?.nextLoadKg).toBe(42.5);
     expect(signal?.evidence).toContainEqual({ label: 'target_reps', value: 15 });
     expect(signal?.evidence).toContainEqual({ label: 'target_reps_max', value: 20 });
+    expect(signal?.evidence).toContainEqual({ label: 'planned_sets', value: 1 });
     expect(signal?.evidence).toContainEqual({ label: 'reference_reps', value: 17 });
+  });
+
+  it('dit le nombre de séries sur lequel la charge a été dimensionnée', () => {
+    const planned = (count: number) =>
+      benchmarkSignal(
+        benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) })),
+      )?.evidence.find((item) => item.label === 'planned_sets')?.value;
+
+    expect([1, 2, 4].map(planned)).toEqual([1, 2, 4]);
   });
 
   it('ne dit pas la charge actuelle d’une routine qui n’en porte pas', () => {
@@ -500,7 +713,7 @@ describe('benchmarkSignal — ce que le coach lit', () => {
   });
 
   it('en pose un quand l’exercice n’est plus dans la routine : la bibliothèque le garde', () => {
-    expect(benchmarkSignal(benchmarkLine(bench({ routine: undefined })))?.nextLoadKg).toBe(77.5);
+    expect(benchmarkSignal(benchmarkLine(bench({ routine: undefined })))?.nextLoadKg).toBe(72.5);
   });
 
   it('ne reprend pas une estimation approximative : le coach ne pousse pas une extrapolation', () => {

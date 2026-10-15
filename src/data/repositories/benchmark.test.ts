@@ -40,7 +40,8 @@ interface SetSpec {
 async function seedExercise(partial: Partial<Exercise> & Pick<Exercise, 'name'>): Promise<Exercise> {
   const exercise = newEntity<Exercise>({
     primaryMuscle: 'chest',
-    secondaryMuscles: [],
+    secondaryMuscles: ['triceps', 'shoulders'],
+    movementPattern: 'poussee_horizontale',
     equipment: 'barbell',
     measurementType: 'weight_reps',
     isCustom: 0,
@@ -217,12 +218,15 @@ describe('loadBenchmarkReport', () => {
       exerciseName: 'Développé couché',
       verdict: 'calibrated',
       tested: { weight: 80, reps: 9 },
-      suggestedKg: 77.5,
+      // Two working sets at 10 % of fatigue each: the first has to be able to do 10 / 0.9 = 11.1 reps,
+      // 104 / (1 + 11.1 / 30) = 75.9 → 75 on a 2.5 kg grid. The warm-up is not a set to hold.
+      plannedSets: 2,
+      suggestedKg: 75,
       currentKg: 70,
     });
     // The two working sets, never the warm-up.
     expect(line.proposal?.targetSetIds).toEqual([sets[0]![1]!.id, sets[0]![2]!.id]);
-    expect(line.proposal?.deltaKg).toBe(7.5);
+    expect(line.proposal?.deltaKg).toBe(5);
   });
 
   it('is not a report for a session that is not a benchmark, nor for one that is gone', async () => {
@@ -243,7 +247,9 @@ describe('loadBenchmarkReport', () => {
     const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
 
     expect(line.verdict).toBe('calibrated');
-    expect(line.suggestedKg).toBe(77.5);
+    // Out of the routine there is no count of sets to read: three, for a pressing movement.
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.proposal).toBeUndefined();
   });
 
@@ -277,8 +283,14 @@ describe('loadBenchmarkReport', () => {
     expect(report.lines[0]!.proposal).toBeUndefined();
   });
 
-  it('lit la fourchette de la routine : un 15 – 20 se dimensionne sur 17 répétitions, pas sur 12', async () => {
-    const curl = await seedExercise({ name: 'Curl poulie', equipment: 'cable' });
+  it('lit la fourchette et les séries de la routine : un 15 – 20 en deux séries d’isolation', async () => {
+    const curl = await seedExercise({
+      name: 'Curl poulie',
+      equipment: 'cable',
+      primaryMuscle: 'biceps',
+      secondaryMuscles: [],
+      movementPattern: 'isolation_coude',
+    });
     const { routine } = await seedRoutine('Bras', [
       {
         exercise: curl,
@@ -293,9 +305,56 @@ describe('loadBenchmarkReport', () => {
     const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
 
     expect(line.zone).toEqual({ low: 15, high: 20 });
-    expect(line.referenceReps).toBe(17);
+    // Two sets of an isolation (8 % of fatigue): 17 / 0.92 = 18.5 reps for the first, not 12 and not 17.
+    expect(line.plannedSets).toBe(2);
+    expect(line.referenceReps).toBeCloseTo(18.4783, 3);
     expect(line.suggestedKg).toBe(42.5);
     expect(line.proposal?.deltaKg).toBe(7.5);
+  });
+
+  it('lit le repos de la séance : une minute de repos baisse la charge, trois minutes la montent', async () => {
+    const loads: number[] = [];
+    for (const restSeconds of [60, 120, 180]) {
+      await resetDb();
+      const exercise = await seedExercise({ name: 'Développé couché', defaultRestSeconds: restSeconds });
+      const { routine } = await seedRoutine('Push', [
+        {
+          exercise,
+          sets: [
+            { targetReps: 15, targetRepsMax: 20, targetWeight: 70 },
+            { targetReps: 15, targetRepsMax: 20, targetWeight: 70 },
+            { targetReps: 15, targetRepsMax: 20, targetWeight: 70 },
+          ],
+        },
+      ]);
+      const workout = await benchmarkOf(routine.id, [[80, 17]]);
+      loads.push((await loadBenchmarkReport(workout.id))!.lines[0]!.suggestedKg!);
+    }
+    // 80 × 17 is a 125.3 kg max. One minute: 20 % of fatigue, 26.6 reps for the first set, 66.5 → 65.
+    // Two minutes: 10 %, 21 reps, 73.7 → 72.5. Three minutes: 6.7 %, 19.5 reps, 75.9 → 75.
+    expect(loads).toEqual([65, 72.5, 75]);
+  });
+
+  it('range l’exercice par sa famille de mouvement : une isolation fatigue moins qu’un polyarticulaire', async () => {
+    const seeds = [
+      { movementPattern: 'poussee_horizontale' as const, secondaryMuscles: ['triceps' as const, 'shoulders' as const] },
+      { movementPattern: 'isolation_coude' as const, secondaryMuscles: [] },
+    ];
+    const loads: number[] = [];
+    for (const seed of seeds) {
+      await resetDb();
+      const exercise = await seedExercise({ name: 'Exercice', ...seed });
+      const { routine } = await seedRoutine('R', [
+        {
+          exercise,
+          sets: [70, 70, 70].map((targetWeight) => ({ targetReps: 15, targetRepsMax: 20, targetWeight })),
+        },
+      ]);
+      const workout = await benchmarkOf(routine.id, [[80, 17]]);
+      loads.push((await loadBenchmarkReport(workout.id))!.lines[0]!.suggestedKg!);
+    }
+    // 80 × 17, a 15 – 20 on three sets: 72.5 for the compound (10 %), 75 for the isolation (8 %).
+    expect(loads).toEqual([72.5, 75]);
   });
 
   it('ne dépend pas de la formule d’affichage des réglages', async () => {
@@ -342,7 +401,13 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
 
   it('pose, par exercice, la charge de sa fourchette comme objectif en attente', async () => {
     const press = await seedExercise({ name: 'Développé couché' });
-    const curl = await seedExercise({ name: 'Curl poulie', equipment: 'cable' });
+    const curl = await seedExercise({
+      name: 'Curl poulie',
+      equipment: 'cable',
+      primaryMuscle: 'biceps',
+      secondaryMuscles: [],
+      movementPattern: 'isolation_coude',
+    });
     const { routine } = await seedRoutine('Haut', [
       { exercise: press, sets: PRESS },
       { exercise: curl, sets: [{ targetReps: 15, targetRepsMax: 20, targetWeight: 35 }] },
@@ -354,8 +419,9 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
 
     const signals = await recordBenchmarkObjectives(workout.id);
 
+    // Le développé tient deux séries (75 kg), le curl une seule (42,5 kg).
     expect(signals.map((signal) => [signal.exerciseId, signal.nextLoadKg])).toEqual([
-      [press.id, 77.5],
+      [press.id, 75],
       [curl.id, 42.5],
     ]);
     const pending = await listPendingRecommendations([press.id, curl.id]);
@@ -374,6 +440,15 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
     expect(pending.find((row) => row.exerciseId === press.id)?.evidence).toContainEqual({
       label: 'target_reps',
       value: 8,
+    });
+    // Et le nombre de séries sur lequel elle a été dimensionnée.
+    expect(pending.find((row) => row.exerciseId === press.id)?.evidence).toContainEqual({
+      label: 'planned_sets',
+      value: 2,
+    });
+    expect(pending.find((row) => row.exerciseId === curl.id)?.evidence).toContainEqual({
+      label: 'planned_sets',
+      value: 1,
     });
   });
 
@@ -396,7 +471,8 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
     const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
     const older = objective(press.id);
     await db.coachRecommendations.add(older);
-    // 40 × 25 sur une fourchette de 8 à 12 : quinze répétitions de plus que la référence.
+    // 40 × 25 sur une fourchette de 8 à 12 : près de quatorze répétitions de plus que les 11,1 que la
+    // première des deux séries doit tenir.
     const workout = await completedBenchmark(routine.id, [[40, 25]]);
 
     expect(await recordBenchmarkObjectives(workout.id)).toEqual([]);
@@ -425,7 +501,7 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
     expect(signals.map((signal) => signal.code)).toEqual(['benchmark_calibrated']);
     expect((await listPendingRecommendations([press.id]))[0]).toMatchObject({
       code: 'benchmark_calibrated',
-      nextLoadKg: 77.5,
+      nextLoadKg: 75,
     });
   });
 });
@@ -453,7 +529,7 @@ describe('applyBenchmarkProposals', () => {
     expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(1);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
-    expect(stored.map((set) => set?.targetWeight)).toEqual([40, 77.5, 77.5]);
+    expect(stored.map((set) => set?.targetWeight)).toEqual([40, 75, 75]);
   });
 
   it('leaves the report saying so, and a second acceptance writes nothing', async () => {
@@ -475,7 +551,7 @@ describe('applyBenchmarkProposals', () => {
     await Promise.all([applyBenchmarkProposals([proposal], workout.id), applyBenchmarkProposals([proposal], workout.id)]);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
-    expect(stored.map((set) => set?.targetWeight)).toEqual([40, 77.5, 77.5]);
+    expect(stored.map((set) => set?.targetWeight)).toEqual([40, 75, 75]);
   });
 
   it('does not write over a routine that was edited since the report was read', async () => {
@@ -506,7 +582,7 @@ describe('applyBenchmarkProposals', () => {
 
     it('le remplace, sur cet exercice et sur lui seul', async () => {
       const { workout, exerciseId } = await calibratedPress();
-      // Deux sources pour la même charge : la cible de la routine (77,5 kg) et « 72,5 kg » du coach,
+      // Deux sources pour la même charge : la cible de la routine (75 kg) et « 72,5 kg » du coach,
       // affiché sur la carte de la séance tant qu'aucune séance ne l'a résolu.
       const objective = recommendation(exerciseId);
       const observation = recommendation(exerciseId, {
@@ -542,7 +618,7 @@ describe('applyBenchmarkProposals', () => {
       expect(await db.coachRecommendations.get(own.id)).toMatchObject({
         status: 'followed',
         outcomeWorkoutId: workout.id,
-        outcomeLoadKg: 77.5,
+        outcomeLoadKg: 75,
       });
     });
 
@@ -579,6 +655,6 @@ describe('applyBenchmarkProposals', () => {
 
     // `toArray` sort dans l'ordre des identifiants, pas des séries : on compare à l'ordre près.
     const weights = alive(await db.routineSets.toArray()).map((set) => set.targetWeight);
-    expect(weights.sort()).toEqual([40, 77.5]);
+    expect(weights.sort()).toEqual([40, 75]);
   });
 });

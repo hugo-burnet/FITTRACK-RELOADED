@@ -2,6 +2,7 @@ import { t } from '@/i18n/fr';
 import type { BenchmarkLine } from '@/lib/benchmark';
 import { Card, Toggle } from '@/ui';
 import {
+  basisReading,
   loadReading,
   oneRepMaxReading,
   proposalMark,
@@ -30,6 +31,7 @@ export function BenchmarkLineCard({
   onToggle: () => void;
 }) {
   const tested = testedReading(line);
+  const basis = basisReading(line);
   const routine = routineReading(line);
   const withoutLoad = withoutLoadReading(line);
   const zone = zoneReading(line);
@@ -56,11 +58,7 @@ export function BenchmarkLineCard({
             <p className="text-base font-semibold text-[var(--accent-ink)]">
               {t('benchmark.suggested', { value: loadReading(line.suggestedKg) })}
             </p>
-            {line.referenceReps !== undefined && (
-              <p className="text-sm text-[var(--text-2)]">
-                {t('benchmark.suggestedBasis', { reps: line.referenceReps })}
-              </p>
-            )}
+            {basis !== undefined && <p className="text-sm text-[var(--text-2)]">{basis}</p>}
           </div>
         )}
         {rough !== undefined && (
