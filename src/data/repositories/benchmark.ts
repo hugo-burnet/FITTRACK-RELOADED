@@ -228,6 +228,8 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
  * charge que le bilan a lue : un décalage rejoué (double appui sur « Appliquer »
  * avant que l'écran ne se rafraîchisse) ou posé sur une routine modifiée entre
  * temps ne déplace pas deux fois, il ne fait rien.
+ *
+ * Renvoie le nombre d'**exercices** réécrits, pas de séries.
  */
 export async function applyBenchmarkProposals(
   proposals: readonly BenchmarkProposal[],
@@ -242,6 +244,10 @@ export async function applyBenchmarkProposals(
         anchor !== undefined && anchor.deletedAt === 0 && anchor.targetWeight === proposal.fromWeight
       );
     });
-    return applyRoutineTargetProposals(current);
+    await applyRoutineTargetProposals(current);
+    // Des exercices, pas des séries : c'est ce que l'écran annonce. La série de
+    // référence change toujours (une proposition alignée n'existe pas), donc
+    // chaque proposition retenue est bien une ligne réécrite.
+    return current.length;
   });
 }

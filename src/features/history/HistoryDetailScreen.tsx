@@ -14,7 +14,7 @@ import { projectCoachExport } from '@/lib/export/projectCoachExport';
 import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
 import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
 import { copyText, shareText, type ShareOutcome } from '@/platform/share';
-import { ActionSheet, Card, ConfirmSheet, HeaderAction } from '@/ui';
+import { ActionSheet, Button, Card, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { HistoryWorkoutDetail } from './HistoryWorkoutDetail';
 
@@ -149,6 +149,18 @@ export function HistoryDetailScreen() {
               </p>
             </Card>
           </div>
+        )}
+        {detail.workout.kind === 'benchmark' && (
+          <Card padded>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-[var(--text-1)]">
+                {t('benchmark.historyCard')}
+              </p>
+              <Button onClick={() => void navigate(`/benchmark/${detail.workout.id}`)}>
+                {t('benchmark.historyLink')}
+              </Button>
+            </div>
+          </Card>
         )}
         <HistoryWorkoutDetail detail={detail} />
       </div>

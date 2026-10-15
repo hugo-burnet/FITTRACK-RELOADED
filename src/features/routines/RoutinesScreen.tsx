@@ -15,6 +15,7 @@ import {
   reorderRoutines,
   updateRoutine,
 } from '@/data/repositories/routines';
+import { startBenchmarkFromRoutine } from '@/data/repositories/benchmark';
 import { readRoutineExportSources } from '@/data/repositories/routineExport';
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
@@ -45,6 +46,7 @@ type SheetState =
   | { kind: 'folderDelete'; folder: RoutineFolder; count: number }
   | { kind: 'routineActions'; routine: Routine }
   | { kind: 'routineMove'; routine: Routine }
+  | { kind: 'routineBenchmark'; routine: Routine }
   | { kind: 'routineDelete'; routine: Routine };
 
 const scopeIdOf = (scope: RoutineExportScope): string =>
@@ -143,6 +145,19 @@ export function RoutinesScreen() {
       })
       .catch(() => undefined);
   };
+
+  /**
+   * Même garde que « Démarrer » (rien ne tourne), et même sortie : la séance en direct.
+   * Pas de rapport au tutoriel : lancer un benchmark n'est pas l'étape qu'il attend.
+   */
+  const startBenchmark = (routine: Routine) => {
+    void startBenchmarkFromRoutine(routine.id, t('benchmark.workoutName', { name: routine.name }))
+      .then(() => navigate('/workout'))
+      .catch(() => undefined);
+  };
+
+  const exerciseCountOf = (routineId: string): number | undefined =>
+    summaries?.find((summary) => summary.routine.id === routineId)?.exerciseCount;
 
   const folderOptions: Option<string>[] = [
     { value: '', label: t('routines.noFolder') },
@@ -381,6 +396,17 @@ export function RoutinesScreen() {
                   onSelect: () => start(sheet.routine.id),
                 },
                 {
+                  label: t('benchmark.menu'),
+                  hint:
+                    active != null
+                      ? t('routines.startBusyHint')
+                      : (exerciseCountOf(sheet.routine.id) ?? 0) === 0
+                        ? t('benchmark.menuEmptyHint')
+                        : t('benchmark.menuHint'),
+                  disabled: active != null || (exerciseCountOf(sheet.routine.id) ?? 0) === 0,
+                  onSelect: () => setSheet({ kind: 'routineBenchmark', routine: sheet.routine }),
+                },
+                {
                   label: t('routines.share'),
                   hint: t('routines.shareHint'),
                   disabled: !shareReady,
@@ -416,6 +442,17 @@ export function RoutinesScreen() {
               ]
             : []
         }
+      />
+
+      <ConfirmSheet
+        open={sheet?.kind === 'routineBenchmark'}
+        onClose={() => setSheet(null)}
+        title={sheet?.kind === 'routineBenchmark' ? sheet.routine.name : ''}
+        body={t('benchmark.launchBody')}
+        confirmLabel={t('benchmark.launchConfirm')}
+        onConfirm={() => {
+          if (sheet?.kind === 'routineBenchmark') startBenchmark(sheet.routine);
+        }}
       />
 
       <ConfirmSheet

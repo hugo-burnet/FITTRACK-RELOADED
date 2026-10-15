@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
+import { startBenchmarkFromRoutine } from '@/data/repositories/benchmark';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import {
@@ -262,6 +263,41 @@ describe('WorkoutScreen — persistance', () => {
     expect(
       screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('WorkoutScreen — benchmark', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  it('rappelle en tête de séance ce qu’un benchmark demande', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée');
+    renderWorkout();
+
+    expect(await screen.findByText(/une série à l’échec par exercice/)).toBeInTheDocument();
+    expect(screen.getAllByRole('textbox', { name: /^Série 1/ }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('textbox', { name: /^Série 2/ })).not.toBeInTheDocument();
+  });
+
+  it('ne dit rien de tel d’une séance ordinaire', async () => {
+    await seedActiveWorkout();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    expect(screen.queryByText(/une série à l’échec par exercice/)).not.toBeInTheDocument();
   });
 });
 

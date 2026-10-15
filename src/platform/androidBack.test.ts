@@ -19,6 +19,8 @@ describe('androidBackDecision', () => {
     // Un champ libre a un nom : le chemin le porte encodé, espaces et deux-points compris.
     ['/analytics/measurements/custom%3ATour%20de%20poignet', '/analytics/measurements'],
     ['/analytics/measurements/custom%3AA%2FB', '/analytics/measurements'],
+    // Le bilan d'un benchmark n'a pas de parent propre : sans historique, on retombe sur l'accueil.
+    ['/benchmark/workout-1', '/'],
     ['/exercises/new', '/exercises'],
     ['/exercises/exercise-1/edit', '/exercises'],
     ['/exercises/exercise-1', '/exercises'],

@@ -298,7 +298,8 @@ describe('applyBenchmarkProposals', () => {
     const { workout, sets } = await calibratedPress();
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
 
-    expect(await applyBenchmarkProposals([proposal])).toBe(2);
+    // Un exercice réécrit — pas les deux séries qui le portent.
+    expect(await applyBenchmarkProposals([proposal])).toBe(1);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
     expect(stored.map((set) => set?.targetWeight)).toEqual([40, 77.5, 77.5]);

@@ -2670,6 +2670,56 @@ const fr = {
    * l'information que cet écran existe pour donner, pas un trou dans les
    * données.
    */
+  /**
+   * Le benchmark : une série menée à l'échec par exercice, et le bilan qui en
+   * tire la charge de travail (spec benchmark). Le lancement vit dans le menu
+   * d'une routine, le bilan sur son écran.
+   */
+  benchmark: {
+    menu: 'Benchmark de cette routine',
+    menuHint: 'Une série à l’échec par exercice, pour caler les charges',
+    menuEmptyHint: 'Cette routine n’a aucun exercice.',
+    launchTitle: 'Benchmark',
+    launchBody:
+      'Une seule série par exercice, menée jusqu’à l’échec.\n' +
+      'Choisis une charge avec laquelle tu comptes faire 5 à 12 répétitions : au-delà de 12, le résultat est trop incertain.\n' +
+      'À la fin, l’app te propose la charge de travail de chaque exercice. Rien n’est écrit dans la routine sans ton accord.',
+    launchConfirm: 'Lancer le benchmark',
+    workoutName: 'Benchmark · {name}',
+    workoutBanner:
+      'Benchmark · une série à l’échec par exercice. Charge visée : 5 à 12 répétitions.',
+    finishNote: 'C’est un benchmark : le bilan et les charges proposées s’affichent après l’enregistrement.',
+    title: 'Bilan du benchmark',
+    notFound: 'Ce benchmark n’existe plus.',
+    intro:
+      'Une série à l’échec par exercice. La charge conseillée est celle où le bas de ta fourchette te laisse environ deux répétitions en réserve.',
+    context: '{routine} · {date}',
+    contextNoRoutine: '{date}',
+    done: 'Fait : {reading}',
+    oneRepMax: '1RM estimé : {value}',
+    suggested: 'Charge de travail conseillée : {value}',
+    suggestedBasis: 'Environ {reps} répétitions à fond.',
+    inRoutine: 'Dans la routine : {value}',
+    inRoutineNone: 'Aucune charge dans la routine.',
+    aligned: 'La routine est déjà à ce niveau.',
+    noLine: 'Cet exercice n’est plus dans la routine : rien à écrire.',
+    tooLight:
+      'Plus de 12 répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
+    noLoad: 'Aucune charge exploitable : rien à estimer.',
+    recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
+    toggleText: 'Appliquer à la routine',
+    toggleLabel: 'Appliquer à la routine : {name}',
+    apply: 'Appliquer à la routine · {count}',
+    applying: 'Écriture…',
+    close: 'Terminé',
+    appliedOne: '1 exercice mis à jour dans la routine.',
+    appliedMany: '{count} exercices mis à jour dans la routine.',
+    appliedNone: 'La routine a changé depuis le bilan : rien n’a été écrit.',
+    applyFailed: 'La routine n’a pas pu être mise à jour.',
+    historyCard: 'Benchmark',
+    historyLink: 'Voir le bilan',
+  },
+
   weekly: {
     title: 'Séances par semaine',
     /** L'entrée depuis l'écran des analyses. */

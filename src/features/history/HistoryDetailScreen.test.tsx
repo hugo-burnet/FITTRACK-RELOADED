@@ -86,6 +86,34 @@ async function renderDetail(workoutId: string) {
 const openActions = () =>
   userEvent.click(screen.getByRole('button', { name: 'Actions de la séance' }));
 
+describe('HistoryDetailScreen — benchmark', () => {
+  beforeEach(resetDb);
+
+  it('mène de la fiche d’un benchmark à son bilan', async () => {
+    const workout = await seedArchivedWorkout();
+    await db.workouts.update(workout.id, { kind: 'benchmark' });
+    render(
+      <MemoryRouter initialEntries={[`/history/${workout.id}`]}>
+        <Routes>
+          <Route path="/history/:workoutId" element={<HistoryDetailScreen />} />
+          <Route path="/benchmark/:workoutId" element={<p>Bilan du benchmark</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Voir le bilan' }));
+
+    expect(await screen.findByText('Bilan du benchmark')).toBeInTheDocument();
+  });
+
+  it('ne propose pas de bilan pour une séance ordinaire', async () => {
+    const workout = await seedArchivedWorkout();
+    await renderDetail(workout.id);
+
+    expect(screen.queryByRole('button', { name: 'Voir le bilan' })).not.toBeInTheDocument();
+  });
+});
+
 describe('HistoryDetailScreen — partage', () => {
   beforeEach(resetDb);
   afterEach(() => install({ share: undefined, clipboard: undefined }));

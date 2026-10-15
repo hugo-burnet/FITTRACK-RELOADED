@@ -19,6 +19,7 @@ import {
 import { announce } from '@/audio/announce';
 import { nativeNotifications } from '@/platform/nativeNotifications';
 import { useRestTimer } from '@/stores/restTimer';
+import type { BenchmarkLocationState } from '@/features/benchmark/BenchmarkScreen';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName, partReading, unitLabel } from '@/i18n/labels';
@@ -72,10 +73,12 @@ export function WorkoutFinishScreen() {
   useEffect(() => {
     const workoutId = detail?.workout.id;
     if (workoutId === undefined || coachSignals === undefined) return;
+    // Un benchmark n'a rien à faire lire : son bilan est un écran, pas un résumé de séance.
+    if (detail?.workout.kind === 'benchmark') return;
     // Claimed outside the component: coming back to this screen is not a reason
     // to hear the session read out a second time.
     if (claimWorkoutRecap(workoutId)) void speakWorkoutRecap(coachSignals);
-  }, [coachSignals, detail?.workout.id]);
+  }, [coachSignals, detail?.workout.id, detail?.workout.kind]);
 
   const [draft, setDraft] = useState<{ id: string; notes: string } | null>(null);
   if (detail != null && draft?.id !== detail.workout.id) {
@@ -169,7 +172,16 @@ export function WorkoutFinishScreen() {
           /* la notif n'est jamais une barrière */
         }
       })
-      .then(() => navigate('/', { replace: true }))
+      // Un benchmark s'achève sur son bilan et non sur l'accueil : c'est là que les
+      // charges se lisent et s'acceptent.
+      .then(() =>
+        workout.kind === 'benchmark'
+          ? navigate(`/benchmark/${workout.id}`, {
+              replace: true,
+              state: { benchmarkFresh: true } satisfies BenchmarkLocationState,
+            })
+          : navigate('/', { replace: true }),
+      )
       .catch(() => setSaveFailed(true))
       .finally(() => {
         savingRef.current = false;
@@ -202,6 +214,11 @@ export function WorkoutFinishScreen() {
           <p role="alert" className="text-sm text-[var(--danger-ink)]">
             {t('finish.saveFailed')}
           </p>
+        )}
+        {workout.kind === 'benchmark' && (
+          <Card padded>
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('benchmark.finishNote')}</p>
+          </Card>
         )}
         <Card padded>
           <div className="flex items-start gap-2">

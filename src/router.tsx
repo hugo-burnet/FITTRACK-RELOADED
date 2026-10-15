@@ -32,6 +32,7 @@ import {
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
+import { BenchmarkRoute } from './features/benchmark/routes';
 import { MeasurementDetailRoute, MeasurementsRoute } from './features/measurements/routes';
 import { MilestonesRoute } from './features/milestones/routes';
 import {
@@ -78,6 +79,8 @@ export const router = createHashRouter([
       { path: 'history/import', element: <HevyImportRoute /> },
       { path: 'history/:workoutId/edit', element: <HistoryEditRoute /> },
       { path: 'history/:workoutId', element: <HistoryDetailRoute /> },
+      // Le bilan d'une séance de benchmark : on y arrive à l'enregistrement et depuis sa fiche d'historique.
+      { path: 'benchmark/:workoutId', element: <BenchmarkRoute /> },
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },

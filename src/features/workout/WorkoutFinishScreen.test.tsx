@@ -1,10 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
+import { startBenchmarkFromRoutine } from '@/data/repositories/benchmark';
 import { createCustomExercise } from '@/data/repositories/exercises';
+import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import {
   addSet,
   addWorkoutExercise,
@@ -42,6 +44,7 @@ function renderFinishScreen(report = vi.fn()) {
         <Routes>
           <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
           <Route path="/" element={<p>Destination accueil</p>} />
+          <Route path="/benchmark/:workoutId" element={<p>Destination bilan</p>} />
         </Routes>
         <LocationProbe />
       </MemoryRouter>
@@ -277,5 +280,58 @@ describe('WorkoutFinishScreen', () => {
     await screen.findByText(/Enregistrer/);
     await waitFor(() => expect(speakWorkoutRecapMock).toHaveBeenCalledTimes(1));
     second.unmount();
+  });
+  describe('pour un benchmark', () => {
+    async function activeBenchmark() {
+      const exercise = await createCustomExercise({
+        name: 'Développé couché',
+        primaryMuscle: 'chest',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const routine = await createRoutine('Push');
+      await addExercisesToRoutine(routine.id, [exercise.id]);
+      const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark · Push');
+      const set = (await getWorkoutDetail(workout.id))!.exercises[0]!.sets[0]!;
+      await completeSet(set.id, { weight: 80, reps: 9 });
+      return workout;
+    }
+
+    it('enregistre la séance puis ouvre son bilan, sans passer par l’accueil', async () => {
+      const workout = await activeBenchmark();
+      renderFinishScreen();
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Enregistrer la séance' }));
+
+      expect(await screen.findByText('Destination bilan')).toBeInTheDocument();
+      expect(screen.getByTestId('location-probe')).toHaveTextContent(`/benchmark/${workout.id}`);
+      expect((await db.workouts.get(workout.id))?.status).toBe('completed');
+    });
+
+    it('prévient que le bilan suit, et ne fait pas lire la séance à voix haute', async () => {
+      await activeBenchmark();
+      renderFinishScreen();
+
+      expect(await screen.findByText(/C’est un benchmark/)).toBeInTheDocument();
+      await screen.findByRole('button', { name: 'Enregistrer la séance' });
+      // Une absence ne s'attend pas : on laisse au calcul du coach le temps de répondre, comme le
+      // jumeau de ce test (« attend le calcul du coach… ») attend l'appel qui, lui, doit venir.
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+      });
+      expect(speakWorkoutRecapMock).not.toHaveBeenCalled();
+    });
+
+    it('n’enregistre aucun objectif du coach', async () => {
+      await activeBenchmark();
+      renderFinishScreen();
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Enregistrer la séance' }));
+      await screen.findByText('Destination bilan');
+
+      expect(await db.coachRecommendations.count()).toBe(0);
+    });
   });
 });
