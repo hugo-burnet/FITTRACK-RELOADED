@@ -7,6 +7,39 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (release) — La feuille de saisie des mensurations repartait du brouillon d'avant
+
+**Constat.** À la fusion de la v2.13.0, un parcours E2E des mensurations — `corriger puis supprimer une mesure refait la courbe` — a
+atteint son délai de 60 s. **C'était la deuxième fois** : la v2.12.1 l'avait vu une fois, « non reproduit en 12 relances, donc non
+expliqué », avec la consigne de garder la trace s'il revenait. La trace a été gardée avant toute relance.
+
+**Cause.** `Sheet` garde son contenu monté 250 ms après sa fermeture (sa sortie ; en mouvement réduit, ce délai est le seul qui la démonte).
+Une feuille rouverte dans ce délai ne démonte donc rien, et `MeasurementSheet` lui passait le formulaire d'avant — **date comprise**.
+Dans le parcours : 84 cm datés d'il y a vingt jours, puis 82,5 cm « sans date » → 82,5 cm daté d'il y a vingt jours, qui **remplace** le
+84 (une mesure par jour). La capture de l'échec le montre : une seule mesure, 82,5 cm, au 25 septembre ; la trace donne 130 à 200 ms
+entre la fermeture de la première feuille et l'ouverture de la seconde. Le commentaire du composant promettait « monté avec la feuille,
+démonté avec elle » ; la feuille ne le tenait pas.
+
+**Pourquoi « non reproduit ».** La course ne se perd que si le navigateur enchaîne plus vite que 250 ms : les relances précédentes, à
+trois en parallèle, étaient plus lentes. **Un seul worker la reproduit : 7 échecs sur 40** sur l'ancien build.
+
+**Ce qui est fait.** Une clé sur le formulaire : un brouillon par cible (les écrans en posent une neuve à chaque geste). Un test
+(`MeasurementSheet.test.tsx`) qui rouvre la feuille avant la fin de sa sortie — vu rouge sans la clé — et un second qui garde la promesse
+voisine (le contenu ne s'efface pas pendant que la feuille redescend) ; quatre mutations, quatre tuées. Les mêmes 40 passes sur le build
+corrigé : **40 réussites sur 40, aucun échec** (5,2 min).
+
+**Pour une personne.** Il faut rouvrir la feuille en moins d'un quart de seconde : rare, mais le coût est une mesure écrasée en silence,
+ce qui est la règle n° 4 de ce projet. D'où le correctif dans la release, bien que le défaut date de la v2.12.0 et soit sans rapport avec
+le benchmark.
+
+**Ce qui n'est pas fait, et pourquoi.**
+
+- **Pas de correctif dans `Sheet` lui-même** (remonter les enfants à chaque ouverture). Là où `open` suit une requête qui clignote, il
+  effacerait un brouillon qui survit aujourd'hui. Le correctif est local, là où le contrat est écrit.
+- **`VolumeBoundsSheet` a le même motif** (`last` + formulaire sans clé, initialisé depuis la ligne) : rouvert pour un autre muscle dans
+  les 250 ms, il garderait les bornes du précédent. Non touché : aucun échec observé, et la release n'avait pas à s'élargir sans preuve.
+  `HomeBodyWeightSheet` se réinitialise explicitement à chaque ouverture (`wasOpen`) ; les autres feuilles ne sont pas auditées.
+
 ### 2026-10-15 (fin) — La charge du benchmark tient les séries de la routine
 
 **Demande.** « Moi je voyais ça comme ça : je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on teste, je varie à

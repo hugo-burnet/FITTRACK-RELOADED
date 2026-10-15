@@ -11,7 +11,7 @@ exercice, et le coach le lit.
 ## Où on en est
 
 - **Publié : v2.13.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.0), APK `FitTrack-v2.13.0.apk`
-  signé avec la clé de release. **Le benchmark repris**, à la demande de l'utilisateur (« le coach doit lire ce benchmark et te proposer des
+  signé avec la clé de release ([journal](docs/journal/2026-10-15-versions-v2-13.md)). **Le benchmark repris**, à la demande de l'utilisateur (« le coach doit lire ce benchmark et te proposer des
   charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 », puis « je choisis ma charge d'essai, le coach
   extrapole la meilleure charge sur x séries »).
   - **La fourchette.** La charge se dimensionnait sur « bas + 2, plafonné à 12 » : un 15 – 20 recevait celle d'une série de 12, bien trop
@@ -33,7 +33,7 @@ exercice, et le coach le lit.
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 602 tests**, 300 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 604 tests**, 301 fichiers, 1 ignoré), `build` et `test:e2e`
   (**35 parcours**, 8 fichiers, à 390 px) — verts sur `master` à la v2.13.0.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
@@ -50,8 +50,10 @@ exercice, et le coach le lit.
   deux répétitions en réserve à la dernière.
 - **Coach R6** : le plafond ne change presque rien tant qu'on ne le relève pas — c'est la décision, pas un défaut (`effectiveCeiling`,
   un seul endroit).
-- **Un E2E des mensurations a bloqué une fois** (`corriger puis supprimer une mesure`, délai de 60 s dans une passe complète ; non
-  reproduit en 12 relances et sur la CI). Si cela revient, garder la trace avant de relancer.
+- **L'E2E des mensurations qui bloquait** (`corriger puis supprimer une mesure`, délai de 60 s) : **expliqué et corrigé à la v2.13.0**. Une
+  feuille de saisie rouverte dans les 250 ms de sa sortie reprenait le brouillon — la date — de la précédente, et écrasait une mesure en
+  silence ; une clé par ouverture, un test. `VolumeBoundsSheet` a le même motif, **non corrigé** (aucun échec observé) ; les autres feuilles
+  ne sont pas auditées (`docs/progress/decisions-et-pieges.md`, entrée « la feuille de saisie des mensurations »).
 - **Coach sur l'historique réel** : non rejoué, la sauvegarde n'est pas dans le dépôt (`npm run coach:replay`).
 
 ## Ce qui reste
@@ -99,7 +101,8 @@ résultat attendu de chaque ligne. L'ancienne liste figure en bas de l'archive d
 
 | Fichier | Contenu |
 | --- | --- |
-| [2026-10-15-versions-v2-12.md](docs/journal/2026-10-15-versions-v2-12.md) | Version v2.12.0 (2026-10-14 → 2026-10-15) |
+| [2026-10-15-versions-v2-13.md](docs/journal/2026-10-15-versions-v2-13.md) | Version v2.13.0 (2026-10-15) |
+| [2026-10-15-versions-v2-12.md](docs/journal/2026-10-15-versions-v2-12.md) | Versions v2.12.0 à v2.12.2 (2026-10-14 → 2026-10-15) |
 | [2026-10-14-versions-v2.md](docs/journal/2026-10-14-versions-v2.md) | Versions v2.4 à v2.11.1 (2026-08-29 → 2026-10-13) |
 | [2026-08-29-versions-v0-v1.md](docs/journal/2026-08-29-versions-v0-v1.md) | Versions v0–v1 |
 | [journal-2026.md](docs/progress/journal-2026.md) | Sessions 2026 (tutoriel, wiki, investigation) |
