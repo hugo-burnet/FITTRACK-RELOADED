@@ -7,6 +7,54 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (revue de code, puis les styles) — Six défauts du benchmark, et un benchmark qui a un style
+
+**Demande.** Une revue de code de la feature et de son intégration au coach, puis : « tu as fait 40×18, je te propose 40×14 trois fois ; en classique
+8-12, 52,5 kg, échec à la 13e, je te propose 50×12 trois fois ; la force, je connais pas ; si on doit choisir le type de benchmark, on peut avoir
+l'option ; c'est particulièrement pertinent pour commencer les programmes ; à toi de définir les calculs. » Spec : `docs/design/specs/2026-10-15-benchmark-design.md`
+(§3, §3 bis, §4, §5) ; exécution : tâche 9 de `docs/design/plans/2026-10-15-benchmark.md`.
+
+**La revue : six défauts, tous reproduits, aucun couvert par un test.** Chacun a maintenant un test vu rouge avant le correctif.
+
+1. **Le bilan retrouvait sa ligne de routine par le rang.** La séance renumérote ses rangs dès qu'on retire, déplace ou remplace un exercice, et l'édition
+   de l'historique aussi. Un curl 15 – 20 remonté d'un rang se lisait en 8 – 12 sans ligne de routine, et le coach posait « démarre à 40 kg » (32,5 avec sa
+   vraie fourchette, et alors « approximatif »). Avec le même exercice deux fois, les lignes se croisaient. → `WorkoutExercise.routineExerciseId`, posé au lancement.
+2. **Un vieux bilan réécrivait la routine**, interrupteur allumé : 90 kg ramenés à 72,5. → l'interrupteur est éteint quand la routine a changé depuis.
+3. **Une pyramide ascendante montait son sommet à 94 % du max** (60 / 70 / 80 → 77,5 / 87,5 / 97,5). → chaque série se dimensionne seule, l'écart le plus prudent.
+4. **Une dégressive à la fin faisait une « pyramide »** et montait la charge de 5 kg. 5. **Un échauffement coché sans la série à l'échec devenait l'essai.**
+6. **La carte du coach restait proposée pendant un benchmark** (« Appliquer » y écrasait la charge d'essai).
+
+Deux autres constats de la revue étaient des messages faux sur des cas rares et **ne sont pas corrigés** : des répétitions décimales (« 12,5 ») donnent
+« trop léger » — la règle entière est celle de `lib/oneRepMax.ts` pour toute l'app, c'est le message qui est faux —, et une charge arrondie à zéro sur
+une machine au pas de 5 réutilise « aucune charge exploitable ». Hors périmètre, constatés en passant (R6) : `DAY_MS` redéfini dans `lib/coach/volume.ts`,
+deux `effectiveCeiling` (`sets.ts`, `volume.ts`), `coachEvaluate.ts` à 505 lignes sans entrée ici.
+
+**Le style.** Léger 15 – 20, classique 8 – 12, force 3 – 5 : une fourchette nommée, choisie à la feuille de lancement (« Comme ma routine » d'office), qui
+remplace celle de la routine pour dimensionner la charge ; l'acceptation écrit la charge **et** la fourchette. Le bilan se lit en une phrase (« 52,5 kg pour
+3 séries de 8 – 12 reps ») et dit ce que chaque série tient à fond (« 13 · 11 · 10 »). La fiche d'un programme propose « Calibrer les charges » : une
+séance de programme se construit depuis sa routine, les charges d'un bloc sont celles de ses routines.
+
+**Choix de détail, à relire.**
+
+- **La réserve de deux répétitions n'a pas bougé.** Les exemples de la demande (40×14, 50×12) correspondent à une dernière série menée jusqu'à l'échec ;
+  avec la réserve, le léger propose 37,5 kg et non 40. Si les charges paraissent trop basses : `BENCHMARK_RESERVE_REPS`, un seul endroit.
+- **La force est la moins connue** : 3 – 5 reps, même réserve, la fatigue du repos prévu pour l'exercice. Un 5×5 se dirait en une ligne de `GOAL_ZONES`.
+- **Pas d'objectif du coach pour une pyramide** : un objectif est un seul chiffre, que « Appliquer » met sur toutes les séries restantes (60 / 70 / 80 devient
+  77,5 trois fois — constaté). Le bilan, lui, garde la forme.
+- **« Périmé » se juge à la date de modification des séries de la ligne de routine**, comparée à la fin du benchmark. Une modification faite *pendant* la séance
+  n'en est pas une : le bilan la lit déjà.
+- **Le nom de la séance dit le style** (« Benchmark léger · Push »), pour le retrouver dans l'historique.
+
+**Pièges rencontrés.**
+
+- **L'édition de l'historique recopie une liste fixe de champs et renumérote les rangs** (`saveArchivedWorkout`). Tout champ ajouté à `WorkoutExercise` doit y
+  être recopié, sans quoi une correction l'efface. `repSeconds` (le tempo propre à un exercice) n'y est pas recopié non plus : **constaté, non corrigé** —
+  corriger une séance passée en efface le tempo.
+- **Une requête par texte supposait qu'un nom de routine n'apparaît qu'une fois à l'écran** (`ProgramFlow.integration.test.tsx`). La carte « Calibrer les
+  charges » le répète : l'unicité à l'écran n'est pas un contrat, les assertions se lisent par rôle (nom + état), ce qui les rend plus strictes.
+- **Un test d'absence est vrai trop tôt** tant que les requêtes vives ne se sont pas posées : celui de la carte du coach attend, et a été vu rouge.
+- **Le dépôt n'impose pas Prettier** (les fichiers commités ne le passent pas non plus) : ne pas reformater en bloc, corriger l'indentation de ce qu'on touche.
+
 ### 2026-10-15 (release) — Un test qui gardait un nœud périmé
 
 **Constat.** La première tentative de la run de release a échoué à l'étape `test:run` : un test sur 3 604 —
