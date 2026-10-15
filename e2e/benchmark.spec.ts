@@ -56,6 +56,7 @@ test.describe('benchmark', () => {
     await expect(page).toHaveURL(/#\/benchmark\/[^/]+$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Bilan du benchmark' })).toBeVisible();
     const squat = page.getByRole('region', { name: 'Squat (barre, nuque)' });
+    await expect(squat).toContainText('Fourchette de la routine : 5 reps');
     await expect(squat).toContainText('Fait : 9 reps · 100 kg');
     await expect(squat).toContainText('1RM estimé : 130 kg');
     await expect(squat).toContainText('Charge de travail conseillée : 105 kg');
@@ -149,5 +150,57 @@ test.describe('benchmark', () => {
     await page.getByRole('button', { name: /^Squat \(barre, nuque\)/ }).first().click();
     await expect(page.getByRole('textbox', { name: 'Série 1 — kg' }).first()).toHaveValue('100');
     await expect(page.getByRole('textbox', { name: 'Série 1 — reps' }).first()).toHaveValue('9');
+  });
+
+  test('avec un historique : la coche attend les répétitions, puis le coach lit le benchmark', async ({
+    page,
+  }) => {
+    await openApp(page);
+    await createRoutineFromTemplate(page, /5×5 — A/);
+
+    // Une première séance ordinaire : 100 kg, cinq répétitions proposées par la routine. C'est la
+    // « dernière fois » du squat, et c'est elle que la coche reprendrait pour le maximum.
+    await startSuggestedWorkout(page, '5×5 — A');
+    await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('100');
+    await page.getByRole('button', { name: 'Valider la série 1' }).click();
+    await expect(page.getByText('1 série sur 15')).toBeVisible();
+    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+    await expect(page).toHaveURL(/#\/$/);
+
+    await page.getByRole('link', { name: 'Planifier' }).click();
+    await page.getByRole('button', { name: 'Routine — 5×5 — A' }).click();
+    await page.getByRole('button', { name: /Benchmark de cette routine/ }).click();
+    await page.getByRole('button', { name: 'Lancer le benchmark' }).click();
+    await expect(page).toHaveURL(/#\/workout$/);
+
+    // « Précédent » offre la dernière fois, mais rien ne la valide à la place du maximum.
+    await expect(page.getByRole('button', { name: 'Précédent' }).first()).toBeEnabled();
+    await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('100');
+    await expect(page.getByRole('textbox', { name: 'Série 1 — reps' })).toHaveAttribute('placeholder', '');
+    await expect(page.getByRole('button', { name: 'Valider la série 1' })).toBeDisabled();
+    await page.getByRole('textbox', { name: 'Série 1 — reps' }).fill('9');
+    await page.getByRole('button', { name: 'Valider la série 1' }).click();
+    await expect(page.getByText('1 série sur 3')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+    await expect(page).toHaveURL(/#\/benchmark\/[^/]+$/);
+    const squat = page.getByRole('region', { name: 'Squat (barre, nuque)' });
+    await expect(squat).toContainText('Fait : 9 reps · 100 kg');
+
+    // On n'écrit rien dans la routine : le coach, lui, a lu le benchmark.
+    await squat.getByRole('switch').click();
+    await page.getByRole('button', { name: 'Terminé' }).click();
+    await expect(page).toHaveURL(/#\/$/);
+
+    await startSuggestedWorkout(page, '5×5 — A');
+    const coach = page.getByRole('article', { name: 'Coach' }).first();
+    await expect(coach).toContainText(
+      'Benchmark : 9 répétitions à 100 kg, soit un max d’environ 130 kg. Pour ta fourchette (5 reps), démarre à 105 kg.',
+    );
+    // Un geste écrit la charge sur les séries restantes, comme tout objectif du coach.
+    await coach.getByRole('button', { name: 'Appliquer 105 kg' }).click();
+    await expect(page.getByRole('textbox', { name: 'Série 2 — kg' })).toHaveAttribute('placeholder', '105');
   });
 });

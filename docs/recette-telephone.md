@@ -144,15 +144,21 @@ Une séance de deux exercices au moins, dont un en barre.
       routine ». Une feuille dit « une seule série par exercice, menée jusqu'à l'échec » ; « Lancer le benchmark »
       ouvre la séance avec le rappel en tête. L'entrée est grisée pendant une séance en cours et absente d'une
       routine vide. *(v2.12.0 ; la ligne de l'éditeur : v2.12.1)*
-- [ ] **En salle.** Une ligne par exercice, aucune répétition visée. Choisir une charge pour 5 à 12 répétitions,
-      aller à l'échec, saisir kg et reps : la coche reste fermée tant que les répétitions manquent. *(v2.12.0)*
-- [ ] **Le bilan.** Enregistrer ouvre « Bilan du benchmark » (pas l'accueil, pas de carte du coach) : par exercice
-      ce qui a été fait, le 1RM estimé, la charge conseillée et la routine. Un exercice à plus de 12 répétitions dit
-      « trop léger », sans interrupteur. Les interrupteurs et « Appliquer à la routine · N » se touchent d'un
-      pouce. *(v2.12.0)*
+- [ ] **En salle.** Une ligne par exercice, aucune répétition visée. Choisir pour chacun une charge avec laquelle tu comptes
+      faire **sa fourchette dans la routine** (8 – 12, 15 – 20, 20…), aller à l'échec, saisir kg et reps : la coche reste fermée
+      tant que les répétitions manquent — **y compris sur un exercice déjà fait la semaine dernière**, dont le « Précédent » ne doit
+      jamais se valider tout seul. *(v2.12.0 ; l'exercice avec historique : après la v2.12.2)*
+- [ ] **Le bilan et la fourchette.** Enregistrer ouvre « Bilan du benchmark » (pas l'accueil, pas de carte du coach) : par exercice la
+      **fourchette de la routine**, ce qui a été fait, le 1RM estimé, la charge conseillée et la routine. Un exercice à 15 – 20 doit
+      proposer une charge **adaptée à 17 répétitions**, pas à 12. Un essai très loin de la fourchette dit « estimation
+      approximative » et son interrupteur est **éteint**. Au-delà de 30 répétitions : « trop léger », sans interrupteur. *(après la v2.12.2)*
+- [ ] **Le coach a lu le benchmark.** Sans appliquer le bilan, lancer la routine normalement : la carte du coach de chaque exercice dit
+      « Benchmark : 9 répétitions à 100 kg, soit un max d'environ … Pour ta fourchette (…), démarre à … kg » ; « Appliquer … kg » écrit
+      la charge sur les séries restantes. *(après la v2.12.2)*
 - [ ] **Appliquer.** « Appliquer à la routine » : « N exercices mis à jour », la ligne se lit « La routine est déjà
       à ce niveau ». Ouvrir la routine : les charges ont changé (une pyramide a gardé sa forme). Le retour d'Android
-      depuis le bilan mène à l'accueil. *(v2.12.0)*
+      depuis le bilan mène à l'accueil. L'objectif que le benchmark avait posé n'apparaît plus sur la carte du coach (il est suivi).
+      *(v2.12.0)*
 - [ ] **La séance d'après.** Lancer la routine normalement : le champ de charge propose la cible calibrée et la
       colonne « Précédent » ne reprend pas le maximum du benchmark. *(v2.12.0)*
 - [ ] **Depuis l'historique.** La fiche d'un benchmark propose « Voir le bilan ». *(v2.12.0)*

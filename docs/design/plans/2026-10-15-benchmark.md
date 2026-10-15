@@ -82,8 +82,24 @@ aucune version de schéma.
 
 - [x] Spec, décisions et pièges, inventaire, recette téléphone, `PROGRESS.md`.
 
+### Tâche 7 — reprise : la fourchette, le coach, la coche (après la v2.12.2)
+
+**Files :** Modify `src/lib/benchmark.ts` (+ test), `src/data/repositories/benchmark.ts` (+ test), `coachEvaluate.ts`,
+`src/features/benchmark/*`, `src/features/workout/{WorkoutSetRow,WorkoutExerciseCard,WorkoutScreen,coachCopy,workoutRecapVoice}.ts(x)`,
+`src/lib/coach/{constants,situation}.ts`, `src/data/types.ts`, `src/lib/backup/validate.ts`, `src/i18n/fr.ts`, `e2e/benchmark.spec.ts`.
+
+- [x] La fourchette : `repZone`, référence = bas + 2 sans plafond à 12, Epley seul de 1 à 30 répétitions, « trop léger » au-delà de 30 ;
+      un 15 – 20, un 20, un 18 testés.
+- [x] L'estimation approximative (plus de six répétitions de la référence) : proposée, dite telle, interrupteur éteint, sans objectif.
+- [x] Le coach lit le benchmark : `benchmark_calibrated` (type, validateur, gravité, situation, texte, voix muette), `recordBenchmarkObjectives`
+      appelée par `finalizeCoachForWorkout`, objectifs résolus à l'acceptation (suivi / remplacé).
+- [x] Les `amrap` : les répétitions d'une série de benchmark ne sont jamais proposées (ligne, carte, écran).
+- [x] E2E : un exercice avec historique (« Précédent » offert, coche fermée sans répétitions), le coach qui lit le benchmark, la fourchette
+      sur le bilan. Vus rouges quand la garde est retirée.
+
 ## Ce qui reste, et pourquoi
 
+- La fourchette n'est pas affichée sur la ligne de série pendant le benchmark (spec §« Ce qui n'est pas fait »).
 - Le bilan n'est pas dans la matrice de mise en page des trois thèmes : sa route porte un identifiant de
   séance qu'un test générique ne connaît pas. Il est vérifié en thème sombre à 100 et 200 % dans son propre
   parcours ; TTY1 et le thème clair restent à l'œil, sur le téléphone.

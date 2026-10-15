@@ -5,11 +5,23 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.12.2 publiée** (PWA et APK). `master` (`3903dc8`) porte la branche de session
-`ccr-57f17af8-maxzqv`, fusionnée `--no-ff`.
+**Dernière mise à jour :** 2026-10-15 — **v2.12.2 publiée** (PWA et APK) ; la **reprise du benchmark** (fourchette, coach, coche) est
+sur la branche de session `ccr-57f17af8-maxzqv`, **non fusionnée, non publiée** : elle attend l'accord de l'utilisateur.
 
 ## Où on en est
 
+- **Sur la branche, non publié : le benchmark repris, à la demande de l'utilisateur** (« le coach doit lire ce benchmark et te proposer
+  des charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 »).
+  - **La fourchette.** La charge se dimensionnait sur « bas + 2, plafonné à 12 » : un 15 – 20 recevait celle d'une série de 12, bien trop
+    lourde. Désormais la fourchette est celle de la routine (cible unique = fourchette d'un point), la référence est son bas + 2
+    répétitions de réserve (10, 17, 22 pour 8 – 12, 15 – 20, 20), Epley seul de 1 à 30 répétitions ; un essai loin de la fourchette est
+    dit approximatif, interrupteur éteint.
+  - **Le coach lit le benchmark.** Signal `benchmark_calibrated`, posé à l'enregistrement par le chemin des objectifs ; la carte de
+    l'exercice l'affiche à la séance suivante. Accepter le bilan écrit la routine et **suit** cet objectif.
+  - **Un défaut trouvé en route.** Pour un exercice qui avait un historique, la coche enregistrait les répétitions de la dernière fois
+    comme maximum du benchmark. Corrigé (`amrap`), avec l'E2E « un exercice a un historique » qui manquait.
+  - Détail et choix à relire : `docs/progress/decisions-et-pieges.md`, entrée « le benchmark suit la fourchette, et le coach le lit ».
+    **À publier en v2.13.0 sur demande** (le numéro n'est pas bumpé).
 - **Publié : v2.12.2** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.2), APK `FitTrack-v2.12.2.apk`
   signé avec la clé de release. Appliquer un benchmark **remplace** l'objectif de charge que le coach avait déjà posé sur l'exercice (il
   restait affiché à côté de la cible écrite par le benchmark : deux chiffres pour un exercice). Précisé : le moteur du coach ne lit aucune
@@ -21,8 +33,8 @@
 - **Avant : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0) : la coche qui n'écrase plus la
   saisie, le coach R6, le benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité. Le détail des trois
   versions, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 531 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**34 parcours**, 8 fichiers, à 390 px) — verts sur `master`, y compris sur la CI.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 569 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**35 parcours**, 8 fichiers, à 390 px) — verts sur la branche ; sur `master` (v2.12.2) : 3 531 tests et 34 parcours, CI verte.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.

@@ -7,6 +7,58 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (suite) — Le benchmark suit la fourchette, et le coach le lit
+
+**Demande.** « Attends, le coach doit lire ce benchmark et te proposer des charges adaptées. Ça met à jour les routines. Par contre ça
+doit bien prendre en compte la fourchette. Un mec qui fait des séries de 8, 12, 15, 18, 20… » Spec :
+`docs/design/specs/2026-10-15-benchmark-design.md` (§2 bis, §3).
+
+**Trois défauts, dont deux que cette demande a fait voir.**
+
+1. **La fourchette n'était prise en compte que jusqu'à 12.** La charge de travail se dimensionnait sur « bas + 2, plafonné à 12 » avec les
+   formules de 1RM de 1 à 12 répétitions. Un 15 – 20 recevait la charge d'une série de 12 — **bien trop lourde** — et un essai à 15
+   répétitions était déclaré « trop léger ». Pour quelqu'un qui travaille à 15, 18 ou 20, le benchmark ne servait à rien. Il ne l'avait
+   pas dit : mes tests ne posaient que des fourchettes de 5 à 12.
+2. **Le coach n'en lisait rien.** Voir l'entrée du benchmark ci-dessous : écarté en bloc, il passait seulement par les cibles de la routine.
+3. **La coche enregistrait les répétitions de la dernière fois comme le maximum.** Un benchmark efface la cible de répétitions de sa série ;
+   le fantôme de la case retombait alors sur la dernière séance de l'exercice, et « Valider » l'enregistrait sans que rien ne soit tapé.
+   L'E2E ne l'avait pas vu : sa base est vide, donc pas de « dernière fois ». **Un E2E de « un exercice a un historique » aurait dû exister
+   dès le départ** ; il existe maintenant, et a été vu rouge quand la garde est retirée.
+
+**Ce qui est fait.**
+
+- La **fourchette** est celle de la première série de travail de la routine (cible unique = fourchette d'un point ; 8 – 12 par défaut) ;
+  la référence est son bas + 2 répétitions de réserve (10, 17, 22 pour 8 – 12, 15 – 20, 20), plafonnée à 30. **Epley seul, de 1 à 30
+  répétitions**, quelle que soit la formule d'affichage : c'est le seul des trois qui reste lisible au-delà de 12, et c'est déjà la
+  règle du coach pour le cran. Au-delà de 30 : « trop léger ».
+- Un essai à **plus de six répétitions de la référence** est une extrapolation : proposée, dite approximative, **interrupteur éteint
+  d'office**, et le coach n'en tire rien.
+- Le coach **lit** le benchmark : signal `benchmark_calibrated`, posé à l'enregistrement de la séance par le chemin des objectifs
+  (`recordCoachSignals`, « un objectif vivant à la fois »), avec les chiffres qui l'ont produit. La carte de l'exercice l'affiche à la
+  séance suivante. L'écriture dans la routine reste l'acceptation du bilan, qui **suit** l'objectif posé par ce benchmark et remplace
+  tout autre objectif de l'exercice.
+- Les `amrap` : les répétitions d'une série de benchmark ne sont jamais proposées.
+
+**Choix de détail, à relire.**
+
+- **Epley pour tout, y compris l'affichage du bilan.** Un utilisateur qui a réglé Brzycki lira un 1RM de bilan différent de celui de la
+  page des records, de quelques pour cent. Mélanger les formules selon le nombre de répétitions aurait créé une marche d'escalier à 12.
+- **Le seuil de six répétitions d'écart** est un jugement, pas une mesure (à six répétitions d'écart, autour de 17, la conversion table sur 13 % d'écart entre
+  deux charges, avec la précision d'Epley) ; une constante (`BENCHMARK_ROUGH_GAP`), à ajuster si le bilan crie « approximatif » trop souvent.
+- **Rien dans une séance de programme** : un bloc possède ses charges, et `useActiveWorkout` retire déjà les objectifs numériques de sa
+  carte. Le benchmark d'une routine qui sert à un programme écrit la routine (acceptation) ; la carte du coach n'y dit rien.
+- **La fourchette n'est pas affichée pendant la séance de benchmark** : elle se lit sur la feuille de lancement et sur le bilan. La poser
+  sur la ligne (la cible de répétitions) rouvrait le défaut 3.
+
+**Pièges rencontrés.**
+
+- **Une assertion qui ne prouvait rien, encore.** « Le coach n'enregistre aucun objectif pour un benchmark » était un test vert — et le
+  contraire de ce que l'utilisateur voulait. Un test qui décrit l'implémentation plutôt que le besoin se corrige avec elle ; ceux-ci ont été
+  réécrits (`n'évalue pas la séance…`, `ne prend pas la charge d'un benchmark pour un objectif suivi`) en disant ce qui reste vrai : aucune
+  règle de séance, et rien de « suivi » par la charge d'un essai à fond.
+- **Le `;` n'est pas un `&&`.** Un lint en erreur est passé dans un commit parce que la commande enchaînait `eslint | tail` et `git commit` ;
+  corrigé par un `--amend` avant le push. Enchaîner les portes avec `&&`.
+
 ### 2026-10-15 — Le benchmark : une série à l'échec par exercice, qui cale les charges de la routine
 
 **Demande.** « Une séance avec une série, le plus de répétitions possible, ça nous calibre notre coach, une série
@@ -24,16 +76,11 @@ progresse à partir des cibles de la routine et de ce qui a été fait ; un dép
 séance, pendant des semaines. Le benchmark écrit la charge juste dans la routine — **sur acceptation** — et
 rien d'autre. Aucun état « calibré » n'est stocké, aucune donnée nouvelle n'est lue par le moteur.
 
-**Ce que le coach lit, et ce qu'il ne lit pas du benchmark (précisé après la question « est-il bien branché à mon coach ? »).**
-Le moteur (`lib/coach`) ne lit **aucune charge cible de routine** : il juge des séries *faites* (leurs charges, leurs répétitions,
-le RPE) contre la fourchette de répétitions. Le benchmark ne change donc pas ses calculs ; il change ce que la routine propose
-comme point de départ, et le moteur en prend acte **à la première séance ordinaire faite à cette charge** — pas avant. Aucun 1RM
-n'est stocké pour lui, et le benchmark ne pose aucun objectif de charge à sa place. Le seul point de contact qui manquait était un
-**objectif déjà posé** (« la prochaine fois, 102,5 kg ») : il restait affiché sur la carte de la séance à côté de la cible que le
-benchmark venait d'écrire, deux chiffres pour un exercice. `applyBenchmarkProposals` le **remplace** (`superseded`, qui n'est pas un
-refus), dans la même transaction que l'écriture et pour les seuls exercices réécrits ; une observation sans charge reste. À
-discuter si l'on veut un lien plus profond (le coach partant du 1RM du benchmark, ou posant la charge calibrée comme objectif) :
-c'est une règle nouvelle, pas un câblage.
+**Ce que le coach lit du benchmark — état de la v2.12.2, changé ensuite : voir l'entrée « le benchmark suit la fourchette, et le coach le lit ».**
+Le moteur (`lib/coach`) ne lit **aucune charge cible de routine** : il juge des séries *faites*. En v2.12.2 le benchmark ne lui
+apportait rien d'autre que les cibles de la routine, une fois acceptées, et la résolution d'un objectif déjà posé à l'acceptation. La
+question de l'utilisateur — « le coach doit lire ce benchmark et proposer des charges adaptées » — a montré que ce n'était pas ce qu'il
+attendait.
 
 **Ce que le benchmark nourrit, et ce qu'il n'alimente pas.** Une série à l'échec est une vraie performance : records,
 volume par muscle, régularité, courbes, historique la comptent. Elle n'est pas le modèle d'une série de travail,
