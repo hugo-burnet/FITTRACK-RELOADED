@@ -85,6 +85,12 @@ Une séance de deux exercices au moins, dont un en barre.
       RPE plus bas : « la charge se consolide ». Reprise après deux semaines : « Reprise après N
       jours », sans charge ; le récap vocal ne dit pas « une hausse de charge est prévue ». Un curl aux
       haltères à 10 kg × 12 sur 10–12 : « vise 18 répétitions », pas 12 kg. *(v2.11.0)*
+- [ ] **Coach, volume par muscle.** Réglages › Coach › Volume par muscle : seize lignes, la semaine en
+      cours, la médiane et le maximum des semaines travaillées. Poser un plancher de 8 sur un muscle que tu
+      travailles moins : après deux semaines complètes dessous, l'accueil dit « Volume bas » ; « Régler »
+      mène aux bornes, « Aucun plancher » fait taire la carte. En semaine de surcharge d'un bloc, au plafond
+      d'un exercice : si le muscle est au plus haut de ce que tu as tenu, la carte propose la charge et non
+      une série en plus, et dit pourquoi. *(cette session)*
 - [ ] **Cran de la fiche.** Renseigner 1,125 kg sur les élévations latérales ; au plafond avec assez de
       répétitions, la charge proposée depuis 5 kg est 6,125. *(v2.11.0)*
 - [ ] Série validée en thème **TTY1** : `[x]`, le repos qui clignote, la jauge d'effort ; la feuille

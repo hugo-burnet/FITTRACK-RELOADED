@@ -7,6 +7,45 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-14 — R6, le volume par muscle : ce que le coach n'ajoute plus, ce que la personne demande à entendre
+
+**Constat.** La tranche 5 du coach v2 attendait son plan depuis le 4 octobre. Le coach raisonne exercice par
+exercice : en semaine de surcharge il propose d'ajouter une série à un muscle déjà au plus haut de ce que la
+personne a tenu. Spec, décisions d'ouverture et leurs raisons : `docs/design/plans/2026-10-04-coach-v2.md`.
+
+**Ce qui est fait.** Des règles pures (`lib/coach/volume.ts`) ; un plafond qui retire `add_set` ; une note de
+carte qui dit pourquoi ; un réglage `coachVolumeBounds` ; un écran « Volume par muscle » (Réglages › Coach) ;
+une carte d'accueil « Volume bas » pour un plancher que la personne a posé.
+
+**Le plafond ne change presque rien tant qu'on ne le relève pas — et c'est la décision, pas un défaut.**
+`add_set` n'est choisi qu'en phase de surcharge, et un pratiquant régulier est à son maximum par
+construction : à 10 séries de pecs par semaine, le plus haut des six semaines est 10, la semaine glissante
+l'égale, la série en plus est retirée. La spec (Q3) le veut ainsi : le coach ne propose pas d'aller au-delà de
+ce qui a déjà été tenu. L'écran rend la décision visible, et c'est lui qui la porte : pour progresser en
+volume, on relève son plafond. **À juger sur le terrain** — si la règle bloque trop souvent, c'est le défaut de
+`effectiveCeiling`, un seul endroit.
+
+**Pourquoi rien n'est journalisé, et pas de version de schéma.** Un constat de semaine n'a ni suite à suivre
+ni objectif à refuser : `coachRecommendations` ne lui sert à rien, donc pas d'`exerciseId` facultatif. La
+valeur du réglage n'est pas validée par la sauvegarde (une clé et une date lui suffisent) : elle est relue
+défensivement, et une valeur abîmée à la main ne casse ni l'écran ni le coach.
+
+**Pièges rencontrés.**
+
+- **Un espace de noms déjà pris.** `volume` existait dans `fr.ts` (le volume d'entraînement, `volume.link`).
+  Une seconde clé du même nom dans l'objet n'a pas fait d'erreur *à l'écriture* : la dernière gagnait, et
+  les chaînes de l'écran « Volume par muscle » disparaissaient (affichées `volume.reading`). Renommé
+  `muscleVolume`. Avant d'ouvrir un espace de noms, le chercher.
+- **La semaine glissante d'un test dans le passé.** L'évaluation d'une séance ouverte lit « maintenant » ;
+  un test qui sème des séances d'août ne voit alors aucune semaine glissante. Les tests figent `Date` seul
+  (`vi.useFakeTimers({ toFake: ['Date'] })`) — les minuteries que Dexie utilise restent réelles.
+- **Un test attendait le mauvais libellé.** « Ischios » est un raccourci d'écriture, le muscle s'appelle
+  « Ischio-jambiers » : un test d'affichage lit l'écran, pas la tête de celui qui l'écrit.
+
+**Ce qui n'est pas fait.** Le rejeu sur l'historique réel (`npm run coach:replay`) : la sauvegarde n'est pas
+dans le dépôt. R6 n'a d'effet que pour un pratiquant en phase de surcharge ayant au moins trois semaines
+d'un muscle — le rejeu dirait combien de propositions réelles elle aurait retirées. R7 reste reportée.
+
 ### 2026-10-14 — Les mensurations : le Lot 11 sans les photos
 
 **Constat.** Le Lot 11 avait été scindé le 2026-08-11 (« les mesures restent, les photos sortent »), mais

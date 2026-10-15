@@ -12,6 +12,7 @@ import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
 import { HomeProgramsRow } from './HomeProgramsRow';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
 import { HomeStatsIsland } from './HomeStatsIsland';
+import { HomeVolumeCard } from './HomeVolumeCard';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
 import { useHomeDashboard } from './useHomeDashboard';
 
@@ -101,6 +102,10 @@ export function HomeScreen() {
             tables comme le corps et le palier, et ne rend rien du tout tant que
             des séances ne sont pas hors de ce téléphone. */}
         <HomeBackupNudge />
+
+        {/* Un muscle sous le plancher que la personne a posé : rien sans plancher, rien pendant des
+            vacances. Elle lit ses propres tables et ne dépend pas du tableau de bord. */}
+        <HomeVolumeCard />
 
         {/* Le corps ne dépend pas du tableau de bord — il lit son propre
             historique — donc il est rendu quoi qu'il arrive, y compris pendant

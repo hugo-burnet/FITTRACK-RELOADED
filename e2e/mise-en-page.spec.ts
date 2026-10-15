@@ -32,6 +32,7 @@ const ROUTES = [
   '/settings',
   '/programs',
   '/workout',
+  '/settings/volume',
   '/analytics/measurements',
   '/analytics/measurements/waist',
   // Un nom libre long, avec des espaces et un deux-points : le titre et les lignes ne doivent

@@ -124,6 +124,93 @@ export async function seedMeasurements(
   }, rows);
 }
 
+/**
+ * Écrit des séances de musculation terminées directement dans IndexedDB, rangées par semaine complète
+ * (le mercredi à midi, **dans le fuseau du navigateur**), avec l'identité du muscle sur la ligne
+ * d'exercice — l'historique n'a pas besoin de la bibliothèque pour le lire. `weeksAgo` : 1 est la
+ * dernière semaine complète. Pour les mêmes raisons que `seedCompletedWorkouts`, il faut recharger
+ * ensuite.
+ */
+export async function seedMuscleSessions(
+  page: Page,
+  sessions: { weeksAgo: number; muscle: string; sets: number }[],
+): Promise<void> {
+  await page.evaluate(async (entries) => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('fittrack');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const transaction = database.transaction(
+      ['workouts', 'workoutExercises', 'workoutSets'],
+      'readwrite',
+    );
+    const workouts = transaction.objectStore('workouts');
+    const exercises = transaction.objectStore('workoutExercises');
+    const sets = transaction.objectStore('workoutSets');
+
+    const monday = new Date();
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+
+    for (const entry of entries) {
+      const day = new Date(monday);
+      day.setDate(day.getDate() - entry.weeksAgo * 7 + 2);
+      day.setHours(12, 0, 0, 0);
+      const startedAt = day.getTime();
+      const stamps = { createdAt: startedAt, updatedAt: startedAt, deletedAt: 0 };
+      const workoutId = crypto.randomUUID();
+      const rowId = crypto.randomUUID();
+      const exerciseId = `e2e-${entry.muscle}`;
+
+      workouts.put({
+        id: workoutId,
+        ...stamps,
+        routineId: '',
+        name: `Séance ${entry.muscle}`,
+        status: 'completed',
+        startedAt,
+        endedAt: startedAt + 3_600_000,
+        durationSeconds: 3600,
+      });
+      exercises.put({
+        id: rowId,
+        ...stamps,
+        workoutId,
+        exerciseId,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: `Exercice ${entry.muscle}`,
+        exerciseMeasurementType: 'weight_reps',
+        exercisePrimaryMuscle: entry.muscle,
+        exerciseEquipment: 'barbell',
+      });
+      for (let order = 0; order < entry.sets; order += 1) {
+        sets.put({
+          id: crypto.randomUUID(),
+          ...stamps,
+          workoutExerciseId: rowId,
+          exerciseId,
+          workoutId,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 60,
+          reps: 10,
+          isCompleted: 1,
+          performedAt: startedAt + order * 120_000,
+        });
+      }
+    }
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    database.close();
+  }, sessions);
+}
+
 /** `AAAA-MM-JJ` d'il y a `days` jours, **dans le fuseau du navigateur** — celui de l'app. */
 export async function isoDaysAgo(page: Page, days: number): Promise<string> {
   return page.evaluate((count) => {

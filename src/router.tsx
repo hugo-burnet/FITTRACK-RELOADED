@@ -19,7 +19,7 @@ import {
   ProgramEditorRoute,
   ProgramListRoute,
 } from './features/programs/routes';
-import { CreditsRoute, DebugRoute } from './features/settings/routes';
+import { CreditsRoute, DebugRoute, VolumeRoute } from './features/settings/routes';
 import { ExerciseDetailRoute, ExerciseFormRoute } from './features/exercises/routes';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
@@ -107,6 +107,7 @@ export const router = createHashRouter([
       { path: 'knowledge/a/:articleId', element: <WikiArticleRoute /> },
       { path: 'knowledge/s/:sectionId', element: <WikiSectionRoute /> },
       { path: 'settings/debug', element: <DebugRoute /> },
+      { path: 'settings/volume', element: <VolumeRoute /> },
       { path: 'settings/about', element: <CreditsRoute /> },
     ],
   },

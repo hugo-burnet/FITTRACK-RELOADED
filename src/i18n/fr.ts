@@ -1953,6 +1953,9 @@ const fr = {
       'c’est un mémo vocal. Les tics du décompte, eux, restent secs.',
 
     trainingSection: 'Entraînement',
+    coachSection: 'Coach',
+    volumeLink: 'Volume par muscle',
+    volumeHint: 'Plancher et plafond de séries par semaine',
 
     notificationsSection: 'Notifications',
     notificationsRest: 'Fin de repos',
@@ -2533,6 +2536,52 @@ const fr = {
     singleSession: 'Une seule séance sur cette période : la courbe commencera à la suivante.',
     noMetric:
       'Cet exercice n’a pas de type de mesure connu, donc rien de comparable d’une séance à l’autre.',
+  },
+
+  /**
+   * Le volume par muscle (R6, coach v2) : ce que l'historique dit de chaque muscle, et les bornes que la
+   * personne pose. Des règles de l'app, pas des vérités : aucun chiffre n'est présenté comme « la science ».
+   */
+  muscleVolume: {
+    title: 'Volume par muscle',
+    intro:
+      'Séries de travail par semaine : le muscle principal de l’exercice compte pour une série, les autres pour rien. Le coach ne propose pas d’ajouter une série à un muscle déjà au plus haut de ce que tu as tenu en six semaines. C’est une règle de l’app : tu peux poser ton plafond, et un plancher si tu veux qu’on te dise quand un muscle est négligé.',
+
+    /** La ligne sous le nom d'un muscle : la semaine en cours, puis ce que six semaines en disent. */
+    reading: 'Semaine : {current} · médiane {median} · max {max}',
+    readingOneWeek: 'Semaine : {current} · travaillé 1 semaine sur 6',
+    readingFewWeeks: 'Semaine : {current} · travaillé {weeks} semaines sur 6',
+    readingNever: 'Semaine : {current} · pas travaillé ces six semaines',
+
+    /** Ce qui est posé, à droite de la ligne. */
+    floorValue: 'Plancher {sets}',
+    floorNone: 'Plancher —',
+    ceilingValue: 'Plafond {sets}',
+    ceilingAuto: 'Plafond {sets} (auto)',
+    ceilingNone: 'Plafond —',
+
+    /** La feuille d'un muscle. */
+    sheetHistory: 'Six semaines complètes : médiane {median}, max {max}, travaillé {weeks} fois.',
+    sheetNoHistory: 'Pas encore d’historique de ce muscle sur les six dernières semaines.',
+    floorLabel: 'Plancher',
+    floorHint: 'Séries par semaine en dessous desquelles tu veux qu’on te le dise, deux semaines de suite.',
+    noFloor: 'Aucun plancher',
+    ceilingLabel: 'Plafond',
+    ceilingHint: 'Séries par semaine au-delà desquelles le coach ne propose plus d’en ajouter.',
+    autoCeiling: 'Plafond automatique',
+    autoCeilingValue: 'Plafond automatique ({sets})',
+    autoCeilingNone: 'Plafond automatique (pas assez d’historique)',
+    orderError: 'Le plancher ne peut pas dépasser le plafond.',
+    save: 'Enregistrer',
+    saving: 'Enregistrement…',
+    saveError: 'Les bornes n’ont pas pu être enregistrées. Réessaie.',
+    loadError: 'Le volume n’a pas pu être lu.',
+
+    /** La carte de l'accueil : un muscle sous le plancher que la personne a posé. */
+    lowTitle: 'Volume bas',
+    lowLine: '{muscle} : {first} puis {second} séries — ton plancher est {floor}.',
+    lowAdjust: 'Régler',
+    lowMore: 'Et {count} de plus.',
   },
 
   /**

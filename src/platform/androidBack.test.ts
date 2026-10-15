@@ -23,6 +23,7 @@ describe('androidBackDecision', () => {
     ['/exercises/exercise-1/edit', '/exercises'],
     ['/exercises/exercise-1', '/exercises'],
     ['/settings/debug', '/settings'],
+    ['/settings/volume', '/settings'],
     ['/settings', '/'],
   ])('navigates from %s to %s without history', (pathname, to) => {
     expect(androidBackDecision(pathname, false)).toEqual({ kind: 'navigate', to });

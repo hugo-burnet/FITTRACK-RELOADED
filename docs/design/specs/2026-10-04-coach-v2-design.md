@@ -236,6 +236,35 @@ l'historique de la personne, et c'est elle qui les corrige :
 Ce signal est **par semaine**, pas par exercice : il demande une carte à part (accueil ou fin de
 séance), et un `exerciseId` facultatif dans le journal.
 
+**Amendement du 2026-10-14 — ce que la tranche 5 a tranché.** Chaque point est une politique, pas
+une vérité (invariant 4) ; le plan de la tranche (`docs/design/plans/2026-10-04-coach-v2.md`) les
+reprend avec leurs raisons.
+
+- **Rien n'est journalisé.** `volume_low` est un constat de semaine, sans suite à suivre ni à refuser :
+  il ne passe pas par `coachRecommendations`, donc **aucun `exerciseId` facultatif et aucune version de
+  schéma** (le § 6 les réservait). `CoachSignalCode` ne gagne pas `volume_low` : ce n'est pas un signal
+  d'exercice. Le plafond ne crée pas de signal non plus : il retire `add_set` des actions permises.
+- **`add_set` n'est *choisi* qu'en phase de surcharge** (`selectProgramAction`). La note « Pas de série en
+  plus » n'est donc posée que si le plafond a retiré une action que la phase aurait choisie : sinon, sur
+  chaque plafond d'un pratiquant régulier — dont le volume est par définition à son maximum — la carte
+  parlerait d'une action que personne ne lui aurait proposée.
+- **Un pratiquant régulier est à son plafond par construction.** À 10 séries de pecs par semaine, le
+  plus haut des six semaines est 10 : la semaine glissante l'égale, `add_set` est retiré. C'est la
+  décision Q3 (« le coach ne propose pas d'aller au-delà de ce qui a déjà été tenu »), rendue visible :
+  pour progresser en volume, on relève son plafond dans « Volume par muscle ».
+- **Semaines complètes pour la référence et le plancher, sept jours glissants pour la décision.** Lundi à
+  lundi, en jour local ; six semaines avant la semaine en cours, qui est incomplète et ne juge personne.
+- **La médiane est celle des semaines travaillées**, pas des six : deux semaines de repos feraient une
+  médiane de zéro, donc un plancher absurde.
+- **Une semaine sans séance n'est pas un volume bas.** `volume_low` exige une séance, tous muscles
+  confondus, dans chacune des deux semaines : deux semaines de vacances ne font pas autant d'alertes que
+  de planchers posés. Un muscle jamais travaillé compte pour zéro série tant que la personne s'entraîne.
+- **Seize muscles** : les régions de `MUSCLE_SCOPE`. `cardio`, `full_body` et `other` n'ont ni plancher ni
+  plafond (un zéro n'y dit rien). Une borne est un nombre entier de séries, de 1 à 99.
+- **La semaine se lit à l'instant où la séance se termine** (ou maintenant, tant qu'elle est ouverte) :
+  elle compte la séance évaluée, que l'historique ne contient pas encore — ou plus, une fois terminée :
+  elle en est écartée pour ne pas être comptée deux fois.
+
 ### R7 — Fatigue générale (reportée)
 
 Plusieurs exercices qui régressent la même semaine, c'est de la fatigue, pas N plateaux. Règle

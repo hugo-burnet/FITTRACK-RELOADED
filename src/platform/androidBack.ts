@@ -8,6 +8,7 @@ const EXACT_PARENTS = new Map<string, string>([
   ['/history/import', '/history'],
   ['/exercises/new', '/exercises'],
   ['/settings/debug', '/settings'],
+  ['/settings/volume', '/settings'],
   ['/settings', '/'],
 ]);
 
