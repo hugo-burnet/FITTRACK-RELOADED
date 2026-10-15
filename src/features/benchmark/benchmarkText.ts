@@ -1,11 +1,7 @@
 import { t } from '@/i18n/fr';
 import { partReading } from '@/i18n/labels';
-import {
-  BENCHMARK_MAX_REPS,
-  BENCHMARK_RESERVE_REPS,
-  type BenchmarkLine,
-  type BenchmarkProposal,
-} from '@/lib/benchmark';
+import type { BenchmarkLine, BenchmarkProposal } from '@/lib/benchmark';
+import { BENCHMARK_MAX_REPS, BENCHMARK_RESERVE_REPS } from '@/lib/benchmarkModel';
 import { performedParts, repsReading } from '@/lib/measurement';
 
 /**
