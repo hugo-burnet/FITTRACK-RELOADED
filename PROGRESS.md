@@ -10,6 +10,8 @@ exercice, et le coach le lit.
 
 ## Où on en est
 
+- **Sur la branche, non publié** : le « ? » de l'écran de bilan du benchmark n'explique plus l'accueil (`showTutorialHelp={false}`) et un
+  test garde toutes les routes contre ce piège (`tutorialRoutes.test.ts`). À publier avec la prochaine version, sur demande.
 - **Publié : v2.13.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.0), APK `FitTrack-v2.13.0.apk`
   signé avec la clé de release ([journal](docs/journal/2026-10-15-versions-v2-13.md)). **Le benchmark repris**, à la demande de l'utilisateur (« le coach doit lire ce benchmark et te proposer des
   charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 », puis « je choisis ma charge d'essai, le coach

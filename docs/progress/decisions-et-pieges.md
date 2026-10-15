@@ -31,6 +31,27 @@ construction (plus de référence à un nœud périmé), pas par une série de p
 **Pièges.** Relancer le job pour obtenir un vert aurait suffi à publier, et aurait laissé un test qui ne gardait pas sa promesse. La relance a
 été faite, *après* avoir su pourquoi.
 
+### 2026-10-15 (après la v2.13.0) — « Tu as tout merge et oublié ? » : le « ? » du bilan expliquait l'accueil
+
+**La question.** Posée par l'utilisateur après la publication. Réponse en deux temps : le dépôt d'abord (`master` = `origin/master`, tag
+`v2.13.0` sur `df1709e`, aucune branche distante non fusionnée hors les trois `archive/*`, ni stash, ni fichier non suivi) ; puis ce que la
+version n'avait ni dit ni fait.
+
+**Ce qui manquait.**
+
+1. **Le « ? » de l'écran de bilan** (`/benchmark/:workoutId`, ajouté à la v2.12.0). Le didacticiel range les routes par préfixe
+   (`tutorialTopicForPath`) et renvoie `home` pour toute autre : le bilan proposait « Expliquer cette page : Accueil ». Aucun test ne regardait
+   le « ? » d'un écran, et aucun de mes parcours ne l'ouvre : ce trou a traversé trois versions. **Corrigé par un renoncement**
+   (`showTutorialHelp={false}` sur les trois états de l'écran), pas par un chapitre : un chapitre demande une narration (voix, clips), et le
+   bilan dit lui-même ce qu'il fait (`benchmark.intro`). Une aide qui parle d'un autre écran est pire que pas d'aide.
+2. **Un garde-fou plutôt qu'un correctif de plus** (`tutorialRoutes.test.ts`) : toute route déclarée qui retombe sur l'accueil doit renoncer à
+   l'aide *et* entrer dans une courte liste, avec sa raison. Aujourd'hui : le Guide (`/knowledge`, dont le cadre retire déjà le « ? ») et le
+   bilan. Vu rouge sans l'entrée du bilan : il nomme exactement `/benchmark/:workoutId`.
+3. **Le checkpoint téléphone de la version était à jour** (§3 ter de `docs/recette-telephone.md`) **mais pas annoncé** à l'utilisateur, ce que
+   le rituel de fin de session demande. Il l'est maintenant, avec la ligne du « ? ».
+
+**Sur la branche, non publié** : rien n'est fusionné ni versionné sans demande explicite.
+
 ### 2026-10-15 (release) — La feuille de saisie des mensurations repartait du brouillon d'avant
 
 **Constat.** À la fusion de la v2.13.0, un parcours E2E des mensurations — `corriger puis supprimer une mesure refait la courbe` — a
