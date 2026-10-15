@@ -892,16 +892,28 @@ describe('suivi du bloc courant', () => {
 
     expect(await screen.findByText('Semaine 2 / 4')).toBeVisible();
     expect(screen.getByText('02 — 75 % · Construction')).toBeVisible();
-    expect(screen.getByText('Force terminée')).toBeVisible();
-    expect(screen.getByText('Terminée')).toBeVisible();
-    expect(screen.getByText('Jambes en retard')).toBeVisible();
-    expect(screen.getByText('Manquée')).toBeVisible();
-    expect(screen.getByText('Poussée du jour')).toBeVisible();
-    expect(screen.getByText('Aujourd’hui')).toBeVisible();
-    expect(screen.getByText('Tirage à venir')).toBeVisible();
-    expect(screen.getByText('À venir')).toBeVisible();
+    // Les séances de la semaine avec leur état. La carte « Calibrer les charges » reprend les noms des
+    // routines : on lit donc la liste par rôle (nom + état), pas par texte.
+    expect(screen.getByRole('button', { name: 'Force terminée, Terminée' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Jambes en retard, Manquée' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Poussée du jour, Aujourd’hui' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Tirage à venir, À venir' })).toBeVisible();
     expect(screen.getByText('03 — 80 % · Construction')).toBeVisible();
     expect(screen.getByText('04 — 85 % · Décharge')).toBeVisible();
+  });
+
+  it('propose de calibrer les charges de ses routines, une ligne chacune', async () => {
+    const { program } = await createTrackingProgram();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    const title = await screen.findByRole('heading', { name: 'Calibrer les charges' });
+    const rows = within(title.closest('section')!).getAllByRole('button');
+    expect(rows.map((row) => row.textContent)).toEqual([
+      expect.stringContaining('Force terminée'),
+      expect.stringContaining('Jambes en retard'),
+      expect.stringContaining('Poussée du jour'),
+      expect.stringContaining('Tirage à venir'),
+    ]);
   });
 
   it('démarre la séance choisie via le programme puis ouvre la séance en direct', async () => {

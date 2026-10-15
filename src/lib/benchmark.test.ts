@@ -5,7 +5,16 @@ import {
   floorLoad,
   type BenchmarkLineInput,
 } from './benchmark';
-import { BENCHMARK_MAX_PLANNED_SETS, BENCHMARK_MAX_REPS } from './benchmarkModel';
+import {
+  BENCHMARK_GOALS,
+  BENCHMARK_GOAL_TEST_REPS,
+  BENCHMARK_MAX_PLANNED_SETS,
+  BENCHMARK_MAX_REPS,
+  capacityForSets,
+  goalZone,
+  setFatigue,
+} from './benchmarkModel';
+import { BENCHMARK_ROUGH_GAP } from './benchmark';
 
 describe('floorLoad', () => {
   const grid = { kg: 2.5, onGrid: true };
@@ -738,6 +747,33 @@ describe('benchmarkLine — le style choisi au lancement', () => {
     expect(line.verdict).toBe('recorded');
     expect(line.proposal).toBeUndefined();
     expect(line.holdReps).toBeUndefined();
+  });
+});
+
+describe('les répétitions qu’on conseille de viser dans l’essai de chaque style', () => {
+  it('sont assez près de ce que la première série doit tenir pour que l’estimation soit fiable', () => {
+    for (const goal of BENCHMARK_GOALS) {
+      const low = goalZone(goal).low;
+      // De une à trois séries, polyarticulaire (10 %) ou isolation (8 %) : les routines courantes.
+      for (const sets of [1, 2, 3]) {
+        for (const rest of [undefined, 90, 180]) {
+          for (const klass of ['compound', 'isolation'] as const) {
+            const reference = capacityForSets(low, sets, setFatigue(klass, rest));
+            const gap = Math.abs(BENCHMARK_GOAL_TEST_REPS[goal] - reference);
+            expect(gap, `${goal} · ${sets} séries · ${klass} · repos ${rest}`).toBeLessThanOrEqual(
+              BENCHMARK_ROUGH_GAP,
+            );
+          }
+        }
+      }
+    }
+  });
+
+  it('tombent dans la fourchette du style, ou juste au-dessus', () => {
+    for (const goal of BENCHMARK_GOALS) {
+      const zone = goalZone(goal);
+      expect(BENCHMARK_GOAL_TEST_REPS[goal]).toBeGreaterThanOrEqual(zone.low);
+    }
   });
 });
 

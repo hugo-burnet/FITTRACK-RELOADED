@@ -33,6 +33,7 @@ import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
+import { ProgramBenchmarkCard } from '@/features/benchmark/ProgramBenchmarkCard';
 import { MissingRoutineReplacementSheet } from './MissingRoutineReplacementSheet';
 import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
@@ -459,6 +460,8 @@ export function ProgramDetailScreen() {
             onRepair={setReplacementTarget}
           />
         )}
+        {/* Avant de démarrer, c'est ici qu'on règle les charges de départ : celles du bloc viennent de ses routines. */}
+        <ProgramBenchmarkCard sessions={sessions} busy={activeWorkoutExists} />
         <UpcomingWeeks weeks={upcomingWeeks} />
       </div>
 

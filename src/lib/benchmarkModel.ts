@@ -94,6 +94,18 @@ const GOAL_ZONES: Readonly<Record<BenchmarkGoal, RepZone>> = {
   strength: { low: 3, high: 5 },
 };
 
+/**
+ * Les répétitions qu'on conseille de viser dans l'essai, pour chaque style : assez près de ce que la première
+ * série doit tenir (17 à 21 en léger, 10 à 12 en classique, 5 à 6 en force, selon le nombre de séries) pour que
+ * l'estimation ne soit pas « approximative ». Affichées avant l'essai — la feuille de lancement et le rappel en
+ * tête de séance — : la personne choisit sa charge, et c'est ce nombre qui la guide.
+ */
+export const BENCHMARK_GOAL_TEST_REPS: Readonly<Record<BenchmarkGoal, number>> = {
+  light: 18,
+  classic: 12,
+  strength: 6,
+};
+
 /** La fourchette d'un style. Une copie : la modifier ne change pas le style. */
 export function goalZone(goal: BenchmarkGoal): RepZone {
   return { ...GOAL_ZONES[goal] };

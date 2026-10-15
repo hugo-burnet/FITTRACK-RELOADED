@@ -292,6 +292,25 @@ describe('WorkoutScreen — benchmark', () => {
     expect(screen.queryByRole('textbox', { name: /^Série 2/ })).not.toBeInTheDocument();
   });
 
+  it('rappelle le style choisi et le nombre de répétitions à viser', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée', 'light');
+    renderWorkout();
+
+    expect(
+      await screen.findByText(/Benchmark léger · une série à l’échec par exercice.*environ 18 fois/),
+    ).toBeInTheDocument();
+  });
+
   it('ne valide jamais les répétitions de la dernière fois à la place du maximum', async () => {
     const exercise = await createCustomExercise({
       name: 'Développé couché',

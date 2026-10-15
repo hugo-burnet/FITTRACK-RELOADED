@@ -215,3 +215,51 @@ describe('le bilan quand la séance a bougé depuis le lancement', () => {
     expect(lineOf(report, 'Curl poulie').proposal?.routineExerciseId).toBe(rows[1]!.id);
   });
 });
+
+describe('le bilan d’un benchmark que la routine a dépassé', () => {
+  beforeEach(async () => {
+    await resetDb();
+  });
+
+  /** Modifie une série de routine comme le ferait une édition : la date de modification suit. */
+  async function editRoutineSet(setId: string, weight: number, after: number) {
+    await db.routineSets.update(setId, { targetWeight: weight, updatedAt: after + 1 });
+  }
+
+  it('ne se dit pas périmé tant que la routine n’a pas bougé depuis', async () => {
+    const { bench, curl, routine } = await seedUpper();
+    const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark');
+    await perform(workout.id, { [bench.id]: [80, 9], [curl.id]: [40, 12] });
+
+    const report = (await loadBenchmarkReport(workout.id))!;
+
+    expect(report.lines.some((line) => line.routineChanged === true)).toBe(false);
+  });
+
+  it('se dit périmé quand une série de sa ligne de routine a été modifiée après lui', async () => {
+    const { bench, curl, routine, sets } = await seedUpper();
+    const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark');
+    await perform(workout.id, { [bench.id]: [80, 9], [curl.id]: [40, 12] });
+    const { endedAt } = (await db.workouts.get(workout.id))!;
+    // Des semaines plus tard, la routine a progressé : 70 → 90 kg.
+    await editRoutineSet(sets[0]![1]!.id, 90, endedAt);
+
+    const report = (await loadBenchmarkReport(workout.id))!;
+
+    expect(lineOf(report, 'Développé couché').routineChanged).toBe(true);
+    // Le curl, lui, n'a pas bougé : sa proposition date de la veille, pas d'avant-hier.
+    expect(lineOf(report, 'Curl poulie').routineChanged).toBeUndefined();
+  });
+
+  it('ne se dit pas périmé pour une modification faite pendant la séance : le bilan la lit déjà', async () => {
+    const { bench, curl, routine, sets } = await seedUpper();
+    const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark');
+    const { startedAt } = (await db.workouts.get(workout.id))!;
+    await editRoutineSet(sets[0]![0]!.id, 75, startedAt);
+    await perform(workout.id, { [bench.id]: [80, 9], [curl.id]: [40, 12] });
+
+    const report = (await loadBenchmarkReport(workout.id))!;
+
+    expect(lineOf(report, 'Développé couché').routineChanged).toBeUndefined();
+  });
+});

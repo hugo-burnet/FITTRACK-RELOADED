@@ -2690,37 +2690,65 @@ const fr = {
     launchTitle: 'Benchmark',
     launchBody:
       'Une seule série par exercice, menée jusqu’à l’échec.\n' +
-      'Choisis la charge avec laquelle tu penses faire la fourchette de cet exercice dans la routine (8 – 12, 15 – 20, 20…) : plus ton essai en est loin, moins la charge proposée est fiable.\n' +
-      'À la fin, le coach en déduit la charge de chaque exercice pour toutes ses séries de la routine. Rien n’est écrit dans la routine sans ton accord.',
+      'Choisis ton style, puis la charge avec laquelle tu penses faire le nombre de répétitions indiqué : plus ton essai en est loin, moins la charge proposée est fiable.\n' +
+      'À la fin, le coach en déduit la charge de chaque exercice pour toutes ses séries. Rien n’est écrit dans la routine sans ton accord.',
+    /** Le style : la fourchette qu'on veut travailler, choisie avant de lancer. */
+    goalLabel: 'Ton style',
+    goalRoutine: 'Comme ma routine',
+    goalRoutineHint:
+      'Chaque exercice se lit sur la fourchette que la routine lui donne (8 – 12, 15 – 20, 20…).',
+    goalChoice: {
+      classic: 'Classique · 8 – 12 reps',
+      light: 'Léger · 15 – 20 reps',
+      strength: 'Force · 3 – 5 reps',
+    },
+    goalName: {
+      classic: 'classique',
+      light: 'léger',
+      strength: 'force',
+    },
+    goalHint:
+      'Choisis une charge que tu penses tenir environ {reps} fois. Si tu acceptes le bilan, la routine prend cette fourchette et la charge.',
     launchConfirm: 'Lancer le benchmark',
     workoutName: 'Benchmark · {name}',
     workoutBanner:
       'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
+    workoutBannerGoal:
+      'Benchmark {style} · une série à l’échec par exercice, avec la charge que tu penses tenir environ {reps} fois.',
     finishNote: 'C’est un benchmark : le coach en tire la charge de chaque exercice, à lire après l’enregistrement.',
     title: 'Bilan du benchmark',
     notFound: 'Ce benchmark n’existe plus.',
     intro:
       'Une série à l’échec par exercice. Pour chacun, le coach cherche la charge qui tient toutes les séries de la routine dans sa fourchette : il compte la fatigue d’une série à l’autre (le repos, le type d’exercice) et garde environ deux répétitions en réserve à la dernière.',
     zone: 'Fourchette de la routine : {range}',
+    style: 'Ton style : {name} · {range}',
     rough:
-      'Estimation approximative : {reps} répétitions, c’est loin des {target} que la première série doit tenir. Refais cet exercice avec une charge qui t’en rapproche pour une estimation fiable ; l’interrupteur est éteint, à toi de le rallumer.',
+      'Estimation approximative : {reps} répétitions, c’est loin des {target} que la première série doit tenir. Refais cet exercice avec une charge qui t’en rapproche pour une estimation fiable.',
+    /** Ajoutée à `rough` seulement quand l'interrupteur existe : sans proposition, il n'y en a pas. */
+    roughSwitch: 'L’interrupteur est éteint, à toi de le rallumer.',
     context: '{routine} · {date}',
     contextNoRoutine: '{date}',
     done: 'Fait : {reading}',
     oneRepMax: '1RM estimé : {value}',
-    suggested: 'Charge de travail conseillée : {value}',
-    suggestedBasis:
-      'Pour {sets} séries : environ {reps} répétitions à fond à la première, {reserve} en réserve à la dernière.',
-    suggestedBasisOne: 'Pour une série : environ {reps} répétitions à fond.',
+    /** La phrase à retenir : la charge, pour les séries et la fourchette sur lesquelles elle est calculée. */
+    plan: '{value} pour {sets} séries de {range}',
+    planOne: '{value} pour une série de {range}',
+    planPyramid: '{value} pour ta série la plus lourde',
+    pyramidNote: 'Les autres séries suivent du même écart : la forme de ta pyramide ne change pas.',
+    /** Ce que chaque série tient à fond à cette charge — « 13 · 11 · 10 » : une charge se lit sur plusieurs séries. */
+    hold: 'À {value}, tu tiendras environ {reps} reps à fond.',
     inRoutine: 'Dans la routine : {value}',
     inRoutineNone: 'Aucune charge dans la routine.',
     aligned: 'La routine est déjà à ce niveau.',
-    noLine: 'Cet exercice n’est plus dans la routine : rien à écrire.',
+    noLine: 'Cet exercice n’est pas dans la routine : rien à écrire.',
+    routineEmpty: 'La routine n’a aucune série de travail pour cet exercice : rien à écrire.',
+    routineChanged: 'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
     tooLight:
       'Plus de {max} répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
     noLoad: 'Aucune charge exploitable : rien à estimer.',
     recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
     toggleText: 'Appliquer à la routine',
+    zoneNote: 'Écrit aussi la fourchette {range} sur les séries de travail.',
     toggleLabel: 'Appliquer à la routine : {name}',
     apply: 'Appliquer à la routine · {count}',
     applying: 'Écriture…',
@@ -2731,6 +2759,10 @@ const fr = {
     applyFailed: 'La routine n’a pas pu être mise à jour.',
     historyCard: 'Benchmark',
     historyLink: 'Voir le bilan',
+    /** Sur la fiche d'un programme : les charges de ses séances viennent de ses routines. */
+    programTitle: 'Calibrer les charges',
+    programHint:
+      'Les charges d’un programme viennent de ses routines. Un benchmark par routine règle celles de départ.',
   },
 
   weekly: {

@@ -150,7 +150,7 @@ function routineRowFor(
   row: WorkoutExercise,
   routineRows: readonly { id: string; exerciseId: string; order: number }[],
   setsByRow: ReadonlyMap<string, readonly RoutineSet[]>,
-): BenchmarkRoutineRow | undefined {
+): { row: BenchmarkRoutineRow; sets: readonly RoutineSet[] } | undefined {
   const match =
     row.routineExerciseId === undefined
       ? routineRows.find(
@@ -161,15 +161,19 @@ function routineRowFor(
             candidate.id === row.routineExerciseId && candidate.exerciseId === row.exerciseId,
         );
   if (match === undefined) return undefined;
+  const sets = setsByRow.get(match.id) ?? [];
   return {
-    routineExerciseId: match.id,
-    sets: (setsByRow.get(match.id) ?? []).map((set) => ({
-      id: set.id,
-      setType: set.setType,
-      ...(set.targetReps === undefined ? {} : { targetReps: set.targetReps }),
-      ...(set.targetRepsMax === undefined ? {} : { targetRepsMax: set.targetRepsMax }),
-      ...(set.targetWeight === undefined ? {} : { targetWeight: set.targetWeight }),
-    })),
+    row: {
+      routineExerciseId: match.id,
+      sets: sets.map((set) => ({
+        id: set.id,
+        setType: set.setType,
+        ...(set.targetReps === undefined ? {} : { targetReps: set.targetReps }),
+        ...(set.targetRepsMax === undefined ? {} : { targetRepsMax: set.targetRepsMax }),
+        ...(set.targetWeight === undefined ? {} : { targetWeight: set.targetWeight }),
+      })),
+    },
+    sets,
   };
 }
 
@@ -234,37 +238,42 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
     // Sans mesure ni nom, ni la ligne ne se lit ni la charge ne se dimensionne.
     if (identity.measurementType === undefined || identity.name === undefined) return [];
 
-    return [
-      benchmarkLine({
-        exerciseId: row.exerciseId,
-        exerciseName: identity.name,
-        measurementType: identity.measurementType,
-        equipment: identity.equipment ?? 'other',
-        ...(exercise?.loadIncrementKg === undefined
-          ? {}
-          : { loadIncrementKg: exercise.loadIncrementKg }),
-        // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
-        // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
-        // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
-        restSeconds: row.restSeconds,
-        ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
-        exerciseClass: exerciseClass({
-          ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
-          ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
-          ...(identity.secondaryMuscles === undefined ? {} : { secondaryMuscles: identity.secondaryMuscles }),
-        }),
-        sets: performed.map((set) => ({
-          ...(set.weight === undefined ? {} : { weight: set.weight }),
-          ...(set.reps === undefined ? {} : { reps: set.reps }),
-          ...(set.durationSeconds === undefined ? {} : { durationSeconds: set.durationSeconds }),
-          ...(set.distanceMeters === undefined ? {} : { distanceMeters: set.distanceMeters }),
-        })),
-        ...(() => {
-          const routineRow = routineRowFor(row, routineRows, setsByRow);
-          return routineRow === undefined ? {} : { routine: routineRow };
-        })(),
+    const linked = routineRowFor(row, routineRows, setsByRow);
+    // La routine a bougé depuis le benchmark : une de ses séries a été modifiée après la fin de la séance. Le
+    // bilan se recalcule contre la routine d'aujourd'hui, mais sa proposition date : ouvert des semaines plus
+    // tard, il proposait de ramener à 72,5 kg une routine qui avait progressé à 90.
+    const routineChanged =
+      linked !== undefined &&
+      workout.endedAt > 0 &&
+      linked.sets.some((set) => set.updatedAt > workout.endedAt);
+
+    const line = benchmarkLine({
+      exerciseId: row.exerciseId,
+      exerciseName: identity.name,
+      measurementType: identity.measurementType,
+      equipment: identity.equipment ?? 'other',
+      ...(exercise?.loadIncrementKg === undefined
+        ? {}
+        : { loadIncrementKg: exercise.loadIncrementKg }),
+      // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
+      // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
+      // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
+      restSeconds: row.restSeconds,
+      ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
+      exerciseClass: exerciseClass({
+        ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
+        ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
+        ...(identity.secondaryMuscles === undefined ? {} : { secondaryMuscles: identity.secondaryMuscles }),
       }),
-    ];
+      sets: performed.map((set) => ({
+        ...(set.weight === undefined ? {} : { weight: set.weight }),
+        ...(set.reps === undefined ? {} : { reps: set.reps }),
+        ...(set.durationSeconds === undefined ? {} : { durationSeconds: set.durationSeconds }),
+        ...(set.distanceMeters === undefined ? {} : { distanceMeters: set.distanceMeters }),
+      })),
+      ...(linked === undefined ? {} : { routine: linked.row }),
+    });
+    return [routineChanged ? { ...line, routineChanged: true as const } : line];
   });
 
   return {

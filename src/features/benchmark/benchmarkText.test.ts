@@ -2,14 +2,20 @@ import { describe, expect, it } from 'vitest';
 import type { BenchmarkLine } from '@/lib/benchmark';
 import {
   appliedReading,
-  basisReading,
+  bannerReading,
+  changedReading,
+  goalName,
+  holdReading,
   loadReading,
   oneRepMaxReading,
+  planReading,
   proposalMark,
+  pyramidReading,
   roughReading,
   routineReading,
   testedReading,
   withoutLoadReading,
+  zoneNoteReading,
   zoneReading,
 } from './benchmarkText';
 
@@ -61,6 +67,27 @@ describe('les lectures du bilan', () => {
     expect(proposalMark(base)).toBe('77,5 kg');
   });
 
+  it('montre la fourchette quand c’est la seule chose à écrire : la charge est déjà la bonne', () => {
+    const proposal = {
+      routineExerciseId: 'row',
+      exerciseId: 'bench',
+      targetSetIds: ['a'],
+      anchorSetId: 'a',
+      fromWeight: 37.5,
+      proposedWeight: 37.5,
+      deltaKg: 0,
+      zone: { low: 15, high: 20, setIds: ['a'] },
+    };
+    expect(proposalMark(proposal)).toBe('15 – 20 reps');
+    // Avec un écart de charge, la marque garde l'écart ; la fourchette se dit dessous.
+    expect(proposalMark({ ...proposal, deltaKg: 2.5, proposedWeight: 40 })).toBe('+2,5 kg');
+    expect(zoneNoteReading({ ...proposal, deltaKg: 2.5, proposedWeight: 40 })).toBe(
+      'Écrit aussi la fourchette 15 – 20 reps sur les séries de travail.',
+    );
+    expect(zoneNoteReading(proposal)).toBeUndefined();
+    expect(zoneNoteReading({ ...proposal, zone: undefined, deltaKg: 2.5 })).toBeUndefined();
+  });
+
   it('dit ce que la routine porte, ou pourquoi elle ne reçoit rien', () => {
     const proposal = {
       routineExerciseId: 'row',
@@ -74,8 +101,26 @@ describe('les lectures du bilan', () => {
       'Aucune charge dans la routine.',
     );
     expect(routineReading(line({ aligned: true }))).toBe('La routine est déjà à ce niveau.');
-    expect(routineReading(line())).toBe('Cet exercice n’est plus dans la routine : rien à écrire.');
+    expect(routineReading(line())).toBe('Cet exercice n’est pas dans la routine : rien à écrire.');
+    expect(routineReading(line({ routineEmpty: true }))).toBe(
+      'La routine n’a aucune série de travail pour cet exercice : rien à écrire.',
+    );
     expect(routineReading(line({ verdict: 'too_light' }))).toBeUndefined();
+  });
+
+  it('prévient quand la routine a changé depuis le benchmark, mais seulement s’il y a quelque chose à écrire', () => {
+    const proposal = {
+      routineExerciseId: 'row',
+      exerciseId: 'bench',
+      targetSetIds: ['a'],
+      anchorSetId: 'a',
+      proposedWeight: 77.5,
+    };
+    expect(changedReading(line({ proposal, routineChanged: true }))).toBe(
+      'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
+    );
+    expect(changedReading(line({ routineChanged: true }))).toBeUndefined();
+    expect(changedReading(line({ proposal }))).toBeUndefined();
   });
 
   it('dit pourquoi un exercice n’a pas de charge', () => {
@@ -92,24 +137,68 @@ describe('les lectures du bilan', () => {
     expect(zoneReading(line({ zone: undefined }))).toBeUndefined();
   });
 
-  it('dit sur combien de séries la charge est calculée, ce que la première tient à fond et la réserve de la dernière', () => {
-    expect(basisReading(line())).toBe(
-      'Pour 3 séries : environ 12 répétitions à fond à la première, 2 en réserve à la dernière.',
+  it('dit le style choisi plutôt que la routine : « Ton style : léger · 15 – 20 reps »', () => {
+    expect(zoneReading(line({ goal: 'light', zone: { low: 15, high: 20 } }))).toBe(
+      'Ton style : léger · 15 – 20 reps',
     );
-    expect(basisReading(line({ plannedSets: 6, referenceReps: 16.9351 }))).toBe(
-      'Pour 6 séries : environ 17 répétitions à fond à la première, 2 en réserve à la dernière.',
+    expect(zoneReading(line({ goal: 'classic', zone: { low: 8, high: 12 } }))).toBe(
+      'Ton style : classique · 8 – 12 reps',
     );
-  });
-
-  it('n’a pas de « dernière série » à nommer quand il n’y en a qu’une', () => {
-    expect(basisReading(line({ plannedSets: 1, referenceReps: 10 }))).toBe(
-      'Pour une série : environ 10 répétitions à fond.',
+    expect(zoneReading(line({ goal: 'strength', zone: { low: 3, high: 5 } }))).toBe(
+      'Ton style : force · 3 – 5 reps',
     );
   });
 
-  it('ne dit rien de la base d’une ligne qui n’a pas de charge conseillée', () => {
-    expect(basisReading(line({ plannedSets: undefined }))).toBeUndefined();
-    expect(basisReading(line({ referenceReps: undefined }))).toBeUndefined();
+  it('nomme les trois styles', () => {
+    expect(['classic', 'light', 'strength'].map((goal) => goalName(goal as 'classic'))).toEqual([
+      'classique',
+      'léger',
+      'force',
+    ]);
+  });
+
+  it('dit la charge pour la fourchette et les séries : « 72,5 kg pour 3 séries de 8 – 12 reps »', () => {
+    const base = line({ zone: { low: 8, high: 12 } });
+    expect(planReading(base)).toBe('72,5 kg pour 3 séries de 8 – 12 reps');
+    expect(planReading(line({ zone: { low: 15, high: 20 }, plannedSets: 2, suggestedKg: 37.5 }))).toBe(
+      '37,5 kg pour 2 séries de 15 – 20 reps',
+    );
+    expect(planReading(line({ zone: { low: 20, high: 20 }, plannedSets: 4 }))).toBe(
+      '72,5 kg pour 4 séries de 20 reps',
+    );
+  });
+
+  it('n’accorde pas « 1 séries » : une série seule se dit une série', () => {
+    expect(planReading(line({ zone: { low: 8, high: 12 }, plannedSets: 1 }))).toBe(
+      '72,5 kg pour une série de 8 – 12 reps',
+    );
+  });
+
+  it('dit la charge de la série la plus lourde pour une pyramide', () => {
+    expect(planReading(line({ zone: { low: 8, high: 12 }, pyramid: true, suggestedKg: 77.5 }))).toBe(
+      '77,5 kg pour ta série la plus lourde',
+    );
+    expect(pyramidReading(line({ pyramid: true }))).toBe(
+      'Les autres séries suivent du même écart : la forme de ta pyramide ne change pas.',
+    );
+    expect(pyramidReading(line())).toBeUndefined();
+  });
+
+  it('ne dit rien d’une ligne qui n’a pas de charge conseillée', () => {
+    expect(planReading(line({ zone: undefined }))).toBeUndefined();
+    expect(planReading(line({ zone: { low: 8, high: 12 }, plannedSets: undefined }))).toBeUndefined();
+    expect(planReading(line({ zone: { low: 8, high: 12 }, suggestedKg: undefined }))).toBeUndefined();
+  });
+
+  it('dit ce que chaque série tient à fond à cette charge', () => {
+    expect(holdReading(line({ holdReps: [13, 11, 10], suggestedKg: 52.5 }))).toBe(
+      'À 52,5 kg, tu tiendras environ 13 · 11 · 10 reps à fond.',
+    );
+    expect(holdReading(line({ holdReps: [10], suggestedKg: 77.5 }))).toBe(
+      'À 77,5 kg, tu tiendras environ 10 reps à fond.',
+    );
+    expect(holdReading(line())).toBeUndefined();
+    expect(holdReading(line({ holdReps: [] }))).toBeUndefined();
   });
 
   it('met en garde contre une estimation tirée d’un essai loin de ce que la première série doit tenir, et d’elle seule', () => {
@@ -118,6 +207,32 @@ describe('les lectures du bilan', () => {
     );
     expect(roughReading(line())).toBeUndefined();
     expect(roughReading(line({ rough: true, referenceReps: undefined }))).toBeUndefined();
+  });
+
+  it('ne parle de l’interrupteur que quand il existe : il n’y en a pas sans proposition', () => {
+    const proposal = {
+      routineExerciseId: 'row',
+      exerciseId: 'bench',
+      targetSetIds: ['a'],
+      anchorSetId: 'a',
+      proposedWeight: 77.5,
+    };
+    const rough = { rough: true as const, tested: { weight: 40, reps: 25 } };
+
+    expect(roughReading(line({ ...rough, proposal }))).toMatch(/L’interrupteur est éteint, à toi de le rallumer\.$/);
+    expect(roughReading(line({ ...rough }))).not.toMatch(/interrupteur/);
+    expect(roughReading(line({ ...rough, aligned: true }))).not.toMatch(/interrupteur/);
+  });
+
+  it('rappelle en tête de séance ce que le benchmark demande, et le nombre de répétitions à viser avec un style', () => {
+    expect(bannerReading(undefined)).toBe(
+      'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
+    );
+    expect(bannerReading('light')).toBe(
+      'Benchmark léger · une série à l’échec par exercice, avec la charge que tu penses tenir environ 18 fois.',
+    );
+    expect(bannerReading('classic')).toMatch(/Benchmark classique .* environ 12 fois\.$/);
+    expect(bannerReading('strength')).toMatch(/Benchmark force .* environ 6 fois\.$/);
   });
 
   it('accorde le compte des exercices mis à jour', () => {

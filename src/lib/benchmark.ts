@@ -171,6 +171,13 @@ export interface BenchmarkLine {
   /** La cible actuelle de la routine : la plus dure de ses séries de travail. */
   currentKg?: number;
   proposal?: BenchmarkProposal;
+  /** `true` quand la ligne de routine existe mais ne porte aucune série de travail (des échauffements seuls). */
+  routineEmpty?: true;
+  /**
+   * `true` quand une série de la routine a été modifiée après ce benchmark : la proposition date, et le bilan
+   * ne l'allume pas d'office. Posé par le dépôt, seul à connaître les dates de la routine.
+   */
+  routineChanged?: true;
   /**
    * `true` quand les séries de travail de la routine portent des charges différentes. Le décalage garde la
    * forme de la pyramide ; un objectif du coach, lui, est un seul chiffre qui l'aplatirait : il n'en pose pas.
@@ -338,7 +345,8 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     ...(rough ? { rough: true as const } : {}),
   };
 
-  if (input.routine === undefined || first === undefined) return line;
+  if (input.routine === undefined) return line;
+  if (first === undefined) return { ...line, routineEmpty: true };
 
   // La série dont le bilan lit la charge : la première de travail — la première qui en porte une, dans une
   // pyramide, pour que « ce qu'elle portait alors » existe.
