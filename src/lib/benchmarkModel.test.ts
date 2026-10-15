@@ -93,6 +93,17 @@ describe('plannedSets — sur combien de séries la charge doit tenir', () => {
     expect(plannedSets(sets(70, undefined, 70), 'compound')).toBe(3);
   });
 
+  it('ne compte pas une série dégressive, et elle ne fait pas une pyramide', () => {
+    const straight = [70, 70, 70].map((targetWeight) => ({ targetWeight, setType: 'normal' as const }));
+    const drop = { targetWeight: 55, setType: 'dropset' as const };
+
+    // Trois séries à 70 kg puis une dégressive à 55 : trois séries à tenir, pas une « pyramide ».
+    expect(plannedSets([...straight, drop], 'compound')).toBe(3);
+    expect(plannedSets([...straight.slice(0, 2), drop], 'compound')).toBe(2);
+    // Et une routine qui ne serait que dégressives retombe sur le défaut de sa classe.
+    expect(plannedSets([drop, drop], 'isolation')).toBe(BENCHMARK_DEFAULT_SETS.isolation);
+  });
+
   it('plafonne : au-delà de six séries à charge égale, personne ne les mène toutes près de l’échec', () => {
     expect(plannedSets(sets(...Array.from({ length: 10 }, () => 50)), 'compound')).toBe(
       BENCHMARK_MAX_PLANNED_SETS,

@@ -1,3 +1,4 @@
+import type { SetType } from '@/data/types';
 import type { ExerciseClass } from '@/lib/exerciseClass';
 
 /**
@@ -148,16 +149,21 @@ export function setFatigue(klass: ExerciseClass, restSeconds?: number): number {
  * - **Une pyramide compte pour une série.** Dès que les séries de travail portent deux charges différentes, la
  *   routine ne dit pas « la même charge, plusieurs fois » : la première est dimensionnée pour elle-même, les
  *   autres suivent du même écart (c'est ce que fait l'écriture). Une série sans charge ne fait pas une pyramide.
+ * - **Une série dégressive ne compte pas, et ne fait pas une pyramide.** Elle est plus légère par construction :
+ *   comptée, elle faisait d'une routine « trois séries à 70 kg, puis une dégressive à 55 » une pyramide d'une
+ *   seule série, et la charge proposée montait de 5 kg. Le reste du coach la laisse de côté de la même façon
+ *   (`progressionSets`, la revue des cibles) ; elle suit seulement le décalage à l'écriture.
  * - **Rien dans la routine** (échauffement seul, exercice sorti de la routine) : le défaut de la classe.
  */
 export function plannedSets(
-  working: readonly { targetWeight?: number }[],
+  working: readonly { targetWeight?: number; setType?: SetType }[],
   klass: ExerciseClass,
 ): number {
-  if (working.length === 0) return BENCHMARK_DEFAULT_SETS[klass];
-  const loads = new Set(working.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight])));
+  const straight = working.filter((set) => set.setType !== 'dropset');
+  if (straight.length === 0) return BENCHMARK_DEFAULT_SETS[klass];
+  const loads = new Set(straight.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight])));
   if (loads.size > 1) return 1;
-  return Math.min(working.length, BENCHMARK_MAX_PLANNED_SETS);
+  return Math.min(straight.length, BENCHMARK_MAX_PLANNED_SETS);
 }
 
 /**

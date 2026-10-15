@@ -199,7 +199,10 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   }
 
   const working = routineWorkingSets(input.routine);
-  const first = working[0];
+  // La série qui donne la fourchette et la charge de départ n'est jamais une dégressive (plus légère par
+  // construction) ; celles-ci suivent le décalage avec les autres, via `targetSetIds`.
+  const straight = working.filter((set) => set.setType !== 'dropset');
+  const first = (straight.length > 0 ? straight : working)[0];
   const zone = repZone(first?.targetReps, first?.targetRepsMax);
 
   const loaded = input.sets.filter(
@@ -244,7 +247,9 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     return { ...base, verdict: 'no_load', zone, tested, oneRepMax: best.oneRepMax };
   }
 
-  const weights = working.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight]));
+  const weights = (straight.length > 0 ? straight : working).flatMap((set) =>
+    set.targetWeight === undefined ? [] : [set.targetWeight],
+  );
   const currentKg = weights.length === 0 ? undefined : Math.max(...weights);
   const rough = Math.abs(best.set.reps! - reference) > BENCHMARK_ROUGH_GAP;
 

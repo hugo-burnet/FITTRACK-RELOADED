@@ -210,7 +210,10 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
   const library = new Map(
     exercises.flatMap((exercise) => (exercise === undefined ? [] : [[exercise.id, exercise] as const])),
   );
-  const completed = alive(sets).filter((set) => set.isCompleted === 1);
+  // Jamais un échauffement : sa charge n'est pas celle d'une série menée à l'échec, et l'offre
+  // « Ton échauffement de la dernière fois » en met dans la séance. Un échauffement seul validé (la série
+  // à l'échec jamais faite, supprimée à l'enregistrement) ne fait pas un essai : l'exercice est « non fait ».
+  const completed = alive(sets).filter((set) => set.isCompleted === 1 && isWorkingSet(set));
 
   const lines = rows.flatMap((row) => {
     const performed = completed.filter((set) => set.workoutExerciseId === row.id);

@@ -127,6 +127,27 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
     expect(line.currentKg).toBe(80);
   });
 
+  it('lit une série dégressive comme le reste de la routine : elle ne change ni le compte ni la charge, et suit le décalage', () => {
+    const straight = workingRoutine([70, 70, 70]).sets;
+    const withDrop = {
+      routineExerciseId: 'row-1',
+      sets: [
+        ...straight,
+        { id: 'd', setType: 'dropset' as const, targetReps: 8, targetRepsMax: 12, targetWeight: 55 },
+      ],
+    };
+
+    const line = benchmarkLine(bench({ routine: withDrop }));
+
+    // Trois séries à tenir, comme sans la dégressive : 72,5 kg et non les 77,5 d'une « pyramide ».
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(72.5);
+    expect(line.currentKg).toBe(70);
+    expect(line.proposal?.deltaKg).toBe(2.5);
+    // La dégressive est écrite avec les autres : elle garde son écart à la série de travail.
+    expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2', 'd']);
+  });
+
   it('propose une charge plus basse quand la routine était trop lourde', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([90]) }));
 
