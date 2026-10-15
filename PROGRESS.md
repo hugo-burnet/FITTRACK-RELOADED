@@ -5,66 +5,31 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — la branche de session `ccr-57f17af8-maxzqv` est **fusionnée dans `master`**
-(`--no-ff`) ; **v2.12.0** est préparée (`package.json` à 2.12.0) et se publie par le `workflow_dispatch` d'`android.yml`
-avec `release_tag`. Dernière version publiée avant elle : **v2.11.1** (2026-10-13).
+**Dernière mise à jour :** 2026-10-15 — **v2.12.0 publiée** (PWA et APK). La branche de session `ccr-57f17af8-maxzqv` est
+fusionnée dans `master` (`256c08a`, `--no-ff`) ; `master` est à jour de la publication.
 
 ## Où on en est
 
-- **Publié : v2.11.1** (PWA et APK) ; **v2.12.0** est en cours de publication.
-- **Portes**, sur `master` : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 527 tests**, 299 fichiers,
-  1 ignoré), `build` et `test:e2e` (**34 parcours**, 8 fichiers, à 390 px).
-- **Branches distantes.** `ccr-449df1c1-etmya3`, fusionnée, est à supprimer à la main : le refus de
-  supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois
-  `archive/*`** : `make-fragments.mjs` lit `archive/fittrack-kb-corpus`.
+- **Publié : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0), APK
+  `FitTrack-v2.12.0.apk` signé avec la clé de release. Ce qu'elle contient (la coche qui n'écrase plus la saisie, le coach R6, le
+  benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité) est dans
+  [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md), avec la voie de la publication et ses vérifications.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 527 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**34 parcours**, 8 fichiers, à 390 px) — verts sur `master`, y compris sur la CI.
+- **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
+  supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
+  `archive/fittrack-kb-corpus`.
+- **Pour publier la suivante** : `chore: prepare release vX.Y.Z` (`package.json` et son lock), `master` poussé sans force, puis le
+  `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
+  pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant.
 
-## Cette session (2026-10-14 → 2026-10-15)
+## À juger sur le terrain (v2.12.0)
 
-Origine : une revue d'ensemble du projet (« quelles améliorations proposes-tu ? »), puis « corrige tout en
-autonomie », puis une idée de l'utilisateur en cours de route : le **benchmark**. Chaque ligne est un commit de
-la branche ; le raisonnement est dans `docs/progress/decisions-et-pieges.md`.
-
-**Corrections**
-
-- **La coche écrasait ce qu'on venait de taper.** Un poids tapé puis ✓ aussitôt pouvait être remplacé par la
-  valeur proposée : l'écran passait une photo périmée à `completeSet`. Désormais la coche ne remplit que les
-  cases vides de la ligne relue **dans** la transaction. Trouvé par un E2E intermittent, corrigé de façon
-  déterministe.
-- **Coach, cible unique.** Un 5×5 ou un 3×10 ne se voyait jamais proposer le cran : R3.2 exigeait une
-  répétition de plus que la cible. Elle se tait sans fourchette. Vu dans le navigateur (« 100 → 102,5 kg »).
-  **Non rejoué sur l'historique réel** — la sauvegarde n'est pas dans le dépôt : `npm run coach:replay`.
-- **Coach, blocs entrelacés.** Deux blocs du même exercice repartaient de `order: 0` et se lisaient A0, B0,
-  A1, B1 : un « Repos long » sur des repos de deux minutes. Rangés par l'heure de leur première série faite.
-- **En-tête à 200 % de police.** Les cibles de 3 rem passaient à 96 px et repoussaient l'aide hors de l'écran.
-- **Dépendances.** Production à **0 vulnérabilité** (Capacitor 8.5.1, react-router-dom 7.18.2).
-  `@capacitor/assets` retiré. Trois avis modérés restent, en outil de dev. Capacitor **8.5.2 n'est pas pris**.
-
-**Ajouts**
-
-- **Benchmark.** Planifier › ⋯ d'une routine › « Benchmark de cette routine » : une série à l'échec par exercice,
-  puis un bilan (1RM estimé, charge de travail conseillée, ce que la routine porte) qui propose d'écrire ces
-  charges dans la routine — **sur acceptation**. Écarté de tout ce qui prescrit (valeurs fantômes, historique du
-  coach, revue des cibles, rotation de l'accueil) ; compte pour les records, le volume et l'historique.
-  `Workout.kind`, aucune version de schéma. **Réserve de 2 répétitions et limite de 12 : à juger à l'usage.**
-- **Coach R6, volume par muscle.** Le coach ne propose plus d'ajouter une série à un muscle qui a déjà tenu ce
-  volume ; un écran « Volume par muscle » (Réglages › Coach) pose ses bornes ; une carte d'accueil « Volume bas »
-  parle d'un plancher que la personne a posé. **Le plafond ne change presque rien tant qu'on ne le relève
-  pas** — c'est la décision, à juger sur le terrain (`effectiveCeiling`, un seul endroit).
-- **Mensurations** (sans photos). Quinze mesures et des champs libres, saisie à n'importe quelle date, courbe à
-  abscisse proportionnelle au temps ; le poids de corps est la même mesure que celui de l'accueil.
-- **Remplacer l'exercice** depuis la séance en cours : la ligne change d'occupant à la même place, les séries
-  déjà faites restent.
-- **Rappel de sauvegarde.** Trois séances que nulle sauvegarde ne contient : une carte sous la séance à
-  lancer, une ligne d'état dans Réglages, le stockage persistant demandé au démarrage.
-- **E2E Playwright**, commité : 34 parcours à 390 px. `npm run test:e2e`. Workflow `e2e.yml` **à part** : il
-  ne garde pas le déploiement.
-- **`docs/recette-telephone.md`** : tous les checkpoints dus, en une passe de 30 minutes.
-
-**Rangement**
-
-- **`evaluate.ts`** (1 051 lignes) découpé en sept modules sans changer un corps de fonction.
-- **`PROGRESS.md`** : 1 245 lignes → ce fichier ; les journaux de v2.4 à v2.11.1 sont dans
-  `docs/journal/2026-10-14-versions-v2.md`. `CLAUDE.md` remis d'accord avec le dépôt.
+- **Benchmark** : la réserve de 2 répétitions et la limite de 12 sont des constantes (`lib/benchmark.ts`) ; si les charges proposées
+  paraissent trop basses ou trop hautes, c'est là.
+- **Coach R6** : le plafond ne change presque rien tant qu'on ne le relève pas — c'est la décision, pas un défaut (`effectiveCeiling`,
+  un seul endroit).
+- **Coach sur l'historique réel** : non rejoué, la sauvegarde n'est pas dans le dépôt (`npm run coach:replay`).
 
 ## Ce qui reste
 
@@ -111,6 +76,7 @@ résultat attendu de chaque ligne. L'ancienne liste figure en bas de l'archive d
 
 | Fichier | Contenu |
 | --- | --- |
+| [2026-10-15-versions-v2-12.md](docs/journal/2026-10-15-versions-v2-12.md) | Version v2.12.0 (2026-10-14 → 2026-10-15) |
 | [2026-10-14-versions-v2.md](docs/journal/2026-10-14-versions-v2.md) | Versions v2.4 à v2.11.1 (2026-08-29 → 2026-10-13) |
 | [2026-08-29-versions-v0-v1.md](docs/journal/2026-08-29-versions-v0-v1.md) | Versions v0–v1 |
 | [journal-2026.md](docs/progress/journal-2026.md) | Sessions 2026 (tutoriel, wiki, investigation) |
