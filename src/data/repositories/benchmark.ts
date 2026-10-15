@@ -1,5 +1,5 @@
 import { db } from '@/data/db';
-import type { RoutineSet, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type { BenchmarkGoal, RoutineSet, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import {
   benchmarkLine,
   benchmarkSignal,
@@ -7,6 +7,7 @@ import {
   type BenchmarkProposal,
   type BenchmarkRoutineRow,
 } from '@/lib/benchmark';
+import type { RepZone } from '@/lib/benchmarkModel';
 import type { CoachSignal } from '@/lib/coach/types';
 import { exerciseClass } from '@/lib/exerciseClass';
 import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
@@ -92,10 +93,14 @@ function linkToRoutine(graph: WorkoutEntityGraph, source: WorkoutRoutineSource):
 /**
  * Lance un benchmark depuis une routine. Refuse quand une séance est déjà
  * ouverte (comme « Démarrer ») et quand la routine n'a aucun exercice.
+ *
+ * `goal` est le style choisi au lancement — léger, classique, force : la fourchette qu'on y vise. Sans lui, le
+ * bilan lit la fourchette que la routine écrit sur chaque exercice.
  */
 export async function startBenchmarkFromRoutine(
   routineId: string,
   name: string,
+  goal?: BenchmarkGoal,
 ): Promise<Workout> {
   const source = await readWorkoutRoutineSource(routineId);
   if (source === null) throw new Error(`Routine introuvable : ${routineId}`);
@@ -105,7 +110,12 @@ export async function startBenchmarkFromRoutine(
   const reduced = reduceToBenchmark(linkToRoutine(built, source));
   const graph: WorkoutEntityGraph = {
     ...reduced,
-    workout: { ...reduced.workout, name, kind: 'benchmark' },
+    workout: {
+      ...reduced.workout,
+      name,
+      kind: 'benchmark',
+      ...(goal === undefined ? {} : { benchmarkGoal: goal }),
+    },
   };
 
   await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
@@ -118,6 +128,8 @@ export async function startBenchmarkFromRoutine(
 
 export interface BenchmarkReport {
   workout: Workout;
+  /** Le style choisi au lancement. Absent : la fourchette de la routine, exercice par exercice. */
+  goal?: BenchmarkGoal;
   /** Absent quand la routine d'où est parti le benchmark n'existe plus. */
   routineName?: string;
   lines: BenchmarkLine[];
@@ -235,6 +247,7 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
         // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
         // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
         restSeconds: row.restSeconds,
+        ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
         exerciseClass: exerciseClass({
           ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
           ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
@@ -256,6 +269,7 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
 
   return {
     workout,
+    ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
     ...(livingRoutine === undefined ? {} : { routineName: livingRoutine.name }),
     lines,
   };
@@ -285,6 +299,18 @@ export async function recordBenchmarkObjectives(workoutId: string): Promise<Coac
   return signals;
 }
 
+/** La série avec la fourchette de `zone` : `targetRepsMax` n'existe que sous une vraie fourchette. */
+function withZone(set: RoutineSet, zone: RepZone): RoutineSet | undefined {
+  const already =
+    set.targetReps === zone.low && (set.targetRepsMax ?? set.targetReps) === zone.high;
+  if (already) return undefined;
+
+  const next: RoutineSet = { ...set, targetReps: zone.low };
+  if (zone.high > zone.low) next.targetRepsMax = zone.high;
+  else delete next.targetRepsMax;
+  return touch(next, {});
+}
+
 /**
  * Écrit les charges acceptées dans la routine — par le chemin d'écriture de la
  * revue des cibles, qui décale chaque série de travail du même écart (une
@@ -295,7 +321,9 @@ export async function recordBenchmarkObjectives(workoutId: string): Promise<Coac
  * avant que l'écran ne se rafraîchisse) ou posé sur une routine modifiée entre
  * temps ne déplace pas deux fois, il ne fait rien.
  *
- * Renvoie le nombre d'**exercices** réécrits, pas de séries.
+ * Renvoie le nombre d'**exercices** réécrits, pas de séries. Quand le benchmark avait un style, les séries de
+ * travail reçoivent aussi sa fourchette de répétitions (« 15 – 20 ») : la routine dit alors ce que la
+ * personne a choisi de travailler, pas ce qu'elle disait avant.
  *
  * **Une charge, une seule source.** Un objectif de charge du coach resté en attente sur l'exercice
  * s'afficherait à côté de la cible que le benchmark vient d'écrire : deux chiffres pour un exercice. Il est
@@ -318,6 +346,25 @@ export async function applyBenchmarkProposals(
       );
     });
     await applyRoutineTargetProposals(current);
+
+    // La fourchette du style choisi, avec la charge et sous la même garde : une proposition dont la série de
+    // référence a changé n'est pas dans `current`, elle n'écrit donc pas non plus de répétitions.
+    const zones = new Map<string, RepZone>();
+    for (const proposal of current) {
+      if (proposal.zone === undefined) continue;
+      const { setIds, ...zone } = proposal.zone;
+      for (const id of setIds) zones.set(id, zone);
+    }
+    if (zones.size > 0) {
+      const rows = alive(
+        (await db.routineSets.bulkGet([...zones.keys()])).flatMap((row) => (row === undefined ? [] : [row])),
+      );
+      const written = rows.flatMap((row) => {
+        const next = withZone(row, zones.get(row.id)!);
+        return next === undefined ? [] : [next];
+      });
+      if (written.length > 0) await db.routineSets.bulkPut(written);
+    }
 
     if (current.length > 0) {
       const writtenKg = new Map(current.map((proposal) => [proposal.exerciseId, proposal.proposedWeight]));

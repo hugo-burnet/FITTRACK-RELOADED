@@ -9,6 +9,7 @@ import {
   type CoachRecommendationStatus,
   type CoachSignalCode,
   type ExternalExerciseSource,
+  type BenchmarkGoal,
   type PersonalRecordType,
   type ProgramStatus,
   type Side,
@@ -122,6 +123,7 @@ const WORKOUT_STATUSES = [
   'discarded',
 ] as const satisfies readonly WorkoutStatus[];
 const WORKOUT_KINDS = ['benchmark'] as const satisfies readonly WorkoutKind[];
+const BENCHMARK_GOALS = ['light', 'classic', 'strength'] as const satisfies readonly BenchmarkGoal[];
 const PROGRAM_STATUSES = [
   'draft',
   'active',
@@ -280,6 +282,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
     },
     optional: {
       kind: oneOf(WORKOUT_KINDS),
+      benchmarkGoal: oneOf(BENCHMARK_GOALS),
       programPhase: oneOf(PROGRAM_PHASES),
       programIsDeload: isFlag,
       programWeekIndex: isRank,

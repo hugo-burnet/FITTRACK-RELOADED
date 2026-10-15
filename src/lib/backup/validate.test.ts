@@ -129,6 +129,27 @@ describe('validateBackupTables', () => {
     });
   });
 
+  it('accepte le style d’un benchmark et refuse un style inconnu', () => {
+    const tables = account();
+    for (const goal of ['light', 'classic', 'strength']) {
+      tables.workouts[0]!.kind = 'benchmark';
+      tables.workouts[0]!.benchmarkGoal = goal;
+      expect(validateBackupTables(tables, NOW_SCHEMA).ok, goal).toBe(true);
+    }
+
+    tables.workouts[0]!.benchmarkGoal = 'endurance';
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'workouts',
+      index: 0,
+      field: 'benchmarkGoal',
+    });
+  });
+
   it('accepte le lien d’une ligne de séance vers sa ligne de routine, et refuse un lien qui n’en est pas un', () => {
     const tables = account();
     tables.workoutExercises[0]!.routineExerciseId = 'routine-row-1';

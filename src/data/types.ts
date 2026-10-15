@@ -292,11 +292,23 @@ export type WorkoutStatus = 'active' | 'completed' | 'discarded';
  */
 export type WorkoutKind = 'benchmark';
 
+/**
+ * Le style d'un benchmark : la fourchette de répétitions qu'on y vise, choisie au lancement. Absent : celle de
+ * chaque exercice dans la routine, lue exercice par exercice.
+ *
+ * `light` 15 – 20 répétitions, `classic` 8 – 12, `strength` 3 – 5 (`lib/benchmarkModel`). Le style dit ce que
+ * la personne veut travailler, pas ce que la routine écrit : au départ d'un programme, la routine n'a souvent
+ * pas encore de fourchette qui vaille.
+ */
+export type BenchmarkGoal = 'light' | 'classic' | 'strength';
+
 export interface Workout extends Syncable {
   routineId: string; // '' for an empty workout (RF-17)
   name: string;
   status: WorkoutStatus; // 'active' = resumed on startup (RF-25)
   kind?: WorkoutKind;
+  /** Pour un benchmark seulement : le style choisi au lancement. Absent : la fourchette de la routine. */
+  benchmarkGoal?: BenchmarkGoal;
   startedAt: number;
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close

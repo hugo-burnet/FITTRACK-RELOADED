@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_DEFAULT_SETS,
+  BENCHMARK_GOALS,
   BENCHMARK_MAX_PLANNED_SETS,
   BENCHMARK_MAX_REPS,
   capacityForSets,
+  goalZone,
   loadForReps,
   oneRepMaxOf,
   plannedSets,
+  repsHeldAt,
   repZone,
   setFatigue,
 } from './benchmarkModel';
@@ -182,5 +185,59 @@ describe('repZone', () => {
     expect(repZone(0, 5)).toEqual({ low: 8, high: 12 });
     expect(repZone(-3, undefined)).toEqual({ low: 8, high: 12 });
     expect(repZone(6.5, 8)).toEqual({ low: 8, high: 12 });
+  });
+});
+
+describe('goalZone — le style qu’on choisit au lancement', () => {
+  it('range chaque style dans sa fourchette : léger 15 – 20, classique 8 – 12, force 3 – 5', () => {
+    expect(goalZone('light')).toEqual({ low: 15, high: 20 });
+    expect(goalZone('classic')).toEqual({ low: 8, high: 12 });
+    expect(goalZone('strength')).toEqual({ low: 3, high: 5 });
+  });
+
+  it('donne une copie : la modifier ne change pas le style', () => {
+    const zone = goalZone('classic');
+    zone.high = 99;
+    expect(goalZone('classic')).toEqual({ low: 8, high: 12 });
+  });
+
+  it('liste les trois styles, du plus courant au plus rare', () => {
+    expect(BENCHMARK_GOALS).toEqual(['classic', 'light', 'strength']);
+  });
+});
+
+describe('repsHeldAt — ce que chaque série tient à fond à une charge donnée', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt) : un max de 64 kg est une série de
+  // 21,1 répétitions à 37,5 kg, et chaque série de plus en perd 10 %.
+  it('compte les répétitions que tient chacune des séries, la fatigue en moins à chaque fois', () => {
+    expect(repsHeldAt(64, 37.5, 3, 0.1)).toEqual([21, 19, 17]);
+    expect(repsHeldAt(75.25, 52.5, 3, 0.1)).toEqual([13, 11, 10]);
+    expect(repsHeldAt(116.67, 95, 3, 0.1)).toEqual([6, 6, 5]);
+  });
+
+  it('arrondit vers le bas : le bilan ne promet jamais une répétition de plus que le modèle', () => {
+    // 52,5 kg tient 13,0 puis 11,7 puis 10,5 répétitions.
+    expect(repsHeldAt(75.25, 52.5, 3, 0.1)).toEqual([13, 11, 10]);
+  });
+
+  it('donne une seule valeur pour une seule série', () => {
+    expect(repsHeldAt(104, 77.5, 1, 0.1)).toEqual([10]);
+  });
+
+  it('ne dépasse pas ce que la formule sait dire', () => {
+    // Un max de 100 kg à 10 kg ferait 270 répétitions : la formule s'arrête à trente.
+    expect(repsHeldAt(100, 10, 2, 0.1)).toEqual([BENCHMARK_MAX_REPS, 27]);
+  });
+
+  it('ne compte pas plus de six séries, et ne dit rien d’une charge qui n’en est pas une', () => {
+    expect(repsHeldAt(104, 70, 9, 0.1)).toHaveLength(BENCHMARK_MAX_PLANNED_SETS);
+    expect(repsHeldAt(104, 0, 3, 0.1)).toEqual([]);
+    expect(repsHeldAt(0, 70, 3, 0.1)).toEqual([]);
+    expect(repsHeldAt(104, Number.NaN, 3, 0.1)).toEqual([]);
+  });
+
+  it('lit un nombre de séries inutilisable comme une série', () => {
+    expect(repsHeldAt(104, 77.5, 0, 0.1)).toEqual([10]);
+    expect(repsHeldAt(104, 77.5, 2.5, 0.1)).toEqual([10]);
   });
 });

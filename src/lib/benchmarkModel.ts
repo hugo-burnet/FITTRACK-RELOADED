@@ -1,4 +1,4 @@
-import type { SetType } from '@/data/types';
+import type { BenchmarkGoal, SetType } from '@/data/types';
 import type { ExerciseClass } from '@/lib/exerciseClass';
 
 /**
@@ -76,6 +76,27 @@ export const BENCHMARK_DEFAULT_SETS: Readonly<Record<ExerciseClass, number>> = {
 export interface RepZone {
   low: number;
   high: number;
+}
+
+/**
+ * Les styles qu'on choisit au lancement, du plus courant au plus rare — l'ordre où la feuille les propose.
+ *
+ * Un style n'est qu'une fourchette nommée : toute la suite du modèle (la capacité exigée, la fatigue, la
+ * réserve) est la même qu'on lise la fourchette dans la routine ou qu'on la prenne ici. Les trois fourchettes
+ * sont des choix de produit, comme le reste de ce module : « léger » est le 15 – 20 de qui travaille avec
+ * plus de répétitions, « classique » le 8 – 12 usuel, « force » les séries courtes et lourdes.
+ */
+export const BENCHMARK_GOALS: readonly BenchmarkGoal[] = ['classic', 'light', 'strength'];
+
+const GOAL_ZONES: Readonly<Record<BenchmarkGoal, RepZone>> = {
+  light: { low: 15, high: 20 },
+  classic: { low: 8, high: 12 },
+  strength: { low: 3, high: 5 },
+};
+
+/** La fourchette d'un style. Une copie : la modifier ne change pas le style. */
+export function goalZone(goal: BenchmarkGoal): RepZone {
+  return { ...GOAL_ZONES[goal] };
 }
 
 const isRepCount = (value: number | undefined): value is number =>
@@ -161,9 +182,21 @@ export function plannedSets(
 ): number {
   const straight = working.filter((set) => set.setType !== 'dropset');
   if (straight.length === 0) return BENCHMARK_DEFAULT_SETS[klass];
-  const loads = new Set(straight.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight])));
-  if (loads.size > 1) return 1;
+  if (isPyramid(straight)) return 1;
   return Math.min(straight.length, BENCHMARK_MAX_PLANNED_SETS);
+}
+
+/**
+ * Les séries de travail portent-elles deux charges différentes ? Une série sans charge, ou dégressive, n'en
+ * fait pas une : seules comptent les charges que la routine écrit sur ses séries « droites ».
+ */
+export function isPyramid(working: readonly { targetWeight?: number; setType?: SetType }[]): boolean {
+  const loads = new Set(
+    working.flatMap((set) =>
+      set.setType === 'dropset' || set.targetWeight === undefined ? [] : [set.targetWeight],
+    ),
+  );
+  return loads.size > 1;
 }
 
 /**
@@ -183,4 +216,21 @@ export function capacityForSets(lowReps: number | undefined, sets: number, fatig
   const count = Number.isInteger(sets) && sets >= 1 ? Math.min(sets, BENCHMARK_MAX_PLANNED_SETS) : 1;
   const lastSet = low + BENCHMARK_RESERVE_REPS;
   return Math.min(BENCHMARK_MAX_REPS, lastSet / (1 - fatigue) ** (count - 1));
+}
+
+/**
+ * Ce que chacune des `sets` séries tient **à fond** à `loadKg`, la première comprise : `[21, 19, 17]` pour une
+ * charge dont la première série ferait 21 répétitions, à 10 % de fatigue par série.
+ *
+ * C'est la même grandeur que la capacité exigée (`capacityForSets`), lue dans l'autre sens : on connaît la
+ * charge — arrondie sur le matériel, donc un peu plus légère que l'idéal —, on dit ce qu'elle permet. Arrondi
+ * vers le bas : le bilan ne promet jamais une répétition de plus que le modèle. La première série est plafonnée
+ * au domaine de la formule ; une charge ou un max inutilisable ne dit rien.
+ */
+export function repsHeldAt(oneRepMax: number, loadKg: number, sets: number, fatigue: number): number[] {
+  if (!Number.isFinite(oneRepMax) || oneRepMax <= 0 || !Number.isFinite(loadKg) || loadKg <= 0) return [];
+  const count = Number.isInteger(sets) && sets >= 1 ? Math.min(sets, BENCHMARK_MAX_PLANNED_SETS) : 1;
+  const first = Math.min(BENCHMARK_MAX_REPS, Math.max(0, (oneRepMax / loadKg - 1) * 30));
+  // La tolérance absorbe le bruit flottant : 12,9999999 est un 13.
+  return Array.from({ length: count }, (_, index) => Math.floor(first * (1 - fatigue) ** index + 1e-9));
 }
