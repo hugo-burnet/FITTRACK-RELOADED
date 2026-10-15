@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise, Routine, RoutineExercise, RoutineSet, SetType } from '@/data/types';
+import type {
+  CoachRecommendation,
+  Exercise,
+  Routine,
+  RoutineExercise,
+  RoutineSet,
+  SetType,
+} from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { alive, newEntity } from './base';
 import {
@@ -291,7 +298,7 @@ describe('applyBenchmarkProposals', () => {
     const detail = (await getWorkoutDetail(workout.id))!;
     await completeSet(detail.exercises[0]!.sets[0]!.id, { weight: 80, reps: 9 });
     await finishWorkout(workout.id);
-    return { workout, sets: sets[0]! };
+    return { workout, sets: sets[0]!, exerciseId: press.id };
   }
 
   it('writes the calibrated load into the working sets and leaves the warm-up alone', async () => {
@@ -336,6 +343,61 @@ describe('applyBenchmarkProposals', () => {
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
     expect(stored.map((set) => set?.targetWeight)).toEqual([40, 72.5, 70]);
+  });
+
+  describe('et l’objectif de charge que le coach avait posé', () => {
+    const recommendation = (
+      exerciseId: string,
+      changes: Partial<CoachRecommendation> = {},
+    ): CoachRecommendation =>
+      newEntity<CoachRecommendation>({
+        exerciseId,
+        code: 'range_ceiling_reached',
+        recommendedAt: 1,
+        nextLoadKg: 72.5,
+        evidence: [],
+        status: 'pending',
+        ...changes,
+      });
+
+    it('le remplace, sur cet exercice et sur lui seul', async () => {
+      const { workout, exerciseId } = await calibratedPress();
+      // Deux sources pour la même charge : la cible de la routine (77,5 kg) et « 72,5 kg » du coach,
+      // affiché sur la carte de la séance tant qu'aucune séance ne l'a résolu.
+      const objective = recommendation(exerciseId);
+      const observation = recommendation(exerciseId, {
+        code: 'plateau',
+        recommendedAt: 0,
+        nextLoadKg: undefined,
+      });
+      const elsewhere = recommendation('autre-exercice', { nextLoadKg: 50 });
+      await db.coachRecommendations.bulkAdd([objective, observation, elsewhere]);
+      const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
+
+      await applyBenchmarkProposals([proposal]);
+
+      const status = async (row: CoachRecommendation) =>
+        (await db.coachRecommendations.get(row.id))?.status;
+      // « remplacé », pas « refusé » : le coach ne se souvient pas d'un refus qui n'en est pas un.
+      expect(await status(objective)).toBe('superseded');
+      expect((await db.coachRecommendations.get(objective.id))?.resolvedAt).toBeGreaterThan(0);
+      // Une observation (pas de charge) reste vraie : le benchmark ne la contredit pas.
+      expect(await status(observation)).toBe('pending');
+      expect(await status(elsewhere)).toBe('pending');
+    });
+
+    it('le laisse en place quand rien n’a été écrit dans la routine', async () => {
+      const { workout, sets, exerciseId } = await calibratedPress();
+      const objective = recommendation(exerciseId);
+      await db.coachRecommendations.add(objective);
+      const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
+      // La routine a bougé depuis le bilan : la proposition ne s'applique pas.
+      await db.routineSets.update(sets[1]!.id, { targetWeight: 72.5 });
+
+      expect(await applyBenchmarkProposals([proposal])).toBe(0);
+
+      expect((await db.coachRecommendations.get(objective.id))?.status).toBe('pending');
+    });
   });
 
   it('writes nothing when the set the report was read from is gone', async () => {

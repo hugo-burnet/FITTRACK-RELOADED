@@ -24,6 +24,17 @@ progresse à partir des cibles de la routine et de ce qui a été fait ; un dép
 séance, pendant des semaines. Le benchmark écrit la charge juste dans la routine — **sur acceptation** — et
 rien d'autre. Aucun état « calibré » n'est stocké, aucune donnée nouvelle n'est lue par le moteur.
 
+**Ce que le coach lit, et ce qu'il ne lit pas du benchmark (précisé après la question « est-il bien branché à mon coach ? »).**
+Le moteur (`lib/coach`) ne lit **aucune charge cible de routine** : il juge des séries *faites* (leurs charges, leurs répétitions,
+le RPE) contre la fourchette de répétitions. Le benchmark ne change donc pas ses calculs ; il change ce que la routine propose
+comme point de départ, et le moteur en prend acte **à la première séance ordinaire faite à cette charge** — pas avant. Aucun 1RM
+n'est stocké pour lui, et le benchmark ne pose aucun objectif de charge à sa place. Le seul point de contact qui manquait était un
+**objectif déjà posé** (« la prochaine fois, 102,5 kg ») : il restait affiché sur la carte de la séance à côté de la cible que le
+benchmark venait d'écrire, deux chiffres pour un exercice. `applyBenchmarkProposals` le **remplace** (`superseded`, qui n'est pas un
+refus), dans la même transaction que l'écriture et pour les seuls exercices réécrits ; une observation sans charge reste. À
+discuter si l'on veut un lien plus profond (le coach partant du 1RM du benchmark, ou posant la charge calibrée comme objectif) :
+c'est une règle nouvelle, pas un câblage.
+
 **Ce que le benchmark nourrit, et ce qu'il n'alimente pas.** Une série à l'échec est une vraie performance : records,
 volume par muscle, régularité, courbes, historique la comptent. Elle n'est pas le modèle d'une série de travail,
 donc tout ce qui **prescrit** l'écarte : les valeurs fantômes (`getLastPerformance`), l'historique du coach et son

@@ -119,6 +119,7 @@ describe('benchmarkLine — weight and reps', () => {
     expect(line.currentKg).toBe(70);
     expect(line.proposal).toEqual({
       routineExerciseId: 'row-1',
+      exerciseId: 'bench',
       targetSetIds: ['s0', 's1', 's2'],
       anchorSetId: 's0',
       fromWeight: 70,
@@ -183,6 +184,7 @@ describe('benchmarkLine — weight and reps', () => {
     expect(line.currentKg).toBeUndefined();
     expect(line.proposal).toEqual({
       routineExerciseId: 'row-1',
+      exerciseId: 'bench',
       targetSetIds: ['s0', 's1'],
       anchorSetId: 's0',
       proposedWeight: 77.5,

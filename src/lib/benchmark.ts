@@ -119,6 +119,8 @@ export interface BenchmarkRoutineRow {
  */
 export interface BenchmarkProposal {
   routineExerciseId: string;
+  /** L'exercice de la bibliothèque : ce que le coach a pu poser comme objectif de charge, c'est sur lui. */
+  exerciseId: string;
   /** Exactement les séries de travail que l'écriture décale. */
   targetSetIds: string[];
   /**
@@ -275,12 +277,14 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     first.targetWeight === undefined
       ? {
           routineExerciseId: input.routine.routineExerciseId,
+          exerciseId: input.exerciseId,
           targetSetIds,
           anchorSetId: first.id,
           proposedWeight: suggested,
         }
       : {
           routineExerciseId: input.routine.routineExerciseId,
+          exerciseId: input.exerciseId,
           targetSetIds,
           anchorSetId: first.id,
           fromWeight: first.targetWeight,
