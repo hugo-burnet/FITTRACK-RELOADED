@@ -68,3 +68,7 @@ coach-replay*.txt
 # Sorties de Playwright (traces et captures des échecs).
 test-results/
 playwright-report/
+
+# Sorties de Playwright (captures, traces) : jamais dans un commit
+test-results/
+playwright-report/
