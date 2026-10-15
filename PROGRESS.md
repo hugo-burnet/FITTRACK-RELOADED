@@ -5,19 +5,18 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.12.1** (`package.json` à 2.12.1), demandée par l'utilisateur : le benchmark gagne une
-porte visible. La v2.12.0 est la version précédente, publiée et close.
+**Dernière mise à jour :** 2026-10-15 — **v2.12.1 publiée** (PWA et APK). `master` (`1fc3908`) porte la branche de session
+`ccr-57f17af8-maxzqv`, fusionnée `--no-ff`.
 
 ## Où on en est
 
-- **v2.12.1 : une porte de plus pour le benchmark.** Il n'était que dans le menu ⋮ d'une routine ; une ligne « Benchmark de cette routine »
-  est ajoutée à l'**éditeur** de la routine, sous « Mettre à jour les cibles ». Même feuille (`BenchmarkLaunchSheet`), mêmes gardes. Rien
-  d'autre ne change.
-- **Publié : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0), APK
-  `FitTrack-v2.12.0.apk` signé avec la clé de release. Ce qu'elle contient (la coche qui n'écrase plus la saisie, le coach R6, le
-  benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité) est dans
-  [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md), avec la voie de la publication et ses vérifications.
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 527 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Publié : v2.12.1** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.1), APK `FitTrack-v2.12.1.apk`
+  signé avec la clé de release. Une ligne **« Benchmark de cette routine » dans l'éditeur de la routine** (le benchmark n'était que dans
+  le menu ⋮ de la liste, et ne se trouvait pas) ; rien d'autre ne change depuis la v2.12.0.
+- **Avant : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0) : la coche qui n'écrase plus la
+  saisie, le coach R6, le benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité. Le détail des deux
+  versions, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 529 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
   (**34 parcours**, 8 fichiers, à 390 px) — verts sur `master`, y compris sur la CI.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
@@ -32,6 +31,8 @@ porte visible. La v2.12.0 est la version précédente, publiée et close.
   paraissent trop basses ou trop hautes, c'est là.
 - **Coach R6** : le plafond ne change presque rien tant qu'on ne le relève pas — c'est la décision, pas un défaut (`effectiveCeiling`,
   un seul endroit).
+- **Un E2E des mensurations a bloqué une fois** (`corriger puis supprimer une mesure`, délai de 60 s dans une passe complète ; non
+  reproduit en 12 relances et sur la CI). Si cela revient, garder la trace avant de relancer.
 - **Coach sur l'historique réel** : non rejoué, la sauvegarde n'est pas dans le dépôt (`npm run coach:replay`).
 
 ## Ce qui reste
