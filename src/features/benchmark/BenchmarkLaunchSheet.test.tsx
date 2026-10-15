@@ -96,6 +96,8 @@ describe('BenchmarkLaunchSheet', () => {
     await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
 
     await waitFor(async () => expect((await getActiveWorkout())?.benchmarkGoal).toBe('light'));
+    // L'historique dit le style : on y retrouve un benchmark léger sans l'ouvrir.
+    expect(await getActiveWorkout()).toMatchObject({ name: 'Benchmark léger · Push' });
     expect(await screen.findByText('Séance en direct')).toBeInTheDocument();
   });
 

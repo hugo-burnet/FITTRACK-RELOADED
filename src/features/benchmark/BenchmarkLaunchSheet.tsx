@@ -5,6 +5,7 @@ import type { BenchmarkGoal, Routine } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { BENCHMARK_GOALS, BENCHMARK_GOAL_TEST_REPS } from '@/lib/benchmarkModel';
 import { Button, ChoiceChip, Sheet } from '@/ui';
+import { goalName } from './benchmarkText';
 
 /** Un style, ou « comme ma routine » : la fourchette de chaque exercice, lue dans la routine. */
 type Choice = BenchmarkGoal | 'routine';
@@ -37,10 +38,13 @@ export function BenchmarkLaunchSheet({
 
   const launch = () => {
     if (routine === null) return;
+    const goal = choice === 'routine' ? undefined : choice;
     void startBenchmarkFromRoutine(
       routine.id,
-      t('benchmark.workoutName', { name: routine.name }),
-      choice === 'routine' ? undefined : choice,
+      goal === undefined
+        ? t('benchmark.workoutName', { name: routine.name })
+        : t('benchmark.workoutNameGoal', { style: goalName(goal), name: routine.name }),
+      goal,
     )
       .then(() => navigate('/workout'))
       .catch(() => undefined);

@@ -2711,6 +2711,8 @@ const fr = {
       'Choisis une charge que tu penses tenir environ {reps} fois. Si tu acceptes le bilan, la routine prend cette fourchette et la charge.',
     launchConfirm: 'Lancer le benchmark',
     workoutName: 'Benchmark · {name}',
+    /** Avec un style : l'historique le dit, on retrouve un benchmark léger sans l'ouvrir. */
+    workoutNameGoal: 'Benchmark {style} · {name}',
     workoutBanner:
       'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
     workoutBannerGoal:
