@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import * as bodyMeasurements from '@/data/repositories/bodyMeasurements';
 import type { WeeklyRegularity } from '@/lib/history';
@@ -13,6 +13,12 @@ const regularity = (over: Partial<WeeklyRegularity> = {}): WeeklyRegularity => (
   streak: 0,
   ...over,
 });
+
+/** Ce que la route des mensurations reçoit : le type, déjà décodé. */
+function ParamProbe() {
+  const { type } = useParams();
+  return <p>courbe de {type}</p>;
+}
 
 function renderIsland(value: WeeklyRegularity = regularity()) {
   return render(
@@ -46,6 +52,24 @@ describe('HomeStatsIsland', () => {
 
     expect(await screen.findByText('82,4')).toBeInTheDocument();
     expect(screen.queryByLabelText('Poids du corps')).not.toBeInTheDocument();
+  });
+
+  it('leads from the weigh-in sheet to the weight curve', async () => {
+    const user = userEvent.setup();
+    await bodyMeasurements.saveBodyWeight(82.4, Date.now());
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<HomeStatsIsland regularity={regularity()} />} />
+          <Route path="/analytics/measurements/:type" element={<ParamProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.click(await screen.findByRole('button', { name: 'Renseigner le poids du jour' }));
+    await user.click(await screen.findByRole('button', { name: 'Voir la courbe et l’historique' }));
+
+    expect(await screen.findByText('courbe de body_weight')).toBeInTheDocument();
   });
 
   it('opens the weigh-in sheet on the tile, and it has no steppers', async () => {

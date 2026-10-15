@@ -76,6 +76,8 @@ export default defineConfig(({ mode }) => {
         '**/.claude/**',
         '**/.worktrees/**',
         'fittrack-kb-contract/**',
+        // Les parcours Playwright (`npm run test:e2e`) : même suffixe `.spec.ts`, autre lanceur.
+        'e2e/**',
       ],
     },
   };

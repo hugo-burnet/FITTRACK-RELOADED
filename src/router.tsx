@@ -19,7 +19,7 @@ import {
   ProgramEditorRoute,
   ProgramListRoute,
 } from './features/programs/routes';
-import { CreditsRoute, DebugRoute } from './features/settings/routes';
+import { CreditsRoute, DebugRoute, VolumeRoute } from './features/settings/routes';
 import { ExerciseDetailRoute, ExerciseFormRoute } from './features/exercises/routes';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
@@ -32,6 +32,8 @@ import {
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
+import { BenchmarkRoute } from './features/benchmark/routes';
+import { MeasurementDetailRoute, MeasurementsRoute } from './features/measurements/routes';
 import { MilestonesRoute } from './features/milestones/routes';
 import {
   ExercisePickerRoute,
@@ -41,6 +43,7 @@ import {
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
+import { WorkoutReplaceExerciseScreen } from './features/workout/WorkoutReplaceExerciseScreen';
 import { WorkoutFinishScreen } from './features/workout/WorkoutFinishScreen';
 import { WorkoutScreen } from './features/workout/WorkoutScreen';
 
@@ -70,16 +73,23 @@ export const router = createHashRouter([
       // Lot 7, and it will have its own route.
       { path: 'workout', element: <WorkoutScreen /> },
       { path: 'workout/add', element: <WorkoutAddExerciseScreen /> },
+      { path: 'workout/replace/:rowId', element: <WorkoutReplaceExerciseScreen /> },
       { path: 'workout/finish', element: <WorkoutFinishScreen /> },
       { path: 'history', element: <HistoryScreen /> },
       { path: 'history/import', element: <HevyImportRoute /> },
       { path: 'history/:workoutId/edit', element: <HistoryEditRoute /> },
       { path: 'history/:workoutId', element: <HistoryDetailRoute /> },
+      // Le bilan d'une séance de benchmark : on y arrive à l'enregistrement et depuis sa fiche d'historique.
+      { path: 'benchmark/:workoutId', element: <BenchmarkRoute /> },
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
       { path: 'analytics/records', element: <RecordsRoute /> },
       { path: 'analytics/milestones', element: <MilestonesRoute /> },
+      // Les mensurations vivent sous Progression : pas de sixième onglet. Le type est encodé dans
+      // l'URL — un champ libre a un nom, avec des espaces.
+      { path: 'analytics/measurements', element: <MeasurementsRoute /> },
+      { path: 'analytics/measurements/:type', element: <MeasurementDetailRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
       { path: 'analytics/volume', element: <WeeklyVolumeRoute /> },
       { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },
@@ -100,6 +110,7 @@ export const router = createHashRouter([
       { path: 'knowledge/a/:articleId', element: <WikiArticleRoute /> },
       { path: 'knowledge/s/:sectionId', element: <WikiSectionRoute /> },
       { path: 'settings/debug', element: <DebugRoute /> },
+      { path: 'settings/volume', element: <VolumeRoute /> },
       { path: 'settings/about', element: <CreditsRoute /> },
     ],
   },

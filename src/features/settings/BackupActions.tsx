@@ -1,18 +1,20 @@
 import { useRef, useState } from 'react';
-import { buildBackup, restoreBackup } from '@/data/repositories/backup';
+import { getBootStorage } from '@/app/bootEasterEgg';
+import { restoreBackup } from '@/data/repositories/backup';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import {
-  backupFileName,
   parseBackup,
-  serializeBackup,
   type BackupCounts,
   type BackupFile,
   type BackupProblem,
 } from '@/lib/backup';
-import { saveTextFile } from '@/platform/saveFile';
+import { rememberBackup } from '@/stores/backupMemory';
 import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
 import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
+import { backupStatusLine } from './backupText';
+import { exportBackup } from './exportBackup';
+import { useBackupStatus } from './useBackupStatus';
 
 /**
  * Les refus qui tiennent en une phrase fixe. `invalid-structure` n'y est pas :
@@ -53,6 +55,7 @@ export function BackupActions({
   reload?: () => void;
 } = {}) {
   const tutorial = useTutorialControls();
+  const { lastBackupAt, workoutsSince, now } = useBackupStatus();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -71,13 +74,9 @@ export function BackupActions({
     setBusy(true);
     setNotice(null);
     try {
-      const backup = await buildBackup();
-      const outcome = await saveTextFile({
-        name: backupFileName(backup.exportedAt),
-        text: serializeBackup(backup),
-        type: 'application/json;charset=utf-8',
-        title: t('settings.backupExportTitle'),
-      });
+      // Par `exportBackup`, comme le rappel de l'accueil : la date de la sauvegarde ne doit pas
+      // dépendre de la porte empruntée.
+      const outcome = await exportBackup();
       if (outcome === 'failed') fail('settings.backupExportFailed');
       else if (outcome === 'shared' || outcome === 'downloaded') {
         tutorial?.report({ type: 'backup-exported', outcome });
@@ -129,6 +128,11 @@ export function BackupActions({
     setBusy(true);
     void restoreBackup(backup)
       .then(() => {
+        // Le téléphone contient maintenant exactement ce fichier : tout ce qu'il porte est déjà
+        // dans une sauvegarde, et seules les séances qui viendront après ne le sont pas. C'est
+        // « maintenant » et non la date du fichier, qui peut manquer (un fichier d'ailleurs) ou
+        // être dans le futur — et faire taire le rappel pour de bon.
+        rememberBackup(getBootStorage(), Date.now());
         setNotice({ text: t('settings.restoreDone'), failed: false });
         // A beat, so the sentence is read before the screen goes.
         setTimeout(reload, 600);
@@ -158,6 +162,10 @@ export function BackupActions({
           onClick={() => inputRef.current?.click()}
         />
       </div>
+
+      <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
+        {backupStatusLine({ lastBackupAt, workoutsSince, now })}
+      </p>
 
       <input
         ref={inputRef}

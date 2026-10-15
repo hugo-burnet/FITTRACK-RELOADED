@@ -38,6 +38,8 @@ describe('AnalyticsScreen', () => {
       // Les paliers juste sous les records, et comme eux sans condition
       // d'historique : les deux écrans savent dire pourquoi ils sont vides.
       'Paliers',
+      // Les mensurations aussi : se peser ne demande aucune séance.
+      'Mensurations',
       'Séances par semaine',
       'Volume d’entraînement',
       'Séries par muscle',

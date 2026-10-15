@@ -61,7 +61,11 @@ export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }
         </div>
       </Card>
 
-      <HomeBodyWeightSheet open={weightOpen} onClose={() => setWeightOpen(false)} />
+      <HomeBodyWeightSheet
+        open={weightOpen}
+        onClose={() => setWeightOpen(false)}
+        onOpenCurve={() => void navigate('/analytics/measurements/body_weight')}
+      />
     </section>
   );
 }

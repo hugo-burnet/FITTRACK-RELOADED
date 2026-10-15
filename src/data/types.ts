@@ -282,10 +282,21 @@ export interface RoutineSet extends Syncable {
 
 export type WorkoutStatus = 'active' | 'completed' | 'discarded';
 
+/**
+ * Ce qu'une séance est, quand ce n'est pas une séance ordinaire. Absent = ordinaire.
+ *
+ * `benchmark` : une série menée à l'échec par exercice, pour calibrer les charges
+ * de la routine (spec benchmark). Une vraie performance — records, volume,
+ * historique la comptent — mais pas un modèle de série de travail : les valeurs
+ * fantômes, l'historique du coach et la revue des cibles l'écartent.
+ */
+export type WorkoutKind = 'benchmark';
+
 export interface Workout extends Syncable {
   routineId: string; // '' for an empty workout (RF-17)
   name: string;
   status: WorkoutStatus; // 'active' = resumed on startup (RF-25)
+  kind?: WorkoutKind;
   startedAt: number;
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close

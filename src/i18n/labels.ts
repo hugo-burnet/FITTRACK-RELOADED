@@ -11,6 +11,7 @@ import type {
   Side,
 } from '@/data/types';
 import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
+import { customName, isPresetType } from '@/lib/bodyMeasurements';
 import type { PeriodKey } from '@/lib/analytics/periods';
 import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
 import type { TargetPart, TargetUnit } from '@/lib/measurement';
@@ -259,6 +260,48 @@ export const metricLabel = (key: MetricKey): string => t(`metric.${key}`);
 export const metricHint = (key: MetricKey): string => t(`metricHint.${key}`);
 
 export const periodLabel = (key: PeriodKey): string => t(`period.${key}`);
+
+/**
+ * The name of a body measurement as a list reads it. A free field prints **as typed** — it is the
+ * user's own word, never translated; an unknown type (data from elsewhere) prints as stored rather
+ * than disappearing from the list that is meant to show everything measured.
+ */
+export function measurementTypeLabel(type: string): string {
+  const name = customName(type);
+  if (name !== undefined) return name;
+  return isPresetType(type) ? t(`measures.type.${type}`) : type;
+}
+
+/** « kg », « % », « cm » — an unknown unit prints as stored. */
+export const measurementUnitLabel = (unit: string): string => {
+  switch (unit) {
+    case 'kg':
+      return t('units.kg');
+    case '%':
+      return t('units.percent');
+    case 'cm':
+      return t('units.centimeters');
+    default:
+      return unit;
+  }
+};
+
+/** « 82,5 kg », « 18 % », « 84 cm » — two decimals at most, the French comma. */
+export function measurementReading(value: number, unit: string): string {
+  const rounded = Math.round(value * 100) / 100;
+  return `${rounded.toLocaleString('fr-FR')} ${measurementUnitLabel(unit)}`;
+}
+
+/**
+ * « +1,5 cm », « \u22121,5 cm », « inchangé ». A true minus (U+2212), not a hyphen: it is the one a
+ * screen reader says as « moins », and the one the program copy already uses. Zero is a word, not
+ * « 0 cm » — the line says what happened.
+ */
+export function measurementChangeReading(change: number, unit: string): string {
+  if (change === 0) return t('measures.unchanged');
+  const sign = change > 0 ? '+' : '\u2212';
+  return `${sign}${measurementReading(Math.abs(change), unit)}`;
+}
 
 /**
  * « 4 séances », « 1 séance », « 0 séance ».

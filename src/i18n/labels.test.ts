@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { t } from './fr';
 import {
   exerciseDisplayName,
+  measurementChangeReading,
+  measurementReading,
+  measurementTypeLabel,
   oneRepMaxFormulaLabel,
   metricLabel,
   metricReading,
@@ -164,5 +167,45 @@ describe('exerciseDisplayName', () => {
     expect(both).not.toBe(oneSide);
     expect(oneSide).toContain('unilatéral');
     expect(both).not.toContain('unilatéral');
+  });
+});
+
+describe('body measurement labels', () => {
+  it('names every preset in French, with the side for the paired ones', () => {
+    expect(measurementTypeLabel('body_weight')).toBe('Poids de corps');
+    expect(measurementTypeLabel('body_fat')).toBe('Masse grasse');
+    expect(measurementTypeLabel('waist')).toBe('Tour de taille');
+    expect(measurementTypeLabel('left_biceps')).toBe('Biceps gauche');
+    expect(measurementTypeLabel('right_calf')).toBe('Mollet droit');
+  });
+
+  it('prints a free field as it was typed, without its prefix or a translation', () => {
+    expect(measurementTypeLabel('custom:Tour de poignet')).toBe('Tour de poignet');
+  });
+
+  it('prints an unknown type as it is rather than hiding it', () => {
+    expect(measurementTypeLabel('mystère')).toBe('mystère');
+  });
+
+  it('reads a value with its unit, the French decimal comma, and at most two decimals', () => {
+    expect(measurementReading(82.5, 'kg')).toBe('82,5 kg');
+    expect(measurementReading(18, '%')).toBe('18 %');
+    expect(measurementReading(84, 'cm')).toBe('84 cm');
+    expect(measurementReading(82.456, 'kg')).toBe('82,46 kg');
+  });
+
+  it('keeps a unit it does not know, as written', () => {
+    expect(measurementReading(32, 'in')).toBe('32 in');
+  });
+
+  it('separates the thousands of a long figure the French way', () => {
+    expect(measurementReading(1234.5, 'kg').replace(/\s/g, ' ')).toBe('1 234,5 kg');
+  });
+
+  it('signs a change with a plus or a true minus, and calls zero unchanged', () => {
+    expect(measurementChangeReading(1.5, 'cm')).toBe('+1,5 cm');
+    expect(measurementChangeReading(-1.5, 'cm')).toBe('\u22121,5 cm');
+    expect(measurementChangeReading(-0.25, 'kg')).toBe('\u22120,25 kg');
+    expect(measurementChangeReading(0, 'cm')).toBe('inchangé');
   });
 });

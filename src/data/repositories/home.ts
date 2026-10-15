@@ -279,7 +279,11 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     })),
     // Le nom voyage avec la séance : les séances importées n'ont pas de
     // `routineId`, c'est par leur titre que `pickSuggestedRoutine` les rattache.
-    completed.map(({ routineId, name, startedAt }) => ({ routineId, name, startedAt })),
+    // Sans les benchmarks : une série à l'échec par exercice n'est pas la séance de
+    // sa routine, et la rotation ne doit pas avancer parce qu'on l'a calibrée.
+    completed
+      .filter((workout) => workout.kind !== 'benchmark')
+      .map(({ routineId, name, startedAt }) => ({ routineId, name, startedAt })),
   );
   const picked =
     pick === null ? undefined : routines.find(({ routine }) => routine.id === pick.routineId);

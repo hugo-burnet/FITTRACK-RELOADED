@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
+import { useAppNavigate } from '@/app/navigation';
 import { setDefaultRepSeconds, setAvailablePlateWeightsKg } from '@/data/repositories/settings';
 import { updateExercise } from '@/data/repositories/exercises';
 import {
@@ -125,6 +126,7 @@ export function WorkoutSheets({
   availablePlateWeightsKg,
 }: WorkoutSheetsProps) {
   const tutorial = useTutorialControls();
+  const navigate = useAppNavigate();
   // Un magasin global, lu ici comme le tutoriel : le faire descendre en
   // propriété depuis l'écran n'aurait rien dit de plus.
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
@@ -133,6 +135,8 @@ export function WorkoutSheets({
   const canDeload = canDeloadWorkout(exercises);
 
   const lineOf = (rowId: string) => workoutLineOf(exercises, rowId);
+  const hasSetsLeft = (rowId: string) =>
+    lineOf(rowId)?.sets.some((set) => set.isCompleted === 0) ?? false;
   const nameOf = (rowId: string) => workoutExerciseNameOf(exercises, rowId);
   const setOf = (setId: string) => workoutSetOf(exercises, setId);
   const typeOf = (setId: string) => workoutSetTypeOf(exercises, setId);
@@ -276,6 +280,17 @@ export function WorkoutSheets({
             onSelect: () => {
               if (sheet?.kind === 'exercise')
                 setSheet({ kind: 'exerciseNotes', rowId: sheet.rowId });
+            },
+          },
+          {
+            label: t('workout.replaceExercise'),
+            // Rien à remplacer quand tout est validé : la raison, plutôt qu'une entrée muette.
+            ...(sheet?.kind === 'exercise' && hasSetsLeft(sheet.rowId)
+              ? { hint: t('workout.replaceExerciseHint') }
+              : { disabled: true, hint: t('workout.replaceExerciseNothingLeft') }),
+            tutorialId: 'workout-replace-exercise',
+            onSelect: () => {
+              if (sheet?.kind === 'exercise') void navigate(`/workout/replace/${sheet.rowId}`);
             },
           },
           {

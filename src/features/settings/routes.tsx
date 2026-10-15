@@ -11,3 +11,5 @@ import { lazyRoute } from '@/app/lazyRoute';
 export const DebugRoute = lazyRoute(() => import('./DebugScreen'), 'DebugScreen');
 
 export const CreditsRoute = lazyRoute(() => import('./CreditsScreen'), 'CreditsScreen');
+
+export const VolumeRoute = lazyRoute(() => import('./VolumeScreen'), 'VolumeScreen');

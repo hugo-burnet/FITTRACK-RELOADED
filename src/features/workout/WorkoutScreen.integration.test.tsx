@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
+import { startBenchmarkFromRoutine } from '@/data/repositories/benchmark';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import {
@@ -24,6 +25,7 @@ import { useRestTimer } from '@/stores/restTimer';
 import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
 import * as announcer from '@/audio/announce';
 import { resetDb } from '@/test/resetDb';
+import { seedWorkout } from '@/test/factories';
 import { WorkoutScreen } from './WorkoutScreen';
 import { heldSecondsAt } from './holdDuration';
 
@@ -60,6 +62,28 @@ function renderWorkout(report = vi.fn()) {
       </MemoryRouter>
     </TutorialContext.Provider>,
   );
+}
+
+/**
+ * Écrit dans la base **dans le dos de l'écran** : une seconde connexion, que les requêtes vivantes
+ * de Dexie n'entendent pas. C'est ce que vit la coche quand la saisie vient d'être écrite et que
+ * l'écran ne l'a pas encore relue — sans dépendre d'un délai.
+ */
+async function writeBehindTheScreen(setId: string, changes: Partial<WorkoutSet>): Promise<void> {
+  const database = await new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open('fittrack');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+  await new Promise<void>((resolve, reject) => {
+    const transaction = database.transaction('workoutSets', 'readwrite');
+    const store = transaction.objectStore('workoutSets');
+    const read = store.get(setId);
+    read.onsuccess = () => store.put({ ...read.result, ...changes });
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+  database.close();
 }
 
 function deferred<T>() {
@@ -239,6 +263,41 @@ describe('WorkoutScreen — persistance', () => {
     expect(
       screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('WorkoutScreen — benchmark', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  it('rappelle en tête de séance ce qu’un benchmark demande', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée');
+    renderWorkout();
+
+    expect(await screen.findByText(/une série à l’échec par exercice/)).toBeInTheDocument();
+    expect(screen.getAllByRole('textbox', { name: /^Série 1/ }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('textbox', { name: /^Série 2/ })).not.toBeInTheDocument();
+  });
+
+  it('ne dit rien de tel d’une séance ordinaire', async () => {
+    await seedActiveWorkout();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    expect(screen.queryByText(/une série à l’échec par exercice/)).not.toBeInTheDocument();
   });
 });
 
@@ -479,15 +538,66 @@ describe('WorkoutScreen — tutoriel durable', () => {
     );
   });
 
+  it('ne perd pas le poids tapé quand la coche devance la relecture de l’écran', async () => {
+    const workoutId = await seedActiveWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+
+    // Le poids est déjà en base, l'écran ne l'a pas relu : la coche ne le voit pas.
+    const set = await firstSet(workoutId);
+    await writeBehindTheScreen(set.id, { weight: 102.5 });
+    expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveValue('');
+    await user.click(complete);
+
+    await waitFor(async () =>
+      expect(await firstSet(workoutId)).toMatchObject({ weight: 102.5, reps: 10, isCompleted: 1 }),
+    );
+  });
+
+  it('ne remplace pas le poids tapé par celui de la séance d’avant quand la coche devance l’écran', async () => {
+    const workoutId = await seedActiveWorkout();
+    const set = await firstSet(workoutId);
+    // Une séance d'avant à 100 kg : l'écran propose ce chiffre en gris, et la coche l'enverrait.
+    await seedWorkout({
+      exerciseId: set.exerciseId,
+      performedAt: Date.now() - 7 * 86_400_000,
+      sets: [[100, 5]],
+    });
+    const user = userEvent.setup();
+    renderWorkout();
+    await screen.findByText('Développé couché');
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    // Le chiffre d'avant est en gris, dans le champ vide : c'est un placeholder, pas une valeur.
+    await waitFor(() =>
+      expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute(
+        'placeholder',
+        '100',
+      ),
+    );
+
+    await writeBehindTheScreen(set.id, { weight: 102.5 });
+    await user.click(complete);
+
+    // 102,5 et non 100 : valider ne rend pas à la séance d'avant ce qu'on vient de taper.
+    await waitFor(async () =>
+      expect(await firstSet(workoutId)).toMatchObject({ weight: 102.5, reps: 5, isCompleted: 1 }),
+    );
+  });
+
   it('starts rest and reports completion only after the durable write', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
     const gate = deferred<void>();
     const realComplete = workoutsRepository.completeSet;
-    vi.spyOn(workoutsRepository, 'completeSet').mockImplementation(async (setId, values) => {
+    vi.spyOn(workoutsRepository, 'completeSet').mockImplementation(async (setId, values, options) => {
       await gate.promise;
-      return realComplete(setId, values);
+      return realComplete(setId, values, options);
     });
     const report = vi.fn();
     renderWorkout(report);

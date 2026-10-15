@@ -132,7 +132,7 @@ export function useWorkoutSetActions({
   const onComplete = (
     line: WorkoutExerciseDetail,
     setId: string,
-    values: Parameters<typeof completeSet>[1],
+    proposed: Parameters<typeof completeSet>[1],
     set: WorkoutSet,
   ): void => {
     if (workoutId === undefined) return;
@@ -155,11 +155,12 @@ export function useWorkoutSetActions({
     // geste qui l'arrête : c'est donc elle qui écrit la durée. Tant qu'il
     // tourne, la saisie manuelle des secondes n'a plus lieu d'être.
     const held = hold.setId === setId ? heldSecondsAt(hold.startedAt, Date.now()) : undefined;
-    const written = held === undefined ? values : { ...values, durationSeconds: held };
     if (completing.current.has(setId)) return;
     completing.current.add(setId);
     setWriteFailed(false);
-    void completeSet(setId, written)
+    // Les chiffres de l'écran sont des propositions : seul le chrono décide d'une valeur, et il
+    // prime sur une durée tapée. Cf. `completeSet` pour ce que la coche relit elle-même.
+    void completeSet(setId, held === undefined ? {} : { durationSeconds: held }, { proposed })
       .then(() => {
         tutorial?.report({ type: 'workout-set-completed', workoutId, setId });
         pace.stop(setId);

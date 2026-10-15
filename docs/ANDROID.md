@@ -75,6 +75,16 @@ Ces autorisations permettent d’afficher la séance active et de sonner à la f
 - **Alarme retardée** : autorise **Alarmes et rappels**, puis enlève les restrictions de batterie propres au fabricant si nécessaire.
 - **Espace privé Android** : FitTrack y constitue une installation et des données distinctes. Quand l’espace privé est verrouillé, Android peut suspendre ses notifications ; installe et utilise l’app dans l’espace où tu souhaites recevoir les alertes.
 
+## 9. Régénérer l’icône et l’écran de démarrage
+
+Les ressources générées sont **versionnées** dans `android/app/src/main/res` : ni le build ni la CI n’ont besoin d’un outil pour les produire. Pour les refaire depuis `assets/logo.svg`, lance l’outil à la demande plutôt que de le garder en dépendance — il embarque `sharp`, `tar` et un ancien `@capacitor/cli` pour une commande qu’on ne lance qu’à chaque refonte de l’icône :
+
+```bash
+npx @capacitor/assets generate --android --assetPath assets \
+  --iconBackgroundColor '#12110f' --iconBackgroundColorDark '#12110f' \
+  --splashBackgroundColor '#12110f' --splashBackgroundColorDark '#12110f'
+```
+
 ## Checkpoint sur le téléphone
 
 1. Télécharge et installe l’APK de la dernière GitHub Release.

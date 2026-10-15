@@ -12,8 +12,10 @@ export {
   addWorkoutExercise,
   removeWorkoutExercise,
   reorderWorkoutExercises,
+  replaceWorkoutExercise,
   updateWorkoutExercise,
 } from './workoutExercises';
+export type { ReplaceOutcome } from './workoutExercises';
 
 export {
   addSet,

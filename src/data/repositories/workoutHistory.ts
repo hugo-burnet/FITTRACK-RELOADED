@@ -2,6 +2,7 @@ import Dexie from 'dexie';
 import { db } from '@/data/db';
 import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import type { MeasurementType, WorkoutSet } from '@/data/types';
+import { benchmarkIdsAmong } from './workoutKinds';
 
 /**
  * What past sessions say — read across sessions, never inside one.
@@ -13,6 +14,50 @@ import type { MeasurementType, WorkoutSet } from '@/data/types';
  * `[exerciseId+performedAt]` from the same lower bound of 1 — an unvalidated set
  * carries `performedAt: 0` and is not history.
  */
+
+/** Combien de séries on lit d'un coup en remontant l'historique d'un exercice. */
+const REFERENCE_PAGE = 8;
+
+/**
+ * La série validée la plus récente de l'exercice, **hors benchmark**.
+ *
+ * Un benchmark est une série menée à l'échec : valeur fantôme, elle proposerait
+ * « 14 × 80 kg » comme la série d'hier (spec benchmark, §2). Les benchmarks sont
+ * rares : on remonte par petites pages et l'on ne lit la séance d'une série
+ * qu'une fois — dans le cas courant, la première page répond après une seule
+ * lecture de séance.
+ */
+async function latestSetOutsideBenchmarks(
+  exerciseId: string,
+  excludeWorkoutId: string | undefined,
+): Promise<WorkoutSet | undefined> {
+  const recent = () =>
+    db.workoutSets
+      .where('[exerciseId+performedAt]')
+      .between([exerciseId, 1], [exerciseId, Dexie.maxKey])
+      .reverse()
+      .filter(
+        (set) =>
+          set.deletedAt === 0 &&
+          set.isCompleted === 1 &&
+          set.workoutId !== (excludeWorkoutId ?? ''),
+      );
+
+  const benchmarks = new Set<string>();
+  const checked = new Set<string>();
+  for (let offset = 0; ; offset += REFERENCE_PAGE) {
+    const page = await recent().offset(offset).limit(REFERENCE_PAGE).toArray();
+    if (page.length === 0) return undefined;
+
+    const unknown = page.map((set) => set.workoutId).filter((id) => !checked.has(id));
+    for (const id of await benchmarkIdsAmong(unknown)) benchmarks.add(id);
+    for (const id of unknown) checked.add(id);
+
+    const hit = page.find((set) => !benchmarks.has(set.workoutId));
+    if (hit !== undefined) return hit;
+    if (page.length < REFERENCE_PAGE) return undefined;
+  }
+}
 
 /**
  * RF-19 — the critical query. Runs for every exercise when the live workout
@@ -34,15 +79,7 @@ export async function getLastPerformance(
   excludeWorkoutId?: string,
   measurementType?: MeasurementType,
 ): Promise<WorkoutSet[]> {
-  const lastSet = await db.workoutSets
-    .where('[exerciseId+performedAt]')
-    .between([exerciseId, 1], [exerciseId, Dexie.maxKey])
-    .reverse()
-    .filter(
-      (set) =>
-        set.deletedAt === 0 && set.isCompleted === 1 && set.workoutId !== (excludeWorkoutId ?? ''),
-    )
-    .first();
+  const lastSet = await latestSetOutsideBenchmarks(exerciseId, excludeWorkoutId);
 
   if (lastSet === undefined) return [];
 

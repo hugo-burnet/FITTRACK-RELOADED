@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import { db } from '@/data/db';
-import { newEntity, touch } from '@/data/repositories/base';
+import { newEntity, softDelete, touch } from '@/data/repositories/base';
+import { localDayBounds } from '@/lib/bodyMeasurements';
 import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import type {
   BodyMeasurement,
@@ -21,16 +22,6 @@ const BODYWEIGHT_RECORD_TYPES = new Set<PersonalRecordType>(['max_volume_session
 export interface BodyWeightReading {
   valueKg: number;
   measuredAt: number;
-}
-
-function localDayBounds(timestamp: number): readonly [number, number] {
-  const start = new Date(timestamp);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
-
-  return [start.getTime(), end.getTime()];
 }
 
 async function liveBodyWeightRows(): Promise<BodyMeasurement[]> {
@@ -149,6 +140,23 @@ export async function getLatestBodyWeight(): Promise<BodyWeightReading | undefin
   return latest === undefined ? undefined : asReading(latest);
 }
 
+/**
+ * What a weight write touches: its own rows, and the records its sessions are read through.
+ * Save and delete both open the same transaction — a weight that changes and the records it feeds
+ * either both land or neither does.
+ */
+function bodyWeightTables() {
+  return [
+    db.settings,
+    db.exercises,
+    db.workouts,
+    db.workoutExercises,
+    db.workoutSets,
+    db.bodyMeasurements,
+    db.personalRecords,
+  ];
+}
+
 export async function saveBodyWeight(
   valueKg: number,
   measuredAt = Date.now(),
@@ -158,15 +166,7 @@ export async function saveBodyWeight(
 
   return db.transaction(
     'rw',
-    [
-      db.settings,
-      db.exercises,
-      db.workouts,
-      db.workoutExercises,
-      db.workoutSets,
-      db.bodyMeasurements,
-      db.personalRecords,
-    ],
+    bodyWeightTables(),
     async () => {
       const beforeRows = await liveBodyWeightRows();
       const existing = beforeRows.find(
@@ -206,6 +206,34 @@ export async function saveBodyWeight(
       return asReading(next);
     },
   );
+}
+
+/**
+ * Deletes one weight reading — softly, like every deletion (ADR-002) — and re-reads the records of
+ * the sessions it covered.
+ *
+ * A reading covers the sessions from its own instant to the next reading's. Without it they read
+ * the previous reading, or the next one when it was the first (`resolveBodyWeightsAt` falls back to
+ * the earliest known weight): that interval is exactly what has to be reconciled, and the one
+ * `saveBodyWeight` already computes for a correction. An id that is unknown or already deleted is
+ * not an error — there is nothing to undo.
+ */
+export async function deleteBodyWeight(measurementId: string): Promise<void> {
+  await db.transaction('rw', bodyWeightTables(), async () => {
+    const rows = await liveBodyWeightRows();
+    const target = rows.find((row) => row.id === measurementId);
+    if (target === undefined) return;
+
+    // Computed before the deletion: afterwards the reading no longer has an interval.
+    const exerciseIds = await bodyweightExerciseIdsIn([effectiveIntervalFor(rows, target.id)!]);
+
+    await softDelete(db.bodyMeasurements, target.id);
+    await reconcileRecordsForExercises(
+      exerciseIds,
+      await getOneRepMaxFormula(),
+      BODYWEIGHT_RECORD_TYPES,
+    );
+  });
 }
 
 export async function resolveBodyWeightsAt(

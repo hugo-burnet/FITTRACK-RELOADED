@@ -43,7 +43,9 @@ export function HeaderAction({
       // Applied to all of them it ate exactly the `gap-2` of the workout header —
       // reported from the phone, the deload chip glued to the chronometer — and
       // it silently overlapped the two icons of the history header by 8px.
-      className={`flex size-12 shrink-0 items-center justify-center rounded-xl
+      // 48 px en pixels CSS (cf. le bouton retour de `Screen`) : à 200 % de taille de police,
+      // `size-12` en ferait 96 et l'en-tête de la séance déborderait.
+      className={`flex size-[48px] shrink-0 items-center justify-center rounded-xl
         text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]
         last:-mr-2 active:bg-[var(--surface-1)] disabled:opacity-60
         ${pressed ? 'bg-[var(--accent-soft)]' : ''}`}

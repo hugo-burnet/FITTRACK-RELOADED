@@ -227,6 +227,13 @@ export function WorkoutScreen() {
       }
     >
       <div className="flex flex-col gap-2">
+        {workout.kind === 'benchmark' && (
+          <Card padded>
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">
+              {t('benchmark.workoutBanner')}
+            </p>
+          </Card>
+        )}
         {workout.programId !== undefined && workout.programWeekIndex !== undefined && (
           <Card padded>
             <div className="flex min-h-12 items-center justify-between gap-3">
@@ -400,7 +407,7 @@ export function WorkoutScreen() {
                     onWrite={(setId, values, recordable) =>
                       onWrite(line, setId, values, recordable)
                     }
-                    onComplete={(setId, values, set) => onComplete(line, setId, values, set)}
+                    onComplete={(setId, proposed, set) => onComplete(line, setId, proposed, set)}
                     onUncomplete={onUncomplete}
                     onDeleteSet={(setId) => void deleteSet(setId)}
                     onRestoreSet={(setId) => void restoreSet(setId)}

@@ -65,7 +65,13 @@ type Props = {
    */
   unilateral?: boolean;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
-  onComplete: (values: Partial<SetValues>) => void;
+  /**
+   * La coche, avec les chiffres qu'elle **propose** — la cible, la séance d'avant — et jamais ce
+   * qui est déjà saisi : cette ligne lit la base avec un temps de retard, et ce qu'elle croirait
+   * saisi pourrait être périmé. `completeSet` relit la série dans sa transaction et ne comble
+   * que ses cases vides.
+   */
+  onComplete: (proposed: Partial<SetValues>) => void;
   onUncomplete: () => void;
   onMenu: () => void;
 };
@@ -265,7 +271,7 @@ export function WorkoutSetRow({
               : completeLabel
         }
         onClick={() =>
-          done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
+          done ? onUncomplete() : onComplete(collect(ghostNumberOf))
         }
         className="flex size-12 shrink-0 items-center justify-center
           transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)]

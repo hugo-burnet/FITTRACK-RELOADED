@@ -11,6 +11,7 @@ import {
   type ProgramCoachContext,
 } from '@/lib/coach';
 import { coachLineFromSource } from '@/lib/coach/fromWorkout';
+import { muscleVolumeContext, type MuscleVolumeContext } from '@/lib/coach/volume';
 import {
   pickProgramSession,
   programPosition,
@@ -19,7 +20,8 @@ import {
 import { isWorkingSet } from '@/lib/records';
 import { alive } from './base';
 import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
-import { getOneRepMaxFormula } from './settings';
+import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
+import { getCoachVolumeBounds, getOneRepMaxFormula } from './settings';
 import { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
 
 function cloneSignal(signal: CoachSignal): CoachSignal {
@@ -50,6 +52,7 @@ function stripLoadProposal(signal: CoachSignal): CoachSignal {
 const FLAG_PROGRESSION_DEFERRED = 'progression_deferred';
 const FLAG_CONTROLLED_ATTEMPT = 'controlled_attempt';
 const FLAG_ADD_SET = 'add_set';
+const FLAG_VOLUME_AT_CEILING = 'volume_at_ceiling';
 
 function withPhaseCopyFlags(
   signal: CoachSignal,
@@ -117,6 +120,34 @@ function shapeSignalsForSelectedAction(
       shaped = stripLoadProposal(signal);
     }
     return withPhaseCopyFlags(shaped, selected, target);
+  });
+}
+
+/**
+ * R6 : la carte dit pourquoi une série n'est pas proposée. Seulement sur un plafond de fourchette —
+ * c'est la carte qui aurait dit « ajoute une série » — et avec ce que la règle a lu : le volume de la
+ * semaine, le plafond, et s'il est celui de la personne ou celui de son historique.
+ */
+function withVolumeNote(
+  signals: readonly CoachSignal[],
+  note: MuscleVolumeContext | undefined,
+): CoachSignal[] {
+  if (note === undefined) return [...signals];
+
+  return signals.map((signal) => {
+    if (signal.code !== 'range_ceiling_reached' && signal.code !== 'range_completed') {
+      return signal;
+    }
+    return {
+      ...signal,
+      evidence: [
+        ...signal.evidence,
+        { label: FLAG_VOLUME_AT_CEILING, value: 1 },
+        { label: 'weekly_sets', value: note.rollingSets },
+        { label: 'weekly_ceiling', value: note.ceiling },
+        ...(note.userSet ? [{ label: 'ceiling_set', value: 1 }] : []),
+      ],
+    };
   });
 }
 
@@ -292,7 +323,9 @@ export async function loadCoachHistoryLines(
 
   for (const set of sets) {
     const workout = workoutById.get(set.workoutId);
-    if (workout === undefined) continue;
+    // Un benchmark n'est pas une séance : une seule série à l'échec, lue comme
+    // une séance entière, ferait proposer des hausses sur du vide.
+    if (workout === undefined || workout.kind === 'benchmark') continue;
     const block = blocks.get(set.workoutExerciseId);
     if (block === undefined) {
       blocks.set(set.workoutExerciseId, {
@@ -336,6 +369,8 @@ export async function loadCoachHistoryLines(
 export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
   const detail = await getWorkoutDetail(workoutId);
   if (detail === null) return [];
+  // Le coach juge des séances de travail ; le bilan d'un benchmark a son écran.
+  if (detail.workout.kind === 'benchmark') return [];
 
   const formula = await getOneRepMaxFormula();
   const exerciseIds = detail.exercises.map((line) => line.row.exerciseId);
@@ -374,6 +409,20 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
     byExercise.set(entry.exerciseId, list);
   }
 
+  // R6 : le volume que chaque muscle a déjà tenu borne `add_set`. La semaine se lit à l'instant où la
+  // séance se termine (ou maintenant, tant qu'elle est ouverte) : elle compte alors la séance qu'on
+  // évalue, que l'historique ne contient pas encore — ou plus : elle en est écartée pour ne pas être
+  // comptée deux fois.
+  const volumeNow = detail.workout.endedAt > 0 ? detail.workout.endedAt : Date.now();
+  const [volumeHistory, volumeBounds] = await Promise.all([
+    loadVolumeEntries(volumeNow, { excludeWorkoutId: workoutId }),
+    getCoachVolumeBounds(),
+  ]);
+  const volumeEntries = [...volumeHistory, ...volumeEntriesOfWorkout(detail)];
+  const muscleOf = new Map(
+    detail.exercises.map((line) => [line.row.exerciseId, workoutExerciseIdentityOf(line).primaryMuscle]),
+  );
+
   const signals: CoachSignal[] = [];
   for (const [, exerciseLines] of byExercise) {
     const newestFirst = exerciseLines
@@ -385,9 +434,26 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
     const latest = newestFirst[0];
     if (latest === undefined) continue;
 
-    const evaluation = evaluatePerformance(latest, newestFirst.slice(1), { formula });
+    const muscle = muscleOf.get(latest.exerciseId);
+    const volume =
+      muscle === undefined
+        ? undefined
+        : muscleVolumeContext(volumeEntries, muscle, volumeBounds, volumeNow);
+    const evaluation = evaluatePerformance(latest, newestFirst.slice(1), {
+      formula,
+      ...(volume === undefined ? {} : { muscleVolume: volume }),
+    });
     const selected = selectProgramAction(evaluation.allowedActions, target);
-    signals.push(...shapeSignalsForSelectedAction(evaluation.signals, selected, target));
+    // Le plafond n'a une conséquence que si la phase aurait choisi d'ajouter une série : sinon la
+    // carte parlerait d'une action que personne ne lui aurait proposée.
+    const volumeNote =
+      evaluation.volumeWithheld === true &&
+      selectProgramAction([...evaluation.allowedActions, 'add_set'], target) === 'add_set'
+        ? volume
+        : undefined;
+    signals.push(
+      ...withVolumeNote(shapeSignalsForSelectedAction(evaluation.signals, selected, target), volumeNote),
+    );
   }
 
   return pickSignals(signals);
@@ -398,6 +464,9 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
  * Call after `finishWorkout` so abandoned sets are already gone.
  */
 export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
+  // Rien à enregistrer — et surtout rien à « suivre » : la charge d'un benchmark est
+  // celle d'un essai à fond, elle ne répond à aucun objectif que le coach aurait posé.
+  if ((await db.workouts.get(workoutId))?.kind === 'benchmark') return [];
   const signals = await evaluateCoachForWorkout(workoutId);
 
   // Resolve what this session answered *before* recording new signals: a fresh

@@ -8,6 +8,7 @@ const EXACT_PARENTS = new Map<string, string>([
   ['/history/import', '/history'],
   ['/exercises/new', '/exercises'],
   ['/settings/debug', '/settings'],
+  ['/settings/volume', '/settings'],
   ['/settings', '/'],
 ]);
 
@@ -20,11 +21,17 @@ export function androidBackDecision(pathname: string, canGoBack: boolean): BackD
   if (exactParent) return { kind: 'navigate', to: exactParent };
   if (ROOT_ROUTES.has(pathname)) return { kind: 'exit' };
 
+  if (/^\/workout\/replace\/[^/]+$/.test(pathname)) return { kind: 'navigate', to: '/workout' };
+
   const routineAdd = pathname.match(/^\/routines\/([^/]+)\/add$/);
   if (routineAdd) return { kind: 'navigate', to: `/routines/${routineAdd[1]}` };
   if (/^\/routines\/[^/]+$/.test(pathname)) return { kind: 'navigate', to: '/routines' };
   if (/^\/history\/[^/]+(?:\/edit)?$/.test(pathname)) {
     return { kind: 'navigate', to: '/history' };
+  }
+  // Une fiche de mesure remonte à la liste des mesures, pas à la racine de Progression.
+  if (/^\/analytics\/measurements\/[^/]+$/.test(pathname)) {
+    return { kind: 'navigate', to: '/analytics/measurements' };
   }
   if (pathname.startsWith('/analytics/')) return { kind: 'navigate', to: '/analytics' };
   if (/^\/exercises\/[^/]+(?:\/edit)?$/.test(pathname)) {

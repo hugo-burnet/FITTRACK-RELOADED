@@ -189,6 +189,70 @@ describe('parcours de composition d’une routine', () => {
     );
   });
 
+  describe('le benchmark d’une routine', () => {
+    async function routineWithExercise(name = 'Push') {
+      const exercise = await createCustomExercise({
+        name: 'Développé couché',
+        primaryMuscle: 'chest',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const routine = await createRoutine(name);
+      await addExercisesToRoutine(routine.id, [exercise.id]);
+      return routine;
+    }
+
+    it('se lance depuis le menu de la routine, après avoir dit ce qu’il demande', async () => {
+      const routine = await routineWithExercise();
+      const user = userEvent.setup();
+      renderRoutineFlow();
+
+      await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
+      await user.click(screen.getByRole('button', { name: /Benchmark de cette routine/ }));
+
+      // Rien n'est lancé tant qu'on n'a pas lu et confirmé.
+      expect(await getActiveWorkout()).toBeUndefined();
+      expect(await screen.findByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeVisible();
+      await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+
+      await waitFor(() =>
+        expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
+      );
+      expect(await getActiveWorkout()).toMatchObject({
+        kind: 'benchmark',
+        name: 'Benchmark · Push',
+        routineId: routine.id,
+      });
+    });
+
+    it('ne se propose pas pour une routine sans exercice, et dit pourquoi', async () => {
+      const routine = await createRoutine('Vide');
+      const user = userEvent.setup();
+      renderRoutineFlow();
+
+      await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
+
+      const entry = screen.getByRole('button', { name: /Benchmark de cette routine/ });
+      expect(entry).toBeDisabled();
+      expect(entry).toHaveTextContent('Cette routine n’a aucun exercice.');
+    });
+
+    it('ne se propose pas tant qu’une séance est en cours', async () => {
+      const routine = await routineWithExercise();
+      await workoutsRepository.startWorkout('', 'En cours');
+      const user = userEvent.setup();
+      renderRoutineFlow();
+
+      await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
+
+      const entry = screen.getByRole('button', { name: /Benchmark de cette routine/ });
+      expect(entry).toBeDisabled();
+      expect(entry).toHaveTextContent('Une séance est déjà en cours');
+    });
+  });
+
   it('keeps the collection route and emits no event when workout start is rejected', async () => {
     const routine = await createRoutine('Échec collection');
     const pending = deferred<Workout>();

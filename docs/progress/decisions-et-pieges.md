@@ -7,6 +7,344 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 — Le benchmark : une série à l'échec par exercice, qui cale les charges de la routine
+
+**Demande.** « Une séance avec une série, le plus de répétitions possible, ça nous calibre notre coach, une série
+par exo. » Spec : `docs/design/specs/2026-10-15-benchmark-design.md` ; exécution :
+`docs/design/plans/2026-10-15-benchmark.md`.
+
+**Ce qui est fait.** `Workout.kind: 'benchmark'` (optionnel, validé par la sauvegarde, aucune version de schéma) ;
+une séance construite depuis la routine puis réduite à une série `failure` par exercice, sans cible de répétitions
+ni de RPE ; un module pur (`lib/benchmark.ts`) qui lit le maximum (formule des réglages, 1 à 12 répétitions) et
+en tire la charge où le bas de fourchette laisse deux répétitions en réserve ; un écran de bilan
+(`/benchmark/:id`) qui propose, exercice par exercice, d'écrire cette charge dans la routine.
+
+**« Calibrer le coach » veut dire : poser le bon point de départ, pas ouvrir un canal vers le moteur.** Le coach
+progresse à partir des cibles de la routine et de ce qui a été fait ; un départ faux se rattrape en un cran par
+séance, pendant des semaines. Le benchmark écrit la charge juste dans la routine — **sur acceptation** — et
+rien d'autre. Aucun état « calibré » n'est stocké, aucune donnée nouvelle n'est lue par le moteur.
+
+**Ce que le benchmark nourrit, et ce qu'il n'alimente pas.** Une série à l'échec est une vraie performance : records,
+volume par muscle, régularité, courbes, historique la comptent. Elle n'est pas le modèle d'une série de travail,
+donc tout ce qui **prescrit** l'écarte : les valeurs fantômes (`getLastPerformance`), l'historique du coach et son
+rejeu de sauvegarde, l'évaluation et le suivi d'objectifs de fin de séance, la revue des cibles (les deux
+fenêtres), la rotation de la routine suggérée à l'accueil. Chaque garde a été retirée une à une : chacune fait
+échouer un test. Un index sur `kind` aurait coûté une version de schéma pour une question posée sur quelques
+séances à la fois — `benchmarkIdsAmong` lit ces séances par lot.
+
+**L'écriture est un décalage, donc elle se rejoue mal — et c'est ce qui a été protégé.** Écrire « +7,5 kg » deux
+fois (double appui, ou deux onglets) fait 85 kg. Chaque proposition porte la série qu'elle a lue et la charge
+qu'elle y a vue ; elle ne s'applique que si cette série porte encore cette charge. Une routine modifiée entre le
+bilan et l'appui n'est pas écrasée, une série de référence supprimée annule la proposition. Le compte annoncé est
+celui des **exercices** réécrits : l'écran disait « 2 exercices » pour un seul, parce que le chemin d'écriture
+qu'il réutilise compte des séries.
+
+**Choix de détail, à relire.**
+
+- **Bas de fourchette + 2 répétitions de réserve** (`BENCHMARK_RESERVE_REPS`). Une série de travail commence deux
+  répétitions avant l'échec ; la double progression a ensuite la place de monter. À juger sur le terrain : si les
+  charges proposées paraissent trop basses ou trop hautes, c'est une constante.
+- **Arrondi vers le bas, toujours.** Sur la grille du matériel ; à partir de la charge essayée quand le pas est
+  celui que la personne a saisi (un cran de 1,125 kg ne tombe pas sur un multiple de 1,125).
+- **Seul `weight_reps` reçoit une charge.** Pour un lest ou une assistance, la charge n'est qu'une part de ce qui
+  est soulevé ; pour un temps, il n'y a pas de charge. Leur résultat est noté, rien n'est proposé.
+- **Au-delà de 12 répétitions, pas d'estimation** : « trop léger, refais-le plus lourd ». Les formules
+  extrapolent au-delà ; un chiffre inventé ferait pire que rien.
+- **Pas de comparaison entre deux benchmarks.** Une série à l'échec est un point bruité ; une courbe de points
+  bruités fabrique des tendances.
+
+**Pièges rencontrés.**
+
+- **Une assertion qui ne prouvait rien.** L'E2E vérifiait que le champ de charge de la séance suivante affichait
+  105 (la cible calibrée) : la cible de la routine passe avant la « dernière fois », donc l'assertion passait
+  avec ou sans l'exclusion du benchmark. Celle qui la prouve est la colonne « Précédent » vide (vue rouge quand
+  la garde est retirée). Une assertion se mute comme le code.
+- **Un test unitaire cassé deux commits plus tôt.** `HomeScreen.test` remplace `useLiveQuery` par `() => null`
+  et mocke chaque carte qui lit ses propres tables ; la carte « Volume bas » (R6) n'y était pas, et `lows.length`
+  tombait sur `null`. Le défaut était dans le test, mais il n'avait pas été vu parce que la passe complète des
+  tests unitaires n'avait pas été refaite après R6. **Une passe complète avant chaque commit de fonctionnalité,
+  pas seulement les tests du dossier touché.**
+- **`pkill -f` tue le shell qui l'invoque** : le motif figure dans sa propre ligne de commande. Terminer un
+  serveur par son PID.
+
+### 2026-10-14 — R6, le volume par muscle : ce que le coach n'ajoute plus, ce que la personne demande à entendre
+
+**Constat.** La tranche 5 du coach v2 attendait son plan depuis le 4 octobre. Le coach raisonne exercice par
+exercice : en semaine de surcharge il propose d'ajouter une série à un muscle déjà au plus haut de ce que la
+personne a tenu. Spec, décisions d'ouverture et leurs raisons : `docs/design/plans/2026-10-04-coach-v2.md`.
+
+**Ce qui est fait.** Des règles pures (`lib/coach/volume.ts`) ; un plafond qui retire `add_set` ; une note de
+carte qui dit pourquoi ; un réglage `coachVolumeBounds` ; un écran « Volume par muscle » (Réglages › Coach) ;
+une carte d'accueil « Volume bas » pour un plancher que la personne a posé.
+
+**Le plafond ne change presque rien tant qu'on ne le relève pas — et c'est la décision, pas un défaut.**
+`add_set` n'est choisi qu'en phase de surcharge, et un pratiquant régulier est à son maximum par
+construction : à 10 séries de pecs par semaine, le plus haut des six semaines est 10, la semaine glissante
+l'égale, la série en plus est retirée. La spec (Q3) le veut ainsi : le coach ne propose pas d'aller au-delà de
+ce qui a déjà été tenu. L'écran rend la décision visible, et c'est lui qui la porte : pour progresser en
+volume, on relève son plafond. **À juger sur le terrain** — si la règle bloque trop souvent, c'est le défaut de
+`effectiveCeiling`, un seul endroit.
+
+**Pourquoi rien n'est journalisé, et pas de version de schéma.** Un constat de semaine n'a ni suite à suivre
+ni objectif à refuser : `coachRecommendations` ne lui sert à rien, donc pas d'`exerciseId` facultatif. La
+valeur du réglage n'est pas validée par la sauvegarde (une clé et une date lui suffisent) : elle est relue
+défensivement, et une valeur abîmée à la main ne casse ni l'écran ni le coach.
+
+**Pièges rencontrés.**
+
+- **Un espace de noms déjà pris.** `volume` existait dans `fr.ts` (le volume d'entraînement, `volume.link`).
+  Une seconde clé du même nom dans l'objet n'a pas fait d'erreur *à l'écriture* : la dernière gagnait, et
+  les chaînes de l'écran « Volume par muscle » disparaissaient (affichées `volume.reading`). Renommé
+  `muscleVolume`. Avant d'ouvrir un espace de noms, le chercher.
+- **La semaine glissante d'un test dans le passé.** L'évaluation d'une séance ouverte lit « maintenant » ;
+  un test qui sème des séances d'août ne voit alors aucune semaine glissante. Les tests figent `Date` seul
+  (`vi.useFakeTimers({ toFake: ['Date'] })`) — les minuteries que Dexie utilise restent réelles.
+- **Un test attendait le mauvais libellé.** « Ischios » est un raccourci d'écriture, le muscle s'appelle
+  « Ischio-jambiers » : un test d'affichage lit l'écran, pas la tête de celui qui l'écrit.
+
+**Ce qui n'est pas fait.** Le rejeu sur l'historique réel (`npm run coach:replay`) : la sauvegarde n'est pas
+dans le dépôt. R6 n'a d'effet que pour un pratiquant en phase de surcharge ayant au moins trois semaines
+d'un muscle — le rejeu dirait combien de propositions réelles elle aurait retirées. R7 reste reportée.
+
+### 2026-10-14 — Les mensurations : le Lot 11 sans les photos
+
+**Constat.** Le Lot 11 avait été scindé le 2026-08-11 (« les mesures restent, les photos sortent »), mais
+seul le poids avait été livré, par une tuile de l'accueil : ni courbe, ni saisie datée, ni autre mesure.
+Le schéma attendait pourtant du câblage et rien d'autre (`type` libre, `[type+measuredAt]`, `measuredAt`
+rétrodatable, table déjà validée par la sauvegarde). Spec : `docs/design/specs/2026-10-14-mensurations-design.md`.
+
+**Ce qui est fait.** Progression › Mensurations : quinze mesures (poids, masse grasse, tours, paires gauche
+et droite), des champs libres, une saisie à n'importe quelle date, une courbe par mesure, un historique où
+l'on corrige et supprime. Le poids de l'accueil est **la même mesure** et sa feuille mène à la courbe.
+
+**Les choix qui engagent.**
+
+- **Le poids reste le poids.** Il nourrit le tonnage au poids du corps, donc les records : toute écriture
+  (saisie, rétrodatage, correction) passe par `saveBodyWeight`, et la suppression par un `deleteBodyWeight`
+  neuf, qui refait les records des séances que la mesure couvrait. Vérifié contre une reconstruction
+  complète des records (première, médiane, dernière et unique mesure). Les autres types n'ont aucun effet
+  sur les records et ont un dépôt plus simple.
+- **Un champ libre est rangé sous `custom:<nom>`**, pas sous son nom nu : un champ appelé « body_weight »
+  se serait rangé sous la clé du poids — et aurait touché aux records — avec l'unité qu'on lui aurait
+  donnée. Le préfixe est invisible à l'écran.
+- **Une mesure par type et par jour**, la règle du poids étendue : saisir un jour déjà mesuré remplace la
+  valeur et garde l'instant. La feuille le dit **avant** l'enregistrement.
+- **Aujourd'hui = maintenant, un autre jour = début de ce jour local.** La tuile de l'accueil écrit à
+  l'instant présent ; le poids du 3 octobre doit valoir pour toutes les séances du 3, pas celles d'après
+  midi. Jamais demain, jamais un jour que le calendrier n'a pas (`new Date(2026, 1, 30)` glisse au 2 mars).
+- **L'abscisse de la courbe est la date.** Une séance se compte, une mesure se date : trois semaines sans
+  pesée doivent se voir. `plotTimedPoints` ne remplace que le x de `plotPoints`.
+- **Aucun point n'est « le record »** : un tour de taille plus petit n'est pas meilleur qu'un tour de bras
+  plus grand. Au-delà de trente points, seul le point touché reste dessiné ; le trait dit la tendance.
+- **Plausible, pas arbitraire.** 825 cm de tour de taille écraserait l'échelle d'une courbe dont les bornes
+  sont celles des données : pourcentage sous 100, longueur jusqu'à 300 cm, kilos jusqu'à 1 000. **Le poids de
+  corps garde « aucun maximum » (spec du 2026-08-10)**, parce que c'est la règle de `saveBodyWeight`.
+- **Le type se choisit avant la saisie, pas dedans** : deux feuilles empilées se disputent le focus et le
+  défilement. « Quelle mesure ? », puis la feuille de saisie.
+
+**Pièges rencontrés.**
+
+- **L'échelle gravée tombait à côté des dates.** La borne basse (« 81,7 kg ») s'alignait sur la ligne
+  « 11 août » au lieu du bas de la courbe, parce que la colonne de l'échelle s'étirait sur la hauteur du
+  graphique **et** des dates. Vu sur une capture, pas à la lecture du code ; corrigé par une grille.
+  `ProgressCard` (la courbe d'un exercice) a la même construction : **à vérifier sur son écran, non
+  touchée**.
+- **`−0`.** `Math.round(-5.5e-15) / 100` vaut −0, que `toBe(0)` refuse et que l'écran aurait écrit « −0 » :
+  un écart nul est nul. Et `1,005 × 100` vaut `100,49999999999999` en flottants : l'arrondi passe par la
+  chaîne (`1.005e2`) pour donner 1,01.
+- **Un test attendait un record qui n'existe plus.** La projection est une *progression* de records : une
+  séance qui ne fait qu'égaler la précédente n'en porte plus. Les chiffres du test ont changé, pas le code.
+
+**Ce qui n'est pas fait.** Les photos (RF-39) et leur verrouillage ; Health Connect (RF-40) ; une tendance
+lissée du poids (c'est une règle à juger, pas un défaut) ; l'indice de masse corporelle (il demande une
+taille) ; un objectif chiffré.
+
+### 2026-10-14 — La coche écrasait le poids qu'on venait de taper
+
+**Constat.** Trouvé par l'E2E du 5×5, qui échouait une fois sur trente sans qu'on sache pourquoi : l'écran
+de fin disait « 1 × 5 a atteint le haut de la fourchette » sans proposer de charge. La série était
+validée **sans poids**. Rejoué cent fois, jamais reproduit ; trouvé en lisant le code, puis reproduit
+**sans délai** avec un test.
+
+**Le mécanisme.** `WorkoutSetRow` calculait les chiffres de la coche à partir des propriétés de la
+ligne (`valueOf(champ) ?? valeurFantôme`), et ces propriétés viennent d'une requête vivante : elles
+arrivent un instant **après** l'écriture. `isSetRecordable` exclut la charge (« la seule valeur qu'une
+série peut ne pas avoir »), donc la coche est active alors que la saisie n'est pas encore revenue. Un
+poids tapé puis validé aussitôt était déjà en base quand `completeSet` écrivait par-dessus — avec
+`undefined` (la série partait sans charge) ou, après une première séance, avec la **valeur grise de la
+séance d'avant** (le mauvais poids, enregistré sans que rien ne le dise). C'est la règle n° 4.
+
+**Pourquoi c'est rare sur un téléphone, et pourquoi ça ne rassure pas.** Entre la dernière frappe et le
+toucher de la coche il y a le temps d'un doigt, plus de 150 ms ; la requête vivante répond en 10 à 30 ms.
+Mais l'écriture fait la queue derrière la transaction de records de la série précédente, qui grandit avec
+l'historique : sur un vieux téléphone et des années de séances, la marge n'est plus celle qu'on croit.
+
+**Le correctif est dans le dépôt, pas dans l'écran.** `completeSet(id, valeurs, { proposed })` relit la
+série **dans sa transaction** ; `proposed` — ce que l'écran propose : la cible, la séance d'avant — ne
+comble que les cases vides de cette ligne-là, et une valeur `undefined` ne signifie plus « effacer »
+(c'est `updateSetValues` qui efface, volontairement). Seul ce que l'appelant **décide** remplace : la
+durée du chrono, qui prime sur une durée tapée. La ligne n'envoie plus que ses propositions. Un test
+écrit dans la base par une seconde connexion (que Dexie n'entend pas) reproduit la course sans délai ;
+chacune des trois variantes du défaut — propositions qui écrasent, `undefined` qui efface, chiffres de
+l'écran renvoyés comme décisions — a été **vue rouge** en la réintroduisant.
+
+**À retenir.** Une valeur lue sur l'écran n'est jamais une donnée : c'est une photo, et la base a pu
+bouger depuis. Toute écriture qui part d'une photo doit se réduire à ce qu'elle décide, et relire le
+reste là où la transaction le garantit. Les autres écritures de la ligne (`updateSetValues`, frappe par
+frappe) ne partent pas d'une photo et n'étaient pas concernées.
+
+### 2026-10-14 — Remplacer l'exercice en séance : une place qui change d'occupant
+
+**Constat.** « La machine est prise » est le cas le plus ordinaire d'une salle, et l'app n'offrait que
+deux sorties : retirer l'exercice (et perdre son rang, son superset, ses notes, ses séries à faire) ou
+l'ajouter ailleurs en fin de séance. Hevy a la fonction ; le cahier des charges ne la numérote pas.
+
+**Ce qui est fait.** Menu ⋮ d'un exercice › « Remplacer l'exercice » › la bibliothèque, où l'on **touche**
+l'exercice (un seul, pas de case à cocher ni de bouton de confirmation : entre deux séries, un appui de
+trop). Le noyau est `replaceWorkoutExercise`, dans une transaction sur les tables de la projection des
+records ; la logique pure (ce qui reste d'une série quand l'exercice change) est dans
+`src/lib/exerciseReplacement.ts`.
+
+**La règle : on remplace ce qu'il reste à faire, jamais ce qui a été fait.**
+
+- **Aucune série validée** : la ligne devient le nouvel exercice, sur place — même rang, même superset,
+  mêmes notes.
+- **Des séries validées** : elles restent sur l'ancienne ligne, sous le nom de l'exercice qui les a vues ;
+  une **nouvelle ligne** (même groupe de superset) prend la suite, juste dessous, avec les séries
+  restantes. Un squat dont deux séries sont faites ne devient pas un leg press rétroactivement.
+- **Tout est validé**, **même exercice**, **exercice inconnu ou supprimé** : refusé, sans rien écrire. Le
+  menu dit pourquoi (« Toutes les séries sont validées : rien à remplacer. ») au lieu d'une entrée muette.
+
+**Ce qui est effacé, et pourquoi.** Les chiffres saisis et **la charge visée** : « 100 kg » est un chiffre
+de développé couché, pas de la place. La fourchette de répétitions, la durée et la distance visées
+survivent **si le nouvel exercice les mesure** (8–12 répétitions ne valent pas pour un gainage chronométré).
+L'instantané (nom, muscles, matériel, unilatéral, facteur de poids du corps), la cadence en répétitions et
+le repos sont **recalculés** pour le nouvel exercice : les clés de l'ancien sont retirées et non écrasées,
+sinon un exercice sans muscle secondaire hériterait de ceux du précédent.
+
+**Ce que ça ne touche pas.** Les records (aucune série validée n'est modifiée ; la projection est dans la
+même transaction par prudence), le schéma (`version` inchangée), la routine d'origine (la séance seule
+change : « remplacer » n'est pas « modifier ma routine »).
+
+**Ce qui n'est pas fait.** Proposer des exercices proches (même muscle, autre matériel) en tête de liste :
+c'est une recommandation, donc une règle à juger — la recherche et les filtres de la bibliothèque
+suffisent pour l'instant. Remplacer dans l'éditeur de routine : la routine se modifie déjà en
+supprimant puis ajoutant, sans état à préserver.
+
+### 2026-10-14 — Un E2E enfin commité, qui ne garde pas le déploiement, et la police du système
+
+**Constat.** CLAUDE.md affirmait « l'E2E Playwright couvre les parcours » ; le dépôt n'avait ni
+dépendance, ni configuration, ni test — la spec du skin TTY1 le disait elle-même (« le dépôt n'a pas de
+Playwright : il n'y a pas de test visuel automatique »). Les sessions refaisaient donc à la main les
+mêmes contrôles Chromium à 390 px, et un libellé qui déborde en TTY1 a été redécouvert **trois fois le
+même jour** (4 octobre).
+
+**Ce qui est fait.** `e2e/` (17 parcours, `npm run test:e2e`, 1 min 30) : le vrai build servi comme Pages,
+390 × 844 tactile, mouvement réduit, service worker bloqué sauf pour le test hors-ligne. Chacun a été
+**vu rouge** en réintroduisant le défaut qu'il garde. Deux passes complètes sans instabilité ; une seule
+instabilité rencontrée, et elle venait du test (un « Accueil » touché pendant la navigation tardive vers
+l'éditeur de routine) — `createRoutineFromTemplate` attend maintenant l'éditeur.
+
+**Pourquoi il ne garde pas le déploiement.** Les portes de `deploy.yml` et d'`android.yml` sont
+déterministes ; un navigateur ne l'est jamais tout à fait, et un parcours qui flanche ne doit pas
+empêcher un correctif d'être publié. `.github/workflows/e2e.yml` tourne à part, sur chaque push et
+chaque PR. **À promouvoir en porte** (ajouter `npm run test:e2e` à `deploy.yml`) quand il aura fait ses
+preuves. Il n'a pas encore tourné sur GitHub : seulement en local, y compris avec `CI=1` et un serveur
+démarré par Playwright lui-même.
+
+**La police du système.** Android applique sa taille de police à `rem`, donc aux cibles en `size-12`
+(3 rem) : 48 px à 100 %, 96 px à 200 %. À 200 %, trois cibles de l'en-tête de la séance repoussaient le
+bouton d'aide hors de l'écran (+13 px de défilement latéral, le titre écrasé à zéro). Une cible tactile
+est un nombre de pixels CSS, pas de rem : `Screen` (retour) et `HeaderAction` passent à `size-[48px]`.
+**Le reste de l'app garde `size-12` / `min-h-12`**, qui n'a pas posé de problème mesuré à 200 %.
+
+**Ce qui n'est pas corrigé : TTY1 à 200 %.** Son texte est une police bitmap à tailles fixes (12, 16, 24,
+32 px) ; à 200 % elle est étirée et la barre du bas déborde de 160 px (« Progression », « Exercices »).
+Un thème rétro dont le charme est la grille de pixels n'a pas de sens à deux fois sa taille : le test s'y
+arrête à 130 %. Si on veut le tenir, la sortie est de fixer en pixels les libellés de la barre du bas
+sous TTY1 (`tty1.css`, la règle `.text-[11px]` qui les passe en `0.75rem`).
+
+**Le piège de la session.** `pgrep -f "<motif>"` s'est une nouvelle fois trouvé dans sa propre ligne de
+commande et a tué le shell (déjà consigné le 2026-10-03 et le 2026-10-04). Arrêter un serveur par son
+PID relevé avec `ss -ltnp`, ou avec le motif entre crochets (`[v]ite`).
+
+### 2026-10-14 — Protéger l'historique : un rappel qui compte les séances, pas un export silencieux
+
+**Constat.** La règle n° 4 garde une séance d'un crash, pas d'un téléphone perdu, réinitialisé ou
+d'une app désinstallée (« Désinstaller l'app les efface », dit le README). La seule parade était un
+export JSON à la main, et rien dans l'app ne se souvenait de l'avoir fait : ni date, ni rappel.
+
+**Ce qui est fait.**
+
+- **`lib/backupNudge`** (pur, testé, mutation vérifiée) : le rappel part de **trois séances** que la
+  dernière sauvegarde ne contient pas, ou d'**une** quand elle date de quatorze jours ; rien à
+  protéger, rien à dire, quel que soit l'âge du fichier ; « Plus tard » le fait taire sept jours.
+  Quinze jours sans séance ne mettent rien en danger, trois séances jamais sauvegardées si.
+- **`stores/backupMemory`** : deux dates dans `localStorage`, **hors sauvegarde** (préfixe
+  `fittrack.` et non `fittrack:`, comme le déblocage de TTY1). Une date de sauvegarde dans la
+  sauvegarde dirait toujours la précédente.
+- **`data/repositories/backupStatus`** : une séance terminée compte si elle a été **créée ou finie**
+  après la dernière sauvegarde — pas « modifiée » : `updatedAt` bouge au recalcul des records et
+  annoncerait des dizaines de séances qui n'ont pas changé. Une séance Hevy importée aujourd'hui,
+  de date ancienne, compte (`createdAt`).
+- **Une seule porte d'export** (`features/settings/exportBackup`) pour les Réglages et la carte de
+  l'accueil : la date retenue ne dépend pas de la porte empruntée. On retient l'instant où le
+  fichier a été **construit** (`exportedAt`), pas celui où la feuille se referme ; rien quand elle
+  est fermée sans choix ou que l'écriture échoue. Une **restauration** retient « maintenant » : le
+  téléphone est alors exactement ce fichier, qu'il ait une date, qu'elle manque ou qu'elle soit
+  dans le futur.
+- **La carte de l'accueil** (`HomeBackupNudge`) : sous la séance à lancer, jamais au-dessus ; rien
+  n'est rendu sans séance à protéger. Une ligne d'état dans Réglages ; le stockage persistant
+  est demandé au démarrage (`platform/storagePersistence`) et son état lu dans Dépannage.
+
+**Ce qui n'est pas fait, et pourquoi.** Un **export automatique silencieux**. Sur Android une web-app
+n'écrit pas où elle veut : ses propres dossiers disparaissent **avec** elle (précisément la panne à
+couvrir), l'écriture dans les dossiers publics demande le Storage Access Framework — un sélecteur de
+dossier natif, donc un plugin que le projet n'a pas et qu'une session sans téléphone ne peut pas
+essayer — et la feuille de partage réclame un geste. Le rappel suivi d'un seul appui est le
+compromis qui marche partout. **À rouvrir** avec un plugin SAF et un essai sur appareil.
+
+**À savoir.** `AndroidManifest.xml` déclare `allowBackup="true"` sans règle : la sauvegarde
+automatique d'Android peut déjà restaurer les données à la réinstallation. Rien ne le vérifie
+(IndexedDB est un LevelDB ouvert pendant la copie) — ne pas s'y fier, l'essayer un jour avec un
+téléphone de test.
+
+### 2026-10-14 — Dépendances : le minimum corrigé en production, et un outil de moins
+
+**Constat.** `npm audit` : 23 avis, dont 3 en production (`@capacitor/android` 8.5.0, critique,
+CVSS 9.3 ; `react-router` / `react-router-dom` 7.18.1, élevé). Presque tout le reste venait de
+`@capacitor/assets`, un outil de dev qui n'a servi qu'**une fois** (générer les icônes, commande
+déjà écrite en `npx` dans le plan Android) et qui embarquait `sharp`, `tar@6`, `xmldom` et un
+`@capacitor/cli@5`.
+
+**Ce qui est fait.**
+
+- **`@capacitor/android`, `@capacitor/core`, `@capacitor/cli` → 8.5.1**, le correctif de l'avis
+  (la navigation ne peut plus atteindre le chemin du proxy HTTP interne), les trois alignés.
+  **Pas 8.5.2** : il touche aux zones sûres et au plugin SystemBars sur Android, que la session
+  ne peut pas essayer sur un téléphone — à prendre avec son propre checkpoint (icône, barres du
+  système, bas de l'écran de séance). 8.5.3 ne change que le CLI iOS.
+- **`react-router-dom` → 7.18.2**, la première version corrigée. L'avis ne concerne que les API
+  RSC instables ; l'app est en routeur hash côté client, donc exposée à rien — le correctif est là
+  pour que `npm audit` redevienne lisible. Production : **0 vulnérabilité**.
+- **`@capacitor/assets` retiré** des dépendances (292 paquets en moins). Les ressources générées
+  sont versionnées dans `android/app/src/main/res`, la CI ne l'appelle pas ; la commande `npx`
+  est dans `docs/ANDROID.md`, § 9.
+- **`vitest` → 4.1.11** (chemin de lecture arbitraire via `@vitest/mocker`, en dev) et les paquets
+  transitifs de build (`postcss`, `browserslist`, `nanoid`, `fast-uri`, `undici`…) mis à jour
+  dans le lock.
+
+**Ce qui reste, accepté.** Trois avis modérés, une seule chaîne, en outil de dev, rien dans le
+bundle : `uuid` < 11.1.1 via `xcode` via `@capacitor/cli` (en amont ; npm propose « un correctif »
+qui est un retour à 8.4.3).
+
+**Le piège.** `npm audit fix` et `npm install -D vitest@4.1.11` plantent avec npm 10.9.4
+(`Cannot read properties of null (reading 'edgesOut')`, dans la résolution des pairs optionnels de
+vitest). `--legacy-peer-deps` « marche » mais **retire `@testing-library/dom`**, pair requis de
+`@testing-library/react` : un lock qui passe et des tests qui ne se lancent plus. Ce qui a
+fonctionné : `npx npm@11 install -D vitest@4.1.11`, dont la différence de lock ne montre que la
+famille vitest. Toujours regarder le diff du lock après un `npm install`.
+
 ### 2026-10-04 — Le cadenas d'ordre revient dans le bandeau de la séance
 
 **Ce qui a été dit.** « Et fais réapparaître le cadenas quand la routine est en cours. »
@@ -491,6 +829,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Remboursée le 2026-10-14 — `lib/coach/evaluate.ts` (1 051 lignes) n'a jamais été consigné.** Il avait
+  grandi tranche après tranche du coach v2 (994 lignes au 13 octobre, la plus grosse source hors
+  dictionnaire) sans que l'écart figure ici — « un écart non consigné est le seul qui pose problème »,
+  dit CLAUDE.md. Il faisait pourtant plusieurs métiers : lire les séries, remettre l'historique en
+  ordre, huit détecteurs, arbitrer, orchestrer ; et il a déjà coûté à un lecteur (« dans quelle
+  situation est-on ? », d'où `situation.ts`). Il est découpé en `constants`, `sets`, `history`,
+  `rules/{range,drop,plateau,returning}`, `arbitrate` (53 à 284 lignes) et `evaluate` (138), **sans un
+  caractère de corps de fonction changé** — vérifié par un script qui compare chaque déclaration à
+  l'original — et sans toucher aux 444 tests du coach et de ses consommateurs, qui passent tels quels. Une doc de
+  `plateauSignal` s'était séparée de sa fonction (trois helpers glissés entre les deux) : remise
+  au-dessus. L'API publique de `evaluate.ts` est inchangée (ses exports d'avant y sont ré-exportés).
 
 - **Assumée le 2026-10-04 — `workoutSets.ts` (dépôt) est remonté à 399 lignes**, après avoir été remboursé à
   266 le 2026-07-27 : il a grandi depuis, jusqu'à 393, sans que l'écart soit consigné (l'historique de ce clone

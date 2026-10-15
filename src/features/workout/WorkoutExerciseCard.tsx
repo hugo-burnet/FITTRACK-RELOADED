@@ -129,7 +129,7 @@ type Props = {
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
   onWrite: (setId: string, values: Partial<SetValues>, recordable: boolean) => void;
-  onComplete: (setId: string, values: Partial<SetValues>, set: WorkoutSet) => void;
+  onComplete: (setId: string, proposed: Partial<SetValues>, set: WorkoutSet) => void;
   onUncomplete: (setId: string) => void;
   onDeleteSet: (setId: string) => void;
   onRestoreSet: (setId: string) => void;
@@ -516,7 +516,7 @@ export function WorkoutExerciseCard({
                       holding={hold?.setId === set.id}
                       unilateral={identity.isUnilateral === 1}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
-                      onComplete={(values) => onComplete(set.id, values, set)}
+                      onComplete={(proposed) => onComplete(set.id, proposed, set)}
                       onUncomplete={() => onUncomplete(set.id)}
                       onMenu={() => onSetMenu(set, index + 1)}
                     />

@@ -107,7 +107,10 @@ export function Screen({
               navigatingBack();
               onBack();
             }}
-            className="-ml-3 flex size-12 shrink-0 items-center justify-center rounded-xl
+            // 48 px en pixels CSS et non `size-12` : une cible tactile ne grandit pas avec la
+            // taille de police du système. À 200 %, `size-12` (3 rem) en fait 96, et les trois
+            // boutons de l'en-tête de la séance repoussaient l'aide hors de l'écran.
+            className="-ml-3 flex size-[48px] shrink-0 items-center justify-center rounded-xl
               text-[var(--text-1)] active:bg-[var(--surface-1)]"
           >
             <ArrowLeftIcon />

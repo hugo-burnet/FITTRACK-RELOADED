@@ -5,6 +5,7 @@ import { Screen } from '@/app/Screen';
 import { db } from '@/data/db';
 import { seedDatabase } from '@/data/seed/seedDatabase';
 import { t } from '@/i18n/fr';
+import { readStoragePersistence } from '@/platform/storagePersistence';
 import { Card, ConfirmAction, ListRow, SectionTitle } from '@/ui';
 import { HistoryUpdateAction } from './HistoryUpdateAction';
 import { RecordRepairAction } from './RecordRepairAction';
@@ -29,6 +30,8 @@ export function DebugScreen() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [storage, setStorage] = useState<StorageEstimate | null>(null);
+  // `null` : le navigateur ne sait pas le dire. La ligne n'est alors pas affichée.
+  const [persisted, setPersisted] = useState<boolean | null>(null);
 
   // Counting every table also observes every table, so the figures update on
   // their own after a reset or a re-seed.
@@ -45,6 +48,10 @@ export function DebugScreen() {
     // Re-read after every write so the figure follows the reset button.
     void navigator.storage.estimate().then(setStorage, () => setStorage(null));
   }, [counts]);
+
+  useEffect(() => {
+    void readStoragePersistence().then(setPersisted);
+  }, []);
 
   const run = (action: () => Promise<void>, done: string) => async () => {
     setBusy(true);
@@ -103,6 +110,11 @@ export function DebugScreen() {
                   </p>
                 )}
               </div>
+            )}
+            {persisted !== null && (
+              <p className="border-t border-[var(--border)] p-4 text-sm leading-relaxed text-[var(--text-2)]">
+                {t(persisted ? 'debug.storagePersisted' : 'debug.storageNotPersisted')}
+              </p>
             )}
           </Card>
         </section>

@@ -5,6 +5,14 @@ import {
   startOfLocalWeek,
   type WeeklyTrainingGoal,
 } from '@/lib/history';
+import { MUSCLE_SCOPE } from '@/lib/analytics/muscles';
+import {
+  isVolumeBound,
+  normalizeVolumeBounds,
+  type VolumeBounds,
+  type VolumeBoundsByMuscle,
+} from '@/lib/coach/volume';
+import type { MuscleGroup } from '@/data/types';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import {
   normalizeRoutineFolderContext,
@@ -19,6 +27,7 @@ const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
 const ONE_REP_MAX_FORMULA_KEY = 'oneRepMaxFormula';
 const REP_SECONDS_KEY = 'repSeconds';
 const HOME_ROUTINE_FOLDER_CONTEXT_KEY = 'homeRoutineFolderContext';
+const COACH_VOLUME_BOUNDS_KEY = 'coachVolumeBounds';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
 const ONE_REP_MAX_FORMULAS: ReadonlySet<OneRepMaxFormula> = new Set([
   'epley',
@@ -194,5 +203,45 @@ export async function setRoutineFolderContext(context: RoutineFolderContext): Pr
     key: HOME_ROUTINE_FOLDER_CONTEXT_KEY,
     value: context,
     updatedAt: Date.now(),
+  });
+}
+
+/**
+ * R6 — les bornes de volume que la personne a posées, par muscle. Vide tant qu'elle n'en a posé
+ * aucune : l'app ne décide pas que 3,8 séries d'ischios, c'est trop peu.
+ *
+ * Dans la table des réglages, donc dans la sauvegarde et sans version de schéma. La valeur est
+ * relue défensivement (cf. `normalizeVolumeBounds`) : la sauvegarde n'en valide que la clé.
+ */
+export async function getCoachVolumeBounds(): Promise<VolumeBoundsByMuscle> {
+  return normalizeVolumeBounds((await db.settings.get(COACH_VOLUME_BOUNDS_KEY))?.value);
+}
+
+/**
+ * Pose, change ou retire les bornes d'un muscle ; les autres ne bougent pas. Une borne est un
+ * nombre entier de séries par semaine, le plancher ne dépasse pas le plafond, et seul un groupe qui
+ * est une région du corps en a — un zéro de `cardio` ne dit rien. Refusé, rien n'est écrit.
+ */
+export async function setCoachVolumeBounds(
+  muscle: MuscleGroup,
+  bounds: VolumeBounds,
+): Promise<VolumeBoundsByMuscle> {
+  const { floor, ceiling } = bounds;
+  if (
+    MUSCLE_SCOPE[muscle] !== 'region' ||
+    (floor !== undefined && !isVolumeBound(floor)) ||
+    (ceiling !== undefined && !isVolumeBound(ceiling)) ||
+    (floor !== undefined && ceiling !== undefined && floor > ceiling)
+  ) {
+    throw new RangeError('Volume bounds must be whole sets from 1 to 99, floor not above ceiling');
+  }
+
+  return db.transaction('rw', db.settings, async () => {
+    const next: VolumeBoundsByMuscle = { ...(await getCoachVolumeBounds()) };
+    if (floor === undefined && ceiling === undefined) delete next[muscle];
+    else next[muscle] = { ...(floor === undefined ? {} : { floor }), ...(ceiling === undefined ? {} : { ceiling }) };
+
+    await db.settings.put({ key: COACH_VOLUME_BOUNDS_KEY, value: next, updatedAt: Date.now() });
+    return next;
   });
 }

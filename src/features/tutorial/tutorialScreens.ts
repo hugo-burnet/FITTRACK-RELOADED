@@ -202,7 +202,11 @@ export function screenHolds(
       return context.programId === null || own === context.programId;
     }
     case 'workout':
-      return pathname === '/workout' || pathname === '/workout/add';
+      return (
+        pathname === '/workout' ||
+        pathname === '/workout/add' ||
+        pathname.startsWith('/workout/replace/')
+      );
     case 'workout-finish':
       return pathname.startsWith('/workout/finish');
     case 'history':

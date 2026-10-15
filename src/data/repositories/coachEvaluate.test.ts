@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import type {
@@ -26,6 +26,7 @@ import {
   replaceProgramWeeks,
 } from './programs';
 import { addExercisesToRoutine, createRoutine } from './routines';
+import { setCoachVolumeBounds } from './settings';
 import { finishWorkout } from './workoutLifecycle';
 
 const exercise: Exercise = {
@@ -1112,5 +1113,192 @@ describe('evaluateCoachForWorkout', () => {
         (item) => item.label !== 'next_load_kg' && item.label !== 'current_load_kg',
       ),
     ).toBe(true);
+  });
+});
+
+describe('R6 — le plafond de volume, de bout en bout', () => {
+  /** Le lundi 17 août 2026 à midi : la séance qu'on évalue, la veille du plafond de fourchette. */
+  const closeAt = new Date(2026, 7, 17, 12).getTime();
+
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+    // La semaine glissante se lit à « maintenant » tant que la séance est ouverte : on le fixe, sans
+    // toucher aux minuteries que Dexie utilise.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(closeAt + 3_600_000);
+  });
+
+  afterEach(() => vi.useRealTimers());
+
+  /** Trois semaines complètes de trois séries de pecs : de quoi tirer un plafond de l'historique. */
+  async function threeWeeksOfChest(): Promise<void> {
+    await seedSession('w-jul', new Date(2026, 6, 29, 12).getTime(), 8, 90);
+    await seedSession('w-aug3', new Date(2026, 7, 5, 12).getTime(), 8, 95);
+    await seedSession('w-aug10', new Date(2026, 7, 12, 12).getTime(), 8, 100);
+  }
+
+  /**
+   * Une séance ouverte qui plafonne la fourchette, la veille d'une semaine de `nextPhase`. Les trois
+   * séries de la semaine glissante : celles de la veille (12 août, trois séries) et celles-ci.
+   */
+  async function openCeilingSession(nextPhase: ProgramPhase): Promise<Workout> {
+    const program = await createProgramDraft({
+      name: 'Bloc',
+      startsAt: new Date(2026, 7, 10, 12).getTime(),
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 110, phase: nextPhase },
+      { weekIndex: 2, loadIndex: 60, phase: 'deload' },
+      { weekIndex: 3, loadIndex: 100, phase: 'return' },
+    ]);
+    const routine = await createRoutine('Haut du corps');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const entry = (await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray())[0]!;
+    await activateProgram(program.id);
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: routine.id,
+        name: 'Séance ouverte',
+        status: 'active',
+        startedAt: closeAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: entry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'volume-close',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add({
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'volume-close-row',
+    });
+    await db.workoutSets.bulkAdd(
+      [0, 1, 2].map((order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: 'volume-close-row',
+          exerciseId: exercise.id,
+          workoutId: workout.id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 100,
+          reps: 12,
+          targetReps: 8,
+          targetRepsMax: 12,
+          isCompleted: 1,
+          performedAt: closeAt + order * 90_000,
+        }),
+        id: `volume-close-set-${order}`,
+      })),
+    );
+    return workout;
+  }
+
+  const labels = (signal: { evidence: { label: string }[] }): string[] =>
+    signal.evidence.map((item) => item.label);
+
+  it('au plus haut de ce que le muscle a tenu : pas de série en plus, la charge à la place, et la carte le dit', async () => {
+    await threeWeeksOfChest();
+    const workout = await openCeilingSession('overload');
+    expect(
+      selectProgramAction(['maintain', 'increase_load', 'add_set'], { phase: 'overload', loadIndex: 110 }),
+    ).toBe('add_set');
+
+    const [signal] = await evaluateCoachForWorkout(workout.id);
+
+    expect(signal).toMatchObject({ code: 'range_ceiling_reached', exerciseId: 'bench' });
+    // La surcharge aurait ajouté une série ; elle ne le peut plus, donc elle monte la charge.
+    expect(labels(signal!)).not.toContain('add_set');
+    expect(signal!.nextLoadKg).toBe(102.5);
+    expect(signal!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'volume_at_ceiling', value: 1 },
+        // Trois séries du 12 août et trois de la séance ouverte, sur sept jours ; le plus tenu : trois.
+        { label: 'weekly_sets', value: 6 },
+        { label: 'weekly_ceiling', value: 3 },
+      ]),
+    );
+    expect(labels(signal!)).not.toContain('ceiling_set');
+  });
+
+  it('sous le plafond posé par la personne : la série en plus reste proposée', async () => {
+    await threeWeeksOfChest();
+    await setCoachVolumeBounds('chest', { ceiling: 20 });
+    const workout = await openCeilingSession('overload');
+
+    const [signal] = await evaluateCoachForWorkout(workout.id);
+
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'add_set', value: 1 }]));
+    expect(labels(signal!)).not.toContain('volume_at_ceiling');
+    expect(signal!.nextLoadKg).toBeUndefined();
+  });
+
+  it('au plafond posé par la personne : la carte dit que c’est le sien', async () => {
+    await threeWeeksOfChest();
+    await setCoachVolumeBounds('chest', { ceiling: 5 });
+    const workout = await openCeilingSession('overload');
+
+    const [signal] = await evaluateCoachForWorkout(workout.id);
+
+    expect(signal!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'volume_at_ceiling', value: 1 },
+        { label: 'weekly_ceiling', value: 5 },
+        { label: 'ceiling_set', value: 1 },
+      ]),
+    );
+  });
+
+  it('moins de trois semaines d’historique : aucun effet, comme avant', async () => {
+    await seedSession('w-aug10', new Date(2026, 7, 12, 12).getTime(), 8, 100);
+    const workout = await openCeilingSession('overload');
+
+    const [signal] = await evaluateCoachForWorkout(workout.id);
+
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'add_set', value: 1 }]));
+    expect(labels(signal!)).not.toContain('volume_at_ceiling');
+  });
+
+  it('une fois la séance terminée, ses séries ne sont pas comptées deux fois', async () => {
+    await threeWeeksOfChest();
+    const workout = await openCeilingSession('overload');
+    await finishWorkout(workout.id);
+
+    const [signal] = await finalizeCoachForWorkout(workout.id);
+
+    // Terminée, la séance est dans l'historique : elle en est écartée, et comptée par elle-même.
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'weekly_sets', value: 6 }]));
+  });
+
+  it('hors de la surcharge, le plafond ne change rien et la carte n’en parle pas', async () => {
+    await threeWeeksOfChest();
+    const workout = await openCeilingSession('progression');
+
+    const [signal] = await evaluateCoachForWorkout(workout.id);
+
+    // La phase n'aurait jamais proposé d'ajouter une série : le plafond n'a rien retiré qu'on voyait.
+    expect(labels(signal!)).not.toContain('volume_at_ceiling');
+    expect(labels(signal!)).not.toContain('add_set');
+    expect(signal!.nextLoadKg).toBe(102.5);
   });
 });

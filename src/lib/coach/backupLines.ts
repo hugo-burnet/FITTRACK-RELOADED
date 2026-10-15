@@ -25,7 +25,10 @@ function rowsOf<T>(table: readonly BackupRow[] | undefined): T[] {
 export function coachLinesFromBackup(backup: BackupFile): CoachExerciseLine[] {
   const workouts = new Map<string, Workout>();
   for (const workout of rowsOf<Workout>(backup.tables.workouts)) {
-    if (!workout.deletedAt && workout.status === 'completed') workouts.set(workout.id, workout);
+    // Même lecture que `loadCoachHistoryLines` : un benchmark n'est pas une séance de travail.
+    if (!workout.deletedAt && workout.status === 'completed' && workout.kind !== 'benchmark') {
+      workouts.set(workout.id, workout);
+    }
   }
   const exercises = new Map<string, Exercise>();
   for (const exercise of rowsOf<Exercise>(backup.tables.exercises)) {

@@ -63,6 +63,89 @@ describe('mergeLinesForWorkout', () => {
     expect(merged).toHaveLength(1);
     expect(merged[0]!.sets).toHaveLength(2);
   });
+
+  describe('deux blocs du même exercice', () => {
+    // Chaque bloc repart de `order: 0` ; recollés tels quels ils s'entrelaçaient
+    // (A0, B0, A1, B1, A2) et toute règle qui lit la suite des séries lisait une
+    // séance qui n'a pas eu lieu.
+    const minute = 60_000;
+    const block = (
+      reps: number[],
+      startMinute: number,
+      extra: Partial<CoachExerciseLine> = {},
+    ): CoachExerciseLine =>
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: reps.map((value, order) =>
+          set({
+            order,
+            reps: value,
+            weight: 100,
+            targetReps: 8,
+            targetRepsMax: 12,
+            performedAt: t0 + (startMinute + order * 2) * minute,
+          }),
+        ),
+        ...extra,
+      });
+
+    const sequence = (merged: CoachExerciseLine) =>
+      [...merged.sets].sort((a, b) => a.order - b.order).map((s) => s.performedAt);
+
+    it('met les séries dans l’ordre où elles ont été faites', () => {
+      const [merged] = mergeLinesForWorkout([block([10, 10, 10], 0), block([7, 7], 6)]);
+      const times = sequence(merged!);
+      expect(times).toEqual([...times].sort((a, b) => a - b));
+      expect(merged!.sets.map((s) => s.order)).toEqual([0, 1, 2, 3, 4]);
+    });
+
+    it('range les blocs dans l’ordre où ils ont été faits, pas dans celui où ils arrivent', () => {
+      // Le bloc fait en second est lu en premier (l'ordre des lignes est celui de la
+      // carte dans la séance, que l'on réarrange) : c'est l'heure qui décide.
+      const [merged] = mergeLinesForWorkout([block([7, 7], 6), block([10, 10, 10], 0)]);
+      expect(sequence(merged!)).toEqual([0, 2, 4, 6, 8].map((m) => t0 + m * minute));
+    });
+
+    it('laisse intacte une ligne seule', () => {
+      const alone = block([10, 9, 8], 0);
+      const [merged] = mergeLinesForWorkout([alone]);
+      expect(merged!.sets).toEqual(alone.sets);
+      expect(merged!.sets).not.toBe(alone.sets);
+    });
+
+    it('ne prête pas au repos le temps qui sépare deux blocs enchaînés', () => {
+      // Deux minutes de repos partout, le second bloc enchaîné sur le premier.
+      // Entrelacées, les séries donnaient des écarts de six minutes (A0 → B0,
+      // A1 → B1) : « Repos long » sur une séance dont aucun repos ne l'était.
+      const signals = collectCoachSignals([block([10, 10, 10], 0), block([6, 6], 6)]);
+      expect(signals.map((s) => s.code)).toContain('intra_session_drop');
+      expect(signals.map((s) => s.code)).not.toContain('long_rest');
+    });
+
+    it('propose d’alléger depuis la charge du haut, celle de la dernière série faite', () => {
+      // Deux séances de deux blocs : 100 kg puis 105 kg, le bas de fourchette (8)
+      // manqué les deux fois. Entrelacée, la dernière série lue était celle du
+      // premier bloc : le coach proposait 97,5 kg depuis une séance finie à 105.
+      const day = 86_400_000;
+      const session = (workoutId: string, dayIndex: number): CoachExerciseLine[] => {
+        const at = (m: number) => t0 + dayIndex * day + m * minute;
+        const make = (reps: number[], startMinute: number, weight: number) =>
+          line({
+            exerciseId: 'bench',
+            workoutId,
+            workoutStartedAt: t0 + dayIndex * day,
+            sets: reps.map((value, order) =>
+              set({ order, reps: value, weight, performedAt: at(startMinute + order * 2) }),
+            ),
+          });
+        return [make([7, 7, 7], 0, 100), make([7, 7], 6, 105)];
+      };
+      const picked = evaluateCoach([...session('w2', 7), ...session('w1', 0)]);
+      expect(picked).toHaveLength(1);
+      expect(picked[0]).toMatchObject({ code: 'range_missed', nextLoadKg: 102.5 });
+    });
+  });
 });
 
 describe('evaluatePerformance — exclusive range partition + allowedActions', () => {
@@ -1463,6 +1546,95 @@ describe('répétitions pour absorber le cran (R3.2)', () => {
   });
 });
 
+describe('cible unique, sans fourchette (R3.2)', () => {
+  // Un 5×5 ou un 3×10 n'a pas de « bas de fourchette » où retomber : le bas et le
+  // haut sont la même cible. R3.2 y exigeait toujours une répétition de plus que
+  // la cible (6 pour un 5×5 de 40 à 160 kg), que le programme ne prescrit pas — le
+  // coach réclamait l'impossible et ne proposait jamais la hausse. La progression
+  // d'un programme à cible unique, c'est la charge.
+  const single = (
+    reps: number[],
+    weight: number,
+    target: number,
+    extra: Partial<CoachExerciseLine> = {},
+    range: { targetReps: number; targetRepsMax: number | undefined } = {
+      targetReps: target,
+      targetRepsMax: undefined,
+    },
+  ) =>
+    line({
+      exerciseId: 'squat',
+      workoutId: 'w1',
+      sets: reps.map((value, order) => set({ order, reps: value, weight, ...range })),
+      ...extra,
+    });
+
+  it.each([40, 60, 100, 140, 160, 180])(
+    'propose le cran d’un 5×5 réussi à %s kg à la barre',
+    (weight) => {
+      const ev = evaluatePerformance(single([5, 5, 5, 5, 5], weight, 5));
+      const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+      expect(ceiling?.nextLoadKg).toBe(weight + 2.5);
+      expect(ceiling?.evidence.map((e) => e.label)).not.toContain('step_needs_reps');
+      expect(ev.allowedActions).toContain('increase_load');
+    },
+  );
+
+  it('propose le cran d’un 3×10 aux haltères, où il pèse pourtant +10 %', () => {
+    // Le cran est celui du matériel (« les haltères c'est +2 kg, t'as pas le
+    // choix ») ; sans fourchette il n'y a pas de répétitions à viser en plus.
+    const ev = evaluatePerformance(
+      single([10, 10, 10], 20, 10, { equipment: 'dumbbell', exerciseId: 'curl' }),
+    );
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(22);
+  });
+
+  it('lit une paire 5–5 comme une cible unique', () => {
+    const ev = evaluatePerformance(single([5, 5, 5], 100, 5, {}, { targetReps: 5, targetRepsMax: 5 }));
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+  });
+
+  it('propose encore le cran après trois séances réussies à la même charge', () => {
+    const session = (workoutId: string, dayIndex: number) =>
+      single([5, 5, 5, 5, 5], 100, 5, {
+        workoutId,
+        workoutStartedAt: t0 + dayIndex * 86_400_000,
+      });
+    const picked = evaluateCoach([session('w3', 4), session('w2', 2), session('w1', 0)]);
+    expect(picked).toHaveLength(1);
+    expect(picked[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 102.5 });
+  });
+
+  it('ne manque pas la cible : une série à 4 sur un 5×5 ne propose rien', () => {
+    const ev = evaluatePerformance(single([5, 5, 5, 4, 4], 100, 5));
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_ceiling_reached');
+  });
+
+  it('retient toujours la charge quand la cible est arrachée (RPE 9,5 ou plus)', () => {
+    const grinding = single([5, 5, 5], 100, 5).sets.map((s) => ({ ...s, rpe: 10 }));
+    const ev = evaluatePerformance(single([5, 5, 5], 100, 5, { sets: grinding }));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
+  it('garde l’exigence de répétitions d’une vraie fourchette', () => {
+    // Même charge, même cran : avec une fourchette 5–8, R3.2 s'applique comme avant
+    // (ici le plafond de 8 suffit, la charge est proposée) ; avec 10–12 sur un
+    // haltère léger, il réclame toujours 18 répétitions.
+    const ranged = evaluatePerformance(
+      single([8, 8, 8], 100, 5, {}, { targetReps: 5, targetRepsMax: 8 }),
+    );
+    expect(ranged.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(102.5);
+    const light = evaluatePerformance(
+      single([12, 12, 12], 10, 10, { equipment: 'dumbbell' }, { targetReps: 10, targetRepsMax: 12 }),
+    );
+    expect(light.signals.find((s) => s.code === 'range_ceiling_reached')?.evidence).toEqual(
+      expect.arrayContaining([{ label: 'step_needs_reps', value: 18 }]),
+    );
+  });
+});
+
 describe('pickSignals', () => {
   it('keeps one signal per exercise, highest severity first', () => {
     const signals: CoachSignal[] = [
@@ -1560,5 +1732,106 @@ describe('mute cases', () => {
       }),
     ]);
     expect(signals).toEqual([]);
+  });
+});
+
+describe('R6 — le plafond de volume du muscle', () => {
+  /** Trois séries au plafond, 100 kg à la barre : `increase_load` et `add_set` sont permis. */
+  const atCeiling = () => line3x8to12([12, 12, 12]);
+
+  it('retire add_set quand la semaine du muscle est au plus haut de ce qui a été tenu, et garde la charge', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_ceiling_reached']);
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.allowedActions).toContain('increase_load');
+    expect(ev.volumeWithheld).toBe(true);
+  });
+
+  it('le retire aussi au-delà du plafond', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 14, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBe(true);
+  });
+
+  it('laisse add_set sous le plafond : le coach peut proposer d’aller jusqu’à ce qui a déjà été tenu', () => {
+    const ev = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 9, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne change rien sans contexte de volume — moins de trois semaines d’historique, aucun effet', () => {
+    const without = evaluatePerformance(atCeiling(), []);
+    const silent = evaluatePerformance(atCeiling(), [], {});
+
+    expect(silent).toEqual(without);
+    expect(without.allowedActions).toContain('add_set');
+    expect(without.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne touche pas aux signaux : le constat est le même avec ou sans plafond', () => {
+    const open = evaluatePerformance(atCeiling(), []);
+    const capped = evaluatePerformance(atCeiling(), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(capped.signals).toEqual(open.signals);
+  });
+
+  it('ne dit rien quand add_set n’était pas permis de toute façon : une reprise', () => {
+    const day = 86_400_000;
+    const previous = line({
+      exerciseId: 'bench',
+      workoutId: 'w0',
+      workoutStartedAt: t0,
+      sets: [set({ order: 0, reps: 12 }), set({ order: 1, reps: 12 }), set({ order: 2, reps: 12 })],
+    });
+    const returning = line({
+      exerciseId: 'bench',
+      workoutId: 'w1',
+      workoutStartedAt: t0 + 21 * day,
+      sets: [0, 1, 2].map((order) =>
+        set({ order, reps: 12, performedAt: t0 + 21 * day + order * 120_000 }),
+      ),
+    });
+
+    const ev = evaluatePerformance(returning, [previous], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.signals.map((s) => s.code)).toContain('returning');
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne dit rien quand add_set n’était pas permis de toute façon : un plafond arraché', () => {
+    const grinding = line({
+      exerciseId: 'bench',
+      workoutId: 'w1',
+      sets: [0, 1, 2].map((order) => set({ order, reps: 12, rpe: 9.5 })),
+    });
+
+    const ev = evaluatePerformance(grinding, [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.allowedActions).not.toContain('add_set');
+    expect(ev.volumeWithheld).toBeUndefined();
+  });
+
+  it('ne dit rien quand il n’y avait aucun plafond de fourchette à franchir', () => {
+    const ev = evaluatePerformance(line3x8to12([9, 9, 9]), [], {
+      muscleVolume: { rollingSets: 10, ceiling: 10 },
+    });
+
+    expect(ev.volumeWithheld).toBeUndefined();
   });
 });

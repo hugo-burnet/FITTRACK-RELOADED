@@ -106,6 +106,7 @@ const fr = {
     seconds: 's',
     minutes: 'min',
     meters: 'm',
+    centimeters: 'cm',
     kilometers: 'km',
     reps: 'reps',
     hours: 'h',
@@ -265,6 +266,22 @@ const fr = {
     lastYesterday: 'Réalisée hier',
     lastDays: 'Réalisée il y a {count} jours',
     lastDate: 'Réalisée le {date}',
+
+    /**
+     * Le rappel de sauvegarde : rare, factuel, jamais une alarme. Il dit ce qui est en jeu
+     * (des séances qui ne vivent que dans ce téléphone) et laisse deux sorties.
+     */
+    backupTitle: 'Sauvegarde ton historique',
+    backupNever:
+      'Rien n’existe hors de ce téléphone : si tu le perds ou désinstalles l’app, tes {count} séances disparaissent.',
+    backupSince:
+      'Dernière sauvegarde : {ago}. {sessions} depuis, que rien ne protège hors de ce téléphone.',
+    backupSessionsOne: '1 séance',
+    backupSessionsMany: '{count} séances',
+    backupAction: 'Sauvegarder',
+    backupLater: 'Plus tard',
+    backupFailed:
+      'La sauvegarde n’a pas pu être enregistrée. Réessaie, ou passe par les Réglages.',
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
@@ -314,6 +331,7 @@ const fr = {
     bodyWeightSaving: 'Enregistrement…',
     bodyWeightHint: 'Renseigne ton poids pour compter les exercices au poids du corps.',
     bodyWeightLatest: 'Dernière mesure : {date}',
+    bodyWeightCurve: 'Voir la courbe et l’historique',
     bodyWeightError: 'Le poids n’a pas pu être enregistré. Réessaie.',
   },
 
@@ -399,6 +417,17 @@ const fr = {
     deletedExercise: 'Exercice supprimé',
     notFound: 'Cette séance n’existe plus',
     addSetAction: 'Ajouter une série',
+    /**
+     * « La machine est prise » : un autre exercice pour ce qu'il reste à faire. L'indication dit
+     * ce que le geste ne fait pas — il ne touche jamais aux séries déjà validées — parce que c'est
+     * ce qu'on se demande avant de l'appuyer.
+     */
+    replaceExercise: 'Remplacer l’exercice',
+    replaceExerciseHint: 'Pour les séries qu’il reste à faire. Celles déjà validées restent.',
+    replaceExerciseNothingLeft: 'Toutes les séries sont validées : rien à remplacer.',
+    replaceFor: 'Pour les séries à faire de {name}. Touche l’exercice qui prend sa place.',
+    replaceFailed: 'Le remplacement n’a pas pu être fait.',
+    replaceGone: 'Cet exercice n’est plus dans la séance.',
     removeExercise: 'Retirer de la séance',
     removeExerciseConfirm:
       'Ses séries seront perdues, y compris celles déjà validées. Les autres exercices ne bougent pas.',
@@ -583,6 +612,14 @@ const fr = {
      * information, elle ne change pas la recommandation.
      */
     failureMargin: 'Série à l’échec : {reps} rép. au-delà du plafond.',
+    /**
+     * Coach v2, R6. La phase de surcharge aurait ajouté une série ; le volume du muscle est déjà au plus
+     * haut. Une règle de l'app, pas une vérité : la phrase dit ce qui a été lu, et à qui est le plafond.
+     */
+    volumeAtCeiling:
+      'Pas de série en plus : ce muscle en est à {sets} séries sur sept jours, le plus que tu aies tenu en six semaines ({ceiling}).',
+    volumeAtCeilingSet:
+      'Pas de série en plus : ce muscle en est à {sets} séries sur sept jours, ton plafond ({ceiling}).',
     /**
      * Coach v2, R1. Le RPE est une règle de l'app, pas une vérité médicale :
      * les phrases disent ce qui a été lu, pas ce que « la science » prescrit.
@@ -1916,6 +1953,9 @@ const fr = {
       'c’est un mémo vocal. Les tics du décompte, eux, restent secs.',
 
     trainingSection: 'Entraînement',
+    coachSection: 'Coach',
+    volumeLink: 'Volume par muscle',
+    volumeHint: 'Plancher et plafond de séries par semaine',
 
     notificationsSection: 'Notifications',
     notificationsRest: 'Fin de repos',
@@ -2010,6 +2050,24 @@ const fr = {
     backupExportTitle: 'Sauvegarde complète FitTrack',
     backupExportDownloaded: 'Sauvegarde téléchargée.',
     backupExportFailed: 'La sauvegarde n’a pas pu être enregistrée.',
+    /**
+     * Où en est la protection : la date de la dernière sauvegarde et ce qu'elle ne
+     * contient pas. Une phrase par cas plutôt qu'un pluriel calculé — « 1 séances »
+     * se lit mal, et c'est le cas qu'on relit.
+     */
+    backupStatusNever: 'Aucune sauvegarde faite depuis cet appareil.',
+    backupStatusNeverOne: 'Aucune sauvegarde faite depuis cet appareil. 1 séance à protéger.',
+    backupStatusNeverMany:
+      'Aucune sauvegarde faite depuis cet appareil. {count} séances à protéger.',
+    /** Le compte des séances n'est pas encore lu : la date seule, sans « à jour » qu'on ignore. */
+    backupLastOnly: 'Dernière sauvegarde : {ago}.',
+    backupStatusUpToDate: 'Dernière sauvegarde : {ago}. À jour.',
+    backupStatusSinceOne: 'Dernière sauvegarde : {ago}. 1 séance depuis.',
+    backupStatusSinceMany: 'Dernière sauvegarde : {ago}. {count} séances depuis.',
+    backupAgoToday: 'aujourd’hui',
+    backupAgoYesterday: 'hier',
+    backupAgoDays: 'il y a {count} jours',
+    backupAgoDate: 'le {date}',
     backupImportLink: 'Restaurer une sauvegarde',
     backupImportHint:
       'Remplace tout le contenu de l’app par celui du fichier. À faire sur un téléphone neuf, ou après une perte.',
@@ -2154,6 +2212,9 @@ const fr = {
     storageQuota: 'sur {quota} Mo disponibles',
     storageUnit: 'Mo',
     storageUnavailable: 'Le navigateur ne donne pas d’estimation de stockage.',
+    storagePersisted: 'Stockage protégé : le navigateur ne l’efface pas de lui-même.',
+    storageNotPersisted:
+      'Stockage non protégé : le navigateur peut l’effacer si la place manque. Une sauvegarde reste la seule vraie protection.',
 
     tablesSection: 'Tables',
     rows: 'lignes',
@@ -2478,10 +2539,187 @@ const fr = {
   },
 
   /**
+   * Le volume par muscle (R6, coach v2) : ce que l'historique dit de chaque muscle, et les bornes que la
+   * personne pose. Des règles de l'app, pas des vérités : aucun chiffre n'est présenté comme « la science ».
+   */
+  muscleVolume: {
+    title: 'Volume par muscle',
+    intro:
+      'Séries de travail par semaine : le muscle principal de l’exercice compte pour une série, les autres pour rien. Le coach ne propose pas d’ajouter une série à un muscle déjà au plus haut de ce que tu as tenu en six semaines. C’est une règle de l’app : tu peux poser ton plafond, et un plancher si tu veux qu’on te dise quand un muscle est négligé.',
+
+    /** La ligne sous le nom d'un muscle : la semaine en cours, puis ce que six semaines en disent. */
+    reading: 'Semaine : {current} · médiane {median} · max {max}',
+    readingOneWeek: 'Semaine : {current} · travaillé 1 semaine sur 6',
+    readingFewWeeks: 'Semaine : {current} · travaillé {weeks} semaines sur 6',
+    readingNever: 'Semaine : {current} · pas travaillé ces six semaines',
+
+    /** Ce qui est posé, à droite de la ligne. */
+    floorValue: 'Plancher {sets}',
+    floorNone: 'Plancher —',
+    ceilingValue: 'Plafond {sets}',
+    ceilingAuto: 'Plafond {sets} (auto)',
+    ceilingNone: 'Plafond —',
+
+    /** La feuille d'un muscle. */
+    sheetHistory: 'Six semaines complètes : médiane {median}, max {max}, travaillé {weeks} fois.',
+    sheetNoHistory: 'Pas encore d’historique de ce muscle sur les six dernières semaines.',
+    floorLabel: 'Plancher',
+    floorHint: 'Séries par semaine en dessous desquelles tu veux qu’on te le dise, deux semaines de suite.',
+    noFloor: 'Aucun plancher',
+    ceilingLabel: 'Plafond',
+    ceilingHint: 'Séries par semaine au-delà desquelles le coach ne propose plus d’en ajouter.',
+    autoCeiling: 'Plafond automatique',
+    autoCeilingValue: 'Plafond automatique ({sets})',
+    autoCeilingNone: 'Plafond automatique (pas assez d’historique)',
+    orderError: 'Le plancher ne peut pas dépasser le plafond.',
+    save: 'Enregistrer',
+    saving: 'Enregistrement…',
+    saveError: 'Les bornes n’ont pas pu être enregistrées. Réessaie.',
+    loadError: 'Le volume n’a pas pu être lu.',
+
+    /** La carte de l'accueil : un muscle sous le plancher que la personne a posé. */
+    lowTitle: 'Volume bas',
+    lowLine: '{muscle} : {first} puis {second} séries — ton plancher est {floor}.',
+    lowAdjust: 'Régler',
+    lowMore: 'Et {count} de plus.',
+  },
+
+  /**
+   * Les mensurations (RF-37, RF-38) : le poids de corps, la masse grasse, les tours, et les champs
+   * que chacun ajoute. Les photos n'en font pas partie — cf. la décision du 2026-08-11.
+   */
+  measures: {
+    title: 'Mensurations',
+    /** L'entrée depuis l'écran des analyses. */
+    link: 'Mensurations',
+    subtitle: 'Poids, taille, bras… et leur courbe',
+
+    add: 'Ajouter une mesure',
+    followedSection: 'Suivies',
+    historySection: 'Historique',
+    empty:
+      'Aucune mesure pour l’instant. Ajoute ton poids, ton tour de taille ou celui de ton bras : la courbe commence à la deuxième mesure.',
+    notFound: 'Aucune mesure de ce type pour l’instant.',
+
+    /** La ligne sous le nom d'une mesure suivie : sa date, puis ce qu'elle a changé depuis la précédente. */
+    rowDateChange: '{date} · {change}',
+    unchanged: 'inchangé',
+    /** « −1,5 cm depuis le 14 sept. » — l'écart sur la période lue, daté de sa première mesure. */
+    changeSince: '{change} depuis le {date}',
+    singleReading:
+      'Une seule mesure sur cette période : la courbe commencera à la suivante.',
+    emptyPeriod: 'Aucune mesure sur cette période.',
+    periodHint: 'Une mesure par jour : en saisir une autre le même jour remplace la première.',
+
+    /** Ce que le graphique dit à un lecteur d'écran, en une phrase. */
+    chartSummary:
+      '{metric} sur {count} mesures, du {first} au {last}. Minimum {min}, maximum {max}, dernière valeur {current}.',
+    chartSummaryOne: '{metric} : une seule mesure, le {first} : {current}.',
+
+    /** La feuille de saisie. */
+    sheetTitle: 'Nouvelle mesure',
+    sheetTitleEdit: 'Corriger la mesure',
+    typeLabel: 'Mesure',
+    typeSheetTitle: 'Quelle mesure ?',
+    customOption: 'Autre mesure…',
+    customNameLabel: 'Nom de la mesure',
+    customNamePlaceholder: 'Tour de poignet',
+    customUnitLabel: 'Unité',
+    valueLabel: 'Valeur',
+    dateLabel: 'Date',
+    weightHint: 'Le poids sert à estimer le tonnage des exercices au poids du corps.',
+    replacesHint: 'Une mesure existe déjà ce jour-là ({value}) : elle sera remplacée.',
+    implausible: 'Cette valeur ne semble pas juste. Vérifie l’unité et la virgule.',
+    dateInvalid: 'Choisis un jour qui n’est pas dans le futur.',
+    save: 'Enregistrer',
+    saving: 'Enregistrement…',
+    saveError: 'La mesure n’a pas pu être enregistrée. Réessaie.',
+
+    /** Toucher une ligne de l'historique. */
+    correct: 'Corriger la valeur',
+    correctHint: 'La date reste celle de cette mesure.',
+    delete: 'Supprimer cette mesure',
+    deleteTitle: 'Supprimer cette mesure ?',
+    deleteBody: '{type} du {date} : {value}. La courbe est refaite sans elle.',
+    deleteBodyWeightNote: 'Les records au poids du corps sont recalculés.',
+    deleteConfirm: 'Supprimer',
+    deleteError: 'La mesure n’a pas pu être supprimée. Réessaie.',
+
+    /** Les quinze mesures du catalogue. La clé est celle de `PRESET_MEASUREMENTS`. */
+    type: {
+      body_weight: 'Poids de corps',
+      body_fat: 'Masse grasse',
+      neck: 'Tour de cou',
+      shoulders: 'Tour d’épaules',
+      chest: 'Tour de poitrine',
+      waist: 'Tour de taille',
+      hips: 'Tour de hanches',
+      left_biceps: 'Biceps gauche',
+      right_biceps: 'Biceps droit',
+      left_forearm: 'Avant-bras gauche',
+      right_forearm: 'Avant-bras droit',
+      left_thigh: 'Cuisse gauche',
+      right_thigh: 'Cuisse droite',
+      left_calf: 'Mollet gauche',
+      right_calf: 'Mollet droit',
+    },
+  },
+
+  /**
    * Les séances par semaine (G2). Une semaine sans séance **se dit** : c'est
    * l'information que cet écran existe pour donner, pas un trou dans les
    * données.
    */
+  /**
+   * Le benchmark : une série menée à l'échec par exercice, et le bilan qui en
+   * tire la charge de travail (spec benchmark). Le lancement vit dans le menu
+   * d'une routine, le bilan sur son écran.
+   */
+  benchmark: {
+    menu: 'Benchmark de cette routine',
+    menuHint: 'Une série à l’échec par exercice, pour caler les charges',
+    menuEmptyHint: 'Cette routine n’a aucun exercice.',
+    launchTitle: 'Benchmark',
+    launchBody:
+      'Une seule série par exercice, menée jusqu’à l’échec.\n' +
+      'Choisis une charge avec laquelle tu comptes faire 5 à 12 répétitions : au-delà de 12, le résultat est trop incertain.\n' +
+      'À la fin, l’app te propose la charge de travail de chaque exercice. Rien n’est écrit dans la routine sans ton accord.',
+    launchConfirm: 'Lancer le benchmark',
+    workoutName: 'Benchmark · {name}',
+    workoutBanner:
+      'Benchmark · une série à l’échec par exercice. Charge visée : 5 à 12 répétitions.',
+    finishNote: 'C’est un benchmark : le bilan et les charges proposées s’affichent après l’enregistrement.',
+    title: 'Bilan du benchmark',
+    notFound: 'Ce benchmark n’existe plus.',
+    intro:
+      'Une série à l’échec par exercice. La charge conseillée est celle où le bas de ta fourchette te laisse environ deux répétitions en réserve.',
+    context: '{routine} · {date}',
+    contextNoRoutine: '{date}',
+    done: 'Fait : {reading}',
+    oneRepMax: '1RM estimé : {value}',
+    suggested: 'Charge de travail conseillée : {value}',
+    suggestedBasis: 'Environ {reps} répétitions à fond.',
+    inRoutine: 'Dans la routine : {value}',
+    inRoutineNone: 'Aucune charge dans la routine.',
+    aligned: 'La routine est déjà à ce niveau.',
+    noLine: 'Cet exercice n’est plus dans la routine : rien à écrire.',
+    tooLight:
+      'Plus de 12 répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
+    noLoad: 'Aucune charge exploitable : rien à estimer.',
+    recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
+    toggleText: 'Appliquer à la routine',
+    toggleLabel: 'Appliquer à la routine : {name}',
+    apply: 'Appliquer à la routine · {count}',
+    applying: 'Écriture…',
+    close: 'Terminé',
+    appliedOne: '1 exercice mis à jour dans la routine.',
+    appliedMany: '{count} exercices mis à jour dans la routine.',
+    appliedNone: 'La routine a changé depuis le bilan : rien n’a été écrit.',
+    applyFailed: 'La routine n’a pas pu être mise à jour.',
+    historyCard: 'Benchmark',
+    historyLink: 'Voir le bilan',
+  },
+
   weekly: {
     title: 'Séances par semaine',
     /** L'entrée depuis l'écran des analyses. */

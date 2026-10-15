@@ -88,6 +88,43 @@ export function plotPoints(values: readonly number[], box: PlotBox): PlotPoint[]
   }));
 }
 
+/** A reading and the instant it was taken at. */
+export interface TimedValue {
+  at: number;
+  value: number;
+}
+
+/**
+ * The curve of a series **spaced by time**, not by rank — `plotPoints` for readings.
+ *
+ * Sessions of an exercise are events that are counted, so one column per session is the honest
+ * spacing. A body measurement is a reading *in time*: three weeks without one must look like
+ * three weeks, or a slope drawn across a gap passes for a trend. The vertical scale is
+ * `plotPoints`' own — bounded by the data, the maximum at the top — so this function only
+ * replaces the x of each point.
+ *
+ * The span runs from the earliest to the latest instant, so a series received out of order still
+ * lands inside the box. When every reading shares one instant there is no interval to divide by;
+ * they are spread evenly rather than piled on a single pixel.
+ */
+export function plotTimedPoints(points: readonly TimedValue[], box: PlotBox): PlotPoint[] {
+  const ranked = plotPoints(
+    points.map((point) => point.value),
+    box,
+  );
+  if (ranked.length < 2) return ranked;
+
+  const instants = points.map((point) => point.at);
+  const first = Math.min(...instants);
+  const span = Math.max(...instants) - first;
+  if (span <= 0) return ranked;
+
+  return ranked.map((position, index) => ({
+    x: ((points[index]!.at - first) / span) * box.width,
+    y: position.y,
+  }));
+}
+
 /**
  * Columns of equal width, measured **from zero** — the second geometry of this
  * module, and deliberately not a variant of the first.

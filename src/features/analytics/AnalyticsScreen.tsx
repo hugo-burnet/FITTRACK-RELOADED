@@ -64,6 +64,13 @@ export function AnalyticsScreen() {
               subtitle={t('milestone.subtitle')}
               onClick={() => void navigate('/analytics/milestones')}
             />
+            {/* Inconditionnel, comme les paliers : l'écran a son état vide, qui dit comment
+                commencer. Aucune séance n'est requise pour se peser. */}
+            <ListRow
+              title={t('measures.link')}
+              subtitle={t('measures.subtitle')}
+              onClick={() => void navigate('/analytics/measurements')}
+            />
             {hasHistory && (
               <>
               <ListRow

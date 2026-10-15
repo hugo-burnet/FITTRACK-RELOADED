@@ -18,8 +18,10 @@ via Capacitor. Usage strictement personnel, mono-utilisateur, **local-first**.
 | `docs/plans/01-ARCHITECTURE.md` | Stack, modèle de données, décisions techniques (ADR). |
 | `docs/plans/lot-NN-*.md` | Plan détaillé tâche par tâche d'un lot. |
 | `docs/design/` | Spécifications et plans d'exécution, une paire de fichiers par fonctionnalité. |
-| `PROGRESS.md` | État d'avancement réel. **À mettre à jour en fin de chaque session.** |
-| `docs/journal/` | Les versions livrées et closes, détachées de `PROGRESS.md`. En lecture seule. |
+| `PROGRESS.md` | État d'avancement réel, **court par construction** (où on en est, ce qui reste, ce qui est dû). **À mettre à jour en fin de chaque session.** |
+| `docs/journal/` | Les versions livrées et closes, détachées de `PROGRESS.md`. En lecture seule. Une version publiée y part. |
+| `docs/progress/decisions-et-pieges.md` | Décisions, pièges et **dette technique assumée**. |
+| `docs/recette-telephone.md` | La liste unique des checkpoints à vérifier sur le téléphone. |
 
 ## Règles non négociables
 
@@ -41,7 +43,7 @@ via Capacitor. Usage strictement personnel, mono-utilisateur, **local-first**.
 - **Dexie.js** sur IndexedDB (persistance) + `dexie-react-hooks` (`useLiveQuery`) pour la réactivité
 - **Zustand** uniquement pour l'état éphémère (séance en cours, minuteur)
 - **React Router en mode hash** (`createHashRouter`) — obligatoire, cf. ADR-003
-- **Vitest** + Testing Library + `fake-indexeddb` ; **Playwright** pour l'E2E
+- **Vitest** + Testing Library + `fake-indexeddb` ; **Playwright** pour l'E2E (`e2e/`, `playwright.config.ts`)
 - **Capacitor** pour l'empaquetage Android (à partir du Lot 10)
 
 ## Commandes
@@ -51,7 +53,8 @@ npm run dev          # serveur de dev
 npm run build        # build de production (doit passer avant tout commit)
 npm run test         # tests unitaires (watch)
 npm run test:run     # tests unitaires (une passe, CI)
-npm run typecheck    # tsc --noEmit
+npm run test:e2e     # parcours dans un vrai navigateur à 390 px (construit puis sert le build)
+npm run typecheck    # tsc --noEmit, sur src/ et sur e2e/
 npm run lint         # eslint
 ```
 
@@ -72,7 +75,7 @@ npm run lint         # eslint
   Découper au compteur produit des composants à vingt propriétés qui se repassent le même
   état : moins de lignes par fichier, plus de couplage, et personne n'y gagne.
   L'état réel du dépôt et les exceptions connues sont dans « Dette technique assumée »
-  de `PROGRESS.md` — un écart non consigné est le seul qui pose problème.
+  de `docs/progress/decisions-et-pieges.md` — un écart non consigné est le seul qui pose problème.
 - Accès aux données **uniquement** via `src/data/repositories/*`. Un composant n'importe jamais
   `db` directement. Seule exception, et elle est commentée sur place : `DebugScreen`, qui parle de
   *tables* et non de routines ou de séances.
@@ -85,19 +88,28 @@ npm run lint         # eslint
 - **TDD sur la logique métier** : moteur de records, calculateur de plaques, 1RM, auto-progression,
   export/import. Ces modules sont testés avant d'être écrits.
 - Les composants d'affichage purs ne sont pas testés unitairement — l'E2E Playwright couvre les
-  parcours.
+  parcours. Il vit dans `e2e/` : une séance de bout en bout, la série qui survit à un rechargement,
+  les cibles de 48 px, la sauvegarde, le démarrage sans réseau, et l'absence de débordement dans les
+  trois thèmes à la taille de police du système. Un défaut d'affichage trouvé à la main devient un
+  test là, pas une ligne de PROGRESS.md.
+- L'E2E ne garde pas le déploiement (`.github/workflows/e2e.yml` est à part) : un navigateur n'est
+  jamais tout à fait déterministe. Il se promeut en porte quand il a fait ses preuves.
 - Un test qui échoue n'est jamais « corrigé » en modifiant l'assertion sans comprendre pourquoi.
 
 ## Git
 
-- Branche de travail : `master`. Commits fréquents et atomiques.
+- Branche de travail : `master`. Commits fréquents et atomiques. Une session d'agent travaille sur sa
+  propre branche `ccr-*` ; la fusion `--no-ff` dans `master` et la release se font **sur demande
+  explicite**, jamais d'office.
 - Convention : `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`.
 - Préfixer le scope par le lot quand c'est pertinent : `feat(lot-05): saisie des séries`.
 - Ne jamais `push --force` sur `master`.
 
 ## Rituel de fin de session
 
-1. `npm run typecheck && npm run test:run && npm run build` — les trois doivent passer.
+1. `npm run typecheck && npm run test:run && npm run build` — les trois doivent passer. Si l'interface a
+   changé : `npm run test:e2e` aussi.
 2. Commit.
-3. Mettre à jour `PROGRESS.md` : lot terminé/en cours, ce qui reste, pièges rencontrés.
-4. Annoncer à l'utilisateur le **checkpoint manuel** à vérifier sur son téléphone.
+3. Mettre à jour `PROGRESS.md` : ce qui change, ce qui reste. Court : le détail d'une décision va dans
+   `docs/progress/decisions-et-pieges.md`, et une version publiée dans `docs/journal/`.
+4. Ajouter le **checkpoint manuel** à `docs/recette-telephone.md` et l'annoncer à l'utilisateur.
