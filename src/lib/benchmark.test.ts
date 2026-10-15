@@ -1,96 +1,44 @@
 import { describe, expect, it } from 'vitest';
-import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import {
   benchmarkLine,
+  benchmarkSignal,
   floorLoad,
-  loadForReps,
-  referenceReps,
   type BenchmarkLineInput,
 } from './benchmark';
-
-const FORMULAS: OneRepMaxFormula[] = ['epley', 'brzycki', 'lombardi'];
-
-describe('loadForReps', () => {
-  it('is the exact inverse of estimateOneRepMax, for every formula and every rep count', () => {
-    for (const formula of FORMULAS) {
-      for (let reps = 1; reps <= 12; reps += 1) {
-        const estimate = estimateOneRepMax(100, reps, formula);
-        expect(estimate).toBeDefined();
-        expect(loadForReps(estimate!, reps, formula)).toBeCloseTo(100, 8);
-      }
-    }
-  });
-
-  it('gives a known value: a 120 kg max carried for 10 reps by Epley is 90 kg', () => {
-    expect(loadForReps(120, 10, 'epley')).toBeCloseTo(90, 8);
-  });
-
-  it('is the max itself for a single', () => {
-    expect(loadForReps(137.5, 1, 'brzycki')).toBe(137.5);
-  });
-
-  it('refuses what the formulas do not cover', () => {
-    expect(loadForReps(100, 0, 'epley')).toBeUndefined();
-    expect(loadForReps(100, 13, 'epley')).toBeUndefined();
-    expect(loadForReps(100, 2.5, 'epley')).toBeUndefined();
-    expect(loadForReps(0, 5, 'epley')).toBeUndefined();
-    expect(loadForReps(-10, 5, 'epley')).toBeUndefined();
-    expect(loadForReps(Number.NaN, 5, 'epley')).toBeUndefined();
-  });
-});
-
-describe('referenceReps', () => {
-  it('keeps two reps in reserve above the bottom of the range', () => {
-    expect(referenceReps(8)).toBe(10);
-    expect(referenceReps(5)).toBe(7);
-  });
-
-  it('never leaves the domain of the formulas', () => {
-    expect(referenceReps(11)).toBe(12);
-    expect(referenceReps(12)).toBe(12);
-    expect(referenceReps(20)).toBe(12);
-  });
-
-  it('falls back on 8 when the routine prescribes nothing usable', () => {
-    expect(referenceReps(undefined)).toBe(10);
-    expect(referenceReps(0)).toBe(10);
-    expect(referenceReps(-3)).toBe(10);
-    expect(referenceReps(6.5)).toBe(10);
-  });
-});
+import { BENCHMARK_MAX_PLANNED_SETS, BENCHMARK_MAX_REPS } from './benchmarkModel';
 
 describe('floorLoad', () => {
   const grid = { kg: 2.5, onGrid: true };
 
-  it('rounds down onto the equipment grid, never up', () => {
+  it('arrondit vers le bas sur la grille du matériel, jamais vers le haut', () => {
     expect(floorLoad(78.7, 80, grid)).toBe(77.5);
     expect(floorLoad(79.99, 80, grid)).toBe(77.5);
     expect(floorLoad(77.5, 80, grid)).toBe(77.5);
   });
 
-  it('does not lose a grid load to float noise', () => {
+  it('ne perd pas une charge de la grille au bruit flottant', () => {
     expect(floorLoad(77.49999999999, 80, grid)).toBe(77.5);
   });
 
-  it('counts a step the user typed from the load that was tried, not from zero', () => {
+  it('compte un pas saisi sur l’exercice à partir de la charge essayée, pas de zéro', () => {
     const typed = { kg: 1.125, onGrid: false };
-    // 80 − 2 × 1,125 : an 77,625 on a multiple-of-1,125 grid would not exist on that stack.
+    // 80 − 2 × 1,125 : un 77,625 sur une grille de multiples de 1,125 n'existerait pas sur cette pile.
     expect(floorLoad(77.9, 80, typed)).toBe(77.75);
     expect(floorLoad(81, 80, typed)).toBe(80);
   });
 
-  it('never goes below zero', () => {
+  it('ne descend jamais sous zéro', () => {
     expect(floorLoad(1, 80, grid)).toBe(0);
   });
 });
 
-const workingRoutine = (weights: (number | undefined)[], lo = 8, hi = 12) => ({
+const workingRoutine = (weights: (number | undefined)[], lo = 8, hi: number | undefined = 12) => ({
   routineExerciseId: 'row-1',
   sets: weights.map((targetWeight, index) => ({
     id: `s${index}`,
     setType: 'normal' as const,
     targetReps: lo,
-    targetRepsMax: hi,
+    ...(hi === undefined ? {} : { targetRepsMax: hi }),
     targetWeight,
   })),
 });
@@ -100,35 +48,56 @@ const bench = (overrides: Partial<BenchmarkLineInput> = {}): BenchmarkLineInput 
   exerciseName: 'Développé couché',
   measurementType: 'weight_reps',
   equipment: 'barbell',
-  formula: 'epley',
   sets: [{ weight: 80, reps: 9 }],
   routine: workingRoutine([70, 70, 70]),
   ...overrides,
 });
 
-describe('benchmarkLine — weight and reps', () => {
-  it('turns a max into a working load that keeps two reps in reserve at the bottom of the range', () => {
+describe('benchmarkLine — une fourchette de 8 à 12', () => {
+  it('transforme un max en charge de travail qui tient les séries de la routine, deux répétitions en réserve à la dernière', () => {
     const line = benchmarkLine(bench());
 
     expect(line.verdict).toBe('calibrated');
     expect(line.tested).toEqual({ weight: 80, reps: 9 });
-    // 80 × (1 + 9/30) = 104 ; 104 / (1 + 10/30) = 78 → 77,5 on a 2,5 grid.
+    expect(line.zone).toEqual({ low: 8, high: 12 });
+    // 80 × (1 + 9/30) = 104. Trois séries à 10 % de fatigue : la première doit pouvoir faire
+    // 10 / 0,9² = 12,35 répétitions, soit 104 / (1 + 12,35/30) = 73,7 → 72,5 sur une grille de 2,5.
     expect(line.oneRepMax).toBeCloseTo(104, 8);
-    expect(line.referenceReps).toBe(10);
-    expect(line.suggestedKg).toBe(77.5);
+    expect(line.plannedSets).toBe(3);
+    expect(line.referenceReps).toBeCloseTo(12.3457, 3);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.currentKg).toBe(70);
+    expect(line.rough).toBeUndefined();
     expect(line.proposal).toEqual({
       routineExerciseId: 'row-1',
       exerciseId: 'bench',
       targetSetIds: ['s0', 's1', 's2'],
       anchorSetId: 's0',
       fromWeight: 70,
-      proposedWeight: 77.5,
-      deltaKg: 7.5,
+      proposedWeight: 72.5,
+      deltaKg: 2.5,
     });
   });
 
-  it('leaves the warm-up sets of the routine alone', () => {
+  it('baisse la charge à chaque série de plus : la même série, une, deux, trois, quatre séries au programme', () => {
+    const suggestedFor = (count: number) =>
+      benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) })).suggestedKg;
+
+    // 104 / (1 + c / 30), c = 10, 11,11, 12,35, 13,72 : 78, 75,9, 73,7, 71,4 — sur une grille de 2,5.
+    expect([1, 2, 3, 4].map(suggestedFor)).toEqual([77.5, 75, 72.5, 70]);
+  });
+
+  it('n’en compte pas plus de six', () => {
+    const suggestedFor = (count: number) =>
+      benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) }));
+
+    expect(suggestedFor(10).plannedSets).toBe(BENCHMARK_MAX_PLANNED_SETS);
+    expect(suggestedFor(10).suggestedKg).toBe(suggestedFor(6).suggestedKg);
+    // 104 / (1 + 16,94/30) = 66,5 → 65.
+    expect(suggestedFor(6).suggestedKg).toBe(65);
+  });
+
+  it('laisse en paix les séries d’échauffement de la routine, et ne les compte pas', () => {
     const line = benchmarkLine(
       bench({
         routine: {
@@ -143,42 +112,38 @@ describe('benchmarkLine — weight and reps', () => {
     );
 
     expect(line.proposal?.targetSetIds).toEqual(['a', 'b']);
+    // Deux séries de travail, pas trois : 104 / (1 + 11,11/30) = 75,9 → 75.
+    expect(line.plannedSets).toBe(2);
+    expect(line.suggestedKg).toBe(75);
   });
 
-  it('sizes the load on the bottom of the first working set of the routine', () => {
-    const line = benchmarkLine(bench({ routine: workingRoutine([70], 5, 5) }));
-
-    // 7 reps in reserve-adjusted terms: 104 / (1 + 7/30) = 84,3 → 82,5.
-    expect(line.referenceReps).toBe(7);
-    expect(line.suggestedKg).toBe(82.5);
-  });
-
-  it('shifts a pyramid as a whole instead of flattening it', () => {
+  it('décale une pyramide en bloc au lieu de l’aplatir, la première série dimensionnée pour elle-même', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([60, 70, 80]) }));
 
-    // The set the benchmark stood in for is the first one: 60 → 77,5.
+    expect(line.plannedSets).toBe(1);
+    expect(line.suggestedKg).toBe(77.5);
     expect(line.proposal?.deltaKg).toBe(17.5);
     expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2']);
     expect(line.currentKg).toBe(80);
   });
 
-  it('proposes a lower load when the routine was too heavy', () => {
+  it('propose une charge plus basse quand la routine était trop lourde', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([90]) }));
 
     expect(line.proposal?.deltaKg).toBe(-12.5);
     expect(line.proposal?.proposedWeight).toBe(77.5);
   });
 
-  it('writes nothing when the routine already carries the calibrated load', () => {
-    const line = benchmarkLine(bench({ routine: workingRoutine([77.5, 77.5]) }));
+  it('n’écrit rien quand la routine porte déjà la charge calibrée', () => {
+    const line = benchmarkLine(bench({ routine: workingRoutine([72.5, 72.5, 72.5]) }));
 
     expect(line.verdict).toBe('calibrated');
-    expect(line.suggestedKg).toBe(77.5);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.proposal).toBeUndefined();
     expect(line.aligned).toBe(true);
   });
 
-  it('writes the figure itself when the routine carried no load at all', () => {
+  it('écrit la charge elle-même quand la routine n’en portait aucune', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([undefined, undefined]) }));
 
     expect(line.currentKg).toBeUndefined();
@@ -187,19 +152,35 @@ describe('benchmarkLine — weight and reps', () => {
       exerciseId: 'bench',
       targetSetIds: ['s0', 's1'],
       anchorSetId: 's0',
-      proposedWeight: 77.5,
+      proposedWeight: 75,
     });
   });
 
-  it('still gives the load when the exercise is no longer in the routine, but proposes no write', () => {
+  it('donne la charge sans écrire quand l’exercice n’est plus dans la routine : fourchette et séries par défaut', () => {
     const line = benchmarkLine(bench({ routine: undefined }));
 
-    expect(line.suggestedKg).toBe(77.5);
+    expect(line.zone).toEqual({ low: 8, high: 12 });
+    // Trois séries pour un polyarticulaire : la même charge que pour une routine de trois séries.
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(72.5);
     expect(line.proposal).toBeUndefined();
     expect(line.aligned).toBeUndefined();
   });
 
-  it('keeps the set that carries the highest estimated max when several were done', () => {
+  it('compte le défaut de la classe quand la routine ne porte que des échauffements : deux séries pour une isolation', () => {
+    const warmupOnly = {
+      routineExerciseId: 'row-1',
+      sets: [{ id: 'w', setType: 'warmup' as const, targetReps: 10, targetWeight: 40 }],
+    };
+
+    expect(benchmarkLine(bench({ routine: warmupOnly })).plannedSets).toBe(3);
+    const isolation = benchmarkLine(bench({ routine: warmupOnly, exerciseClass: 'isolation' }));
+    expect(isolation.plannedSets).toBe(2);
+    // Rien à réécrire : aucune série de travail à décaler.
+    expect(isolation.proposal).toBeUndefined();
+  });
+
+  it('retient la série au plus haut max estimé quand il y en a plusieurs', () => {
     const line = benchmarkLine(
       bench({
         sets: [
@@ -212,38 +193,173 @@ describe('benchmarkLine — weight and reps', () => {
 
     expect(line.tested).toEqual({ weight: 80, reps: 12 });
     expect(line.oneRepMax).toBeCloseTo(112, 8);
+    // 112 / (1 + 12,35/30) = 79,3 → 77,5.
+    expect(line.suggestedKg).toBe(77.5);
   });
 
-  it('honours the formula of the settings', () => {
-    const epley = benchmarkLine(bench());
-    const brzycki = benchmarkLine(bench({ formula: 'brzycki' }));
-
-    expect(brzycki.oneRepMax).toBeCloseTo((80 * 36) / (37 - 9), 8);
-    expect(brzycki.oneRepMax).not.toBeCloseTo(epley.oneRepMax!, 1);
-  });
-
-  it('counts a step typed on the exercise from the load that was tried', () => {
+  it('compte un pas saisi sur l’exercice à partir de la charge essayée', () => {
     const line = benchmarkLine(bench({ loadIncrementKg: 1.125 }));
 
-    // ideal 78 ; 80 − 1 × 1,125 = 78,875 is above it, 80 − 2 × 1,125 = 77,75 is below.
-    expect(line.suggestedKg).toBe(77.75);
+    // idéal 73,68 ; 80 − 5 × 1,125 = 74,375 est au-dessus, 80 − 6 × 1,125 = 73,25 en dessous.
+    expect(line.suggestedKg).toBe(73.25);
   });
 
-  it('says so when the set went past what the formulas can read', () => {
-    const line = benchmarkLine(bench({ sets: [{ weight: 40, reps: 15 }] }));
+  it('lit un single comme le max lui-même', () => {
+    const line = benchmarkLine(bench({ sets: [{ weight: 130, reps: 1 }] }));
 
+    expect(line.oneRepMax).toBe(130);
+    // 130 / (1 + 12,35/30) = 92,1 → 90.
+    expect(line.suggestedKg).toBe(90);
+  });
+
+  it('dimensionne sur le bas de la première série de travail de la routine', () => {
+    const line = benchmarkLine(bench({ routine: workingRoutine([70], 5, 5) }));
+
+    // Une seule série : 104 / (1 + 7/30) = 84,3 → 82,5.
+    expect(line.zone).toEqual({ low: 5, high: 5 });
+    expect(line.plannedSets).toBe(1);
+    expect(line.referenceReps).toBe(7);
+    expect(line.suggestedKg).toBe(82.5);
+  });
+});
+
+describe('benchmarkLine — les fourchettes hautes', () => {
+  it('suit un 15 – 20 : 22 répétitions à 40 kg font une charge de travail de 42,5 kg, pas de 12 répétitions', () => {
+    const line = benchmarkLine(
+      bench({
+        equipment: 'cable',
+        exerciseClass: 'isolation',
+        sets: [{ weight: 40, reps: 22 }],
+        routine: workingRoutine([35, 35], 15, 20),
+      }),
+    );
+
+    expect(line.verdict).toBe('calibrated');
+    expect(line.zone).toEqual({ low: 15, high: 20 });
+    // Deux séries d'une isolation (8 % de fatigue) : la première doit pouvoir faire 17 / 0,92 = 18,48
+    // répétitions. 40 × (1 + 22/30) = 69,33 ; 69,33 / (1 + 18,48/30) = 42,9 → 42,5 sur la grille du câble.
+    expect(line.plannedSets).toBe(2);
+    expect(line.referenceReps).toBeCloseTo(18.4783, 3);
+    expect(line.oneRepMax).toBeCloseTo(69.3333, 3);
+    expect(line.suggestedKg).toBe(42.5);
+    expect(line.rough).toBeUndefined();
+    expect(line.proposal?.deltaKg).toBe(7.5);
+  });
+
+  it('retrouve l’exemple de la personne : 80 kg, 17 répétitions, un 15 – 20 sur trois séries', () => {
+    const input = (overrides: Partial<BenchmarkLineInput>) =>
+      bench({ sets: [{ weight: 80, reps: 17 }], routine: workingRoutine([70, 70, 70], 15, 20), ...overrides });
+
+    // 80 × (1 + 17/30) = 125,3. Polyarticulaire : 17 / 0,9² = 20,99 répétitions pour la première série,
+    // 125,3 / (1 + 20,99/30) = 73,7 → 72,5. L'essai en est à 4 répétitions : fiable.
+    const compound = benchmarkLine(input({}));
+    expect(compound.suggestedKg).toBe(72.5);
+    expect(compound.referenceReps).toBeCloseTo(20.9877, 3);
+    expect(compound.rough).toBeUndefined();
+
+    // Une isolation fatigue moins : 17 / 0,92² = 20,09 répétitions → 75,07 → 75.
+    const isolation = benchmarkLine(input({ exerciseClass: 'isolation' }));
+    expect(isolation.suggestedKg).toBe(75);
+    expect(isolation.referenceReps).toBeCloseTo(20.0851, 3);
+    expect(isolation.referenceReps!).toBeLessThan(compound.referenceReps!);
+  });
+
+  it('descend la charge quand le repos raccourcit, la monte quand il s’allonge', () => {
+    const withRest = (restSeconds: number) =>
+      benchmarkLine(
+        bench({
+          sets: [{ weight: 80, reps: 17 }],
+          routine: workingRoutine([70, 70, 70], 15, 20),
+          restSeconds,
+        }),
+      ).suggestedKg;
+
+    // Une minute : 20 % de fatigue, 17 / 0,8² = 26,6 répétitions → 66,5 → 65.
+    // Trois minutes : 6,7 %, 17 / 0,933² = 19,5 répétitions → 75,9 → 75.
+    expect([60, 120, 180].map(withRest)).toEqual([65, 72.5, 75]);
+  });
+
+  it('compte deux minutes sans repos connu : la même charge qu’un repos de 120 secondes', () => {
+    const sets = [{ weight: 80, reps: 17 }];
+    const routine = workingRoutine([70, 70, 70], 15, 20);
+
+    expect(benchmarkLine(bench({ sets, routine })).referenceReps).toBe(
+      benchmarkLine(bench({ sets, routine, restSeconds: 120 })).referenceReps,
+    );
+  });
+
+  it('plafonne la capacité exigée à 30 répétitions : six séries d’un 20 ne demandent pas plus que la formule ne sait dire', () => {
+    const line = benchmarkLine(
+      bench({
+        equipment: 'cable',
+        sets: [{ weight: 30, reps: 21 }],
+        routine: workingRoutine([25, 25, 25, 25, 25, 25], 20, 20),
+      }),
+    );
+
+    expect(line.plannedSets).toBe(6);
+    expect(line.referenceReps).toBe(BENCHMARK_MAX_REPS);
+    // 30 × 1,7 = 51 ; 51 / (1 + 30/30) = 25,5 → 25.
+    expect(line.suggestedKg).toBe(25);
+  });
+
+  it('ne plafonne pas à 12 : la même série lue sur une fourchette de 8 à 12 donnerait bien plus lourd', () => {
+    const high = benchmarkLine(
+      bench({ equipment: 'cable', sets: [{ weight: 40, reps: 16 }], routine: workingRoutine([35], 15, 20) }),
+    );
+    const low = benchmarkLine(
+      bench({ equipment: 'cable', sets: [{ weight: 40, reps: 16 }], routine: workingRoutine([35], 8, 12) }),
+    );
+
+    expect(high.suggestedKg).toBeLessThan(low.suggestedKg!);
+  });
+
+  it('suit une cible unique de 20 : 21 répétitions à 30 kg se dimensionnent sur 22', () => {
+    const line = benchmarkLine(
+      bench({
+        equipment: 'cable',
+        sets: [{ weight: 30, reps: 21 }],
+        routine: workingRoutine([25], 20, 20),
+      }),
+    );
+
+    expect(line.zone).toEqual({ low: 20, high: 20 });
+    expect(line.plannedSets).toBe(1);
+    expect(line.referenceReps).toBe(22);
+    // 30 × 1,7 = 51 ; 51 / (1 + 22/30) = 29,42 → 27,5.
+    expect(line.suggestedKg).toBe(27.5);
+  });
+
+  it('lit un 18 : 20 répétitions à 25 kg se dimensionnent sur 20', () => {
+    const line = benchmarkLine(
+      bench({
+        equipment: 'cable',
+        sets: [{ weight: 25, reps: 20 }],
+        routine: workingRoutine([20], 18, 18),
+      }),
+    );
+
+    expect(line.referenceReps).toBe(20);
+    // L'essai est pile à la référence : la charge de travail est la charge essayée, arrondie vers le bas.
+    expect(line.suggestedKg).toBe(25);
+  });
+
+  it('accepte jusqu’à 30 répétitions, et dit « trop léger » au-delà', () => {
+    expect(benchmarkLine(bench({ sets: [{ weight: 20, reps: 30 }] })).verdict).toBe('calibrated');
+
+    const line = benchmarkLine(bench({ sets: [{ weight: 20, reps: 31 }] }));
     expect(line.verdict).toBe('too_light');
-    expect(line.tested).toEqual({ weight: 40, reps: 15 });
+    expect(line.tested).toEqual({ weight: 20, reps: 31 });
     expect(line.oneRepMax).toBeUndefined();
     expect(line.suggestedKg).toBeUndefined();
     expect(line.proposal).toBeUndefined();
   });
 
-  it('prefers a readable set over a too-light one', () => {
+  it('préfère une série lisible à une série trop légère', () => {
     const line = benchmarkLine(
       bench({
         sets: [
-          { weight: 40, reps: 15 },
+          { weight: 20, reps: 40 },
           { weight: 80, reps: 9 },
         ],
       }),
@@ -252,36 +368,64 @@ describe('benchmarkLine — weight and reps', () => {
     expect(line.verdict).toBe('calibrated');
     expect(line.tested).toEqual({ weight: 80, reps: 9 });
   });
+});
 
-  it('cannot read a max without a load', () => {
+describe('benchmarkLine — un essai loin de la fourchette', () => {
+  const single = workingRoutine([70]);
+
+  it('reste fiable jusqu’à six répétitions d’écart avec la capacité exigée, approximatif au-delà', () => {
+    // Une série d'un 8 – 12 : la capacité exigée est 10 ; 16 est à six, 17 est à sept.
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 16 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 17 }] })).rough).toBe(true);
+    // Dans l'autre sens : 4 est à six, 3 est à sept.
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 4 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 3 }] })).rough).toBe(true);
+  });
+
+  it('juge l’écart sur la capacité de la première série, pas sur le bas de la fourchette plus la réserve', () => {
+    // Trois séries d'un 8 – 12 : la capacité exigée est 12,35, pas 10. 18 est à 5,65 : fiable ; 19 est à 6,65.
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 18 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 19 }] })).rough).toBe(true);
+    // Dans l'autre sens : 6 est à 6,35, 7 à 5,35.
+    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 7 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 6 }] })).rough).toBe(true);
+  });
+
+  it('propose quand même une charge, mais la dit approximative', () => {
+    const line = benchmarkLine(bench({ sets: [{ weight: 40, reps: 25 }], routine: workingRoutine([57.5], 5, 5) }));
+
+    expect(line.verdict).toBe('calibrated');
+    expect(line.rough).toBe(true);
+    // 40 × (1 + 25/30) = 73,33 ; 73,33 / (1 + 7/30) = 59,46 → 57,5.
+    expect(line.suggestedKg).toBe(57.5);
+  });
+
+  it('juge l’écart sur la fourchette de chaque exercice : 22 répétitions sont proches d’un 15 – 20, loin d’un 5', () => {
+    const sets = [{ weight: 40, reps: 22 }];
+    expect(benchmarkLine(bench({ sets, routine: workingRoutine([35], 15, 20) })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets, routine: workingRoutine([35], 5, 5) })).rough).toBe(true);
+  });
+});
+
+describe('benchmarkLine — les cas sans charge à proposer', () => {
+  it('ne lit pas un max sans charge', () => {
     expect(benchmarkLine(bench({ sets: [{ reps: 10 }] })).verdict).toBe('no_load');
     expect(benchmarkLine(bench({ sets: [{ weight: 0, reps: 10 }] })).verdict).toBe('no_load');
   });
 
-  it('reports a load too small for the equipment step as unreadable rather than as zero', () => {
+  it('dit qu’une charge sous le premier cran du matériel n’est pas lisible plutôt que zéro', () => {
     const line = benchmarkLine(bench({ sets: [{ weight: 1, reps: 10 }], equipment: 'barbell' }));
 
     expect(line.verdict).toBe('no_load');
     expect(line.proposal).toBeUndefined();
   });
 
-  it('reads a single as the max itself', () => {
-    const line = benchmarkLine(bench({ sets: [{ weight: 130, reps: 1 }] }));
-
-    expect(line.oneRepMax).toBe(130);
-    // 130 / (1 + 10/30) = 97,5
-    expect(line.suggestedKg).toBe(97.5);
-  });
-});
-
-describe('benchmarkLine — what has no load to propose', () => {
-  it('records reps for a bodyweight exercise, without a proposal', () => {
+  it('note les répétitions d’un exercice au poids du corps, sans proposition', () => {
     const line = benchmarkLine({
       exerciseId: 'pullup',
       exerciseName: 'Tractions',
       measurementType: 'reps_only',
       equipment: 'bodyweight',
-      formula: 'epley',
       sets: [{ reps: 11 }],
       routine: workingRoutine([undefined]),
     });
@@ -292,26 +436,24 @@ describe('benchmarkLine — what has no load to propose', () => {
     expect(line.proposal).toBeUndefined();
   });
 
-  it('keeps the most repetitions among bodyweight sets', () => {
+  it('garde le plus de répétitions parmi des séries au poids du corps', () => {
     const line = benchmarkLine({
       exerciseId: 'pullup',
       exerciseName: 'Tractions',
       measurementType: 'reps_only',
       equipment: 'bodyweight',
-      formula: 'epley',
       sets: [{ reps: 8 }, { reps: 11 }, { reps: 9 }],
     });
 
     expect(line.tested).toEqual({ reps: 11 });
   });
 
-  it('records the hold of a timed exercise', () => {
+  it('note le maintien d’un exercice chronométré', () => {
     const line = benchmarkLine({
       exerciseId: 'plank',
       exerciseName: 'Gainage',
       measurementType: 'time_only',
       equipment: 'bodyweight',
-      formula: 'epley',
       sets: [{ durationSeconds: 75 }, { durationSeconds: 90 }],
     });
 
@@ -319,13 +461,12 @@ describe('benchmarkLine — what has no load to propose', () => {
     expect(line.tested).toEqual({ durationSeconds: 90 });
   });
 
-  it('gives an assisted exercise its reps and no load', () => {
+  it('donne ses répétitions à un exercice assisté, sans charge', () => {
     const line = benchmarkLine({
       exerciseId: 'assisted',
       exerciseName: 'Tractions assistées',
       measurementType: 'assisted_weight_reps',
       equipment: 'machine',
-      formula: 'epley',
       sets: [{ weight: 30, reps: 8 }],
       routine: workingRoutine([30]),
     });
@@ -335,7 +476,93 @@ describe('benchmarkLine — what has no load to propose', () => {
     expect(line.proposal).toBeUndefined();
   });
 
-  it('marks an exercise nobody did', () => {
+  it('marque un exercice que personne n’a fait', () => {
     expect(benchmarkLine(bench({ sets: [] })).verdict).toBe('skipped');
+  });
+});
+
+describe('benchmarkSignal — ce que le coach lit', () => {
+  it('pose la charge de la fourchette comme objectif, avec les chiffres qui l’ont produite', () => {
+    const signal = benchmarkSignal(benchmarkLine(bench()));
+
+    expect(signal).toEqual({
+      code: 'benchmark_calibrated',
+      exerciseId: 'bench',
+      nextLoadKg: 72.5,
+      severity: expect.any(Number),
+      evidence: [
+        { label: 'tested_load_kg', value: 80 },
+        { label: 'tested_reps', value: 9 },
+        { label: 'one_rep_max_kg', value: 104 },
+        { label: 'target_reps', value: 8 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'planned_sets', value: 3 },
+        // 12,3457 arrondi à une décimale : un chiffre de plus en dirait plus que le modèle n'en sait.
+        { label: 'reference_reps', value: 12.3 },
+        { label: 'current_load_kg', value: 70 },
+      ],
+    });
+  });
+
+  it('suit la fourchette de l’exercice : un 15 – 20 dit 15, 20, une série et 17', () => {
+    const signal = benchmarkSignal(
+      benchmarkLine(
+        bench({
+          equipment: 'cable',
+          sets: [{ weight: 40, reps: 22 }],
+          routine: workingRoutine([35], 15, 20),
+        }),
+      ),
+    );
+
+    expect(signal?.nextLoadKg).toBe(42.5);
+    expect(signal?.evidence).toContainEqual({ label: 'target_reps', value: 15 });
+    expect(signal?.evidence).toContainEqual({ label: 'target_reps_max', value: 20 });
+    expect(signal?.evidence).toContainEqual({ label: 'planned_sets', value: 1 });
+    expect(signal?.evidence).toContainEqual({ label: 'reference_reps', value: 17 });
+  });
+
+  it('dit le nombre de séries sur lequel la charge a été dimensionnée', () => {
+    const planned = (count: number) =>
+      benchmarkSignal(
+        benchmarkLine(bench({ routine: workingRoutine(Array.from({ length: count }, () => 70)) })),
+      )?.evidence.find((item) => item.label === 'planned_sets')?.value;
+
+    expect([1, 2, 4].map(planned)).toEqual([1, 2, 4]);
+  });
+
+  it('ne dit pas la charge actuelle d’une routine qui n’en porte pas', () => {
+    const signal = benchmarkSignal(benchmarkLine(bench({ routine: workingRoutine([undefined]) })));
+
+    expect(signal?.evidence.map((item) => item.label)).not.toContain('current_load_kg');
+  });
+
+  it('en pose un aussi quand la routine porte déjà la charge : il remplace l’objectif d’avant', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ routine: workingRoutine([77.5]) })))).toBeDefined();
+  });
+
+  it('en pose un quand l’exercice n’est plus dans la routine : la bibliothèque le garde', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ routine: undefined })))?.nextLoadKg).toBe(72.5);
+  });
+
+  it('ne reprend pas une estimation approximative : le coach ne pousse pas une extrapolation', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 40, reps: 25 }] })))).toBeUndefined();
+  });
+
+  it('ne dit rien de ce qui n’a pas de charge à proposer', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 20, reps: 40 }] })))).toBeUndefined();
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ reps: 10 }] })))).toBeUndefined();
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [] })))).toBeUndefined();
+    expect(
+      benchmarkSignal(
+        benchmarkLine({
+          exerciseId: 'pullup',
+          exerciseName: 'Tractions',
+          measurementType: 'reps_only',
+          equipment: 'bodyweight',
+          sets: [{ reps: 11 }],
+        }),
+      ),
+    ).toBeUndefined();
   });
 });

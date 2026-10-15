@@ -149,6 +149,7 @@ const COACH_CODES = [
   'plateau',
   'long_rest',
   'consolidating',
+  'benchmark_calibrated',
   'returning',
 ] as const satisfies readonly CoachSignalCode[];
 const COACH_STATUSES = [

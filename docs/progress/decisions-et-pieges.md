@@ -7,6 +7,118 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (fin) — La charge du benchmark tient les séries de la routine
+
+**Demande.** « Moi je voyais ça comme ça : je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on teste, je varie à
+17, 20 ou 12… 1 série de chaque exo. Le coach récupère ces infos, et extrapole la meilleure charge sur x séries. Par exemple, je sais pas,
+3 séries sur les poly-articulaires, 2 sur les isolations. C'est un exemple au pif, attention. » Spec :
+`docs/design/specs/2026-10-15-benchmark-design.md` (§3).
+
+**Ce que j'avais mal lu.** La question d'avant (« le benchmark a l'air de donner des charges à respecter, alors pourquoi pas, mais on va
+sur le plus de reps possible ») m'avait fait proposer deux variantes, dont un essai à charge imposée. La personne voulait autre chose : elle
+choisit **sa** charge d'essai (« je pense que je peux faire 80 × 15 »), va à l'échec, et c'est le coach qui en déduit la charge de travail.
+Le benchmark ne change pas de forme ; ce qui manquait, c'est que la charge qu'il propose **tienne plusieurs séries**.
+
+**Le défaut que cela a fait voir.** Le calcul « bas + 2 » dimensionnait la charge pour **une** série à l'échec moins deux répétitions. Posée
+sur trois séries à charge égale, elle est trop lourde : pour un 8 – 12, 80 kg × 9 donnait 77,5 kg, alors que 72,5 kg tiennent les trois.
+Mes tests ne posaient que des routines à une ou deux séries et des essais proches de la référence ; aucun ne comptait les séries.
+
+**Ce qui est fait.**
+
+- `lib/benchmarkModel.ts` (le modèle) : la première série doit pouvoir faire `(bas + 2) / (1 − φ)^(x − 1)` répétitions pour que la dernière
+  tienne le bas de la fourchette avec deux répétitions en réserve ; la charge est celle de cette capacité sur le max (Epley, inverse exact,
+  capacité non entière admise). φ = 10 % par série pour un polyarticulaire reposé deux minutes, 8 % pour une isolation, ×(120 / repos) borné
+  entre 0,6 et 2. `x` = les séries de travail de la routine, six au plus ; une pyramide compte pour une ; sans série de travail, 3
+  (polyarticulaire) ou 2 (isolation).
+- `lib/exerciseClass.ts` : polyarticulaire ou isolation, lu sur la famille de mouvement du catalogue — aucune table à tenir. « Autre » ou
+  absente (exercice personnel) : le corps entier ou deux muscles secondaires et plus font un polyarticulaire ; sans rien, polyarticulaire.
+- `lib/benchmark.ts` (la lecture) : le calcul passe par ce modèle ; « approximatif » se juge sur la capacité exigée de la première série
+  (plus de six répétitions d'écart) et non plus sur « bas + 2 ». Le signal du coach porte `planned_sets` et `reference_reps`.
+- `loadBenchmarkReport` donne à la ligne le repos de l'exercice dans la séance et sa classe ; le bilan dit « Pour 3 séries : environ 12
+  répétitions à fond à la première, 2 en réserve à la dernière » ; le coach « Pour 3 séries de 8 – 12 reps, démarre à 72,5 kg » (« pour ta
+  fourchette » quand il n'y en a qu'une).
+- L'exemple de la demande, chiffré : 80 kg × 17 sur un 15 – 20, trois séries → 72,5 kg (polyarticulaire) ou 75 kg (isolation) ; 65 kg avec une
+  minute de repos, 75 kg avec trois.
+
+**Choix de détail, à relire.**
+
+- **`x` est le nombre de séries de la routine**, pas « 3 et 2 » d'office. La demande disait « x » et « par exemple » ; le 3 / 2 ne sert que
+  quand la routine n'en dit rien. **Tranché avec l'utilisateur** à qui j'ai demandé si le coach devait aussi *proposer* le nombre de séries
+  par type d'exercice et l'écrire dans la routine : « JSP, tu proposes quoi ? » — proposition : 3 / 2 en défaut seulement, rien d'écrit,
+  parce que le nombre de séries d'un muscle est déjà l'affaire de R6 et qu'une série à l'échec ne dit pas combien de séries on récupère.
+  Il a répondu « oui, publie la v2.13.0 ».
+- **Les constantes de fatigue sont au pif**, comme les « 3 et 2 ». 10 % de répétitions en moins par série est un ordre de grandeur courant,
+  pas une mesure de la personne. Elles sont nommées, en un seul fichier ; le jour où un bilan paraît faux, on corrige là.
+- **Une pyramide compte pour une série** (la première est dimensionnée pour elle-même, les autres suivent du même écart). Pour une montée
+  de charge c'est la lecture qui ne promet rien de plus que ce que la première série dit.
+- **Un plafond de six séries et de 30 répétitions exigées** : au-delà, la formule n'est plus une estimation. Six séries de 20 se heurtent
+  au plafond de 30 — la charge est alors la plus légère que le benchmark sache proposer, la dernière série garde moins que la réserve.
+- **Le repos est celui qui est prévu**, pas un repos mesuré : le benchmark n'a qu'une série par exercice.
+
+**Pièges rencontrés.**
+
+- **Une graine de test qui ne portait pas ce que le code venait d'apprendre à lire.** Les tests de dépôt et d'écran semaient un
+  « Développé couché » sans famille de mouvement et sans muscle secondaire : `exerciseClass` le lisait en isolation, et les charges
+  attendues tombaient de quelques kilos. La graine était fausse, pas le code — elle porte maintenant une famille de poussée et deux
+  muscles secondaires, comme le catalogue.
+- **Une mutation a survécu à un test qui ne la visait pas.** « Pyramide : plus de 2 charges au lieu de plus d'1 » passait : mon test de
+  pyramide posait trois charges. Un cas à deux charges (montée, ou série lourde suivie de séries légères) l'a tuée. 32 mutations, 0
+  survivante.
+- **Un fichier de 498 lignes qui faisait deux métiers** (le modèle de charge et la lecture d'un benchmark) : coupé en `benchmarkModel.ts` et
+  `benchmark.ts` plutôt que consigné comme écart.
+
+### 2026-10-15 (suite) — Le benchmark suit la fourchette, et le coach le lit
+
+**Demande.** « Attends, le coach doit lire ce benchmark et te proposer des charges adaptées. Ça met à jour les routines. Par contre ça
+doit bien prendre en compte la fourchette. Un mec qui fait des séries de 8, 12, 15, 18, 20… » Spec :
+`docs/design/specs/2026-10-15-benchmark-design.md` (§2 bis, §3).
+
+**Trois défauts, dont deux que cette demande a fait voir.**
+
+1. **La fourchette n'était prise en compte que jusqu'à 12.** La charge de travail se dimensionnait sur « bas + 2, plafonné à 12 » avec les
+   formules de 1RM de 1 à 12 répétitions. Un 15 – 20 recevait la charge d'une série de 12 — **bien trop lourde** — et un essai à 15
+   répétitions était déclaré « trop léger ». Pour quelqu'un qui travaille à 15, 18 ou 20, le benchmark ne servait à rien. Il ne l'avait
+   pas dit : mes tests ne posaient que des fourchettes de 5 à 12.
+2. **Le coach n'en lisait rien.** Voir l'entrée du benchmark ci-dessous : écarté en bloc, il passait seulement par les cibles de la routine.
+3. **La coche enregistrait les répétitions de la dernière fois comme le maximum.** Un benchmark efface la cible de répétitions de sa série ;
+   le fantôme de la case retombait alors sur la dernière séance de l'exercice, et « Valider » l'enregistrait sans que rien ne soit tapé.
+   L'E2E ne l'avait pas vu : sa base est vide, donc pas de « dernière fois ». **Un E2E de « un exercice a un historique » aurait dû exister
+   dès le départ** ; il existe maintenant, et a été vu rouge quand la garde est retirée.
+
+**Ce qui est fait.**
+
+- La **fourchette** est celle de la première série de travail de la routine (cible unique = fourchette d'un point ; 8 – 12 par défaut) ;
+  la référence est son bas + 2 répétitions de réserve (10, 17, 22 pour 8 – 12, 15 – 20, 20), plafonnée à 30. **Epley seul, de 1 à 30
+  répétitions**, quelle que soit la formule d'affichage : c'est le seul des trois qui reste lisible au-delà de 12, et c'est déjà la
+  règle du coach pour le cran. Au-delà de 30 : « trop léger ».
+- Un essai à **plus de six répétitions de la référence** est une extrapolation : proposée, dite approximative, **interrupteur éteint
+  d'office**, et le coach n'en tire rien.
+- Le coach **lit** le benchmark : signal `benchmark_calibrated`, posé à l'enregistrement de la séance par le chemin des objectifs
+  (`recordCoachSignals`, « un objectif vivant à la fois »), avec les chiffres qui l'ont produit. La carte de l'exercice l'affiche à la
+  séance suivante. L'écriture dans la routine reste l'acceptation du bilan, qui **suit** l'objectif posé par ce benchmark et remplace
+  tout autre objectif de l'exercice.
+- Les `amrap` : les répétitions d'une série de benchmark ne sont jamais proposées.
+
+**Choix de détail, à relire.**
+
+- **Epley pour tout, y compris l'affichage du bilan.** Un utilisateur qui a réglé Brzycki lira un 1RM de bilan différent de celui de la
+  page des records, de quelques pour cent. Mélanger les formules selon le nombre de répétitions aurait créé une marche d'escalier à 12.
+- **Le seuil de six répétitions d'écart** est un jugement, pas une mesure (à six répétitions d'écart, autour de 17, la conversion table sur 13 % d'écart entre
+  deux charges, avec la précision d'Epley) ; une constante (`BENCHMARK_ROUGH_GAP`), à ajuster si le bilan crie « approximatif » trop souvent.
+- **Rien dans une séance de programme** : un bloc possède ses charges, et `useActiveWorkout` retire déjà les objectifs numériques de sa
+  carte. Le benchmark d'une routine qui sert à un programme écrit la routine (acceptation) ; la carte du coach n'y dit rien.
+- **La fourchette n'est pas affichée pendant la séance de benchmark** : elle se lit sur la feuille de lancement et sur le bilan. La poser
+  sur la ligne (la cible de répétitions) rouvrait le défaut 3.
+
+**Pièges rencontrés.**
+
+- **Une assertion qui ne prouvait rien, encore.** « Le coach n'enregistre aucun objectif pour un benchmark » était un test vert — et le
+  contraire de ce que l'utilisateur voulait. Un test qui décrit l'implémentation plutôt que le besoin se corrige avec elle ; ceux-ci ont été
+  réécrits (`n'évalue pas la séance…`, `ne prend pas la charge d'un benchmark pour un objectif suivi`) en disant ce qui reste vrai : aucune
+  règle de séance, et rien de « suivi » par la charge d'un essai à fond.
+- **Le `;` n'est pas un `&&`.** Un lint en erreur est passé dans un commit parce que la commande enchaînait `eslint | tail` et `git commit` ;
+  corrigé par un `--amend` avant le push. Enchaîner les portes avec `&&`.
+
 ### 2026-10-15 — Le benchmark : une série à l'échec par exercice, qui cale les charges de la routine
 
 **Demande.** « Une séance avec une série, le plus de répétitions possible, ça nous calibre notre coach, une série
@@ -24,16 +136,11 @@ progresse à partir des cibles de la routine et de ce qui a été fait ; un dép
 séance, pendant des semaines. Le benchmark écrit la charge juste dans la routine — **sur acceptation** — et
 rien d'autre. Aucun état « calibré » n'est stocké, aucune donnée nouvelle n'est lue par le moteur.
 
-**Ce que le coach lit, et ce qu'il ne lit pas du benchmark (précisé après la question « est-il bien branché à mon coach ? »).**
-Le moteur (`lib/coach`) ne lit **aucune charge cible de routine** : il juge des séries *faites* (leurs charges, leurs répétitions,
-le RPE) contre la fourchette de répétitions. Le benchmark ne change donc pas ses calculs ; il change ce que la routine propose
-comme point de départ, et le moteur en prend acte **à la première séance ordinaire faite à cette charge** — pas avant. Aucun 1RM
-n'est stocké pour lui, et le benchmark ne pose aucun objectif de charge à sa place. Le seul point de contact qui manquait était un
-**objectif déjà posé** (« la prochaine fois, 102,5 kg ») : il restait affiché sur la carte de la séance à côté de la cible que le
-benchmark venait d'écrire, deux chiffres pour un exercice. `applyBenchmarkProposals` le **remplace** (`superseded`, qui n'est pas un
-refus), dans la même transaction que l'écriture et pour les seuls exercices réécrits ; une observation sans charge reste. À
-discuter si l'on veut un lien plus profond (le coach partant du 1RM du benchmark, ou posant la charge calibrée comme objectif) :
-c'est une règle nouvelle, pas un câblage.
+**Ce que le coach lit du benchmark — état de la v2.12.2, changé ensuite : voir l'entrée « le benchmark suit la fourchette, et le coach le lit ».**
+Le moteur (`lib/coach`) ne lit **aucune charge cible de routine** : il juge des séries *faites*. En v2.12.2 le benchmark ne lui
+apportait rien d'autre que les cibles de la routine, une fois acceptées, et la résolution d'un objectif déjà posé à l'acceptation. La
+question de l'utilisateur — « le coach doit lire ce benchmark et proposer des charges adaptées » — a montré que ce n'était pas ce qu'il
+attendait.
 
 **Ce que le benchmark nourrit, et ce qu'il n'alimente pas.** Une série à l'échec est une vraie performance : records,
 volume par muscle, régularité, courbes, historique la comptent. Elle n'est pas le modèle d'une série de travail,

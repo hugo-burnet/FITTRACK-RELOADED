@@ -5,24 +5,36 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.12.2 publiée** (PWA et APK). `master` (`3903dc8`) porte la branche de session
-`ccr-57f17af8-maxzqv`, fusionnée `--no-ff`.
+**Dernière mise à jour :** 2026-10-15 — **v2.13.0 publiée** (PWA et APK) : le benchmark lit la fourchette et les séries de chaque
+exercice, et le coach le lit.
 
 ## Où on en est
 
-- **Publié : v2.12.2** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.2), APK `FitTrack-v2.12.2.apk`
-  signé avec la clé de release. Appliquer un benchmark **remplace** l'objectif de charge que le coach avait déjà posé sur l'exercice (il
-  restait affiché à côté de la cible écrite par le benchmark : deux chiffres pour un exercice). Précisé : le moteur du coach ne lit aucune
-  charge cible de routine, il juge des séries faites ; le benchmark le calibre par les cibles de la routine, et il en prend acte à la
-  première séance ordinaire faite à cette charge (`docs/progress/decisions-et-pieges.md`, entrée du benchmark).
-- **Avant : v2.12.1** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.1), APK `FitTrack-v2.12.1.apk`
-  signé avec la clé de release. Une ligne **« Benchmark de cette routine » dans l'éditeur de la routine** (le benchmark n'était que dans
-  le menu ⋮ de la liste, et ne se trouvait pas) ; rien d'autre ne change depuis la v2.12.0.
-- **Avant : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0) : la coche qui n'écrase plus la
-  saisie, le coach R6, le benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité. Le détail des trois
-  versions, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 531 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**34 parcours**, 8 fichiers, à 390 px) — verts sur `master`, y compris sur la CI.
+- **Publié : v2.13.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.0), APK `FitTrack-v2.13.0.apk`
+  signé avec la clé de release. **Le benchmark repris**, à la demande de l'utilisateur (« le coach doit lire ce benchmark et te proposer des
+  charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 », puis « je choisis ma charge d'essai, le coach
+  extrapole la meilleure charge sur x séries »).
+  - **La fourchette.** La charge se dimensionnait sur « bas + 2, plafonné à 12 » : un 15 – 20 recevait celle d'une série de 12, bien trop
+    lourde. Désormais la fourchette est celle de la routine (cible unique = fourchette d'un point), Epley seul de 1 à 30 répétitions ; un
+    essai loin de ce que la première série doit tenir est dit approximatif, interrupteur éteint.
+  - **Les séries.** La charge conseillée **tient toutes les séries de la routine** (six au plus ; une pyramide compte pour une ; sans
+    série de travail, 3 pour un polyarticulaire, 2 pour une isolation) : la première doit pouvoir faire `(bas + 2) / (1 − φ)^(x − 1)`
+    répétitions pour que la dernière garde deux répétitions en réserve. φ = 10 % par série (8 % pour une isolation), plus haut quand le
+    repos est court. Exemple : 80 kg × 17 sur un 15 – 20, trois séries → 72,5 kg. Les chiffres de fatigue sont **au pif**, comme les
+    « 3 et 2 séries » de la demande : `lib/benchmarkModel.ts`, à régler sur le terrain. Le coach n'écrit jamais un nombre de séries
+    (tranché avec l'utilisateur : R6 s'en charge).
+  - **Le coach lit le benchmark.** Signal `benchmark_calibrated`, posé à l'enregistrement par le chemin des objectifs ; la carte de
+    l'exercice l'affiche à la séance suivante. Accepter le bilan écrit la routine et **suit** cet objectif.
+  - **Un défaut trouvé en route.** Pour un exercice qui avait un historique, la coche enregistrait les répétitions de la dernière fois
+    comme maximum du benchmark. Corrigé (`amrap`), avec l'E2E « un exercice a un historique » qui manquait.
+  - Détail et choix à relire : `docs/progress/decisions-et-pieges.md`, entrées du 2026-10-15 (« la charge du benchmark tient les séries de
+    la routine », « le benchmark suit la fourchette, et le coach le lit »).
+- **Avant : v2.12.0 → v2.12.2** — la coche qui n'écrase plus la saisie, le coach R6 (volume par muscle), le benchmark (puis sa porte dans
+  l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
+  sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
+  [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 602 tests**, 300 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**35 parcours**, 8 fichiers, à 390 px) — verts sur `master` à la v2.13.0.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
@@ -30,12 +42,12 @@
   `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
   pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant.
 
-## À juger sur le terrain (v2.12.0)
+## À juger sur le terrain (v2.12.0 → v2.13.0)
 
-- **Un lien plus profond entre benchmark et coach** (le coach partant du 1RM du benchmark, ou posant la charge calibrée comme objectif) :
-  non fait, c'est une règle nouvelle ; à demander si la calibration par la routine ne suffit pas.
-- **Benchmark** : la réserve de 2 répétitions et la limite de 12 sont des constantes (`lib/benchmark.ts`) ; si les charges proposées
-  paraissent trop basses ou trop hautes, c'est là.
+- **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
+  séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
+  paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ
+  deux répétitions en réserve à la dernière.
 - **Coach R6** : le plafond ne change presque rien tant qu'on ne le relève pas — c'est la décision, pas un défaut (`effectiveCeiling`,
   un seul endroit).
 - **Un E2E des mensurations a bloqué une fois** (`corriger puis supprimer une mesure`, délai de 60 s dans une passe complète ; non

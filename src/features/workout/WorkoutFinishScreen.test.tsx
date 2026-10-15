@@ -324,14 +324,16 @@ describe('WorkoutFinishScreen', () => {
       expect(speakWorkoutRecapMock).not.toHaveBeenCalled();
     });
 
-    it('n’enregistre aucun objectif du coach', async () => {
+    it('fait lire le benchmark au coach, et à lui seul : un objectif, celui de la fourchette', async () => {
       await activeBenchmark();
       renderFinishScreen();
 
       await userEvent.click(await screen.findByRole('button', { name: 'Enregistrer la séance' }));
       await screen.findByText('Destination bilan');
 
-      expect(await db.coachRecommendations.count()).toBe(0);
+      // Pas de règle de séance (fourchette tenue, plafond, hausse) : un seul objectif, posé par le benchmark.
+      const rows = await db.coachRecommendations.toArray();
+      expect(rows.map((row) => [row.code, row.nextLoadKg])).toEqual([['benchmark_calibrated', 77.5]]);
     });
   });
 });

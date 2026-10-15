@@ -104,6 +104,8 @@ export type CardEffort = {
 
 type Props = {
   line: WorkoutExerciseDetail;
+  /** Séance de benchmark : les répétitions de chaque série sont le résultat, jamais une proposition. */
+  amrap?: boolean;
   tutorial?: boolean;
   preferred?: boolean;
   superset?: SupersetPlace;
@@ -166,6 +168,7 @@ export function WorkoutExerciseCard({
   reorderEnabled,
   foldCommand,
   onMenu,
+  amrap = false,
   onPace,
   onStopPace,
   onPlates,
@@ -515,6 +518,7 @@ export function WorkoutExerciseCard({
                       }
                       holding={hold?.setId === set.id}
                       unilateral={identity.isUnilateral === 1}
+                      amrap={amrap}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(proposed) => onComplete(set.id, proposed, set)}
                       onUncomplete={() => onUncomplete(set.id)}

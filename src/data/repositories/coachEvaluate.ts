@@ -19,6 +19,7 @@ import {
 } from '@/lib/programs';
 import { isWorkingSet } from '@/lib/records';
 import { alive } from './base';
+import { recordBenchmarkObjectives } from './benchmark';
 import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
 import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
 import { getCoachVolumeBounds, getOneRepMaxFormula } from './settings';
@@ -464,9 +465,12 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
  * Call after `finishWorkout` so abandoned sets are already gone.
  */
 export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
-  // Rien à enregistrer — et surtout rien à « suivre » : la charge d'un benchmark est
-  // celle d'un essai à fond, elle ne répond à aucun objectif que le coach aurait posé.
-  if ((await db.workouts.get(workoutId))?.kind === 'benchmark') return [];
+  // Un benchmark n'est pas une séance de travail à juger, et sa charge est celle d'un essai à fond : elle
+  // ne répond à aucun objectif que le coach aurait posé, donc rien à « suivre ». Mais le coach **le lit** :
+  // il en tire la charge de la fourchette de chaque exercice, comme objectif.
+  if ((await db.workouts.get(workoutId))?.kind === 'benchmark') {
+    return recordBenchmarkObjectives(workoutId);
+  }
   const signals = await evaluateCoachForWorkout(workoutId);
 
   // Resolve what this session answered *before* recording new signals: a fresh

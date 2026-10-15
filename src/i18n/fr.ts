@@ -632,6 +632,14 @@ const fr = {
     plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     returning: 'Reprise après {days} jours sans cet exercice : on consolide avant de monter.',
     /**
+     * Le benchmark : ce qui a été mesuré, puis la charge de la fourchette, tenue sur les séries de la routine.
+     * Pas de flèche : elle est réservée à la charge à mettre.
+     */
+    benchmark_calibrated:
+      'Benchmark : {reps} répétitions à {tested} kg, soit un max d’environ {max} kg. Pour ta fourchette ({range}), démarre à {weight} kg.',
+    benchmarkCalibratedSets:
+      'Benchmark : {reps} répétitions à {tested} kg, soit un max d’environ {max} kg. Pour {sets} séries de {range}, démarre à {weight} kg.',
+    /**
      * R3.2 : le cran est celui du matériel. La phrase dit ce qu'il pèse et le
      * compte de répétitions qui permet de le prendre sans sortir de la fourchette.
      */
@@ -2682,29 +2690,34 @@ const fr = {
     launchTitle: 'Benchmark',
     launchBody:
       'Une seule série par exercice, menée jusqu’à l’échec.\n' +
-      'Choisis une charge avec laquelle tu comptes faire 5 à 12 répétitions : au-delà de 12, le résultat est trop incertain.\n' +
-      'À la fin, l’app te propose la charge de travail de chaque exercice. Rien n’est écrit dans la routine sans ton accord.',
+      'Choisis la charge avec laquelle tu penses faire la fourchette de cet exercice dans la routine (8 – 12, 15 – 20, 20…) : plus ton essai en est loin, moins la charge proposée est fiable.\n' +
+      'À la fin, le coach en déduit la charge de chaque exercice pour toutes ses séries de la routine. Rien n’est écrit dans la routine sans ton accord.',
     launchConfirm: 'Lancer le benchmark',
     workoutName: 'Benchmark · {name}',
     workoutBanner:
-      'Benchmark · une série à l’échec par exercice. Charge visée : 5 à 12 répétitions.',
-    finishNote: 'C’est un benchmark : le bilan et les charges proposées s’affichent après l’enregistrement.',
+      'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
+    finishNote: 'C’est un benchmark : le coach en tire la charge de chaque exercice, à lire après l’enregistrement.',
     title: 'Bilan du benchmark',
     notFound: 'Ce benchmark n’existe plus.',
     intro:
-      'Une série à l’échec par exercice. La charge conseillée est celle où le bas de ta fourchette te laisse environ deux répétitions en réserve.',
+      'Une série à l’échec par exercice. Pour chacun, le coach cherche la charge qui tient toutes les séries de la routine dans sa fourchette : il compte la fatigue d’une série à l’autre (le repos, le type d’exercice) et garde environ deux répétitions en réserve à la dernière.',
+    zone: 'Fourchette de la routine : {range}',
+    rough:
+      'Estimation approximative : {reps} répétitions, c’est loin des {target} que la première série doit tenir. Refais cet exercice avec une charge qui t’en rapproche pour une estimation fiable ; l’interrupteur est éteint, à toi de le rallumer.',
     context: '{routine} · {date}',
     contextNoRoutine: '{date}',
     done: 'Fait : {reading}',
     oneRepMax: '1RM estimé : {value}',
     suggested: 'Charge de travail conseillée : {value}',
-    suggestedBasis: 'Environ {reps} répétitions à fond.',
+    suggestedBasis:
+      'Pour {sets} séries : environ {reps} répétitions à fond à la première, {reserve} en réserve à la dernière.',
+    suggestedBasisOne: 'Pour une série : environ {reps} répétitions à fond.',
     inRoutine: 'Dans la routine : {value}',
     inRoutineNone: 'Aucune charge dans la routine.',
     aligned: 'La routine est déjà à ce niveau.',
     noLine: 'Cet exercice n’est plus dans la routine : rien à écrire.',
     tooLight:
-      'Plus de 12 répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
+      'Plus de {max} répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
     noLoad: 'Aucune charge exploitable : rien à estimer.',
     recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
     toggleText: 'Appliquer à la routine',

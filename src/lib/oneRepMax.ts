@@ -1,7 +1,6 @@
 export type OneRepMaxFormula = 'epley' | 'brzycki' | 'lombardi';
 
-/** Beyond this the formulas extrapolate rather than estimate; the domain is shared by their inverse. */
-export const MAX_ESTIMATED_REPS = 12;
+const MAX_ESTIMATED_REPS = 12;
 
 export function estimateOneRepMax(
   weightKg: number,

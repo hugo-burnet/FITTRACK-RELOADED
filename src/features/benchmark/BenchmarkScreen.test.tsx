@@ -13,13 +13,18 @@ import type { Exercise, Routine, RoutineExercise, RoutineSet } from '@/data/type
 import { resetDb } from '@/test/resetDb';
 import { BenchmarkScreen } from './BenchmarkScreen';
 
-async function seedBenchmark(results: [weight: number, reps: number][]) {
+async function seedBenchmark(
+  results: [weight: number, reps: number][],
+  zone: { low: number; high: number } = { low: 8, high: 12 },
+  setCount = 2,
+) {
   const exercises = await Promise.all(
     results.map(async (_, index) => {
       const exercise = newEntity<Exercise>({
         name: index === 0 ? 'Développé couché' : `Exercice ${index + 1}`,
         primaryMuscle: 'chest',
-        secondaryMuscles: [],
+        secondaryMuscles: ['triceps', 'shoulders'],
+        movementPattern: 'poussee_horizontale',
         equipment: 'barbell',
         measurementType: 'weight_reps',
         isCustom: 0,
@@ -42,13 +47,13 @@ async function seedBenchmark(results: [weight: number, reps: number][]) {
       notes: '',
     });
     await db.routineExercises.add(row);
-    const sets = [0, 1].map((order) =>
+    const sets = Array.from({ length: setCount }, (_, order) =>
       newEntity<RoutineSet>({
         routineExerciseId: row.id,
         order,
         setType: 'normal',
-        targetReps: 8,
-        targetRepsMax: 12,
+        targetReps: zone.low,
+        targetRepsMax: zone.high,
         targetWeight: 70,
       }),
     );
@@ -90,7 +95,14 @@ describe('BenchmarkScreen', () => {
     const card = await screen.findByRole('region', { name: 'Développé couché' });
     expect(within(card).getByText('Fait : 9 reps · 80 kg')).toBeInTheDocument();
     expect(within(card).getByText('1RM estimé : 104 kg')).toBeInTheDocument();
-    expect(within(card).getByText('Charge de travail conseillée : 77,5 kg')).toBeInTheDocument();
+    // Deux séries à 70 kg dans la routine : la première doit pouvoir faire 11 répétitions à fond pour que la
+    // seconde tienne les 8 du bas de la fourchette avec deux en réserve — 104 / (1 + 11,1 / 30) = 75,9 → 75.
+    expect(within(card).getByText('Charge de travail conseillée : 75 kg')).toBeInTheDocument();
+    expect(
+      within(card).getByText(
+        'Pour 2 séries : environ 11 répétitions à fond à la première, 2 en réserve à la dernière.',
+      ),
+    ).toBeInTheDocument();
     expect(within(card).getByText('Dans la routine : 70 kg')).toBeInTheDocument();
     expect(within(card).getByRole('switch', { name: /Développé couché/ })).toBeChecked();
     expect(screen.getByText(/Push · /)).toBeInTheDocument();
@@ -104,7 +116,7 @@ describe('BenchmarkScreen', () => {
     await user.click(await screen.findByRole('button', { name: 'Appliquer à la routine · 1' }));
 
     expect(await screen.findByText('1 exercice mis à jour dans la routine.')).toBeInTheDocument();
-    expect(await targetWeights(setIds)).toEqual([77.5, 77.5]);
+    expect(await targetWeights(setIds)).toEqual([75, 75]);
     // Le bilan se relit : la routine est à ce niveau, il n'y a plus rien à appliquer.
     expect(await screen.findByText('La routine est déjà à ce niveau.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Terminé' })).toBeEnabled();
@@ -123,9 +135,25 @@ describe('BenchmarkScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
 
     await screen.findByText('1 exercice mis à jour dans la routine.');
-    // Le premier est resté à 70 ; le second, 60 kg × 10, est un 1RM de 80 kg que dix répétitions
-    // avec deux en réserve ramènent à 60 kg : il est calé, de 70 à 60.
-    expect(await targetWeights(setIds)).toEqual([70, 70, 60, 60]);
+    // Le premier est resté à 70 ; le second, 60 kg × 10, est un 1RM de 80 kg : deux séries dont la
+    // dernière garde deux répétitions en réserve le ramènent de 70 à 57,5 kg.
+    expect(await targetWeights(setIds)).toEqual([70, 70, 57.5, 57.5]);
+  });
+
+  it('rallume ce qu’on avait éteint : un second appui rend la ligne à l’écriture', async () => {
+    const { workout } = await seedBenchmark([[80, 9]]);
+    const user = userEvent.setup();
+    renderScreen(workout.id);
+
+    const toggle = await screen.findByRole('switch', { name: /Développé couché/ });
+    await user.click(toggle);
+    expect(toggle).not.toBeChecked();
+    expect(screen.getByRole('button', { name: 'Terminé' })).toBeInTheDocument();
+
+    await user.click(toggle);
+
+    expect(toggle).toBeChecked();
+    expect(screen.getByRole('button', { name: 'Appliquer à la routine · 1' })).toBeInTheDocument();
   });
 
   it('ne propose rien quand tout est décoché, et la sortie quitte sans écrire', async () => {
@@ -140,13 +168,61 @@ describe('BenchmarkScreen', () => {
     expect(await targetWeights(setIds)).toEqual([70, 70]);
   });
 
-  it('dit « trop léger » au-delà de 12 répétitions, sans interrupteur', async () => {
-    const { workout } = await seedBenchmark([[40, 15]]);
+  it('dit « trop léger » au-delà de 30 répétitions, sans interrupteur', async () => {
+    const { workout } = await seedBenchmark([[20, 35]]);
     renderScreen(workout.id);
 
-    expect(await screen.findByText(/Plus de 12 répétitions/)).toBeInTheDocument();
+    expect(await screen.findByText(/Plus de 30 répétitions/)).toBeInTheDocument();
     expect(screen.queryByRole('switch')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Terminé' })).toBeInTheDocument();
+  });
+
+  it('lit la fourchette de chaque exercice : un 15 – 20 n’est plus « trop léger » à 22 répétitions', async () => {
+    const { workout, setIds } = await seedBenchmark([[40, 22]], { low: 15, high: 20 });
+    const user = userEvent.setup();
+    renderScreen(workout.id);
+
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    expect(within(card).getByText('Fourchette de la routine : 15 – 20 reps')).toBeInTheDocument();
+    // 40 × 22 = 69,33 ; deux séries d'un 15 – 20 : 18,9 répétitions pour la première, 42,5 sur la grille de la barre (2,5).
+    expect(within(card).getByText('Charge de travail conseillée : 42,5 kg')).toBeInTheDocument();
+    expect(
+      within(card).getByText(
+        'Pour 2 séries : environ 19 répétitions à fond à la première, 2 en réserve à la dernière.',
+      ),
+    ).toBeInTheDocument();
+    expect(within(card).queryByText(/Estimation approximative/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
+    await screen.findByText('1 exercice mis à jour dans la routine.');
+    expect(await targetWeights(setIds)).toEqual([42.5, 42.5]);
+  });
+
+  it('éteint l’interrupteur d’une estimation approximative, et ne l’écrit qu’une fois rallumé', async () => {
+    // 40 × 25 sur une fourchette de 5, deux séries : la première doit tenir 7,8 répétitions, l'essai en est à 17.
+    const { workout, setIds } = await seedBenchmark([[40, 25]], { low: 5, high: 5 });
+    const user = userEvent.setup();
+    renderScreen(workout.id);
+
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    expect(
+      within(card).getByText(
+        /Estimation approximative : 25 répétitions, c’est loin des 8 que la première série doit tenir/,
+      ),
+    ).toBeInTheDocument();
+    const toggle = within(card).getByRole('switch', { name: /Développé couché/ });
+    expect(toggle).not.toBeChecked();
+    // Rien de coché : la sortie quitte sans rien écrire.
+    expect(screen.getByRole('button', { name: 'Terminé' })).toBeInTheDocument();
+    expect(await targetWeights(setIds)).toEqual([70, 70]);
+
+    await user.click(toggle);
+    expect(toggle).toBeChecked();
+    await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
+
+    await screen.findByText('1 exercice mis à jour dans la routine.');
+    // 40 × (1 + 25/30) = 73,33 ; sur 7,8 répétitions : 58,2 → 57,5.
+    expect(await targetWeights(setIds)).toEqual([57.5, 57.5]);
   });
 
   it('revient à l’historique, et non à l’accueil, quand on y est venu de la fiche d’une séance', async () => {
@@ -174,7 +250,35 @@ describe('BenchmarkScreen', () => {
 
     await user.dblClick(await screen.findByRole('button', { name: 'Appliquer à la routine · 1' }));
 
-    await waitFor(async () => expect(await targetWeights(setIds)).toEqual([77.5, 77.5]));
+    await waitFor(async () => expect(await targetWeights(setIds)).toEqual([75, 75]));
     expect(write).toHaveBeenCalledTimes(1);
+  });
+
+  it('dimensionne la charge sur le nombre de séries de la routine : trois séries, trois séries tenues', async () => {
+    const { workout, setIds } = await seedBenchmark([[80, 9]], { low: 8, high: 12 }, 3);
+    const user = userEvent.setup();
+    renderScreen(workout.id);
+
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    // 10 / 0,9² = 12,3 répétitions pour la première série : 104 / (1 + 12,3 / 30) = 73,7 → 72,5.
+    expect(within(card).getByText('Charge de travail conseillée : 72,5 kg')).toBeInTheDocument();
+    expect(
+      within(card).getByText(
+        'Pour 3 séries : environ 12 répétitions à fond à la première, 2 en réserve à la dernière.',
+      ),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
+    await screen.findByText('1 exercice mis à jour dans la routine.');
+    expect(await targetWeights(setIds)).toEqual([72.5, 72.5, 72.5]);
+  });
+
+  it('dit « pour une série » quand la routine n’en porte qu’une', async () => {
+    const { workout } = await seedBenchmark([[80, 9]], { low: 8, high: 12 }, 1);
+    renderScreen(workout.id);
+
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    expect(within(card).getByText('Charge de travail conseillée : 77,5 kg')).toBeInTheDocument();
+    expect(within(card).getByText('Pour une série : environ 10 répétitions à fond.')).toBeInTheDocument();
   });
 });

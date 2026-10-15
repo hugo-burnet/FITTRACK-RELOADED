@@ -1,74 +1,40 @@
 import type { Equipment, MeasurementType, SetType } from '@/data/types';
+import { SEVERITY } from '@/lib/coach/constants';
+import type { CoachSignal } from '@/lib/coach/types';
+import type { ExerciseClass } from '@/lib/exerciseClass';
 import { resolveLoadStep, type LoadStep } from '@/lib/loadIncrement';
 import type { Performed } from '@/lib/measurement';
-import { MAX_ESTIMATED_REPS, estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import { isWorkingSet } from '@/lib/records';
+import {
+  capacityForSets,
+  loadForReps,
+  oneRepMaxOf,
+  plannedSets,
+  repZone,
+  setFatigue,
+  type RepZone,
+} from './benchmarkModel';
 
 /**
  * Le benchmark : une série menée à l'échec par exercice, lue comme un maximum,
- * et ce que ce maximum dit de la charge de travail (spec benchmark, §3).
+ * et ce que ce maximum dit de la charge de travail **de la fourchette de cet
+ * exercice, tenue sur toutes ses séries** (spec benchmark, §3).
  *
  * Pur par construction : des séries et une ligne de routine en entrée, un
  * verdict et — quand il y a lieu — une proposition d'écriture en sortie. Lire
  * la base et écrire dans la routine est l'affaire de `repositories/benchmark`.
- */
-
-/**
- * Les répétitions qu'on garde en réserve au bas de la fourchette. Un maximum
- * dit ce que la personne peut faire *une fois, à fond* ; une série de travail
- * commence deux répétitions avant l'échec, et la double progression a ensuite de
- * la place pour monter avant de devoir ajouter du poids.
- */
-export const BENCHMARK_RESERVE_REPS = 2;
-
-/** Le bas de fourchette quand la routine n'en porte pas : le milieu du « 6 – 12 » usuel. */
-export const BENCHMARK_DEFAULT_LOW_REPS = 8;
-
-/**
- * La charge à laquelle un maximum de `oneRepMax` tient `reps` répétitions : le
- * miroir exact de `estimateOneRepMax`, formule par formule.
  *
- * Même domaine que lui (1 à 12) et pour la même raison : au-delà, les formules
- * extrapolent, et renvoyer un nombre ferait passer une extrapolation pour une
- * mesure.
+ * Le modèle — du maximum à la charge, par Epley, avec la fatigue d'une série à l'autre — est dans
+ * `benchmarkModel` ; ce module en fait un verdict par exercice, une proposition d'écriture et le signal
+ * que le coach lit.
  */
-export function loadForReps(
-  oneRepMax: number,
-  reps: number,
-  formula: OneRepMaxFormula,
-): number | undefined {
-  if (
-    !Number.isFinite(oneRepMax) ||
-    oneRepMax <= 0 ||
-    !Number.isInteger(reps) ||
-    reps < 1 ||
-    reps > MAX_ESTIMATED_REPS
-  ) {
-    return undefined;
-  }
-  if (reps === 1) return oneRepMax;
-
-  switch (formula) {
-    case 'epley':
-      return oneRepMax / (1 + reps / 30);
-    case 'brzycki':
-      return (oneRepMax * (37 - reps)) / 36;
-    case 'lombardi':
-      return oneRepMax / reps ** 0.1;
-  }
-}
 
 /**
- * Les répétitions sur lesquelles dimensionner la charge : le bas de fourchette
- * de la routine plus la réserve, sans sortir du domaine des formules.
+ * L'écart, en répétitions, entre l'essai et la capacité que la première série doit avoir au-delà duquel
+ * l'estimation est dite approximative. Convertir 22 répétitions en 17 est une petite extrapolation ;
+ * convertir 25 en 7 n'est plus une mesure, et la charge qui en sort ne s'écrit pas d'office dans la routine.
  */
-export function referenceReps(lowReps: number | undefined): number {
-  const low =
-    lowReps !== undefined && Number.isInteger(lowReps) && lowReps >= 1
-      ? lowReps
-      : BENCHMARK_DEFAULT_LOW_REPS;
-  return Math.min(MAX_ESTIMATED_REPS, low + BENCHMARK_RESERVE_REPS);
-}
+export const BENCHMARK_ROUGH_GAP = 6;
 
 const round3 = (value: number): number => Math.round(value * 1000) / 1000;
 
@@ -91,7 +57,7 @@ export function floorLoad(ideal: number, anchor: number, step: LoadStep): number
 export type BenchmarkVerdict =
   /** Un maximum lisible, une charge de travail en découle. */
   | 'calibrated'
-  /** Plus de 12 répétitions : trop léger pour que la formule dise quoi que ce soit. */
+  /** Plus de 30 répétitions : trop léger pour que la formule dise quoi que ce soit. */
   | 'too_light'
   /** Pas de charge exploitable : rien à dimensionner. */
   | 'no_load'
@@ -143,11 +109,14 @@ export interface BenchmarkLineInput {
   measurementType: MeasurementType;
   equipment: Equipment;
   loadIncrementKg?: number;
-  formula: OneRepMaxFormula;
   /** Les séries validées de l'exercice dans la séance, dans l'ordre qu'on veut. */
   sets: readonly Performed[];
   /** La ligne de la routine d'où l'exercice est parti — absente si elle n'existe plus. */
   routine?: BenchmarkRoutineRow;
+  /** Le repos de l'exercice, en secondes : plus il est court, plus une série en fatigue la suivante. Absent : deux minutes. */
+  restSeconds?: number;
+  /** Polyarticulaire ou isolation (`exerciseClass`). Absent : polyarticulaire, la lecture la plus prudente. */
+  exerciseClass?: ExerciseClass;
 }
 
 export interface BenchmarkLine {
@@ -156,7 +125,16 @@ export interface BenchmarkLine {
   measurementType: MeasurementType;
   verdict: BenchmarkVerdict;
   tested?: Performed;
+  /** La fourchette de la routine sur laquelle la charge est dimensionnée. */
+  zone?: RepZone;
   oneRepMax?: number;
+  /** Sur combien de séries la charge est dimensionnée (`plannedSets`) : celles de la routine, ou le défaut de la classe. */
+  plannedSets?: number;
+  /**
+   * Ce que la première série doit pouvoir faire, à fond, avec la charge conseillée (`capacityForSets`) : pas
+   * forcément entier. C'est la grandeur sur laquelle la charge est dimensionnée, et celle que l'essai doit
+   * approcher pour que l'estimation soit fiable.
+   */
   referenceReps?: number;
   suggestedKg?: number;
   /** La cible actuelle de la routine : la plus dure de ses séries de travail. */
@@ -164,6 +142,12 @@ export interface BenchmarkLine {
   proposal?: BenchmarkProposal;
   /** `true` quand la routine porte déjà la charge calibrée — rien à écrire. */
   aligned?: true;
+  /**
+   * `true` quand l'essai est à plus de `BENCHMARK_ROUGH_GAP` répétitions de la capacité exigée de la première
+   * série : la charge est une extrapolation. Elle est proposée, mais n'est cochée ni écrite d'office, et le
+   * coach ne la reprend pas.
+   */
+  rough?: true;
 }
 
 interface Estimated {
@@ -188,14 +172,17 @@ function bestRecorded(sets: readonly Performed[]): Performed {
 }
 
 /**
- * La ligne de la routine qui détermine la charge : la première série de
- * travail, celle que le benchmark remplace. Les autres suivent du même écart.
+ * Les séries de travail de la ligne de routine. La première donne la fourchette et la charge de départ,
+ * les autres suivent du même écart ; leur nombre est celui sur lequel la charge doit tenir.
  */
 function routineWorkingSets(routine: BenchmarkRoutineRow | undefined): BenchmarkRoutineSet[] {
   return routine === undefined ? [] : routine.sets.filter(isWorkingSet);
 }
 
-/** Un exercice du benchmark, lu : son maximum, la charge qui en découle, ce qu'il faudrait écrire. */
+/**
+ * Un exercice du benchmark, lu : son maximum, la charge qui en découle **pour sa fourchette et ses séries**, ce
+ * qu'il faudrait écrire.
+ */
 export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   const base = {
     exerciseId: input.exerciseId,
@@ -211,26 +198,30 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     return { ...base, verdict: 'recorded', tested: resultOf(bestRecorded(input.sets)) };
   }
 
+  const working = routineWorkingSets(input.routine);
+  const first = working[0];
+  const zone = repZone(first?.targetReps, first?.targetRepsMax);
+
   const loaded = input.sets.filter(
     (set) => set.weight !== undefined && set.weight > 0 && set.reps !== undefined && set.reps >= 1,
   );
   if (loaded.length === 0) {
-    return { ...base, verdict: 'no_load', tested: resultOf(bestRecorded(input.sets)) };
+    return { ...base, verdict: 'no_load', zone, tested: resultOf(bestRecorded(input.sets)) };
   }
 
   const estimated: Estimated[] = loaded.flatMap((set) => {
-    const oneRepMax = estimateOneRepMax(set.weight!, set.reps!, input.formula);
+    const oneRepMax = oneRepMaxOf(set.weight!, set.reps!);
     return oneRepMax === undefined ? [] : [{ set, oneRepMax }];
   });
 
   if (estimated.length === 0) {
-    // Tout est au-delà de 12 : on garde la série la plus chargée, puis la plus longue.
+    // Tout est au-delà de 30 : on garde la série la plus chargée, puis la plus longue.
     const heaviest = loaded.reduce((best, set) =>
       set.weight! > best.weight! || (set.weight === best.weight && set.reps! > best.reps!)
         ? set
         : best,
     );
-    return { ...base, verdict: 'too_light', tested: resultOf(heaviest) };
+    return { ...base, verdict: 'too_light', zone, tested: resultOf(heaviest) };
   }
 
   const best = estimated.reduce((top, candidate) =>
@@ -238,10 +229,10 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   );
   const tested = resultOf(best.set);
 
-  const working = routineWorkingSets(input.routine);
-  const first = working[0];
-  const reference = referenceReps(first?.targetReps);
-  const ideal = loadForReps(best.oneRepMax, reference, input.formula);
+  const klass = input.exerciseClass ?? 'compound';
+  const planned = plannedSets(working, klass);
+  const reference = capacityForSets(zone.low, planned, setFatigue(klass, input.restSeconds));
+  const ideal = loadForReps(best.oneRepMax, reference);
   const step = resolveLoadStep({
     equipment: input.equipment,
     ...(input.loadIncrementKg === undefined ? {} : { loadIncrementKg: input.loadIncrementKg }),
@@ -250,20 +241,24 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
 
   if (!(suggested > 0)) {
     // Une charge sous le premier cran du matériel n'est pas une proposition.
-    return { ...base, verdict: 'no_load', tested, oneRepMax: best.oneRepMax };
+    return { ...base, verdict: 'no_load', zone, tested, oneRepMax: best.oneRepMax };
   }
 
   const weights = working.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight]));
   const currentKg = weights.length === 0 ? undefined : Math.max(...weights);
+  const rough = Math.abs(best.set.reps! - reference) > BENCHMARK_ROUGH_GAP;
 
   const line: BenchmarkLine = {
     ...base,
     verdict: 'calibrated',
     tested,
+    zone,
     oneRepMax: best.oneRepMax,
+    plannedSets: planned,
     referenceReps: reference,
     suggestedKg: suggested,
     ...(currentKg === undefined ? {} : { currentKg }),
+    ...(rough ? { rough: true as const } : {}),
   };
 
   if (input.routine === undefined || first === undefined) return line;
@@ -293,4 +288,51 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
         };
 
   return { ...line, proposal };
+}
+
+const round1 = (value: number): number => Math.round(value * 10) / 10;
+
+/**
+ * Ce que le coach lit du benchmark : la charge de la fourchette de l'exercice, tenue sur ses séries, comme objectif.
+ *
+ * Un objectif de charge comme un autre — affiché sur la carte de l'exercice à la séance suivante, jamais
+ * prérempli, écrit sur les séries restantes sur un geste —, avec les chiffres qui l'ont produit : jamais
+ * un « 77,5 kg » nu.
+ *
+ * **Aucun signal pour une estimation approximative** : le coach ne pousse pas une extrapolation, la
+ * personne la lit sur le bilan et décide de l'écrire ou non dans la routine. Aucun non plus sans charge à
+ * proposer (trop léger, sans charge, au poids du corps). **Un signal même quand la routine porte déjà la
+ * charge** : il remplace l'objectif que le coach avait posé avant, qui sinon resterait affiché à côté.
+ */
+export function benchmarkSignal(line: BenchmarkLine): CoachSignal | undefined {
+  if (
+    line.verdict !== 'calibrated' ||
+    line.rough === true ||
+    line.suggestedKg === undefined ||
+    line.tested?.weight === undefined ||
+    line.tested.reps === undefined ||
+    line.oneRepMax === undefined ||
+    line.zone === undefined ||
+    line.plannedSets === undefined ||
+    line.referenceReps === undefined
+  ) {
+    return undefined;
+  }
+
+  return {
+    code: 'benchmark_calibrated',
+    exerciseId: line.exerciseId,
+    nextLoadKg: line.suggestedKg,
+    severity: SEVERITY.benchmark_calibrated,
+    evidence: [
+      { label: 'tested_load_kg', value: line.tested.weight },
+      { label: 'tested_reps', value: line.tested.reps },
+      { label: 'one_rep_max_kg', value: round1(line.oneRepMax) },
+      { label: 'target_reps', value: line.zone.low },
+      { label: 'target_reps_max', value: line.zone.high },
+      { label: 'planned_sets', value: line.plannedSets },
+      { label: 'reference_reps', value: round1(line.referenceReps) },
+      ...(line.currentKg === undefined ? [] : [{ label: 'current_load_kg', value: line.currentKg }]),
+    ],
+  };
 }

@@ -5,6 +5,7 @@ import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { applyBenchmarkProposals, loadBenchmarkReport } from '@/data/repositories/benchmark';
 import { t } from '@/i18n/fr';
+import type { BenchmarkLine } from '@/lib/benchmark';
 import { ActionBand, Card } from '@/ui';
 import { BenchmarkLineCard } from './BenchmarkLineCard';
 import { appliedReading } from './benchmarkText';
@@ -32,7 +33,9 @@ export function BenchmarkScreen() {
   const fresh = (useLocation().state as BenchmarkLocationState | null)?.benchmarkFresh === true;
   const report = useLiveQuery(() => loadBenchmarkReport(workoutId), [workoutId]);
 
-  const [declined, setDeclined] = useState<ReadonlySet<string>>(new Set());
+  // Ce que la personne a retourné par rapport au défaut : allumé pour une charge fiable, éteint pour une
+  // estimation approximative. Retenir le retournement, et non l'état, laisse le défaut à `line.rough`.
+  const [flipped, setFlipped] = useState<ReadonlySet<string>>(new Set());
   const [applying, setApplying] = useState(false);
   const [outcome, setOutcome] = useState<{ count: number } | 'failed' | null>(null);
   const applyingRef = useRef(false);
@@ -69,14 +72,16 @@ export function BenchmarkScreen() {
   }
 
   const lines = report.lines.filter((line) => line.verdict !== 'skipped');
-  const proposals = lines.flatMap((line) =>
-    line.proposal === undefined ? [] : [line.proposal],
+  const isIncluded = (line: BenchmarkLine): boolean =>
+    line.proposal !== undefined &&
+    (line.rough !== true) !== flipped.has(line.proposal.routineExerciseId);
+  const selected = lines.flatMap((line) =>
+    line.proposal !== undefined && isIncluded(line) ? [line.proposal] : [],
   );
-  const selected = proposals.filter((proposal) => !declined.has(proposal.routineExerciseId));
   const date = longDate.format(report.workout.startedAt);
 
   const toggle = (routineExerciseId: string) =>
-    setDeclined((current) => {
+    setFlipped((current) => {
       const next = new Set(current);
       if (!next.delete(routineExerciseId)) next.add(routineExerciseId);
       return next;
@@ -87,7 +92,7 @@ export function BenchmarkScreen() {
     applyingRef.current = true;
     setApplying(true);
     setOutcome(null);
-    void applyBenchmarkProposals(selected)
+    void applyBenchmarkProposals(selected, report.workout.id)
       .then((count) => setOutcome({ count }))
       .catch(() => setOutcome('failed'))
       .finally(() => {
@@ -144,9 +149,7 @@ export function BenchmarkScreen() {
           <BenchmarkLineCard
             key={`${index}-${line.exerciseId}`}
             line={line}
-            included={
-              line.proposal !== undefined && !declined.has(line.proposal.routineExerciseId)
-            }
+            included={isIncluded(line)}
             onToggle={() => line.proposal !== undefined && toggle(line.proposal.routineExerciseId)}
           />
         ))}

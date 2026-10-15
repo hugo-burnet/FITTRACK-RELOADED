@@ -2,12 +2,15 @@ import { t } from '@/i18n/fr';
 import type { BenchmarkLine } from '@/lib/benchmark';
 import { Card, Toggle } from '@/ui';
 import {
+  basisReading,
   loadReading,
   oneRepMaxReading,
   proposalMark,
+  roughReading,
   routineReading,
   testedReading,
   withoutLoadReading,
+  zoneReading,
 } from './benchmarkText';
 
 /**
@@ -28,8 +31,11 @@ export function BenchmarkLineCard({
   onToggle: () => void;
 }) {
   const tested = testedReading(line);
+  const basis = basisReading(line);
   const routine = routineReading(line);
   const withoutLoad = withoutLoadReading(line);
+  const zone = zoneReading(line);
+  const rough = roughReading(line);
 
   return (
     <Card padded>
@@ -41,6 +47,7 @@ export function BenchmarkLineCard({
           </p>
         )}
 
+        {zone !== undefined && <p className="text-sm text-[var(--text-2)]">{zone}</p>}
         {line.verdict === 'calibrated' && line.oneRepMax !== undefined && (
           <p className="text-sm text-[var(--text-2)]">
             {t('benchmark.oneRepMax', { value: oneRepMaxReading(line.oneRepMax) })}
@@ -51,12 +58,11 @@ export function BenchmarkLineCard({
             <p className="text-base font-semibold text-[var(--accent-ink)]">
               {t('benchmark.suggested', { value: loadReading(line.suggestedKg) })}
             </p>
-            {line.referenceReps !== undefined && (
-              <p className="text-sm text-[var(--text-2)]">
-                {t('benchmark.suggestedBasis', { reps: line.referenceReps })}
-              </p>
-            )}
+            {basis !== undefined && <p className="text-sm text-[var(--text-2)]">{basis}</p>}
           </div>
+        )}
+        {rough !== undefined && (
+          <p className="text-sm leading-relaxed text-[var(--text-1)]">{rough}</p>
         )}
         {routine !== undefined && <p className="text-sm text-[var(--text-2)]">{routine}</p>}
         {withoutLoad !== undefined && (

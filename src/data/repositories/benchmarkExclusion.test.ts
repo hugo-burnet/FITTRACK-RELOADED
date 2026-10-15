@@ -120,13 +120,18 @@ describe('le coach', () => {
     });
     await withRange(benchmark.id);
 
+    // Aucune évaluation de séance : pas de « fourchette tenue », pas de plafond, pas de hausse à proposer.
     expect(await evaluateCoachForWorkout(benchmark.id)).toEqual([]);
-    expect(await finalizeCoachForWorkout(benchmark.id)).toEqual([]);
+    // Le coach, lui, le *lit* : la seule chose qu'il en tire est l'objectif du benchmark, rien des règles de séance.
+    const finalized = await finalizeCoachForWorkout(benchmark.id);
+    expect(finalized.map((signal) => signal.code)).toEqual(['benchmark_calibrated']);
     const recorded = await listRecommendationsForExercise(bench.id);
-    expect(recorded.filter((row) => row.sourceWorkoutId === benchmark.id)).toEqual([]);
+    expect(
+      recorded.filter((row) => row.sourceWorkoutId === benchmark.id).map((row) => row.code),
+    ).toEqual(['benchmark_calibrated']);
   });
 
-  it('ne prend pas la charge d’un benchmark pour un objectif suivi', async () => {
+  it('ne prend pas la charge d’un benchmark pour un objectif suivi : il le remplace', async () => {
     const pending = newEntity<CoachRecommendation>({
       exerciseId: bench.id,
       code: 'range_ceiling_reached',
@@ -145,7 +150,9 @@ describe('le coach', () => {
 
     await finalizeCoachForWorkout(benchmark.id);
 
-    expect((await db.coachRecommendations.get(pending.id))?.status).toBe('pending');
+    // Ni suivi — la charge d'un essai à fond n'est pas une réponse à l'objectif — ni laissé en place : le
+    // coach vient de lire le benchmark et pose sa propre charge, « un objectif vivant à la fois ».
+    expect((await db.coachRecommendations.get(pending.id))?.status).toBe('superseded');
   });
 
   it('ne rejoue pas un benchmark depuis une sauvegarde', async () => {

@@ -25,6 +25,8 @@ export type CoachSituation =
   | 'ceiling_reached'
   /** Same load, at least as many reps, clearly less effort. */
   | 'consolidating'
+  /** A benchmark gave the load for the exercise's rep range. */
+  | 'calibrated'
   /** The range held without reaching its ceiling. */
   | 'in_range'
   /** No progress on the estimated 1RM across the comparison window. */
@@ -53,6 +55,8 @@ export function situationOfCode(code: CoachSignalCode | undefined): CoachSituati
       return 'ceiling_reached';
     case 'consolidating':
       return 'consolidating';
+    case 'benchmark_calibrated':
+      return 'calibrated';
     case 'range_satisfied':
       return 'in_range';
     case 'plateau':

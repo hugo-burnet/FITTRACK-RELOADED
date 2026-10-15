@@ -31,7 +31,7 @@ aucune version de schéma.
 **Files :** Create `src/lib/benchmark.ts` (+ test) ; Modify `src/lib/oneRepMax.ts` (exporte le domaine).
 
 - [x] `loadForReps` : l'inverse exact des trois formules, aller-retour testé pour 1 à 12 répétitions.
-- [x] `referenceReps` : bas de fourchette + 2, plafonné à 12, 8 par défaut.
+- [x] `referenceReps` : bas de fourchette + 2, plafonné à 12, 8 par défaut. *(remplacé par `capacityForSets`, tâche 8)*
 - [x] `floorLoad` : vers le bas, sur la grille du matériel ou à partir de la charge essayée.
 - [x] `benchmarkLine` : meilleure série, verdicts (`calibrated`, `too_light`, `no_load`, `recorded`, `skipped`),
       proposition qui décale toutes les séries de travail et préserve une pyramide.
@@ -82,9 +82,46 @@ aucune version de schéma.
 
 - [x] Spec, décisions et pièges, inventaire, recette téléphone, `PROGRESS.md`.
 
+### Tâche 7 — reprise : la fourchette, le coach, la coche (après la v2.12.2)
+
+**Files :** Modify `src/lib/benchmark.ts` (+ test), `src/data/repositories/benchmark.ts` (+ test), `coachEvaluate.ts`,
+`src/features/benchmark/*`, `src/features/workout/{WorkoutSetRow,WorkoutExerciseCard,WorkoutScreen,coachCopy,workoutRecapVoice}.ts(x)`,
+`src/lib/coach/{constants,situation}.ts`, `src/data/types.ts`, `src/lib/backup/validate.ts`, `src/i18n/fr.ts`, `e2e/benchmark.spec.ts`.
+
+- [x] La fourchette : `repZone`, référence = bas + 2 sans plafond à 12, Epley seul de 1 à 30 répétitions, « trop léger » au-delà de 30 ;
+      un 15 – 20, un 20, un 18 testés.
+- [x] L'estimation approximative (plus de six répétitions de la référence) : proposée, dite telle, interrupteur éteint, sans objectif.
+- [x] Le coach lit le benchmark : `benchmark_calibrated` (type, validateur, gravité, situation, texte, voix muette), `recordBenchmarkObjectives`
+      appelée par `finalizeCoachForWorkout`, objectifs résolus à l'acceptation (suivi / remplacé).
+- [x] Les `amrap` : les répétitions d'une série de benchmark ne sont jamais proposées (ligne, carte, écran).
+- [x] E2E : un exercice avec historique (« Précédent » offert, coche fermée sans répétitions), le coach qui lit le benchmark, la fourchette
+      sur le bilan. Vus rouges quand la garde est retirée.
+
+### Tâche 8 — la charge qui tient les séries (reprise après la tâche 7)
+
+**Files :** Create `src/lib/benchmarkModel.ts`, `src/lib/exerciseClass.ts` (+ tests) ; Modify `src/lib/benchmark.ts` (+ test),
+`src/data/repositories/benchmark.ts` (+ test), `src/features/benchmark/{BenchmarkLineCard,benchmarkText}.ts(x)`,
+`src/features/workout/coachCopy.ts`, `src/i18n/fr.ts`, `e2e/benchmark.spec.ts`.
+
+- [x] `exerciseClass` : polyarticulaire ou isolation, lu sur `movementPattern` (tout le catalogue rangé), par les muscles pour « autre »
+      ou une famille absente, polyarticulaire sans rien savoir.
+- [x] Le modèle (`benchmarkModel`) : `setFatigue` (10 % / 8 %, facteur de repos borné), `plannedSets` (séries de travail, six au plus,
+      pyramide = une, 3 / 2 par défaut), `capacityForSets` (`(bas + 2) / (1 − φ)^(x − 1)`, plafonnée à 30), `loadForReps` qui accepte une
+      capacité non entière. Valeurs de référence calculées à part, dans un script Python écrit hors du dépôt.
+- [x] `benchmarkLine` : repos et classe en entrée, `plannedSets` et capacité en sortie, « approximatif » jugé sur la capacité ; le signal du
+      coach porte `planned_sets` et `reference_reps`.
+- [x] Le dépôt donne à la ligne le repos de la séance et la classe de l'exercice ; le bilan dit « Pour 3 séries : … », le coach « Pour 3 séries
+      de 8 – 12 reps, démarre à … kg ».
+- [x] E2E : 5×5 — A, squat 100 kg × 9 → 130 → **95 kg** sur cinq séries (et non plus 105 kg).
+- [x] Trente-deux mutations, trente-deux tuées (une a survécu à un test de pyramide à trois charges : un cas à deux charges l'a tuée).
+- [x] Le module a été coupé en deux (`benchmarkModel` / `benchmark`) : il faisait le modèle et la lecture à la fois.
+
 ## Ce qui reste, et pourquoi
 
+- La fourchette n'est pas affichée sur la ligne de série pendant le benchmark (spec §« Ce qui n'est pas fait »).
 - Le bilan n'est pas dans la matrice de mise en page des trois thèmes : sa route porte un identifiant de
   séance qu'un test générique ne connaît pas. Il est vérifié en thème sombre à 100 et 200 % dans son propre
   parcours ; TTY1 et le thème clair restent à l'œil, sur le téléphone.
-- Le seuil « 12 répétitions » et la réserve de 2 sont des constantes à juger à l'usage.
+- La réserve de 2, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les séries par défaut (3 / 2) et la
+  limite de 30 répétitions sont des constantes à juger à l'usage, toutes dans `benchmarkModel.ts`.
+- Le coach ne propose pas le nombre de séries : il dimensionne la charge sur celles de la routine (question posée à l'utilisateur).
