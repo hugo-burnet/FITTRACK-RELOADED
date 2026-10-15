@@ -48,7 +48,10 @@ export function setForReplacement(set: WorkoutSet, to: MeasurementType): Workout
   return next;
 }
 
-/** Ce que la ligne dit de son exercice : l'instantané, et la cadence qui était la sienne. */
+/**
+ * Ce que la ligne dit de son exercice : l'instantané, la cadence qui était la sienne, et la ligne de
+ * routine d'où elle venait (un benchmark : cette ligne-là parlait de l'ancien exercice).
+ */
 const IDENTITY_KEYS = [
   'exerciseName',
   'exerciseMeasurementType',
@@ -59,6 +62,7 @@ const IDENTITY_KEYS = [
   'exerciseIsUnilateral',
   // Un tempo se choisit pour un exercice : l'autre prend le réglage de l'app.
   'repSeconds',
+  'routineExerciseId',
 ] as const;
 
 /**

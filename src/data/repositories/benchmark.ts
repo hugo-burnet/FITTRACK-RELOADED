@@ -20,6 +20,7 @@ import {
   insertWorkoutEntities,
   readWorkoutRoutineSource,
   type WorkoutEntityGraph,
+  type WorkoutRoutineSource,
 } from './workoutLifecycle';
 
 /**
@@ -72,6 +73,23 @@ function reduceToBenchmark(graph: WorkoutEntityGraph): WorkoutEntityGraph {
 }
 
 /**
+ * Pose sur chaque ligne de séance l'identifiant de la ligne de routine d'où elle part.
+ *
+ * `buildWorkoutEntities` fait une ligne de séance par ligne de routine, dans le même ordre : c'est ce qui
+ * permet de les apparier par leur position dans ces deux listes, une seule fois, ici. Le bilan retrouve
+ * ensuite sa ligne par cet identifiant, et non par un rang que la séance renumérote.
+ */
+function linkToRoutine(graph: WorkoutEntityGraph, source: WorkoutRoutineSource): WorkoutEntityGraph {
+  return {
+    ...graph,
+    exercises: graph.exercises.map((row, index) => {
+      const routineRow = source.rows[index];
+      return routineRow === undefined ? row : { ...row, routineExerciseId: routineRow.id };
+    }),
+  };
+}
+
+/**
  * Lance un benchmark depuis une routine. Refuse quand une séance est déjà
  * ouverte (comme « Démarrer ») et quand la routine n'a aucun exercice.
  */
@@ -84,7 +102,7 @@ export async function startBenchmarkFromRoutine(
   if (source.rows.length === 0) throw new Error(`Routine sans exercice : ${routineId}`);
 
   const built = buildWorkoutEntities({ source, startedAt: Date.now() });
-  const reduced = reduceToBenchmark(built);
+  const reduced = reduceToBenchmark(linkToRoutine(built, source));
   const graph: WorkoutEntityGraph = {
     ...reduced,
     workout: { ...reduced.workout, name, kind: 'benchmark' },
@@ -106,19 +124,30 @@ export interface BenchmarkReport {
 }
 
 /**
- * La ligne de la routine qui correspond à un exercice de la séance : même
- * exercice, **même rang**. Rapprocher par exercice seul confondrait un exercice
- * présent deux fois ; si la routine a été modifiée depuis, rien ne correspond et
- * il n'y a rien à écrire — mieux vaut ne rien écrire que l'écrire à côté.
+ * La ligne de la routine qui correspond à un exercice de la séance.
+ *
+ * **Par l'identifiant posé au lancement**, et pour le même exercice : la séance renumérote ses rangs dès
+ * qu'on retire, déplace ou remplace un exercice (et l'édition de l'historique aussi), donc un rang ne dit
+ * plus quelle ligne de la routine on a devant soi. Rapprocher par exercice seul confondrait un exercice
+ * présent deux fois. Si la routine a été modifiée depuis — la ligne supprimée, l'exercice changé —, rien
+ * ne correspond et il n'y a rien à écrire : mieux vaut ne rien écrire que l'écrire à côté.
+ *
+ * Un benchmark lancé avant ce lien n'en porte pas : il retombe sur le rang, comme avant.
  */
 function routineRowFor(
   row: WorkoutExercise,
   routineRows: readonly { id: string; exerciseId: string; order: number }[],
   setsByRow: ReadonlyMap<string, readonly RoutineSet[]>,
 ): BenchmarkRoutineRow | undefined {
-  const match = routineRows.find(
-    (candidate) => candidate.exerciseId === row.exerciseId && candidate.order === row.order,
-  );
+  const match =
+    row.routineExerciseId === undefined
+      ? routineRows.find(
+          (candidate) => candidate.exerciseId === row.exerciseId && candidate.order === row.order,
+        )
+      : routineRows.find(
+          (candidate) =>
+            candidate.id === row.routineExerciseId && candidate.exerciseId === row.exerciseId,
+        );
   if (match === undefined) return undefined;
   return {
     routineExerciseId: match.id,

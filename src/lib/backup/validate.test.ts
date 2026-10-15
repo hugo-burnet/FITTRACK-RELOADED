@@ -129,6 +129,24 @@ describe('validateBackupTables', () => {
     });
   });
 
+  it('accepte le lien d’une ligne de séance vers sa ligne de routine, et refuse un lien qui n’en est pas un', () => {
+    const tables = account();
+    tables.workoutExercises[0]!.routineExerciseId = 'routine-row-1';
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+
+    tables.workoutExercises[0]!.routineExerciseId = 42;
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'workoutExercises',
+      index: 0,
+      field: 'routineExerciseId',
+    });
+  });
+
   it('refuse deux lignes qui portent le même identifiant', () => {
     // `bulkPut` en écraserait une sans un mot : deux séances entrent, une seule
     // ressort, et le fichier disait pourtant qu'il y en avait deux.

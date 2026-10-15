@@ -325,6 +325,16 @@ export interface WorkoutExercise extends Syncable {
   supersetGroup: number;
   notes?: string;
 
+  /**
+   * La ligne de routine d'où cette ligne de séance est partie — posée au lancement d'un benchmark, qui a
+   * besoin de retrouver sa ligne (zone, séries, charges à écrire) quoi que la séance devienne.
+   *
+   * Le rang ne peut pas faire ce travail : la séance le renumérote dès qu'on retire, déplace ou remplace
+   * un exercice, et l'édition de l'historique aussi. Absent d'une séance ordinaire, d'un exercice ajouté
+   * en séance, et d'un benchmark lancé avant ce champ (le bilan retombe alors sur le rang).
+   */
+  routineExerciseId?: string;
+
   /** Resolved once on session entry; always positive and independent of later edits. */
   restSeconds: number;
 

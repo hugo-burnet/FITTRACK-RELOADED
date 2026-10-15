@@ -312,6 +312,10 @@ const SPECS: Record<BackupTable, TableSpec> = {
       // la note de routine vient alimenter au démarrage. Les deux bouts du
       // report sont désormais typés du même côté de la porte.
       notes: isString,
+      // Le lien d'un benchmark vers sa ligne de routine. Pas de `links` : une ligne de routine supprimée
+      // reste une référence valide (le bilan ne la trouve simplement plus), et une sauvegarde qui la
+      // perdrait ne doit pas pour autant être refusée.
+      routineExerciseId: isId,
     },
     links: [
       { field: 'workoutId', table: 'workouts' },
