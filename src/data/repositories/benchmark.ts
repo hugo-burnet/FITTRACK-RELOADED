@@ -11,7 +11,6 @@ import { isWorkingSet } from '@/lib/records';
 import { alive, newEntity } from './base';
 import { supersedePendingLoadRecommendations } from './coachRecommendations';
 import { applyRoutineTargetProposals } from './routineTargetReview';
-import { getOneRepMaxFormula } from './settings';
 import {
   assertNoActiveWorkout,
   buildWorkoutEntities,
@@ -144,7 +143,7 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
   const rows = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray()).sort(
     byOrder,
   );
-  const [sets, exercises, routine, formula] = await Promise.all([
+  const [sets, exercises, routine] = await Promise.all([
     rows.length === 0
       ? []
       : db.workoutSets
@@ -153,7 +152,6 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
           .toArray(),
     db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]),
     workout.routineId === '' ? undefined : db.routines.get(workout.routineId),
-    getOneRepMaxFormula(),
   ]);
 
   const livingRoutine = routine !== undefined && routine.deletedAt === 0 ? routine : undefined;
@@ -198,7 +196,6 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
         ...(exercise?.loadIncrementKg === undefined
           ? {}
           : { loadIncrementKg: exercise.loadIncrementKg }),
-        formula,
         sets: performed.map((set) => ({
           ...(set.weight === undefined ? {} : { weight: set.weight }),
           ...(set.reps === undefined ? {} : { reps: set.reps }),

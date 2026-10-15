@@ -5,9 +5,11 @@ import {
   loadReading,
   oneRepMaxReading,
   proposalMark,
+  roughReading,
   routineReading,
   testedReading,
   withoutLoadReading,
+  zoneReading,
 } from './benchmarkText';
 
 const line = (overrides: Partial<BenchmarkLine> = {}): BenchmarkLine => ({
@@ -75,10 +77,24 @@ describe('les lectures du bilan', () => {
   });
 
   it('dit pourquoi un exercice n’a pas de charge', () => {
-    expect(withoutLoadReading(line({ verdict: 'too_light' }))).toMatch(/Plus de 12 répétitions/);
+    expect(withoutLoadReading(line({ verdict: 'too_light' }))).toMatch(/Plus de 30 répétitions/);
     expect(withoutLoadReading(line({ verdict: 'no_load' }))).toMatch(/Aucune charge exploitable/);
     expect(withoutLoadReading(line({ verdict: 'recorded' }))).toMatch(/Résultat noté/);
     expect(withoutLoadReading(line())).toBeUndefined();
+  });
+
+  it('écrit la fourchette de la routine comme sa ligne : « 8 – 12 reps », « 15 – 20 reps », « 20 reps »', () => {
+    expect(zoneReading(line({ zone: { low: 8, high: 12 } }))).toBe('Fourchette de la routine : 8 – 12 reps');
+    expect(zoneReading(line({ zone: { low: 15, high: 20 } }))).toBe('Fourchette de la routine : 15 – 20 reps');
+    expect(zoneReading(line({ zone: { low: 20, high: 20 } }))).toBe('Fourchette de la routine : 20 reps');
+    expect(zoneReading(line({ zone: undefined }))).toBeUndefined();
+  });
+
+  it('met en garde contre une estimation tirée d’un essai loin de la fourchette, et d’elle seule', () => {
+    expect(roughReading(line({ rough: true, tested: { weight: 40, reps: 25 } }))).toMatch(
+      /Estimation approximative : 25 répétitions/,
+    );
+    expect(roughReading(line())).toBeUndefined();
   });
 
   it('accorde le compte des exercices mis à jour', () => {

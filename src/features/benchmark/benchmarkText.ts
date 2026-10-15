@@ -1,7 +1,7 @@
 import { t } from '@/i18n/fr';
 import { partReading } from '@/i18n/labels';
-import type { BenchmarkLine, BenchmarkProposal } from '@/lib/benchmark';
-import { performedParts } from '@/lib/measurement';
+import { BENCHMARK_MAX_REPS, type BenchmarkLine, type BenchmarkProposal } from '@/lib/benchmark';
+import { performedParts, repsReading } from '@/lib/measurement';
 
 /**
  * Les phrases du bilan, hors du composant : elles se testent sans écran, et la
@@ -31,6 +31,19 @@ export function proposalMark(proposal: BenchmarkProposal): string {
   return `${deltaKg < 0 ? '−' : '+'}${loadReading(Math.abs(deltaKg))}`;
 }
 
+/** « 8 – 12 reps », « 15 – 20 reps », « 20 reps » : la fourchette de la routine, écrite comme sur sa ligne. */
+export function zoneReading(line: BenchmarkLine): string | undefined {
+  if (line.zone === undefined) return undefined;
+  const part = repsReading({ targetReps: line.zone.low, targetRepsMax: line.zone.high });
+  return part === undefined ? undefined : t('benchmark.zone', { range: partReading(part) });
+}
+
+/** La mise en garde d'une estimation tirée d'un essai loin de la fourchette. */
+export function roughReading(line: BenchmarkLine): string | undefined {
+  if (line.rough !== true || line.tested?.reps === undefined) return undefined;
+  return t('benchmark.rough', { reps: line.tested.reps });
+}
+
 /** Ce que la routine dit de cet exercice — ou rien, quand la ligne se suffit. */
 export function routineReading(line: BenchmarkLine): string | undefined {
   if (line.verdict !== 'calibrated') return undefined;
@@ -45,7 +58,7 @@ export function routineReading(line: BenchmarkLine): string | undefined {
 export function withoutLoadReading(line: BenchmarkLine): string | undefined {
   switch (line.verdict) {
     case 'too_light':
-      return t('benchmark.tooLight');
+      return t('benchmark.tooLight', { max: BENCHMARK_MAX_REPS });
     case 'no_load':
       return t('benchmark.noLoad');
     case 'recorded':

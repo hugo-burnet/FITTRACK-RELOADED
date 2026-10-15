@@ -274,7 +274,28 @@ describe('loadBenchmarkReport', () => {
     expect(report.lines[0]!.proposal).toBeUndefined();
   });
 
-  it('takes the formula of the settings', async () => {
+  it('lit la fourchette de la routine : un 15 – 20 se dimensionne sur 17 répétitions, pas sur 12', async () => {
+    const curl = await seedExercise({ name: 'Curl poulie', equipment: 'cable' });
+    const { routine } = await seedRoutine('Bras', [
+      {
+        exercise: curl,
+        sets: [
+          { targetReps: 15, targetRepsMax: 20, targetWeight: 35 },
+          { targetReps: 15, targetRepsMax: 20, targetWeight: 35 },
+        ],
+      },
+    ]);
+    const workout = await benchmarkOf(routine.id, [[40, 22]]);
+
+    const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
+
+    expect(line.zone).toEqual({ low: 15, high: 20 });
+    expect(line.referenceReps).toBe(17);
+    expect(line.suggestedKg).toBe(42.5);
+    expect(line.proposal?.deltaKg).toBe(7.5);
+  });
+
+  it('ne dépend pas de la formule d’affichage des réglages', async () => {
     const press = await seedExercise({ name: 'Développé couché' });
     const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
     const workout = await benchmarkOf(routine.id, [[80, 9]]);
@@ -282,7 +303,8 @@ describe('loadBenchmarkReport', () => {
 
     const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
 
-    expect(line.oneRepMax).toBeCloseTo((80 * 36) / 28, 6);
+    // Epley, toujours : 80 × (1 + 9/30). Brzycki dirait 80 × 36 / 28 = 102,9.
+    expect(line.oneRepMax).toBeCloseTo(104, 6);
   });
 });
 

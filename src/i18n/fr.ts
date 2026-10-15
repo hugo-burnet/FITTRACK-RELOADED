@@ -2682,17 +2682,20 @@ const fr = {
     launchTitle: 'Benchmark',
     launchBody:
       'Une seule série par exercice, menée jusqu’à l’échec.\n' +
-      'Choisis une charge avec laquelle tu comptes faire 5 à 12 répétitions : au-delà de 12, le résultat est trop incertain.\n' +
-      'À la fin, l’app te propose la charge de travail de chaque exercice. Rien n’est écrit dans la routine sans ton accord.',
+      'Choisis une charge avec laquelle tu comptes faire la fourchette de cet exercice dans la routine (8 – 12, 15 – 20, 20…) : plus ton essai en est loin, moins la charge proposée est fiable.\n' +
+      'À la fin, le coach te propose la charge de chaque exercice pour sa fourchette. Rien n’est écrit dans la routine sans ton accord.',
     launchConfirm: 'Lancer le benchmark',
     workoutName: 'Benchmark · {name}',
     workoutBanner:
-      'Benchmark · une série à l’échec par exercice. Charge visée : 5 à 12 répétitions.',
-    finishNote: 'C’est un benchmark : le bilan et les charges proposées s’affichent après l’enregistrement.',
+      'Benchmark · une série à l’échec par exercice, avec une charge pour la fourchette habituelle de chacun.',
+    finishNote: 'C’est un benchmark : le coach en tire la charge de chaque exercice, à lire après l’enregistrement.',
     title: 'Bilan du benchmark',
     notFound: 'Ce benchmark n’existe plus.',
     intro:
-      'Une série à l’échec par exercice. La charge conseillée est celle où le bas de ta fourchette te laisse environ deux répétitions en réserve.',
+      'Une série à l’échec par exercice. Pour chacun, le coach propose la charge de sa fourchette : celle où le bas de la fourchette te laisse environ deux répétitions en réserve.',
+    zone: 'Fourchette de la routine : {range}',
+    rough:
+      'Estimation approximative : {reps} répétitions, c’est loin de la fourchette. Refais cet exercice plus près d’elle pour une charge fiable ; l’interrupteur est éteint, à toi de le rallumer.',
     context: '{routine} · {date}',
     contextNoRoutine: '{date}',
     done: 'Fait : {reading}',
@@ -2704,7 +2707,7 @@ const fr = {
     aligned: 'La routine est déjà à ce niveau.',
     noLine: 'Cet exercice n’est plus dans la routine : rien à écrire.',
     tooLight:
-      'Plus de 12 répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
+      'Plus de {max} répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
     noLoad: 'Aucune charge exploitable : rien à estimer.',
     recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
     toggleText: 'Appliquer à la routine',

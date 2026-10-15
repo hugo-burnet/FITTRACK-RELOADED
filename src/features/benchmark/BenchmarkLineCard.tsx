@@ -5,9 +5,11 @@ import {
   loadReading,
   oneRepMaxReading,
   proposalMark,
+  roughReading,
   routineReading,
   testedReading,
   withoutLoadReading,
+  zoneReading,
 } from './benchmarkText';
 
 /**
@@ -30,6 +32,8 @@ export function BenchmarkLineCard({
   const tested = testedReading(line);
   const routine = routineReading(line);
   const withoutLoad = withoutLoadReading(line);
+  const zone = zoneReading(line);
+  const rough = roughReading(line);
 
   return (
     <Card padded>
@@ -41,6 +45,7 @@ export function BenchmarkLineCard({
           </p>
         )}
 
+        {zone !== undefined && <p className="text-sm text-[var(--text-2)]">{zone}</p>}
         {line.verdict === 'calibrated' && line.oneRepMax !== undefined && (
           <p className="text-sm text-[var(--text-2)]">
             {t('benchmark.oneRepMax', { value: oneRepMaxReading(line.oneRepMax) })}
@@ -57,6 +62,9 @@ export function BenchmarkLineCard({
               </p>
             )}
           </div>
+        )}
+        {rough !== undefined && (
+          <p className="text-sm leading-relaxed text-[var(--text-1)]">{rough}</p>
         )}
         {routine !== undefined && <p className="text-sm text-[var(--text-2)]">{routine}</p>}
         {withoutLoad !== undefined && (
