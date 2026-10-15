@@ -215,8 +215,9 @@ function bestRecorded(sets: readonly Performed[]): Performed {
 }
 
 /**
- * Les séries de travail de la ligne de routine. La première donne la fourchette et la charge de départ,
- * les autres suivent du même écart ; leur nombre est celui sur lequel la charge doit tenir.
+ * Les séries de travail de la ligne de routine (l'échauffement n'en est pas une). Leur nombre est celui sur
+ * lequel la charge doit tenir ; elles reçoivent toutes le même décalage de charge. La première série « droite »
+ * donne la fourchette et la charge de départ — sauf pour une pyramide, dont chaque série se dimensionne seule.
  */
 function routineWorkingSets(routine: BenchmarkRoutineRow | undefined): BenchmarkRoutineSet[] {
   return routine === undefined ? [] : routine.sets.filter(isWorkingSet);

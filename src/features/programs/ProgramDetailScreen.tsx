@@ -460,8 +460,11 @@ export function ProgramDetailScreen() {
             onRepair={setReplacementTarget}
           />
         )}
-        {/* Avant de démarrer, c'est ici qu'on règle les charges de départ : celles du bloc viennent de ses routines. */}
-        <ProgramBenchmarkCard sessions={sessions} busy={activeWorkoutExists} />
+        {/* Avant de démarrer, c'est ici qu'on règle les charges de départ : celles du bloc viennent de ses routines.
+            Un bloc terminé n'a plus de départ à régler. */}
+        {detail.program.status !== 'completed' && (
+          <ProgramBenchmarkCard sessions={sessions} busy={activeWorkoutExists} />
+        )}
         <UpcomingWeeks weeks={upcomingWeeks} />
       </div>
 

@@ -7,6 +7,7 @@ import { createCustomExercise } from '@/data/repositories/exercises';
 import * as programsRepository from '@/data/repositories/programs';
 import {
   activateProgram,
+  completeProgram,
   createProgramDraft,
   createScheduleRevision,
   getProgramDetail,
@@ -914,6 +915,16 @@ describe('suivi du bloc courant', () => {
       expect.stringContaining('Poussée du jour'),
       expect.stringContaining('Tirage à venir'),
     ]);
+  });
+
+  it('ne propose plus de calibrer les charges d’un bloc terminé', async () => {
+    const { program } = await createTrackingProgram();
+    await completeProgram(program.id);
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // La fiche est lue (elle garde son menu), mais il n'y a plus de départ à régler.
+    await screen.findByRole('button', { name: /^Force terminée,/ });
+    expect(screen.queryByRole('heading', { name: 'Calibrer les charges' })).not.toBeInTheDocument();
   });
 
   it('démarre la séance choisie via le programme puis ouvre la séance en direct', async () => {
