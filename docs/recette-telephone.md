@@ -10,7 +10,7 @@
 > dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
 > série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les trois
 > thèmes à 100, 130 et 200 % (TTY1 : 130 %), l'app qui démarre sans réseau, la sauvegarde, le
-> remplacement d'un exercice et les mensurations (hors sélecteur de date natif).
+> remplacement d'un exercice, les mensurations (hors sélecteur de date natif) et le benchmark de bout en bout.
 > Reste ici **ce qu'un navigateur ne dit pas** : le toucher, le son, les notifications, le bouton
 > retour d'Android, la vraie WebView, une police de 16 px à bout de bras.
 >
@@ -136,6 +136,24 @@ Une séance de deux exercices au moins, dont un en barre.
       *(cette session)*
 - [ ] **Champ libre.** Ajouter › Autre mesure… › « Tour de poignet », cm : il apparaît dans la liste et se
       propose ensuite à côté du catalogue. *(cette session)*
+
+## 3 ter. Benchmark (4 min)
+
+- [ ] **Lancement.** Planifier › ⋯ d'une routine › « Benchmark de cette routine » : une feuille dit « une seule
+      série par exercice, menée jusqu'à l'échec » ; « Lancer le benchmark » ouvre la séance avec le rappel en
+      tête. Le menu est grisé pendant une séance en cours et pour une routine vide. *(v2.12.0)*
+- [ ] **En salle.** Une ligne par exercice, aucune répétition visée. Choisir une charge pour 5 à 12 répétitions,
+      aller à l'échec, saisir kg et reps : la coche reste fermée tant que les répétitions manquent. *(v2.12.0)*
+- [ ] **Le bilan.** Enregistrer ouvre « Bilan du benchmark » (pas l'accueil, pas de carte du coach) : par exercice
+      ce qui a été fait, le 1RM estimé, la charge conseillée et la routine. Un exercice à plus de 12 répétitions dit
+      « trop léger », sans interrupteur. Les interrupteurs et « Appliquer à la routine · N » se touchent d'un
+      pouce. *(v2.12.0)*
+- [ ] **Appliquer.** « Appliquer à la routine » : « N exercices mis à jour », la ligne se lit « La routine est déjà
+      à ce niveau ». Ouvrir la routine : les charges ont changé (une pyramide a gardé sa forme). Le retour d'Android
+      depuis le bilan mène à l'accueil. *(v2.12.0)*
+- [ ] **La séance d'après.** Lancer la routine normalement : le champ de charge propose la cible calibrée et la
+      colonne « Précédent » ne reprend pas le maximum du benchmark. *(v2.12.0)*
+- [ ] **Depuis l'historique.** La fiche d'un benchmark propose « Voir le bilan ». *(v2.12.0)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 

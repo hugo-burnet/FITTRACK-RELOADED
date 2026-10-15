@@ -1,7 +1,7 @@
 # Benchmark — Design
 
 **Date :** 2026-10-15
-**Statut :** demandé par l'utilisateur (« une séance avec 1 série, le plus de répétitions possible, ça
+**Statut :** livré (v2.12.0) — demandé par l'utilisateur (« une séance avec 1 série, le plus de répétitions possible, ça
 nous calibre notre coach, 1 série par exo »), décisions de détail prises en autonomie, à relire
 **Périmètre :** une séance spéciale lancée depuis une routine, son bilan, et l'écriture — acceptée —
 des charges calibrées dans cette routine. **Hors périmètre :** un benchmark « libre » hors routine,
@@ -86,6 +86,12 @@ Accepter écrit par `applyRoutineTargetProposals` — le chemin d'écriture de l
 **toutes** les séries de travail de la ligne du même écart (une pyramide garde sa forme) et relit les
 identifiants en base. Une ligne se décoche : le bilan propose, la personne dispose. Une fois appliqué, la
 cible égale la proposition et la ligne se lit « déjà à jour » — l'écran n'a pas d'état à retenir.
+
+**Un décalage ne se rejoue pas.** Chaque proposition porte la série qu'elle a lue (la première de travail) et
+la charge qu'elle y a vue (`anchorSetId`, `fromWeight`) : elle n'est écrite que si cette série porte encore
+cette charge. Un double appui, ou une routine modifiée entre le bilan et l'appui, ne déplace pas deux fois ;
+une série de référence supprimée annule la proposition. Le compte annoncé (« 1 exercice mis à jour ») est celui
+des exercices réécrits, pas des séries.
 
 L'exercice de la séance est rapproché de la ligne de routine par `(exerciseId, order)`. Si la routine a
 été modifiée entre-temps et que rien ne correspond, la ligne n'a pas de proposition : mieux vaut ne rien

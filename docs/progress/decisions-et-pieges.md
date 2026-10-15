@@ -7,6 +7,66 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 — Le benchmark : une série à l'échec par exercice, qui cale les charges de la routine
+
+**Demande.** « Une séance avec une série, le plus de répétitions possible, ça nous calibre notre coach, une série
+par exo. » Spec : `docs/design/specs/2026-10-15-benchmark-design.md` ; exécution :
+`docs/design/plans/2026-10-15-benchmark.md`.
+
+**Ce qui est fait.** `Workout.kind: 'benchmark'` (optionnel, validé par la sauvegarde, aucune version de schéma) ;
+une séance construite depuis la routine puis réduite à une série `failure` par exercice, sans cible de répétitions
+ni de RPE ; un module pur (`lib/benchmark.ts`) qui lit le maximum (formule des réglages, 1 à 12 répétitions) et
+en tire la charge où le bas de fourchette laisse deux répétitions en réserve ; un écran de bilan
+(`/benchmark/:id`) qui propose, exercice par exercice, d'écrire cette charge dans la routine.
+
+**« Calibrer le coach » veut dire : poser le bon point de départ, pas ouvrir un canal vers le moteur.** Le coach
+progresse à partir des cibles de la routine et de ce qui a été fait ; un départ faux se rattrape en un cran par
+séance, pendant des semaines. Le benchmark écrit la charge juste dans la routine — **sur acceptation** — et
+rien d'autre. Aucun état « calibré » n'est stocké, aucune donnée nouvelle n'est lue par le moteur.
+
+**Ce que le benchmark nourrit, et ce qu'il n'alimente pas.** Une série à l'échec est une vraie performance : records,
+volume par muscle, régularité, courbes, historique la comptent. Elle n'est pas le modèle d'une série de travail,
+donc tout ce qui **prescrit** l'écarte : les valeurs fantômes (`getLastPerformance`), l'historique du coach et son
+rejeu de sauvegarde, l'évaluation et le suivi d'objectifs de fin de séance, la revue des cibles (les deux
+fenêtres), la rotation de la routine suggérée à l'accueil. Chaque garde a été retirée une à une : chacune fait
+échouer un test. Un index sur `kind` aurait coûté une version de schéma pour une question posée sur quelques
+séances à la fois — `benchmarkIdsAmong` lit ces séances par lot.
+
+**L'écriture est un décalage, donc elle se rejoue mal — et c'est ce qui a été protégé.** Écrire « +7,5 kg » deux
+fois (double appui, ou deux onglets) fait 85 kg. Chaque proposition porte la série qu'elle a lue et la charge
+qu'elle y a vue ; elle ne s'applique que si cette série porte encore cette charge. Une routine modifiée entre le
+bilan et l'appui n'est pas écrasée, une série de référence supprimée annule la proposition. Le compte annoncé est
+celui des **exercices** réécrits : l'écran disait « 2 exercices » pour un seul, parce que le chemin d'écriture
+qu'il réutilise compte des séries.
+
+**Choix de détail, à relire.**
+
+- **Bas de fourchette + 2 répétitions de réserve** (`BENCHMARK_RESERVE_REPS`). Une série de travail commence deux
+  répétitions avant l'échec ; la double progression a ensuite la place de monter. À juger sur le terrain : si les
+  charges proposées paraissent trop basses ou trop hautes, c'est une constante.
+- **Arrondi vers le bas, toujours.** Sur la grille du matériel ; à partir de la charge essayée quand le pas est
+  celui que la personne a saisi (un cran de 1,125 kg ne tombe pas sur un multiple de 1,125).
+- **Seul `weight_reps` reçoit une charge.** Pour un lest ou une assistance, la charge n'est qu'une part de ce qui
+  est soulevé ; pour un temps, il n'y a pas de charge. Leur résultat est noté, rien n'est proposé.
+- **Au-delà de 12 répétitions, pas d'estimation** : « trop léger, refais-le plus lourd ». Les formules
+  extrapolent au-delà ; un chiffre inventé ferait pire que rien.
+- **Pas de comparaison entre deux benchmarks.** Une série à l'échec est un point bruité ; une courbe de points
+  bruités fabrique des tendances.
+
+**Pièges rencontrés.**
+
+- **Une assertion qui ne prouvait rien.** L'E2E vérifiait que le champ de charge de la séance suivante affichait
+  105 (la cible calibrée) : la cible de la routine passe avant la « dernière fois », donc l'assertion passait
+  avec ou sans l'exclusion du benchmark. Celle qui la prouve est la colonne « Précédent » vide (vue rouge quand
+  la garde est retirée). Une assertion se mute comme le code.
+- **Un test unitaire cassé deux commits plus tôt.** `HomeScreen.test` remplace `useLiveQuery` par `() => null`
+  et mocke chaque carte qui lit ses propres tables ; la carte « Volume bas » (R6) n'y était pas, et `lows.length`
+  tombait sur `null`. Le défaut était dans le test, mais il n'avait pas été vu parce que la passe complète des
+  tests unitaires n'avait pas été refaite après R6. **Une passe complète avant chaque commit de fonctionnalité,
+  pas seulement les tests du dossier touché.**
+- **`pkill -f` tue le shell qui l'invoque** : le motif figure dans sa propre ligne de commande. Terminer un
+  serveur par son PID.
+
 ### 2026-10-14 — R6, le volume par muscle : ce que le coach n'ajoute plus, ce que la personne demande à entendre
 
 **Constat.** La tranche 5 du coach v2 attendait son plan depuis le 4 octobre. Le coach raisonne exercice par
