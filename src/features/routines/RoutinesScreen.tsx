@@ -15,7 +15,6 @@ import {
   reorderRoutines,
   updateRoutine,
 } from '@/data/repositories/routines';
-import { startBenchmarkFromRoutine } from '@/data/repositories/benchmark';
 import { readRoutineExportSources } from '@/data/repositories/routineExport';
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
@@ -33,6 +32,7 @@ import { FolderFormSheet } from './FolderFormSheet';
 import { RoutineCollection } from './RoutineCollection';
 import { collapsibleRoutineFolderIds } from './collapsibleFolders';
 import type { RoutineCollectionIntent } from './RoutineCollection';
+import { BenchmarkLaunchSheet } from '@/features/benchmark/BenchmarkLaunchSheet';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { useRoutineLibraryView } from '@/stores/routineLibraryView';
 import { OrderLockButton } from '@/ui';
@@ -143,16 +143,6 @@ export function RoutinesScreen() {
         tutorial?.report({ type: 'workout-started', workoutId: workout.id, routineId });
         navigate('/workout');
       })
-      .catch(() => undefined);
-  };
-
-  /**
-   * Même garde que « Démarrer » (rien ne tourne), et même sortie : la séance en direct.
-   * Pas de rapport au tutoriel : lancer un benchmark n'est pas l'étape qu'il attend.
-   */
-  const startBenchmark = (routine: Routine) => {
-    void startBenchmarkFromRoutine(routine.id, t('benchmark.workoutName', { name: routine.name }))
-      .then(() => navigate('/workout'))
       .catch(() => undefined);
   };
 
@@ -444,15 +434,9 @@ export function RoutinesScreen() {
         }
       />
 
-      <ConfirmSheet
-        open={sheet?.kind === 'routineBenchmark'}
+      <BenchmarkLaunchSheet
+        routine={sheet?.kind === 'routineBenchmark' ? sheet.routine : null}
         onClose={() => setSheet(null)}
-        title={sheet?.kind === 'routineBenchmark' ? sheet.routine.name : ''}
-        body={t('benchmark.launchBody')}
-        confirmLabel={t('benchmark.launchConfirm')}
-        onConfirm={() => {
-          if (sheet?.kind === 'routineBenchmark') startBenchmark(sheet.routine);
-        }}
       />
 
       <ConfirmSheet

@@ -37,6 +37,7 @@ import {
 } from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
+import { BenchmarkLaunchSheet } from '@/features/benchmark/BenchmarkLaunchSheet';
 import { RoutineExerciseCard } from './RoutineExerciseCard';
 import { RoutineExerciseSheet } from './RoutineExerciseSheet';
 import { RoutineSetSheet } from './RoutineSetSheet';
@@ -68,6 +69,7 @@ export function RoutineEditorScreen() {
   const tutorial = useTutorialControls();
   const report = tutorial?.report;
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const [benchmarking, setBenchmarking] = useState(false);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
 
@@ -286,6 +288,17 @@ export function RoutineEditorScreen() {
               onClick={() => void navigate(`/routines/${routine.id}/review`)}
               trailing={<ChevronDownIcon className="-rotate-90 text-[var(--text-2)]" />}
             />
+            {/* Le benchmark, là où l'on regarde la routine. Il n'était que dans le menu ⋮ de la
+                liste — un menu qu'on n'ouvre que pour dupliquer ou supprimer —, et on ne le
+                trouvait pas. Éteint, avec sa raison, tant qu'une séance tourne : une seule à la
+                fois. */}
+            <ListRow
+              title={t('benchmark.menu')}
+              subtitle={running ? t('routines.startBusyHint') : t('benchmark.menuHint')}
+              disabled={active === undefined || running}
+              onClick={() => setBenchmarking(true)}
+              trailing={<ChevronDownIcon className="-rotate-90 text-[var(--text-2)]" />}
+            />
           </Card>
         )}
 
@@ -395,6 +408,11 @@ export function RoutineEditorScreen() {
         onRemove={() => {
           if (sheet?.kind === 'exercise') void removeRoutineExercise(sheet.rowId);
         }}
+      />
+
+      <BenchmarkLaunchSheet
+        routine={benchmarking ? routine : null}
+        onClose={() => setBenchmarking(false)}
       />
 
       <RoutineSetSheet

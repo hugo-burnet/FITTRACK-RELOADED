@@ -53,6 +53,13 @@ qu'il réutilise compte des séries.
 - **Pas de comparaison entre deux benchmarks.** Une série à l'échec est un point bruité ; une courbe de points
   bruités fabrique des tendances.
 
+**Une porte qu'on ne trouve pas n'existe pas (v2.12.1).** Livré, le benchmark n'était qu'une ligne du menu ⋮ d'une
+routine dans la liste — un menu qu'on n'ouvre que pour dupliquer ou supprimer. L'utilisateur a regardé et ne l'a pas vu ;
+rien n'était cassé. Une seconde porte, **dans l'éditeur de la routine** (là où on regarde ses exercices, sous « Mettre à
+jour les cibles »), ouvre la même feuille (`BenchmarkLaunchSheet`, partagée : les deux portes ne peuvent pas dériver). Avant
+d'ajouter une fonctionnalité derrière un menu, se demander où l'on irait la chercher. L'autre cause possible — une PWA qui
+ne se met pas à jour (`registerType: 'prompt'`), un APK pas réinstallé — se lit au numéro d'en-tête.
+
 **Pièges rencontrés.**
 
 - **Une assertion qui ne prouvait rien.** L'E2E vérifiait que le champ de charge de la séance suivante affichait

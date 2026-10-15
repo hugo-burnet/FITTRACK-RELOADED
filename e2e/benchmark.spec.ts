@@ -103,12 +103,35 @@ test.describe('benchmark', () => {
     await expect(page.getByRole('button', { name: 'Précédent' }).first()).toBeDisabled();
   });
 
-  test('le benchmark survit à un rechargement, comme toute séance (règle n° 4)', async ({ page }) => {
+  test('il se lance aussi depuis l’éditeur de la routine, et survit à un rechargement (règle n° 4)', async ({
+    page,
+  }) => {
     await openApp(page);
-    await createRoutineFromTemplate(page, /5×5 — A/);
+    // Partir d'un modèle ouvre l'éditeur de la routine qu'on vient de créer : c'est là qu'on la
+    // regarde, et la porte du benchmark y est visible, sans passer par le menu ⋮ de la liste.
     await page.getByRole('link', { name: 'Planifier' }).click();
-    await page.getByRole('button', { name: 'Routine — 5×5 — A' }).click();
-    await page.getByRole('button', { name: /Benchmark de cette routine/ }).click();
+    await page.getByRole('button', { name: 'Partir d’un modèle' }).click();
+    await page.getByRole('button', { name: /5×5 — A/ }).click();
+    await expect(page).toHaveURL(/#\/routines\/[^/]+$/);
+
+    const door = page.getByRole('button', { name: /Benchmark de cette routine/ });
+    await expect(door).toBeVisible();
+    const box = await door.boundingBox();
+    expect(box, 'la porte doit être à l’écran').not.toBeNull();
+    expect(box!.height).toBeGreaterThanOrEqual(47.5);
+    for (const percent of [100, 200]) {
+      await page.evaluate((value) => {
+        document.documentElement.style.fontSize = `${value}%`;
+      }, percent);
+      await settleLayout(page);
+      expect(await findHorizontalOverflow(page), `police à ${percent} %`).toEqual([]);
+    }
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '';
+    });
+
+    await door.click();
+    await expect(page.getByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeVisible();
     await page.getByRole('button', { name: 'Lancer le benchmark' }).click();
     await expect(page).toHaveURL(/#\/workout$/);
     await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('100');
