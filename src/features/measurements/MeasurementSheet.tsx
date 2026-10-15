@@ -53,7 +53,15 @@ export function MeasurementSheet({ target, onClose }: Props) {
   // La dernière cible reste en place pendant que la feuille redescend : le contenu ne doit pas
   // s'effondrer sous les yeux au moment où elle se ferme.
   const [last, setLast] = useState(target);
-  if (target !== undefined && target !== last) setLast(target);
+  // Un brouillon par cible. `Sheet` garde son contenu monté 250 ms après la fermeture, le temps de sa
+  // sortie : une feuille rouverte dans ce délai — deux saisies enchaînées vite — retrouvait le brouillon
+  // de la précédente, date comprise, et une mesure tapée « pour aujourd'hui » remplaçait celle d'il y a
+  // vingt jours. Les écrans posent une cible neuve à chaque geste : une cible neuve, c'est un formulaire neuf.
+  const [draft, setDraft] = useState(0);
+  if (target !== undefined && target !== last) {
+    setLast(target);
+    setDraft(draft + 1);
+  }
   const shown = target ?? last;
 
   return (
@@ -62,9 +70,10 @@ export function MeasurementSheet({ target, onClose }: Props) {
       onClose={onClose}
       title={shown?.kind === 'edit' ? t('measures.sheetTitleEdit') : t('measures.sheetTitle')}
     >
-      {/* Monté avec la feuille, démonté avec elle : chaque ouverture repart d'un brouillon vide,
-          et une saisie abandonnée hier soir n'est pas encore dans le champ ce matin. */}
-      {shown !== undefined && <MeasurementForm target={shown} onClose={onClose} />}
+      {/* Un formulaire par ouverture : chaque ouverture repart d'un brouillon vide, et une saisie
+          abandonnée hier soir n'est pas encore dans le champ ce matin. La clé tient cette promesse
+          là où la feuille, encore montée pour sa sortie, ne la tient pas. */}
+      {shown !== undefined && <MeasurementForm key={draft} target={shown} onClose={onClose} />}
     </Sheet>
   );
 }
