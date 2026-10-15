@@ -28,6 +28,8 @@ vi.mock('./HomeBodyCard', () => ({ HomeBodyCard: () => <div>Corps</div> }));
 vi.mock('./HomeProgramsRow', () => ({ HomeProgramsRow: () => <div>Programmes</div> }));
 vi.mock('./HomeRecentWorkouts', () => ({ HomeRecentWorkouts: () => <div>Historique</div> }));
 vi.mock('./HomeStatsIsland', () => ({ HomeStatsIsland: () => <div>Statistiques</div> }));
+// Lit ses propres tables, comme le corps : ce test remplace `useLiveQuery` par `null`, qu'une carte réelle ne reçoit jamais.
+vi.mock('./HomeVolumeCard', () => ({ HomeVolumeCard: () => null }));
 vi.mock('./HomeSuggestionCard', () => ({
   HomeSuggestionCard: ({
     routineContext,
