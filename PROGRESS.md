@@ -5,14 +5,14 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.12.1 préparée** (`package.json` à 2.12.1), sur demande de l'utilisateur ; **v2.12.0**
-est la dernière version publiée et close. La branche de session `ccr-57f17af8-maxzqv` est fusionnée dans `master` (`256c08a`) et alignée
-dessus.
+**Dernière mise à jour :** 2026-10-15 — **v2.12.1** (`package.json` à 2.12.1), demandée par l'utilisateur : le benchmark gagne une
+porte visible. La v2.12.0 est la version précédente, publiée et close.
 
 ## Où on en est
 
-- **v2.12.1 : un numéro seul.** Aucune modification de l'application depuis la v2.12.0 — seuls `PROGRESS.md` et le journal ont changé,
-  rien ne se voit dans l'APK. Publiée parce que l'utilisateur l'a demandée ; son issue est consignée dans le journal de la v2.12.
+- **v2.12.1 : une porte de plus pour le benchmark.** Il n'était que dans le menu ⋮ d'une routine ; une ligne « Benchmark de cette routine »
+  est ajoutée à l'**éditeur** de la routine, sous « Mettre à jour les cibles ». Même feuille (`BenchmarkLaunchSheet`), mêmes gardes. Rien
+  d'autre ne change.
 - **Publié : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0), APK
   `FitTrack-v2.12.0.apk` signé avec la clé de release. Ce qu'elle contient (la coche qui n'écrase plus la saisie, le coach R6, le
   benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité) est dans

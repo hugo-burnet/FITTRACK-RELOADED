@@ -139,9 +139,11 @@ Une séance de deux exercices au moins, dont un en barre.
 
 ## 3 ter. Benchmark (4 min)
 
-- [ ] **Lancement.** Planifier › ⋯ d'une routine › « Benchmark de cette routine » : une feuille dit « une seule
-      série par exercice, menée jusqu'à l'échec » ; « Lancer le benchmark » ouvre la séance avec le rappel en
-      tête. Le menu est grisé pendant une séance en cours et pour une routine vide. *(v2.12.0)*
+- [ ] **Lancement.** Deux portes, la même feuille. Planifier › ouvrir une routine › ligne « Benchmark de cette
+      routine » (sous « Mettre à jour les cibles »), ou Planifier › ⋮ d'une routine › « Benchmark de cette
+      routine ». Une feuille dit « une seule série par exercice, menée jusqu'à l'échec » ; « Lancer le benchmark »
+      ouvre la séance avec le rappel en tête. L'entrée est grisée pendant une séance en cours et absente d'une
+      routine vide. *(v2.12.0 ; la ligne de l'éditeur : v2.12.1)*
 - [ ] **En salle.** Une ligne par exercice, aucune répétition visée. Choisir une charge pour 5 à 12 répétitions,
       aller à l'échec, saisir kg et reps : la coche reste fermée tant que les répétitions manquent. *(v2.12.0)*
 - [ ] **Le bilan.** Enregistrer ouvre « Bilan du benchmark » (pas l'accueil, pas de carte du coach) : par exercice

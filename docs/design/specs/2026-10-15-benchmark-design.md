@@ -102,8 +102,11 @@ dont le 1RM estimé est le plus haut.
 
 ### 5. Le lancement
 
-Dans le menu d'une routine : **« Benchmark de cette routine »**, désactivé tant qu'une séance est en cours,
-comme « Démarrer ». Une feuille d'explication (trois phrases : une série par exercice, choisis une charge
+**Deux portes, une seule feuille.** Dans le menu ⋮ d'une routine (la liste) et sur une ligne de son **éditeur**, sous
+« Mettre à jour les cibles » : **« Benchmark de cette routine »**, désactivé tant qu'une séance est en cours, comme
+« Démarrer », et absent d'une routine sans exercice. La première porte seule n'a pas suffi : un menu qu'on n'ouvre que pour
+dupliquer ou supprimer n'est pas un endroit où l'on cherche une fonctionnalité — signalé par l'utilisateur après la v2.12.0.
+Les deux ouvrent `BenchmarkLaunchSheet`, qui ne peut donc pas dire deux choses différentes. Une feuille d'explication (trois phrases : une série par exercice, choisis une charge
 où tu t'attends à 5 – 12 répétitions, va jusqu'à l'échec) précède le lancement. Aucun rappel, aucune
 périodicité : c'est un geste que la personne décide.
 

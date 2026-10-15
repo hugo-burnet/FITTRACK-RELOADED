@@ -227,6 +227,46 @@ describe('parcours de composition d’une routine', () => {
       });
     });
 
+    it('se lance aussi depuis l’éditeur de la routine, là où on la regarde', async () => {
+      const routine = await routineWithExercise();
+      const user = userEvent.setup();
+      renderRoutineFlow(`/routines/${routine.id}`);
+
+      await user.click(await screen.findByRole('button', { name: /Benchmark de cette routine/ }));
+
+      expect(await getActiveWorkout()).toBeUndefined();
+      expect(await screen.findByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeVisible();
+      await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+
+      await waitFor(() =>
+        expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
+      );
+      expect(await getActiveWorkout()).toMatchObject({
+        kind: 'benchmark',
+        name: 'Benchmark · Push',
+        routineId: routine.id,
+      });
+    });
+
+    it('n’apparaît pas dans l’éditeur d’une routine vide, et s’éteint pendant une séance', async () => {
+      const empty = await createRoutine('Vide');
+      const user = userEvent.setup();
+      const first = renderRoutineFlow(`/routines/${empty.id}`);
+      await screen.findByDisplayValue('Vide');
+      expect(screen.queryByRole('button', { name: /Benchmark de cette routine/ })).not.toBeInTheDocument();
+      first.unmount();
+
+      const routine = await routineWithExercise('Pull');
+      await workoutsRepository.startWorkout('', 'En cours');
+      renderRoutineFlow(`/routines/${routine.id}`);
+
+      const row = await screen.findByRole('button', { name: /Benchmark de cette routine/ });
+      expect(row).toBeDisabled();
+      expect(row).toHaveTextContent('Une séance est déjà en cours');
+      await user.click(row);
+      expect(screen.queryByRole('button', { name: 'Lancer le benchmark' })).not.toBeInTheDocument();
+    });
+
     it('ne se propose pas pour une routine sans exercice, et dit pourquoi', async () => {
       const routine = await createRoutine('Vide');
       const user = userEvent.setup();
