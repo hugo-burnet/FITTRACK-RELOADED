@@ -54,6 +54,10 @@ Elle n'est **pas un modèle de série de travail**, donc elle est écartée de t
 Le coach est calibré **par les cibles de la routine**, une fois que la personne les a acceptées — pas par
 un canal parallèle.
 
+Précisément : le moteur ne lit pas les charges cibles ; il juge des séries faites. Il prend donc acte de la charge calibrée à la première
+séance ordinaire faite avec elle. Un objectif de charge que le coach avait déjà posé sur l'exercice est **remplacé** (`superseded`) à
+l'acceptation, pour que la carte de la séance et la cible de la routine ne donnent pas deux chiffres.
+
 ### 3. Du maximum à la charge de travail
 
 `lib/benchmark.ts`, pur :

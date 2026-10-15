@@ -9,6 +9,7 @@ import {
 import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { isWorkingSet } from '@/lib/records';
 import { alive, newEntity } from './base';
+import { supersedePendingLoadRecommendations } from './coachRecommendations';
 import { applyRoutineTargetProposals } from './routineTargetReview';
 import { getOneRepMaxFormula } from './settings';
 import {
@@ -230,13 +231,20 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
  * temps ne déplace pas deux fois, il ne fait rien.
  *
  * Renvoie le nombre d'**exercices** réécrits, pas de séries.
+ *
+ * **Une charge, une seule source.** Un objectif de charge que le coach avait posé sur l'exercice
+ * (« la prochaine fois, 102,5 kg ») reste affiché sur sa carte pendant la séance tant qu'aucune
+ * séance ne l'a résolu : à côté de la cible que le benchmark vient d'écrire, la personne lirait deux
+ * chiffres pour le même exercice. Il est donc **remplacé** (`superseded`, qui n'est pas un refus : le
+ * coach ne le tient pas pour tel) — dans la même transaction que l'écriture, et seulement pour les
+ * exercices réellement réécrits. Les observations sans charge restent : le benchmark ne les contredit pas.
  */
 export async function applyBenchmarkProposals(
   proposals: readonly BenchmarkProposal[],
 ): Promise<number> {
   if (proposals.length === 0) return 0;
 
-  return db.transaction('rw', db.routineSets, async () => {
+  return db.transaction('rw', db.routineSets, db.coachRecommendations, async () => {
     const anchors = await db.routineSets.bulkGet(proposals.map((proposal) => proposal.anchorSetId));
     const current = proposals.filter((proposal, index) => {
       const anchor = anchors[index];
@@ -245,6 +253,7 @@ export async function applyBenchmarkProposals(
       );
     });
     await applyRoutineTargetProposals(current);
+    await supersedePendingLoadRecommendations(current.map((proposal) => proposal.exerciseId));
     // Des exercices, pas des séries : c'est ce que l'écran annonce. La série de
     // référence change toujours (une proposition alignée n'existe pas), donc
     // chaque proposition retenue est bien une ligne réécrite.

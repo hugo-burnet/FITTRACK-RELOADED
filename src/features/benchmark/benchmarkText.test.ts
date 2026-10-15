@@ -45,14 +45,26 @@ describe('les lectures du bilan', () => {
   });
 
   it('montre l’écart quand la routine porte une charge, la charge sinon', () => {
-    const base = { routineExerciseId: 'row', targetSetIds: ['a'], anchorSetId: 'a', proposedWeight: 77.5 };
+    const base = {
+      routineExerciseId: 'row',
+      exerciseId: 'bench',
+      targetSetIds: ['a'],
+      anchorSetId: 'a',
+      proposedWeight: 77.5,
+    };
     expect(proposalMark({ ...base, fromWeight: 70, deltaKg: 7.5 })).toBe('+7,5 kg');
     expect(proposalMark({ ...base, fromWeight: 90, deltaKg: -12.5 })).toBe('−12,5 kg');
     expect(proposalMark(base)).toBe('77,5 kg');
   });
 
   it('dit ce que la routine porte, ou pourquoi elle ne reçoit rien', () => {
-    const proposal = { routineExerciseId: 'row', targetSetIds: ['a'], anchorSetId: 'a', proposedWeight: 77.5 };
+    const proposal = {
+      routineExerciseId: 'row',
+      exerciseId: 'bench',
+      targetSetIds: ['a'],
+      anchorSetId: 'a',
+      proposedWeight: 77.5,
+    };
     expect(routineReading(line({ proposal }))).toBe('Dans la routine : 70 kg');
     expect(routineReading(line({ proposal, currentKg: undefined }))).toBe(
       'Aucune charge dans la routine.',
