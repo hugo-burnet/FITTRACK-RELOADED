@@ -50,7 +50,7 @@ version n'avait ni dit ni fait.
 3. **Le checkpoint téléphone de la version était à jour** (§3 ter de `docs/recette-telephone.md`) **mais pas annoncé** à l'utilisateur, ce que
    le rituel de fin de session demande. Il l'est maintenant, avec la ligne du « ? ».
 
-**Sur la branche, non publié** : rien n'est fusionné ni versionné sans demande explicite.
+**Publié en v2.13.1**, après son accord (« Publier ») : rien n'est fusionné ni versionné sans demande explicite.
 
 ### 2026-10-15 (release) — La feuille de saisie des mensurations repartait du brouillon d'avant
 
