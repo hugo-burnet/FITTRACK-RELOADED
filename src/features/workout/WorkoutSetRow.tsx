@@ -64,6 +64,13 @@ type Props = {
    * rendu, même après l'échéance des dix secondes.
    */
   unilateral?: boolean;
+  /**
+   * Une série menée à l'échec pour en connaître le nombre — celle d'un benchmark : les répétitions **sont**
+   * le résultat. Elles ne sont jamais proposées, ni en grisé ni par la coche. Sans cela, le « Précédent »
+   * d'un exercice qui a un historique remplissait les répétitions de la dernière fois, et la coche les
+   * enregistrait comme le maximum de la personne sans qu'elle ait rien tapé.
+   */
+  amrap?: boolean;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
   /**
    * La coche, avec les chiffres qu'elle **propose** — la cible, la séance d'avant — et jamais ce
@@ -85,6 +92,7 @@ export function WorkoutSetRow({
   tutorialRank,
   holding = false,
   unilateral = false,
+  amrap = false,
   onWrite,
   onComplete,
   onUncomplete,
@@ -137,8 +145,10 @@ export function WorkoutSetRow({
     field === 'reps' && isRepRange(set) ? repsReading(set)?.value : undefined;
 
   // A range is guidance, not a recordable value; reuse the previous count.
-  const ghostNumberOf = (field: TargetField): number | undefined =>
-    targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
+  const ghostNumberOf = (field: TargetField): number | undefined => {
+    if (amrap && field === 'reps') return undefined;
+    return targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
+  };
 
   const resolved: ResolvedValues = {};
   for (const column of columns) {

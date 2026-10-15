@@ -268,6 +268,7 @@ export function WorkoutScreen() {
                 return (
                   <WorkoutExerciseCard
                     line={line}
+                    amrap={workout.kind === 'benchmark'}
                     preferred={
                       line.row.id ===
                       exercises.find((item) => item.sets.some((set) => set.isCompleted === 0))?.row

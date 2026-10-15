@@ -292,6 +292,38 @@ describe('WorkoutScreen — benchmark', () => {
     expect(screen.queryByRole('textbox', { name: /^Série 2/ })).not.toBeInTheDocument();
   });
 
+  it('ne valide jamais les répétitions de la dernière fois à la place du maximum', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    // Une séance ordinaire derrière soi : 70 kg × 12. C'est le « Précédent » que la coche reprendrait.
+    await seedWorkout({ exerciseId: exercise.id, performedAt: Date.now() - 7 * 86_400_000, sets: [[70, 12]] });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée');
+    const user = userEvent.setup();
+    renderWorkout();
+
+    const tick = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
+    // La charge est tapée, les répétitions non : un maximum sans son nombre n'est pas un maximum.
+    expect(tick).toBeDisabled();
+
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '9');
+    // La saisie s'écrit en base, puis l'écran la relit : la coche s'ouvre à ce moment-là.
+    await waitFor(() => expect(tick).toBeEnabled());
+    await user.click(tick);
+
+    await waitFor(async () => {
+      expect(await firstSet(workout.id)).toMatchObject({ weight: 80, reps: 9, isCompleted: 1 });
+    });
+  });
+
   it('ne dit rien de tel d’une séance ordinaire', async () => {
     await seedActiveWorkout();
     renderWorkout();
