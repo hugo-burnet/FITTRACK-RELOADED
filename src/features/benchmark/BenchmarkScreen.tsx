@@ -50,7 +50,7 @@ export function BenchmarkScreen() {
 
   if (report === undefined) {
     return (
-      <Screen title="" onBack={leave}>
+      <Screen title="" onBack={leave} showTutorialHelp={false}>
         <div aria-hidden="true" className="space-y-4">
           <div className="h-24 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
           <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
@@ -61,7 +61,7 @@ export function BenchmarkScreen() {
 
   if (report === null) {
     return (
-      <Screen title={t('benchmark.title')} onBack={leave}>
+      <Screen title={t('benchmark.title')} onBack={leave} showTutorialHelp={false}>
         <div role="status">
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('benchmark.notFound')}</p>
@@ -102,9 +102,13 @@ export function BenchmarkScreen() {
   };
 
   return (
+    // Pas de « ? » : le didacticiel ne connaît pas cette route et la rangerait sous l'accueil — « Expliquer
+    // cette page : Accueil », devant un bilan. Une aide qui parle d'un autre écran est pire que pas d'aide ;
+    // le bilan dit lui-même ce qu'il fait (`benchmark.intro`).
     <Screen
       title={t('benchmark.title')}
       onBack={leave}
+      showTutorialHelp={false}
       footer={
         <ActionBand
           label={

@@ -10,6 +10,7 @@ import { getWorkoutDetail } from '@/data/repositories/workoutDetail';
 import { finishWorkout } from '@/data/repositories/workoutLifecycle';
 import { completeSet } from '@/data/repositories/workoutSets';
 import type { Exercise, Routine, RoutineExercise, RoutineSet } from '@/data/types';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { resetDb } from '@/test/resetDb';
 import { BenchmarkScreen } from './BenchmarkScreen';
 
@@ -79,6 +80,20 @@ function renderScreen(workoutId: string, state?: { benchmarkFresh: boolean }) {
         <Route path="/history" element={<div>Historique</div>} />
       </Routes>
     </MemoryRouter>,
+  );
+}
+
+/** L'écran dans une appli où l'aide du didacticiel existe : sans elle, aucun « ? » ne peut paraître. */
+function renderWithTutorial(workoutId: string) {
+  const controls = { openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report: vi.fn() };
+  return render(
+    <TutorialContext.Provider value={controls}>
+      <MemoryRouter initialEntries={[`/benchmark/${workoutId}`]}>
+        <Routes>
+          <Route path="/benchmark/:workoutId" element={<BenchmarkScreen />} />
+        </Routes>
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
 }
 
@@ -234,6 +249,21 @@ describe('BenchmarkScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Terminé' }));
 
     expect(await screen.findByText('Historique')).toBeInTheDocument();
+  });
+
+  it('n’offre pas « Aide sur cette page » : la route n’a pas de chapitre, son « ? » expliquerait l’accueil', async () => {
+    const { workout } = await seedBenchmark([[80, 9]]);
+    renderWithTutorial(workout.id);
+
+    await screen.findByRole('region', { name: 'Développé couché' });
+    expect(screen.queryByRole('button', { name: 'Aide sur cette page' })).not.toBeInTheDocument();
+  });
+
+  it('ne l’offre pas non plus pour un benchmark qui n’existe plus', async () => {
+    renderWithTutorial('inconnu');
+
+    await screen.findByText('Ce benchmark n’existe plus.');
+    expect(screen.queryByRole('button', { name: 'Aide sur cette page' })).not.toBeInTheDocument();
   });
 
   it('dit qu’un benchmark absent n’existe plus', async () => {
