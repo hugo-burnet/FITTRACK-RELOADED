@@ -39,7 +39,7 @@ corrigés, la fiche d'un programme propose « Calibrer les charges ».
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 693 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 694 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
   (**36 parcours**, 8 fichiers, à 390 px) — verts sur la branche `ccr-a1ec0e4b-s9kwdx` ; `master` à la v2.13.1 : 3 608 tests, 35 parcours.
 - **Branches distantes.** `ccr-57f17af8-maxzqv`, fusionnée, est à supprimer à la main (`ccr-449df1c1-etmya3` l'a été) : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
