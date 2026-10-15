@@ -348,3 +348,31 @@ describe('coachSignalMessage — cran à absorber (R3.2)', () => {
     expect(message).not.toContain('→');
   });
 });
+
+describe('coachSignalMessage — benchmark', () => {
+  const calibrated = (range: [number, number]): CoachSignal => ({
+    exerciseId: 'bench',
+    code: 'benchmark_calibrated',
+    severity: 36,
+    nextLoadKg: 77.5,
+    evidence: [
+      { label: 'tested_load_kg', value: 80 },
+      { label: 'tested_reps', value: 9 },
+      { label: 'one_rep_max_kg', value: 104 },
+      { label: 'target_reps', value: range[0] },
+      { label: 'target_reps_max', value: range[1] },
+      { label: 'reference_reps', value: range[0] + 2 },
+    ],
+  });
+
+  it('dit ce qui a été mesuré, et la charge pour la fourchette de l’exercice', () => {
+    expect(coachSignalMessage(calibrated([8, 12]))).toBe(
+      'Benchmark : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.',
+    );
+  });
+
+  it('écrit une cible unique comme telle, et une fourchette haute sans la tronquer', () => {
+    expect(coachSignalMessage(calibrated([20, 20]))).toContain('ta fourchette (20 reps)');
+    expect(coachSignalMessage(calibrated([15, 20]))).toContain('ta fourchette (15 – 20 reps)');
+  });
+});

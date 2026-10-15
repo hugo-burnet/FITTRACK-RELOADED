@@ -13,8 +13,11 @@ import { alive, newEntity } from './base';
 import {
   applyBenchmarkProposals,
   loadBenchmarkReport,
+  recordBenchmarkObjectives,
   startBenchmarkFromRoutine,
 } from './benchmark';
+import { finalizeCoachForWorkout } from './coachEvaluate';
+import { listPendingRecommendations } from './coachRecommendations';
 import { getWorkoutDetail } from './workoutDetail';
 import {
   ProgramWorkoutError,
@@ -308,6 +311,125 @@ describe('loadBenchmarkReport', () => {
   });
 });
 
+describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
+  beforeEach(async () => {
+    await resetDb();
+  });
+
+  async function completedBenchmark(
+    routineId: string,
+    results: [weight: number, reps: number][],
+  ) {
+    const workout = await startBenchmarkFromRoutine(routineId, 'Benchmark');
+    const detail = (await getWorkoutDetail(workout.id))!;
+    for (const [index, [weight, reps]] of results.entries()) {
+      await completeSet(detail.exercises[index]!.sets[0]!.id, { weight, reps });
+    }
+    await finishWorkout(workout.id);
+    return workout;
+  }
+
+  const objective = (exerciseId: string, changes: Partial<CoachRecommendation> = {}): CoachRecommendation =>
+    newEntity<CoachRecommendation>({
+      exerciseId,
+      code: 'range_ceiling_reached',
+      recommendedAt: 1,
+      nextLoadKg: 72.5,
+      evidence: [],
+      status: 'pending',
+      ...changes,
+    });
+
+  it('pose, par exercice, la charge de sa fourchette comme objectif en attente', async () => {
+    const press = await seedExercise({ name: 'Développé couché' });
+    const curl = await seedExercise({ name: 'Curl poulie', equipment: 'cable' });
+    const { routine } = await seedRoutine('Haut', [
+      { exercise: press, sets: PRESS },
+      { exercise: curl, sets: [{ targetReps: 15, targetRepsMax: 20, targetWeight: 35 }] },
+    ]);
+    const workout = await completedBenchmark(routine.id, [
+      [80, 9],
+      [40, 22],
+    ]);
+
+    const signals = await recordBenchmarkObjectives(workout.id);
+
+    expect(signals.map((signal) => [signal.exerciseId, signal.nextLoadKg])).toEqual([
+      [press.id, 77.5],
+      [curl.id, 42.5],
+    ]);
+    const pending = await listPendingRecommendations([press.id, curl.id]);
+    expect(pending).toHaveLength(2);
+    expect(pending.find((row) => row.exerciseId === curl.id)).toMatchObject({
+      code: 'benchmark_calibrated',
+      status: 'pending',
+      nextLoadKg: 42.5,
+      sourceWorkoutId: workout.id,
+    });
+    // La fourchette de chaque exercice voyage avec son objectif : 15 – 20 pour le curl, 8 – 12 pour le développé.
+    expect(pending.find((row) => row.exerciseId === curl.id)?.evidence).toContainEqual({
+      label: 'target_reps',
+      value: 15,
+    });
+    expect(pending.find((row) => row.exerciseId === press.id)?.evidence).toContainEqual({
+      label: 'target_reps',
+      value: 8,
+    });
+  });
+
+  it('remplace l’objectif que le coach avait posé avant, sur cet exercice et sur lui seul', async () => {
+    const press = await seedExercise({ name: 'Développé couché' });
+    const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
+    const older = objective(press.id);
+    const elsewhere = objective('autre-exercice', { nextLoadKg: 50 });
+    await db.coachRecommendations.bulkAdd([older, elsewhere]);
+    const workout = await completedBenchmark(routine.id, [[80, 9]]);
+
+    await recordBenchmarkObjectives(workout.id);
+
+    expect((await db.coachRecommendations.get(older.id))?.status).toBe('superseded');
+    expect((await db.coachRecommendations.get(elsewhere.id))?.status).toBe('pending');
+  });
+
+  it('ne pose rien pour une estimation approximative, et laisse l’ancien objectif en place', async () => {
+    const press = await seedExercise({ name: 'Développé couché' });
+    const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
+    const older = objective(press.id);
+    await db.coachRecommendations.add(older);
+    // 40 × 25 sur une fourchette de 8 à 12 : quinze répétitions de plus que la référence.
+    const workout = await completedBenchmark(routine.id, [[40, 25]]);
+
+    expect(await recordBenchmarkObjectives(workout.id)).toEqual([]);
+
+    expect((await db.coachRecommendations.get(older.id))?.status).toBe('pending');
+    const rows = await db.coachRecommendations.toArray();
+    expect(rows.filter((row) => row.code === 'benchmark_calibrated')).toEqual([]);
+  });
+
+  it('ne lit pas une séance qui n’est pas un benchmark, ni une séance absente', async () => {
+    const press = await seedExercise({ name: 'Développé couché' });
+    const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
+    const ordinary = await startWorkoutFromRoutine(routine.id);
+
+    expect(await recordBenchmarkObjectives(ordinary.id)).toEqual([]);
+    expect(await recordBenchmarkObjectives('missing')).toEqual([]);
+  });
+
+  it('est ce que l’enregistrement de la séance appelle : le coach lit le benchmark sans autre geste', async () => {
+    const press = await seedExercise({ name: 'Développé couché' });
+    const { routine } = await seedRoutine('Push', [{ exercise: press, sets: PRESS }]);
+    const workout = await completedBenchmark(routine.id, [[80, 9]]);
+
+    const signals = await finalizeCoachForWorkout(workout.id);
+
+    expect(signals.map((signal) => signal.code)).toEqual(['benchmark_calibrated']);
+    expect((await listPendingRecommendations([press.id]))[0]).toMatchObject({
+      code: 'benchmark_calibrated',
+      nextLoadKg: 77.5,
+    });
+  });
+});
+
 describe('applyBenchmarkProposals', () => {
   beforeEach(async () => {
     await resetDb();
@@ -328,7 +450,7 @@ describe('applyBenchmarkProposals', () => {
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
 
     // Un exercice réécrit — pas les deux séries qui le portent.
-    expect(await applyBenchmarkProposals([proposal])).toBe(1);
+    expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(1);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
     expect(stored.map((set) => set?.targetWeight)).toEqual([40, 77.5, 77.5]);
@@ -337,20 +459,20 @@ describe('applyBenchmarkProposals', () => {
   it('leaves the report saying so, and a second acceptance writes nothing', async () => {
     const { workout } = await calibratedPress();
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
-    await applyBenchmarkProposals([proposal]);
+    await applyBenchmarkProposals([proposal], workout.id);
 
     const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
 
     expect(line.aligned).toBe(true);
     expect(line.proposal).toBeUndefined();
-    expect(await applyBenchmarkProposals([proposal])).toBe(0);
+    expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(0);
   });
 
   it('does not move twice when the same acceptance arrives twice before the screen refreshes', async () => {
     const { workout, sets } = await calibratedPress();
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
 
-    await Promise.all([applyBenchmarkProposals([proposal]), applyBenchmarkProposals([proposal])]);
+    await Promise.all([applyBenchmarkProposals([proposal], workout.id), applyBenchmarkProposals([proposal], workout.id)]);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
     expect(stored.map((set) => set?.targetWeight)).toEqual([40, 77.5, 77.5]);
@@ -361,7 +483,7 @@ describe('applyBenchmarkProposals', () => {
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
     await db.routineSets.update(sets[1]!.id, { targetWeight: 72.5 });
 
-    expect(await applyBenchmarkProposals([proposal])).toBe(0);
+    expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(0);
 
     const stored = await db.routineSets.bulkGet(sets.map((set) => set.id));
     expect(stored.map((set) => set?.targetWeight)).toEqual([40, 72.5, 70]);
@@ -396,7 +518,7 @@ describe('applyBenchmarkProposals', () => {
       await db.coachRecommendations.bulkAdd([objective, observation, elsewhere]);
       const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
 
-      await applyBenchmarkProposals([proposal]);
+      await applyBenchmarkProposals([proposal], workout.id);
 
       const status = async (row: CoachRecommendation) =>
         (await db.coachRecommendations.get(row.id))?.status;
@@ -408,6 +530,22 @@ describe('applyBenchmarkProposals', () => {
       expect(await status(elsewhere)).toBe('pending');
     });
 
+    it('marque suivi l’objectif que ce benchmark avait posé : l’accepter, c’est le suivre', async () => {
+      const { workout, exerciseId } = await calibratedPress();
+      await finalizeCoachForWorkout(workout.id);
+      const own = (await listPendingRecommendations([exerciseId]))[0]!;
+      expect(own.code).toBe('benchmark_calibrated');
+      const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
+
+      await applyBenchmarkProposals([proposal], workout.id);
+
+      expect(await db.coachRecommendations.get(own.id)).toMatchObject({
+        status: 'followed',
+        outcomeWorkoutId: workout.id,
+        outcomeLoadKg: 77.5,
+      });
+    });
+
     it('le laisse en place quand rien n’a été écrit dans la routine', async () => {
       const { workout, sets, exerciseId } = await calibratedPress();
       const objective = recommendation(exerciseId);
@@ -416,7 +554,7 @@ describe('applyBenchmarkProposals', () => {
       // La routine a bougé depuis le bilan : la proposition ne s'applique pas.
       await db.routineSets.update(sets[1]!.id, { targetWeight: 72.5 });
 
-      expect(await applyBenchmarkProposals([proposal])).toBe(0);
+      expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(0);
 
       expect((await db.coachRecommendations.get(objective.id))?.status).toBe('pending');
     });
@@ -427,7 +565,7 @@ describe('applyBenchmarkProposals', () => {
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
     await db.routineSets.update(sets[1]!.id, { deletedAt: Date.now() });
 
-    expect(await applyBenchmarkProposals([proposal])).toBe(0);
+    expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(0);
 
     expect((await db.routineSets.get(sets[2]!.id))?.targetWeight).toBe(70);
   });
@@ -437,7 +575,7 @@ describe('applyBenchmarkProposals', () => {
     const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
     await db.routineSets.update(sets[2]!.id, { deletedAt: Date.now() });
 
-    expect(await applyBenchmarkProposals([proposal])).toBe(1);
+    expect(await applyBenchmarkProposals([proposal], workout.id)).toBe(1);
 
     // `toArray` sort dans l'ordre des identifiants, pas des séries : on compare à l'ordre près.
     const weights = alive(await db.routineSets.toArray()).map((set) => set.targetWeight);

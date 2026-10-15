@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_MAX_REPS,
   benchmarkLine,
+  benchmarkSignal,
   floorLoad,
   loadForReps,
   oneRepMaxOf,
@@ -447,5 +448,79 @@ describe('benchmarkLine — les cas sans charge à proposer', () => {
 
   it('marque un exercice que personne n’a fait', () => {
     expect(benchmarkLine(bench({ sets: [] })).verdict).toBe('skipped');
+  });
+});
+
+describe('benchmarkSignal — ce que le coach lit', () => {
+  it('pose la charge de la fourchette comme objectif, avec les chiffres qui l’ont produite', () => {
+    const signal = benchmarkSignal(benchmarkLine(bench()));
+
+    expect(signal).toEqual({
+      code: 'benchmark_calibrated',
+      exerciseId: 'bench',
+      nextLoadKg: 77.5,
+      severity: expect.any(Number),
+      evidence: [
+        { label: 'tested_load_kg', value: 80 },
+        { label: 'tested_reps', value: 9 },
+        { label: 'one_rep_max_kg', value: 104 },
+        { label: 'target_reps', value: 8 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'reference_reps', value: 10 },
+        { label: 'current_load_kg', value: 70 },
+      ],
+    });
+  });
+
+  it('suit la fourchette de l’exercice : un 15 – 20 dit 15, 20 et 17', () => {
+    const signal = benchmarkSignal(
+      benchmarkLine(
+        bench({
+          equipment: 'cable',
+          sets: [{ weight: 40, reps: 22 }],
+          routine: workingRoutine([35], 15, 20),
+        }),
+      ),
+    );
+
+    expect(signal?.nextLoadKg).toBe(42.5);
+    expect(signal?.evidence).toContainEqual({ label: 'target_reps', value: 15 });
+    expect(signal?.evidence).toContainEqual({ label: 'target_reps_max', value: 20 });
+    expect(signal?.evidence).toContainEqual({ label: 'reference_reps', value: 17 });
+  });
+
+  it('ne dit pas la charge actuelle d’une routine qui n’en porte pas', () => {
+    const signal = benchmarkSignal(benchmarkLine(bench({ routine: workingRoutine([undefined]) })));
+
+    expect(signal?.evidence.map((item) => item.label)).not.toContain('current_load_kg');
+  });
+
+  it('en pose un aussi quand la routine porte déjà la charge : il remplace l’objectif d’avant', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ routine: workingRoutine([77.5]) })))).toBeDefined();
+  });
+
+  it('en pose un quand l’exercice n’est plus dans la routine : la bibliothèque le garde', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ routine: undefined })))?.nextLoadKg).toBe(77.5);
+  });
+
+  it('ne reprend pas une estimation approximative : le coach ne pousse pas une extrapolation', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 40, reps: 25 }] })))).toBeUndefined();
+  });
+
+  it('ne dit rien de ce qui n’a pas de charge à proposer', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 20, reps: 40 }] })))).toBeUndefined();
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ reps: 10 }] })))).toBeUndefined();
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [] })))).toBeUndefined();
+    expect(
+      benchmarkSignal(
+        benchmarkLine({
+          exerciseId: 'pullup',
+          exerciseName: 'Tractions',
+          measurementType: 'reps_only',
+          equipment: 'bodyweight',
+          sets: [{ reps: 11 }],
+        }),
+      ),
+    ).toBeUndefined();
   });
 });

@@ -631,6 +631,9 @@ const fr = {
       '{sets} × {reps} a atteint le haut de la fourchette, mais à l’échec (RPE moyen {rpe}) : on refait cette charge plus facilement avant de monter.',
     plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     returning: 'Reprise après {days} jours sans cet exercice : on consolide avant de monter.',
+    /** Le benchmark : ce qui a été mesuré, puis la charge de la fourchette. Pas de flèche : elle est réservée à la charge à mettre. */
+    benchmark_calibrated:
+      'Benchmark : {reps} répétitions à {tested} kg, soit un max d’environ {max} kg. Pour ta fourchette ({range}), démarre à {weight} kg.',
     /**
      * R3.2 : le cran est celui du matériel. La phrase dit ce qu'il pèse et le
      * compte de répétitions qui permet de le prendre sans sortir de la fourchette.

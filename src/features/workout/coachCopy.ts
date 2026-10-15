@@ -1,6 +1,8 @@
 import type { CoachRecommendation } from '@/data/types';
 import type { CoachSignal } from '@/lib/coach';
 import { t } from '@/i18n/fr';
+import { partReading } from '@/i18n/labels';
+import { repsReading } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
 
 type SignalLike = Pick<CoachSignal, 'code' | 'nextLoadKg' | 'evidence'> & {
@@ -163,6 +165,19 @@ function constatMessage(signal: SignalLike): string {
       });
     case 'returning':
       return t('coach.returning', { days: evidenceValue(signal, 'gap_days') ?? 0 });
+    case 'benchmark_calibrated': {
+      const range = repsReading({
+        targetReps: evidenceValue(signal, 'target_reps'),
+        targetRepsMax: evidenceValue(signal, 'target_reps_max'),
+      });
+      return t('coach.benchmark_calibrated', {
+        reps: evidenceValue(signal, 'tested_reps') ?? 0,
+        tested: formatNumber(evidenceValue(signal, 'tested_load_kg') ?? 0),
+        max: formatNumber(evidenceValue(signal, 'one_rep_max_kg') ?? 0),
+        range: range === undefined ? '' : partReading(range),
+        weight: formatNumber(resolvedNextLoadKg(signal) ?? 0),
+      });
+    }
     case 'long_rest':
       return t('coach.long_rest', {
         seconds: evidenceValue(signal, 'max_rest_seconds') ?? 0,

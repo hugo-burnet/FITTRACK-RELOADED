@@ -33,8 +33,10 @@ function signalCue(signal: CoachSignal): RecapCue | null {
         return 'coach-recap-progress';
       }
       return 'coach-recap-increase';
-    // Reprise (R5) : on refait la séance, le plan ne bouge pas.
+    // Reprise (R5) : on refait la séance, le plan ne bouge pas. Le bilan d'un benchmark est un écran,
+    // pas un résumé de séance : la voix ne le lit pas non plus.
     case 'returning':
+    case 'benchmark_calibrated':
       return null;
     case 'range_missed':
       return 'coach-recap-adjust';

@@ -58,6 +58,7 @@ const SITUATION_OF_CODE: Record<CoachSignalCode, CoachSituation> = {
   plateau: 'plateau',
   intra_session_drop: 'rep_drop',
   long_rest: 'rep_drop',
+  benchmark_calibrated: 'calibrated',
 };
 
 describe('situationOfCode', () => {

@@ -472,7 +472,13 @@ export type CoachSignalCode =
   /** Coach v2, R1 — same load, at least as many reps, clearly less effort. */
   | 'consolidating'
   /** Coach v2, R5 — first session after a break of 14 days or more. */
-  | 'returning';
+  | 'returning'
+  /**
+   * The coach read a benchmark (one set to failure) and proposes the load of the exercise's rep
+   * range. It carries a load, so it is an objective like a ceiling: shown on the card, never
+   * pre-filled, resolved by the next session or by accepting it into the routine.
+   */
+  | 'benchmark_calibrated';
 
 export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed' | 'superseded';
 

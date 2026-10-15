@@ -92,7 +92,7 @@ export function BenchmarkScreen() {
     applyingRef.current = true;
     setApplying(true);
     setOutcome(null);
-    void applyBenchmarkProposals(selected)
+    void applyBenchmarkProposals(selected, report.workout.id)
       .then((count) => setOutcome({ count }))
       .catch(() => setOutcome('failed'))
       .finally(() => {

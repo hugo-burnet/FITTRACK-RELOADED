@@ -1,6 +1,8 @@
 import type { Equipment, MeasurementType, SetType } from '@/data/types';
 import { resolveLoadStep, type LoadStep } from '@/lib/loadIncrement';
 import type { Performed } from '@/lib/measurement';
+import { SEVERITY } from '@/lib/coach/constants';
+import type { CoachSignal } from '@/lib/coach/types';
 import { isWorkingSet } from '@/lib/records';
 
 /**
@@ -337,4 +339,49 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
         };
 
   return { ...line, proposal };
+}
+
+const round1 = (value: number): number => Math.round(value * 10) / 10;
+
+/**
+ * Ce que le coach lit du benchmark : la charge de la fourchette de l'exercice, comme objectif.
+ *
+ * Un objectif de charge comme un autre — affiché sur la carte de l'exercice à la séance suivante, jamais
+ * prérempli, écrit sur les séries restantes sur un geste —, avec les chiffres qui l'ont produit : jamais
+ * un « 77,5 kg » nu.
+ *
+ * **Aucun signal pour une estimation approximative** : le coach ne pousse pas une extrapolation, la
+ * personne la lit sur le bilan et décide de l'écrire ou non dans la routine. Aucun non plus sans charge à
+ * proposer (trop léger, sans charge, au poids du corps). **Un signal même quand la routine porte déjà la
+ * charge** : il remplace l'objectif que le coach avait posé avant, qui sinon resterait affiché à côté.
+ */
+export function benchmarkSignal(line: BenchmarkLine): CoachSignal | undefined {
+  if (
+    line.verdict !== 'calibrated' ||
+    line.rough === true ||
+    line.suggestedKg === undefined ||
+    line.tested?.weight === undefined ||
+    line.tested.reps === undefined ||
+    line.oneRepMax === undefined ||
+    line.zone === undefined ||
+    line.referenceReps === undefined
+  ) {
+    return undefined;
+  }
+
+  return {
+    code: 'benchmark_calibrated',
+    exerciseId: line.exerciseId,
+    nextLoadKg: line.suggestedKg,
+    severity: SEVERITY.benchmark_calibrated,
+    evidence: [
+      { label: 'tested_load_kg', value: line.tested.weight },
+      { label: 'tested_reps', value: line.tested.reps },
+      { label: 'one_rep_max_kg', value: round1(line.oneRepMax) },
+      { label: 'target_reps', value: line.zone.low },
+      { label: 'target_reps_max', value: line.zone.high },
+      { label: 'reference_reps', value: line.referenceReps },
+      ...(line.currentKg === undefined ? [] : [{ label: 'current_load_kg', value: line.currentKg }]),
+    ],
+  };
 }

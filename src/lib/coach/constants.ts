@@ -34,6 +34,8 @@ export const SEVERITY: Record<CoachSignalCode, number> = {
   // Sous le plafond, qui reste la nouvelle à donner ; au-dessus de la fourchette
   // tenue, que la consolidation précise.
   consolidating: 38,
+  // Elle ne passe jamais par `pickSignals` : le benchmark la pose directement, un objectif à la fois.
+  benchmark_calibrated: 36,
   range_satisfied: 35,
   plateau: 30,
   intra_session_drop: 20,
@@ -46,6 +48,7 @@ export const CODE_ORDER: CoachSignalCode[] = [
   'range_ceiling_reached',
   'range_completed',
   'consolidating',
+  'benchmark_calibrated',
   'range_satisfied',
   'plateau',
   'intra_session_drop',

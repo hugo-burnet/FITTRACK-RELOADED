@@ -2,14 +2,16 @@ import { db } from '@/data/db';
 import type { RoutineSet, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import {
   benchmarkLine,
+  benchmarkSignal,
   type BenchmarkLine,
   type BenchmarkProposal,
   type BenchmarkRoutineRow,
 } from '@/lib/benchmark';
+import type { CoachSignal } from '@/lib/coach/types';
 import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { isWorkingSet } from '@/lib/records';
-import { alive, newEntity } from './base';
-import { supersedePendingLoadRecommendations } from './coachRecommendations';
+import { alive, newEntity, touch } from './base';
+import { recordCoachSignals } from './coachRecommendations';
 import { applyRoutineTargetProposals } from './routineTargetReview';
 import {
   assertNoActiveWorkout,
@@ -218,6 +220,30 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
 }
 
 /**
+ * Le coach lit le benchmark : pour chaque exercice dont la charge de la fourchette est fiable, il pose un
+ * objectif de charge (`benchmark_calibrated`) — celui que la carte de l'exercice affichera à la prochaine
+ * séance, et qu'un geste écrit sur les séries restantes.
+ *
+ * C'est le chemin des objectifs du coach, pas un autre : `recordCoachSignals` remplace l'objectif en attente
+ * de l'exercice (« un objectif vivant à la fois »), et c'est lui qui le dit `superseded`, jamais refusé. Une
+ * estimation approximative n'en pose pas (cf. `benchmarkSignal`) : l'objectif d'avant reste.
+ *
+ * Appelée à l'enregistrement de la séance, après sa clôture. N'écrit rien dans la routine : cela reste
+ * l'acceptation du bilan.
+ */
+export async function recordBenchmarkObjectives(workoutId: string): Promise<CoachSignal[]> {
+  const report = await loadBenchmarkReport(workoutId);
+  if (report === null) return [];
+
+  const signals = report.lines.flatMap((line) => benchmarkSignal(line) ?? []);
+  await recordCoachSignals(signals, {
+    workoutId,
+    recommendedAt: report.workout.endedAt > 0 ? report.workout.endedAt : Date.now(),
+  });
+  return signals;
+}
+
+/**
  * Écrit les charges acceptées dans la routine — par le chemin d'écriture de la
  * revue des cibles, qui décale chaque série de travail du même écart (une
  * pyramide garde sa forme) et relit les séries en base plutôt que de les croire.
@@ -229,15 +255,15 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
  *
  * Renvoie le nombre d'**exercices** réécrits, pas de séries.
  *
- * **Une charge, une seule source.** Un objectif de charge que le coach avait posé sur l'exercice
- * (« la prochaine fois, 102,5 kg ») reste affiché sur sa carte pendant la séance tant qu'aucune
- * séance ne l'a résolu : à côté de la cible que le benchmark vient d'écrire, la personne lirait deux
- * chiffres pour le même exercice. Il est donc **remplacé** (`superseded`, qui n'est pas un refus : le
- * coach ne le tient pas pour tel) — dans la même transaction que l'écriture, et seulement pour les
- * exercices réellement réécrits. Les observations sans charge restent : le benchmark ne les contredit pas.
+ * **Une charge, une seule source.** Un objectif de charge du coach resté en attente sur l'exercice
+ * s'afficherait à côté de la cible que le benchmark vient d'écrire : deux chiffres pour un exercice. Il est
+ * donc résolu, dans la même transaction que l'écriture et pour les seuls exercices réellement réécrits :
+ * l'objectif que **ce** benchmark avait posé est `followed` — l'accepter, c'est le suivre —, tout autre est
+ * `superseded`, qui n'est pas un refus. Les observations sans charge restent : le benchmark ne les contredit pas.
  */
 export async function applyBenchmarkProposals(
   proposals: readonly BenchmarkProposal[],
+  workoutId: string,
 ): Promise<number> {
   if (proposals.length === 0) return 0;
 
@@ -250,7 +276,29 @@ export async function applyBenchmarkProposals(
       );
     });
     await applyRoutineTargetProposals(current);
-    await supersedePendingLoadRecommendations(current.map((proposal) => proposal.exerciseId));
+
+    if (current.length > 0) {
+      const writtenKg = new Map(current.map((proposal) => [proposal.exerciseId, proposal.proposedWeight]));
+      const now = Date.now();
+      const pending = alive(
+        await db.coachRecommendations.where('exerciseId').anyOf([...writtenKg.keys()]).toArray(),
+      ).filter((row) => row.status === 'pending' && row.nextLoadKg !== undefined);
+      if (pending.length > 0) {
+        await db.coachRecommendations.bulkPut(
+          pending.map((row) =>
+            row.sourceWorkoutId === workoutId
+              ? touch(row, {
+                  status: 'followed',
+                  resolvedAt: now,
+                  outcomeWorkoutId: workoutId,
+                  outcomeLoadKg: writtenKg.get(row.exerciseId),
+                })
+              : touch(row, { status: 'superseded', resolvedAt: now }),
+          ),
+        );
+      }
+    }
+
     // Des exercices, pas des séries : c'est ce que l'écran annonce. La série de
     // référence change toujours (une proposition alignée n'existe pas), donc
     // chaque proposition retenue est bien une ligne réécrite.
