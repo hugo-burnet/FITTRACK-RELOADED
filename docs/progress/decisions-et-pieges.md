@@ -7,6 +7,30 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (release) — Un test qui gardait un nœud périmé
+
+**Constat.** La première tentative de la run de release a échoué à l'étape `test:run` : un test sur 3 604 —
+`WorkoutScreen.integration.test.tsx › garde la question d'effort visible quand la dernière série replie la carte`. Le même commit avait passé
+ce test dans le déploiement Pages et dans le build Android du push ; la tentative relancée a réussi. La version n'y était pour rien : le test et
+le code qu'il couvre n'avaient pas bougé.
+
+**Cause.** `EffortStrip` est rendue à deux endroits de `WorkoutExerciseCard` : sous la série (carte ouverte), puis sous la carte repliée — le
+repli démonte l'une et monte l'autre. Le test faisait `expect(await findByRole('group')).toBeVisible()` : `findByRole` rend le premier nœud vu,
+et si le repli tombe dans la passe suivante, ce nœud n'est plus dans le document quand `toBeVisible` le lit (« element is not in the document »).
+Une course entre deux rendus, que seule une machine lente (la CI, deux cœurs) laisse voir ; **non reproduit en local**, 81 passes sur 81 sous
+charge, sur le code de la version et sur celui de la v2.12.2 — le défaut est donc ancien, pas introduit par cette version.
+
+**Et le test ne gardait pas ce qu'il disait.** Il ne vérifiait la question qu'*avant* le repli, puis le repli à part : supprimer la barre
+d'après le repli — exactement ce que le commentaire du composant dit qu'il ne faut pas faire (« the one effort reading most likely to matter is
+also the only one the person can never enter ») — le laissait vert. Mutation vue : l'ancien test survit, le nouveau la tue.
+
+**Ce qui est fait.** Le test relit la barre à chaque essai (`waitFor`) et la veut **repliée et visible en même temps**. Rien n'a été changé dans
+le composant. **Ce qui n'est pas prouvé** : que la course ne revienne plus — faute de la reproduire, la nouvelle assertion est vraie par
+construction (plus de référence à un nœud périmé), pas par une série de passes.
+
+**Pièges.** Relancer le job pour obtenir un vert aurait suffi à publier, et aurait laissé un test qui ne gardait pas sa promesse. La relance a
+été faite, *après* avoir su pourquoi.
+
 ### 2026-10-15 (release) — La feuille de saisie des mensurations repartait du brouillon d'avant
 
 **Constat.** À la fusion de la v2.13.0, un parcours E2E des mensurations — `corriger puis supprimer une mesure refait la courbe` — a

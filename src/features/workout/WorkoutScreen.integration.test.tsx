@@ -841,9 +841,14 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await waitFor(() => expect(complete).toBeEnabled());
     await user.click(complete);
 
-    expect(await screen.findByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
+    // La question existe à deux endroits — sous la série, puis sous la carte repliée — : le repli la
+    // démonte ici et la remonte là. Un nœud trouvé avant le repli n'est plus dans le document après, et
+    // une assertion posée dessus échouait une fois de temps en temps (sur la CI, quand les deux rendus ne
+    // tombaient pas dans la même passe). On la relit donc à chaque essai, et on la veut **repliée et
+    // visible à la fois** : c'est la promesse du composant, que la réponse survive au repli.
     await waitFor(() => {
       expect(screen.getByRole('button', { expanded: false })).toHaveTextContent('Développé couché');
+      expect(screen.getByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
     });
   });
 
