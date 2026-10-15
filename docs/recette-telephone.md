@@ -166,6 +166,8 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **La séance d'après.** Lancer la routine normalement : le champ de charge propose la cible calibrée et la
       colonne « Précédent » ne reprend pas le maximum du benchmark. *(v2.12.0)*
 - [ ] **Depuis l'historique.** La fiche d'un benchmark propose « Voir le bilan ». *(v2.12.0)*
+- [ ] **Pas de « ? » sur le bilan.** L'en-tête du bilan ne porte que la flèche de retour : un « ? » y expliquerait l'accueil, pas le bilan.
+      *(v2.13.1)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 
