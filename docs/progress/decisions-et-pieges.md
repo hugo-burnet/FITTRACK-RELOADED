@@ -7,6 +7,64 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-15 (fin) — La charge du benchmark tient les séries de la routine
+
+**Demande.** « Moi je voyais ça comme ça : je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on teste, je varie à
+17, 20 ou 12… 1 série de chaque exo. Le coach récupère ces infos, et extrapole la meilleure charge sur x séries. Par exemple, je sais pas,
+3 séries sur les poly-articulaires, 2 sur les isolations. C'est un exemple au pif, attention. » Spec :
+`docs/design/specs/2026-10-15-benchmark-design.md` (§3).
+
+**Ce que j'avais mal lu.** La question d'avant (« le benchmark a l'air de donner des charges à respecter, alors pourquoi pas, mais on va
+sur le plus de reps possible ») m'avait fait proposer deux variantes, dont un essai à charge imposée. La personne voulait autre chose : elle
+choisit **sa** charge d'essai (« je pense que je peux faire 80 × 15 »), va à l'échec, et c'est le coach qui en déduit la charge de travail.
+Le benchmark ne change pas de forme ; ce qui manquait, c'est que la charge qu'il propose **tienne plusieurs séries**.
+
+**Le défaut que cela a fait voir.** Le calcul « bas + 2 » dimensionnait la charge pour **une** série à l'échec moins deux répétitions. Posée
+sur trois séries à charge égale, elle est trop lourde : pour un 8 – 12, 80 kg × 9 donnait 77,5 kg, alors que 72,5 kg tiennent les trois.
+Mes tests ne posaient que des routines à une ou deux séries et des essais proches de la référence ; aucun ne comptait les séries.
+
+**Ce qui est fait.**
+
+- `lib/benchmarkModel.ts` (le modèle) : la première série doit pouvoir faire `(bas + 2) / (1 − φ)^(x − 1)` répétitions pour que la dernière
+  tienne le bas de la fourchette avec deux répétitions en réserve ; la charge est celle de cette capacité sur le max (Epley, inverse exact,
+  capacité non entière admise). φ = 10 % par série pour un polyarticulaire reposé deux minutes, 8 % pour une isolation, ×(120 / repos) borné
+  entre 0,6 et 2. `x` = les séries de travail de la routine, six au plus ; une pyramide compte pour une ; sans série de travail, 3
+  (polyarticulaire) ou 2 (isolation).
+- `lib/exerciseClass.ts` : polyarticulaire ou isolation, lu sur la famille de mouvement du catalogue — aucune table à tenir. « Autre » ou
+  absente (exercice personnel) : le corps entier ou deux muscles secondaires et plus font un polyarticulaire ; sans rien, polyarticulaire.
+- `lib/benchmark.ts` (la lecture) : le calcul passe par ce modèle ; « approximatif » se juge sur la capacité exigée de la première série
+  (plus de six répétitions d'écart) et non plus sur « bas + 2 ». Le signal du coach porte `planned_sets` et `reference_reps`.
+- `loadBenchmarkReport` donne à la ligne le repos de l'exercice dans la séance et sa classe ; le bilan dit « Pour 3 séries : environ 12
+  répétitions à fond à la première, 2 en réserve à la dernière » ; le coach « Pour 3 séries de 8 – 12 reps, démarre à 72,5 kg » (« pour ta
+  fourchette » quand il n'y en a qu'une).
+- L'exemple de la demande, chiffré : 80 kg × 17 sur un 15 – 20, trois séries → 72,5 kg (polyarticulaire) ou 75 kg (isolation) ; 65 kg avec une
+  minute de repos, 75 kg avec trois.
+
+**Choix de détail, à relire.**
+
+- **`x` est le nombre de séries de la routine**, pas « 3 et 2 » d'office. La demande disait « x » et « par exemple » ; le 3 / 2 ne sert que
+  quand la routine n'en dit rien. **Question restée ouverte** : le coach doit-il aussi *proposer* le nombre de séries par type d'exercice, et
+  l'écrire dans la routine ? Rien ne l'écrit aujourd'hui.
+- **Les constantes de fatigue sont au pif**, comme les « 3 et 2 ». 10 % de répétitions en moins par série est un ordre de grandeur courant,
+  pas une mesure de la personne. Elles sont nommées, en un seul fichier ; le jour où un bilan paraît faux, on corrige là.
+- **Une pyramide compte pour une série** (la première est dimensionnée pour elle-même, les autres suivent du même écart). Pour une montée
+  de charge c'est la lecture qui ne promet rien de plus que ce que la première série dit.
+- **Un plafond de six séries et de 30 répétitions exigées** : au-delà, la formule n'est plus une estimation. Six séries de 20 se heurtent
+  au plafond de 30 — la charge est alors la plus légère que le benchmark sache proposer, la dernière série garde moins que la réserve.
+- **Le repos est celui qui est prévu**, pas un repos mesuré : le benchmark n'a qu'une série par exercice.
+
+**Pièges rencontrés.**
+
+- **Une graine de test qui ne portait pas ce que le code venait d'apprendre à lire.** Les tests de dépôt et d'écran semaient un
+  « Développé couché » sans famille de mouvement et sans muscle secondaire : `exerciseClass` le lisait en isolation, et les charges
+  attendues tombaient de quelques kilos. La graine était fausse, pas le code — elle porte maintenant une famille de poussée et deux
+  muscles secondaires, comme le catalogue.
+- **Une mutation a survécu à un test qui ne la visait pas.** « Pyramide : plus de 2 charges au lieu de plus d'1 » passait : mon test de
+  pyramide posait trois charges. Un cas à deux charges (montée, ou série lourde suivie de séries légères) l'a tuée. 32 mutations, 0
+  survivante.
+- **Un fichier de 498 lignes qui faisait deux métiers** (le modèle de charge et la lecture d'un benchmark) : coupé en `benchmarkModel.ts` et
+  `benchmark.ts` plutôt que consigné comme écart.
+
 ### 2026-10-15 (suite) — Le benchmark suit la fourchette, et le coach le lit
 
 **Demande.** « Attends, le coach doit lire ce benchmark et te proposer des charges adaptées. Ça met à jour les routines. Par contre ça

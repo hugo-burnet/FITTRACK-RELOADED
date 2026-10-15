@@ -11,11 +11,16 @@ sur la branche de session `ccr-57f17af8-maxzqv`, **non fusionnée, non publiée*
 ## Où on en est
 
 - **Sur la branche, non publié : le benchmark repris, à la demande de l'utilisateur** (« le coach doit lire ce benchmark et te proposer
-  des charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 »).
+  des charges adaptées… et ça doit bien prendre en compte la fourchette : 8, 12, 15, 18, 20 », puis « je choisis ma charge d'essai, le
+  coach extrapole la meilleure charge sur x séries »).
   - **La fourchette.** La charge se dimensionnait sur « bas + 2, plafonné à 12 » : un 15 – 20 recevait celle d'une série de 12, bien trop
-    lourde. Désormais la fourchette est celle de la routine (cible unique = fourchette d'un point), la référence est son bas + 2
-    répétitions de réserve (10, 17, 22 pour 8 – 12, 15 – 20, 20), Epley seul de 1 à 30 répétitions ; un essai loin de la fourchette est
-    dit approximatif, interrupteur éteint.
+    lourde. Désormais la fourchette est celle de la routine (cible unique = fourchette d'un point), Epley seul de 1 à 30 répétitions ; un
+    essai loin de ce que la première série doit tenir est dit approximatif, interrupteur éteint.
+  - **Les séries.** La charge conseillée **tient toutes les séries de la routine** (six au plus ; une pyramide compte pour une ; sans
+    série de travail, 3 pour un polyarticulaire, 2 pour une isolation) : la première doit pouvoir faire `(bas + 2) / (1 − φ)^(x − 1)`
+    répétitions pour que la dernière garde deux répétitions en réserve. φ = 10 % par série (8 % pour une isolation), plus haut quand le
+    repos est court. Exemple : 80 kg × 17 sur un 15 – 20, trois séries → 72,5 kg. Les chiffres de fatigue sont **au pif**, comme les
+    « 3 et 2 séries » de la demande : `lib/benchmarkModel.ts`, à régler sur le terrain.
   - **Le coach lit le benchmark.** Signal `benchmark_calibrated`, posé à l'enregistrement par le chemin des objectifs ; la carte de
     l'exercice l'affiche à la séance suivante. Accepter le bilan écrit la routine et **suit** cet objectif.
   - **Un défaut trouvé en route.** Pour un exercice qui avait un historique, la coche enregistrait les répétitions de la dernière fois
@@ -33,7 +38,7 @@ sur la branche de session `ccr-57f17af8-maxzqv`, **non fusionnée, non publiée*
 - **Avant : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0) : la coche qui n'écrase plus la
   saisie, le coach R6, le benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité. Le détail des trois
   versions, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 569 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 602 tests**, 300 fichiers, 1 ignoré), `build` et `test:e2e`
   (**35 parcours**, 8 fichiers, à 390 px) — verts sur la branche ; sur `master` (v2.12.2) : 3 531 tests et 34 parcours, CI verte.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
@@ -46,8 +51,10 @@ sur la branche de session `ccr-57f17af8-maxzqv`, **non fusionnée, non publiée*
 
 - **Un lien plus profond entre benchmark et coach** (le coach partant du 1RM du benchmark, ou posant la charge calibrée comme objectif) :
   non fait, c'est une règle nouvelle ; à demander si la calibration par la routine ne suffit pas.
-- **Benchmark** : la réserve de 2 répétitions et la limite de 12 sont des constantes (`lib/benchmark.ts`) ; si les charges proposées
-  paraissent trop basses ou trop hautes, c'est là.
+- **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
+  séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
+  paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ
+  deux répétitions en réserve à la dernière.
 - **Coach R6** : le plafond ne change presque rien tant qu'on ne le relève pas — c'est la décision, pas un défaut (`effectiveCeiling`,
   un seul endroit).
 - **Un E2E des mensurations a bloqué une fois** (`corriger puis supprimer une mesure`, délai de 60 s dans une passe complète ; non
@@ -67,6 +74,11 @@ règle**, pas des défauts, et demandent l'historique réel pour être jugés (`
 - la moyenne du RPE dilue la dernière série.
 
 ### Décisions qui attendent l'utilisateur
+
+- **Benchmark : le coach doit-il aussi proposer le nombre de séries ?** Aujourd'hui il dimensionne la charge sur celles que la routine
+  porte (3 pour un polyarticulaire, 2 pour une isolation seulement si elle n'en dit rien) et n'écrit jamais « fais 3 séries ». La demande
+  disait « extrapole la meilleure charge sur x séries, par exemple 3 sur les poly-articulaires, 2 sur les isolations ».
+- **Publier le benchmark repris en v2.13.0 ?** Rien n'est fusionné ni versionné sans l'accord de l'utilisateur.
 
 - **Le wiki et le corpus** (`fittrack-kb-contract`, 9 Mo ; ~1,8 Mo de JSON embarqués ; le `prebuild`
   dépend de `kb:check-articles`) sont la plus grosse surface de maintenance hors du cœur de l'app : les
