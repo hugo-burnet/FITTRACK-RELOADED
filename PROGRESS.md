@@ -5,18 +5,22 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.12.1 publiée** (PWA et APK). `master` (`1fc3908`) porte la branche de session
-`ccr-57f17af8-maxzqv`, fusionnée `--no-ff`.
+**Dernière mise à jour :** 2026-10-15 — **v2.12.2 préparée** (`package.json` à 2.12.2) ; **v2.12.1** est la dernière version publiée.
 
 ## Où on en est
 
+- **v2.12.2 : le benchmark et l'objectif du coach.** Appliquer un benchmark **remplace** l'objectif de charge que le coach avait déjà posé
+  sur l'exercice (« la prochaine fois, 102,5 kg ») : il restait affiché dans la séance à côté de la cible écrite par le benchmark, deux
+  chiffres pour un exercice. Précisé : le moteur du coach ne lit aucune charge cible de routine, il juge des séries faites — le benchmark
+  le calibre par les cibles de la routine, et il en prend acte à la première séance ordinaire faite à cette charge
+  (`docs/progress/decisions-et-pieges.md`, entrée du benchmark).
 - **Publié : v2.12.1** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.1), APK `FitTrack-v2.12.1.apk`
   signé avec la clé de release. Une ligne **« Benchmark de cette routine » dans l'éditeur de la routine** (le benchmark n'était que dans
   le menu ⋮ de la liste, et ne se trouvait pas) ; rien d'autre ne change depuis la v2.12.0.
 - **Avant : v2.12.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.12.0) : la coche qui n'écrase plus la
   saisie, le coach R6, le benchmark, les mensurations, « Remplacer l'exercice », le rappel de sauvegarde, l'E2E commité. Le détail des deux
   versions, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 529 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 531 tests**, 299 fichiers, 1 ignoré), `build` et `test:e2e`
   (**34 parcours**, 8 fichiers, à 390 px) — verts sur `master`, y compris sur la CI.
 - **Branches distantes.** `ccr-449df1c1-etmya3` et `ccr-57f17af8-maxzqv`, fusionnées, sont à supprimer à la main : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
