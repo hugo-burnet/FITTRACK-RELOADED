@@ -11,6 +11,7 @@ import {
 } from '@/lib/routineTargets';
 import { alive, touch } from './base';
 import { getRoutineDetail } from './routineLifecycle';
+import { benchmarkIdsAmong } from './workoutKinds';
 
 /**
  * La collecte de la revue des cibles — et sa seule écriture.
@@ -124,9 +125,13 @@ async function recentBlockIdsByExercise(
       .limit(limit)
       .toArray();
 
+    // Un benchmark n'est pas une séance de référence : il prendrait une des
+    // `count` places, puis serait écarté plus loin, et la revue en lirait une de moins.
+    const benchmarks = await benchmarkIdsAmong(recent.map((set) => set.workoutId));
     const seenWorkouts = new Set<string>();
     const seenBlocks = new Set<string>();
     for (const set of recent) {
+      if (benchmarks.has(set.workoutId)) continue;
       if (!seenWorkouts.has(set.workoutId)) {
         if (seenWorkouts.size >= count) break;
         seenWorkouts.add(set.workoutId);
@@ -148,7 +153,7 @@ async function recentBlockIdsByExercise(
  */
 async function recentRoutineBlockIds(routineId: string, count: number): Promise<string[]> {
   const workouts = alive(await db.workouts.where('routineId').equals(routineId).toArray())
-    .filter((workout) => workout.status === 'completed')
+    .filter((workout) => workout.status === 'completed' && workout.kind !== 'benchmark')
     .sort((a, b) => b.startedAt - a.startedAt || b.id.localeCompare(a.id))
     .slice(0, count);
 
@@ -193,7 +198,8 @@ async function loadBlocks(blockIds: readonly string[]): Promise<BlockMap> {
   const blocks: BlockMap = new Map();
   for (const row of living) {
     const workout = workoutById.get(row.workoutId);
-    // Une séance en cours ou abandonnée n'est pas de l'historique.
+    // Une séance en cours ou abandonnée n'est pas de l'historique. Les benchmarks,
+    // eux, ne sont jamais arrivés jusqu'ici : les deux fenêtres les écartent.
     if (workout === undefined || workout.status !== 'completed') continue;
 
     const sets = setsByBlock.get(row.id);
@@ -282,12 +288,12 @@ export async function loadRoutineTargetReview(
  * rester ouverte pendant qu'une série était supprimée ailleurs.
  */
 export async function applyRoutineTargetProposals(
-  proposals: readonly RoutineTargetProposal[],
+  proposals: readonly Pick<RoutineTargetProposal, 'targetSetIds' | 'deltaKg' | 'proposedWeight'>[],
 ): Promise<number> {
   if (proposals.length === 0) return 0;
 
   return db.transaction('rw', db.routineSets, async () => {
-    const byId = new Map<string, RoutineTargetProposal>();
+    const byId = new Map<string, (typeof proposals)[number]>();
     for (const proposal of proposals) {
       for (const setId of proposal.targetSetIds) byId.set(setId, proposal);
     }

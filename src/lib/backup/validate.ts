@@ -12,6 +12,7 @@ import {
   type PersonalRecordType,
   type ProgramStatus,
   type Side,
+  type WorkoutKind,
   type WorkoutStatus,
 } from '@/data/types';
 import { BACKUP_TABLES, type BackupRow, type BackupTable } from './types';
@@ -120,6 +121,7 @@ const WORKOUT_STATUSES = [
   'completed',
   'discarded',
 ] as const satisfies readonly WorkoutStatus[];
+const WORKOUT_KINDS = ['benchmark'] as const satisfies readonly WorkoutKind[];
 const PROGRAM_STATUSES = [
   'draft',
   'active',
@@ -276,6 +278,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       durationSeconds: isCount,
     },
     optional: {
+      kind: oneOf(WORKOUT_KINDS),
       programPhase: oneOf(PROGRAM_PHASES),
       programIsDeload: isFlag,
       programWeekIndex: isRank,

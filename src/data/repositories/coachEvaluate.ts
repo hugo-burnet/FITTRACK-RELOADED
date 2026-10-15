@@ -323,7 +323,9 @@ export async function loadCoachHistoryLines(
 
   for (const set of sets) {
     const workout = workoutById.get(set.workoutId);
-    if (workout === undefined) continue;
+    // Un benchmark n'est pas une séance : une seule série à l'échec, lue comme
+    // une séance entière, ferait proposer des hausses sur du vide.
+    if (workout === undefined || workout.kind === 'benchmark') continue;
     const block = blocks.get(set.workoutExerciseId);
     if (block === undefined) {
       blocks.set(set.workoutExerciseId, {
@@ -367,6 +369,8 @@ export async function loadCoachHistoryLines(
 export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
   const detail = await getWorkoutDetail(workoutId);
   if (detail === null) return [];
+  // Le coach juge des séances de travail ; le bilan d'un benchmark a son écran.
+  if (detail.workout.kind === 'benchmark') return [];
 
   const formula = await getOneRepMaxFormula();
   const exerciseIds = detail.exercises.map((line) => line.row.exerciseId);
@@ -460,6 +464,9 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
  * Call after `finishWorkout` so abandoned sets are already gone.
  */
 export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
+  // Rien à enregistrer — et surtout rien à « suivre » : la charge d'un benchmark est
+  // celle d'un essai à fond, elle ne répond à aucun objectif que le coach aurait posé.
+  if ((await db.workouts.get(workoutId))?.kind === 'benchmark') return [];
   const signals = await evaluateCoachForWorkout(workoutId);
 
   // Resolve what this session answered *before* recording new signals: a fresh

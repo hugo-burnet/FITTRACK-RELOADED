@@ -121,6 +121,15 @@ export interface BenchmarkProposal {
   routineExerciseId: string;
   /** Exactement les séries de travail que l'écriture décale. */
   targetSetIds: string[];
+  /**
+   * La série dont le bilan a lu la charge (la première de travail) et ce qu'elle
+   * portait alors. L'écriture est un *décalage* : rejouée sur une routine qui a
+   * déjà bougé — un double appui, une modification faite ailleurs —, elle
+   * déplacerait deux fois. Elle ne s'applique donc que si cette série porte
+   * encore ce que le bilan a vu.
+   */
+  anchorSetId: string;
+  fromWeight?: number;
   proposedWeight: number;
   /** Absent quand la ligne ne portait aucune charge : les séries reçoivent `proposedWeight`. */
   deltaKg?: number;
@@ -264,10 +273,17 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   const targetSetIds = working.map((set) => set.id);
   const proposal: BenchmarkProposal =
     first.targetWeight === undefined
-      ? { routineExerciseId: input.routine.routineExerciseId, targetSetIds, proposedWeight: suggested }
+      ? {
+          routineExerciseId: input.routine.routineExerciseId,
+          targetSetIds,
+          anchorSetId: first.id,
+          proposedWeight: suggested,
+        }
       : {
           routineExerciseId: input.routine.routineExerciseId,
           targetSetIds,
+          anchorSetId: first.id,
+          fromWeight: first.targetWeight,
           proposedWeight: suggested,
           deltaKg: round3(suggested - first.targetWeight),
         };

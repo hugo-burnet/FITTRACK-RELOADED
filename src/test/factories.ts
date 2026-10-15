@@ -19,10 +19,14 @@ export async function seedWorkout(input: {
   performedAt: number;
   /** [weight, reps] per set */
   sets: [number, number][];
+  /** A session from a routine, and/or a special kind of session. */
+  routineId?: string;
+  kind?: Workout['kind'];
 }): Promise<Workout> {
   const workout = newEntity<Workout>({
-    routineId: '',
+    routineId: input.routineId ?? '',
     name: 'Séance de test',
+    ...(input.kind === undefined ? {} : { kind: input.kind }),
     status: 'completed',
     startedAt: input.performedAt,
     endedAt: input.performedAt + 3_600_000,

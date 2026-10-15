@@ -111,6 +111,24 @@ describe('validateBackupTables', () => {
     expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
   });
 
+  it('accepte une séance de benchmark et refuse un genre de séance inconnu', () => {
+    const tables = account();
+    tables.workouts[0]!.kind = 'benchmark';
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+
+    tables.workouts[0]!.kind = 'marathon';
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'workouts',
+      index: 0,
+      field: 'kind',
+    });
+  });
+
   it('refuse deux lignes qui portent le même identifiant', () => {
     // `bulkPut` en écraserait une sans un mot : deux séances entrent, une seule
     // ressort, et le fichier disait pourtant qu'il y en avait deux.

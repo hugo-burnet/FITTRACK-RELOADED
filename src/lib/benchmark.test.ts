@@ -120,6 +120,8 @@ describe('benchmarkLine — weight and reps', () => {
     expect(line.proposal).toEqual({
       routineExerciseId: 'row-1',
       targetSetIds: ['s0', 's1', 's2'],
+      anchorSetId: 's0',
+      fromWeight: 70,
       proposedWeight: 77.5,
       deltaKg: 7.5,
     });
@@ -182,6 +184,7 @@ describe('benchmarkLine — weight and reps', () => {
     expect(line.proposal).toEqual({
       routineExerciseId: 'row-1',
       targetSetIds: ['s0', 's1'],
+      anchorSetId: 's0',
       proposedWeight: 77.5,
     });
   });
