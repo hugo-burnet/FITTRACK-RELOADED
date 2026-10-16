@@ -4,11 +4,11 @@
 **Statut :** livré (v2.12.0), **repris à la demande de l'utilisateur** : « le coach doit lire ce benchmark et te proposer des
 charges adaptées, ça met à jour les routines — et ça doit bien prendre en compte la fourchette : un mec qui fait des séries de
 8, 12, 15, 18, 20 ». Demande d'origine : « une séance avec 1 série, le plus de répétitions possible, ça nous calibre notre
-coach, 1 série par exo ». **Reprise** (non publiée) : « je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on
+coach, 1 série par exo ». **Reprise** (v2.13.0) : « je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on
 teste, je varie à 17, 20 ou 12… 1 série de chaque exo. Le coach récupère ces infos et extrapole la meilleure charge sur x séries — par
 exemple 3 séries sur les poly-articulaires, 2 sur les isolations, c'est un exemple au pif ». Décisions de détail prises en autonomie, à
 relire.
-**Seconde reprise** (non publiée) : « Je fais au chest press 40 kg, 18 reps à l'échec. Je voudrais qu'il me propose : ok frero, tu as fait
+**Seconde reprise** (v2.14.0) : « Je fais au chest press 40 kg, 18 reps à l'échec. Je voudrais qu'il me propose : ok frero, tu as fait
 40×18, donc maintenant je te propose 40×14 trois fois (j'en sais rien, j'ai pas fait les calculs, mais tu vois l'idée). Je veux faire de la
 classique du 8-12 : 52,5 kg au chest press, échec à la 13e, il me dit « ok mec, je te propose 50×12 trois fois ». Et la force, je connais pas.
 Et s'il faut choisir quel type de benchmark on fait, on peut avoir l'option. Et je trouve que c'est particulièrement pertinent pour commencer

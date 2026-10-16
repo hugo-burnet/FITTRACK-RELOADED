@@ -58,6 +58,8 @@ séance de programme se construit depuis sa routine, les charges d'un bloc sont 
 - **Un test d'absence est vrai trop tôt** tant que les requêtes vives ne se sont pas posées : celui de la carte du coach attend, et a été vu rouge.
 - **Le dépôt n'impose pas Prettier** (les fichiers commités ne le passent pas non plus) : ne pas reformater en bloc, corriger l'indentation de ce qu'on touche.
 
+**Publié en v2.14.0**, après son accord (« fusionne et publie ») : rien n'est fusionné ni versionné sans demande explicite.
+
 ### 2026-10-15 (release) — Un test qui gardait un nœud périmé
 
 **Constat.** La première tentative de la run de release a échoué à l'étape `test:run` : un test sur 3 604 —
