@@ -246,16 +246,16 @@ describe('range_ceiling_reached — remise dans la fourchette', () => {
 
   it('propose d’un coup la charge qui remet dans la fourchette quand on est très au-dessus du plafond', () => {
     // 30 répétitions à 40 kg : un max d'au moins 80 kg ; trois séries d'un 15 – 20 en demandent 21 à la première,
-    // soit 80 / (1 + 21/30) = 47,1 → 45 kg, et non un cran de plus (42,5).
+    // soit 80 / (1 + 21/30) = 47,1 → 47,5 kg (le pas de 2,5 le plus proche), et non un cran de plus (42,5).
     const [signal] = light([30, 28, 26]);
 
-    expect(signal).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 45 });
+    expect(signal).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 47.5 });
     expect(signal!.evidence).toEqual(
       expect.arrayContaining([
         { label: 'ceiling_rebalanced', value: 1 },
         { label: 'top_reps', value: 30 },
         { label: 'target_reps', value: 15 },
-        { label: 'next_load_kg', value: 45 },
+        { label: 'next_load_kg', value: 47.5 },
       ]),
     );
   });

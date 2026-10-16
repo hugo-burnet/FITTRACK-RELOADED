@@ -41,8 +41,8 @@ import {
  * que la formule fait mal, et la charge qui en sort ne s'écrit pas d'office dans la routine.
  *
  * Au-dessus de la capacité exigée, ce n'est plus l'écart de répétitions qui juge mais le saut de charge
- * (`BENCHMARK_MAX_JUMP`) : 27 répétitions pour un 15 – 20 ne demandent que 6 % de plus, c'est une consigne claire
- * — plus lourd — que le bilan applique ; 25 répétitions pour un 5 – 8 en demandent 37 %, et la formule n'est plus
+ * (`BENCHMARK_MAX_JUMP`) : 27 répétitions pour un 15 – 20 ne demandent que 13 % de plus, c'est une consigne claire
+ * — plus lourd — que le bilan applique ; 25 répétitions pour un 5 – 8 en demandent 44 %, et la formule n'est plus
  * une mesure.
  */
 export const BENCHMARK_ROUGH_GAP = 6;
@@ -273,7 +273,7 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     const oneRepMax = oneRepMaxOf(set.weight!, set.reps!);
     if (oneRepMax !== undefined) return [{ set, oneRepMax }];
     // Plus de 30 répétitions : Epley ne mesure plus, mais il ne décroît pas — le max est au moins celui d'une
-    // série de 30. On dimensionne sur ce plancher : la charge qui en sort est un minimum, jamais trop haute.
+    // série de 30. On dimensionne sur ce plancher : la charge qui en sort est un minimum, à un demi-pas près.
     if (Number.isInteger(set.reps) && set.reps! > BENCHMARK_MAX_REPS) {
       return [{ set, oneRepMax: oneRepMaxOf(set.weight!, BENCHMARK_MAX_REPS)!, minimum: true as const }];
     }

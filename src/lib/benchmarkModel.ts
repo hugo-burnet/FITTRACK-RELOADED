@@ -42,9 +42,10 @@ export const BENCHMARK_MAX_REPS = 30;
 
 /**
  * Le plus grand saut de charge, en part de la charge essayée, qu'une seule série justifie : au-delà, la charge
- * conseillée est une extrapolation que le bilan ne coche pas d'office et que le coach ne reprend pas. Convertir
- * 25 répétitions en 8 demande 37 % de plus ; la formule le dit, rien de ce qu'on a mesuré ne le garantit. Un
- * 15 – 20 testé à 30 répétitions demande 12 % de plus : il n'atteint jamais cette limite.
+ * conseillée est une extrapolation que le bilan ne coche pas d'office et que le coach ne reprend pas. Un 5 – 8
+ * testé à 25 répétitions demande 44 % de plus (40 kg, trois séries, pas de 2,5) ; la formule le dit, rien de ce
+ * qu'on a mesuré ne le garantit. Un 15 – 20 testé à 30 répétitions en demande 19 % : il n'atteint jamais cette
+ * limite.
  */
 export const BENCHMARK_MAX_JUMP = 0.3;
 
@@ -171,8 +172,8 @@ export function loadForReps(oneRepMax: number, reps: number): number | undefined
 }
 
 /**
- * La charge atteignable la plus proche **sans dépasser** `ideal` : le benchmark ne propose jamais plus que ce que
- * le maximum autorise.
+ * La charge atteignable la plus proche **sans dépasser** `ideal` : un plafond (le saut maximal du coach, la
+ * moitié d'un pas de marge en moins), pas l'arrondi d'une proposition — c'est `roundLoad`.
  *
  * Sur la grille du matériel quand le pas est celui de la table. Quand c'est un pas saisi sur l'exercice, la
  * grille part de la charge essayée et non de zéro : un cran de 1,125 kg sur une pile de 5 ne tombe pas sur un
@@ -182,6 +183,23 @@ export function floorLoad(ideal: number, anchor: number, step: LoadStep): number
   const base = step.onGrid ? 0 : anchor;
   // La tolérance absorbe le bruit flottant : 77,49999999999 est un 77,5.
   const steps = Math.floor((ideal - base) / step.kg + 1e-9);
+  return Math.max(0, Math.round((base + steps * step.kg) * 1000) / 1000);
+}
+
+/**
+ * La charge du pas de l'exercice **la plus proche** de `ideal` : on arrondit simplement au pas renseigné dans
+ * l'appli (`resolveLoadStep`), en haut comme en bas, sans règle de tolérance.
+ *
+ * Même grille que `floorLoad` : celle de la table quand le pas est celui du matériel, la charge essayée plus
+ * des multiples du pas quand c'est un pas saisi sur l'exercice. Arrondir vers le bas coûtait un cran entier pour
+ * une fraction de kilo — 34,94 kg devenait 33,875 pour une leg extension faite à 35, avec un pas de 1,125 — et
+ * obligeait à une tolérance de plus ; au plus proche, la proposition est à un demi-pas de ce que le modèle dit,
+ * 0,56 kg au plus avec un pas de 1,125, 2,5 kg avec le 5 kg d'une machine qui n'a pas de pas saisi.
+ */
+export function roundLoad(ideal: number, anchor: number, step: LoadStep): number {
+  const base = step.onGrid ? 0 : anchor;
+  // La tolérance absorbe le bruit flottant : 61,2499999999 est un 61,25, donc un demi-pas, qui monte.
+  const steps = Math.floor((ideal - base) / step.kg + 0.5 + 1e-9);
   return Math.max(0, Math.round((base + steps * step.kg) * 1000) / 1000);
 }
 
@@ -258,9 +276,9 @@ export function capacityForSets(lowReps: number | undefined, sets: number, fatig
 
 /**
  * La charge qui remet un max de `oneRepMax` dans une fourchette de bas `lowReps`, tenue sur `sets` séries : celle
- * dont la dernière série garde la réserve au bas de la fourchette (`capacityForSets`), arrondie vers le bas sur
- * le matériel (`floorLoad`, compté depuis `anchorKg` quand le pas est celui de l'exercice). 0 quand il n'y a rien
- * à proposer — un max inutilisable, ou une charge sous le premier cran du matériel.
+ * dont la dernière série garde la réserve au bas de la fourchette (`capacityForSets`), arrondie au pas de
+ * l'exercice (`roundLoad`, compté depuis `anchorKg` quand le pas est celui saisi sur l'exercice). 0 quand il n'y
+ * a rien à proposer — un max inutilisable, ou une charge qui n'atteint pas un demi-cran.
  *
  * Le bilan du benchmark et le coach en séance normale s'en servent tous les deux : ce que le coach propose à une
  * personne qui dépasse le haut de sa fourchette est la charge qu'un benchmark lui aurait proposée.
@@ -274,7 +292,7 @@ export function loadForRange(
   step: LoadStep,
 ): number {
   const ideal = loadForReps(oneRepMax, capacityForSets(lowReps, sets, fatigue));
-  return ideal === undefined ? 0 : floorLoad(ideal, anchorKg, step);
+  return ideal === undefined ? 0 : roundLoad(ideal, anchorKg, step);
 }
 
 /**

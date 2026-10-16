@@ -330,9 +330,9 @@ describe('loadBenchmarkReport', () => {
       const workout = await benchmarkOf(routine.id, [[80, 17]]);
       loads.push((await loadBenchmarkReport(workout.id))!.lines[0]!.suggestedKg!);
     }
-    // 80 × 17 is a 125.3 kg max. One minute: 20 % of fatigue, 26.6 reps for the first set, 66.5 → 65.
+    // 80 × 17 is a 125.3 kg max. One minute: 20 % of fatigue, 26.6 reps for the first set, 66.5 → 67.5.
     // Two minutes: 10 %, 21 reps, 73.7 → 72.5. Three minutes: 6.7 %, 19.5 reps, 75.9 → 75.
-    expect(loads).toEqual([65, 72.5, 75]);
+    expect(loads).toEqual([67.5, 72.5, 75]);
   });
 
   it('range l’exercice par sa famille de mouvement : une isolation fatigue moins qu’un polyarticulaire', async () => {
@@ -419,17 +419,17 @@ describe('recordBenchmarkObjectives — le coach lit le benchmark', () => {
 
     const signals = await recordBenchmarkObjectives(workout.id);
 
-    // Le développé tient deux séries (75 kg), le curl une seule (42,5 kg).
+    // Le développé tient deux séries (75 kg), le curl une seule (44,25 kg → 45 au pas de 2,5 le plus proche).
     expect(signals.map((signal) => [signal.exerciseId, signal.nextLoadKg])).toEqual([
       [press.id, 75],
-      [curl.id, 42.5],
+      [curl.id, 45],
     ]);
     const pending = await listPendingRecommendations([press.id, curl.id]);
     expect(pending).toHaveLength(2);
     expect(pending.find((row) => row.exerciseId === curl.id)).toMatchObject({
       code: 'benchmark_calibrated',
       status: 'pending',
-      nextLoadKg: 42.5,
+      nextLoadKg: 45,
       sourceWorkoutId: workout.id,
     });
     // La fourchette de chaque exercice voyage avec son objectif : 15 – 20 pour le curl, 8 – 12 pour le développé.

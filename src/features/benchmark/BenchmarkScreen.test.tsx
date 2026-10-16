@@ -184,7 +184,8 @@ describe('BenchmarkScreen', () => {
   });
 
   it('donne un minimum au-delà de 30 répétitions, avec son interrupteur allumé', async () => {
-    // 40 × 35 en léger, trois séries à 35 kg : le max est au moins celui de 30 répétitions (80 kg), donc au moins 45 kg.
+    // 40 × 35 en léger, trois séries à 35 kg : le max est au moins celui de 30 répétitions (80 kg), donc au moins
+    // 80 / (1 + 21/30) = 47,1 → 47,5 kg au pas de la barre.
     const { workout, setIds } = await seedBenchmark([[40, 35]], { low: 8, high: 12 }, 3, {
       goal: 'light',
       weights: [35, 35, 35],
@@ -195,7 +196,7 @@ describe('BenchmarkScreen', () => {
     const card = await screen.findByRole('region', { name: 'Développé couché' });
     expect(within(card).getByText('Fait : 35 reps · 40 kg')).toBeInTheDocument();
     expect(within(card).getByText('1RM : au moins 80 kg')).toBeInTheDocument();
-    expect(within(card).getByText('Au moins 45 kg pour 3 séries de 15 – 20 reps')).toBeInTheDocument();
+    expect(within(card).getByText('Au moins 47,5 kg pour 3 séries de 15 – 20 reps')).toBeInTheDocument();
     expect(within(card).getByText(/Plus de 30 répétitions : ton max ne se calcule plus/)).toBeInTheDocument();
     // Un minimum ne dit pas ce qu'on tiendra, et n'est pas une estimation approximative.
     expect(within(card).queryByText(/tu tiendras/)).not.toBeInTheDocument();
@@ -204,7 +205,7 @@ describe('BenchmarkScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
     await screen.findByText('1 exercice mis à jour dans la routine.');
-    expect(await targetWeights(setIds)).toEqual([45, 45, 45]);
+    expect(await targetWeights(setIds)).toEqual([47.5, 47.5, 47.5]);
   });
 
   it('remet dans le 15 – 20 un essai très au-dessus : 40 × 28 en léger propose 45 kg, interrupteur allumé', async () => {
