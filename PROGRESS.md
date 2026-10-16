@@ -5,7 +5,7 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-16 — **v2.15.0 en cours de publication** (PWA et APK) : le coach remet dans la fourchette quand on la dépasse de
+**Dernière mise à jour :** 2026-10-16 — **v2.15.0 publiée** (PWA et APK) : le coach remet dans la fourchette quand on la dépasse de
 beaucoup (bilan du benchmark et séance normale), plus de 30 reps donnent un minimum au bilan, et les propositions de charge s'arrondissent au pas
 renseigné sur l'exercice, au plus proche.
 La v2.14.0 avait donné un style au benchmark (léger, classique, lourd), fait corriger six défauts relevés par une revue de code et ajouté « Calibrer les
@@ -13,7 +13,7 @@ charges » à la fiche d'un programme.
 
 ## Où on en est
 
-- **v2.15.0** — publication en cours (voir le journal pour l'issue), à la demande de l'utilisateur (« fusionne et publie ») :
+- **Publié : v2.15.0**, à la demande de l'utilisateur (« fusionne et publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.15.0), APK `FitTrack-v2.15.0.apk`
   ([journal](docs/journal/2026-10-16-versions-v2-15.md)). Sa demande : « ça se passe comment si je tape plus de 20 reps en léger ? » puis « il faut que le coach
   te rebalance dans une range 15-20 », puis, sur le pas de ses machines, « on arrondit simplement au pas renseigné dans l'App ». Au **bilan du benchmark**, un
@@ -44,8 +44,8 @@ charges » à la fiche d'un programme.
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
 - **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 735 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
   (**36 parcours**, 8 fichiers, à 390 px) — verts à la v2.15.0 ; la v2.14.0 : 3 695 tests, 36 parcours.
-- **Branches distantes.** `ccr-57f17af8-maxzqv`, fusionnée, est à supprimer à la main (`ccr-449df1c1-etmya3` l'a été) : le refus de
-  supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
+- **Branches distantes.** `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 et v2.15.0), fusionnées, sont à supprimer à la main
+  (`ccr-449df1c1-etmya3` l'a été) : le refus de supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
 - **Pour publier la suivante** : `chore: prepare release vX.Y.Z` (`package.json` et son lock), `master` poussé sans force, puis le
   `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
