@@ -183,13 +183,50 @@ describe('BenchmarkScreen', () => {
     expect(await targetWeights(setIds)).toEqual([70, 70]);
   });
 
-  it('dit « trop léger » au-delà de 30 répétitions, sans interrupteur', async () => {
-    const { workout } = await seedBenchmark([[20, 35]]);
+  it('donne un minimum au-delà de 30 répétitions, avec son interrupteur allumé', async () => {
+    // 40 × 35 en léger, trois séries à 35 kg : le max est au moins celui de 30 répétitions (80 kg), donc au moins 45 kg.
+    const { workout, setIds } = await seedBenchmark([[40, 35]], { low: 8, high: 12 }, 3, {
+      goal: 'light',
+      weights: [35, 35, 35],
+    });
+    const user = userEvent.setup();
     renderScreen(workout.id);
 
-    expect(await screen.findByText(/Plus de 30 répétitions/)).toBeInTheDocument();
-    expect(screen.queryByRole('switch')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Terminé' })).toBeInTheDocument();
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    expect(within(card).getByText('Fait : 35 reps · 40 kg')).toBeInTheDocument();
+    expect(within(card).getByText('1RM : au moins 80 kg')).toBeInTheDocument();
+    expect(within(card).getByText('Au moins 45 kg pour 3 séries de 15 – 20 reps')).toBeInTheDocument();
+    expect(within(card).getByText(/Plus de 30 répétitions : ton max ne se calcule plus/)).toBeInTheDocument();
+    // Un minimum ne dit pas ce qu'on tiendra, et n'est pas une estimation approximative.
+    expect(within(card).queryByText(/tu tiendras/)).not.toBeInTheDocument();
+    expect(within(card).queryByText(/Estimation approximative/)).not.toBeInTheDocument();
+    expect(within(card).getByRole('switch', { name: /Développé couché/ })).toBeChecked();
+
+    await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
+    await screen.findByText('1 exercice mis à jour dans la routine.');
+    expect(await targetWeights(setIds)).toEqual([45, 45, 45]);
+  });
+
+  it('remet dans le 15 – 20 un essai très au-dessus : 40 × 28 en léger propose 45 kg, interrupteur allumé', async () => {
+    const { workout, setIds } = await seedBenchmark([[40, 28]], { low: 8, high: 12 }, 3, {
+      goal: 'light',
+      weights: [35, 35, 35],
+    });
+    const user = userEvent.setup();
+    renderScreen(workout.id);
+
+    const card = await screen.findByRole('region', { name: 'Développé couché' });
+    // 40 × 28 est un max de 77,3 kg ; trois séries d'un 15 – 20 : 21 pour la première, 45,5 → 45 sur la grille de la barre.
+    expect(within(card).getByText('45 kg pour 3 séries de 15 – 20 reps')).toBeInTheDocument();
+    expect(
+      within(card).getByText('À 45 kg, tu tiendras environ 21 · 19 · 17 reps à fond.'),
+    ).toBeInTheDocument();
+    expect(within(card).queryByText(/Estimation approximative/)).not.toBeInTheDocument();
+    expect(within(card).getByRole('switch', { name: /Développé couché/ })).toBeChecked();
+
+    await user.click(screen.getByRole('button', { name: 'Appliquer à la routine · 1' }));
+    await screen.findByText('1 exercice mis à jour dans la routine.');
+    expect(await targetWeights(setIds)).toEqual([45, 45, 45]);
   });
 
   it('lit la fourchette de chaque exercice : un 15 – 20 n’est plus « trop léger » à 22 répétitions', async () => {
@@ -399,9 +436,11 @@ describe('BenchmarkScreen', () => {
   });
 
   it('ne parle pas d’interrupteur quand il n’y en a pas : estimation approximative d’une routine déjà alignée', async () => {
-    // 60 × 20 est approximatif pour une fourchette de 8 – 12 sur trois séries (écart de 8), et la routine,
-    // à 70 kg, porte déjà la charge calibrée : pas de proposition, donc pas d'interrupteur à rallumer.
-    const { workout } = await seedBenchmark([[60, 20]], { low: 8, high: 12 }, 3);
+    // 100 × 3 est approximatif pour une fourchette de 8 – 12 sur trois séries (la première doit en tenir 12), et la
+    // routine, à 77,5 kg, porte déjà la charge calibrée : pas de proposition, donc pas d'interrupteur à rallumer.
+    const { workout } = await seedBenchmark([[100, 3]], { low: 8, high: 12 }, 3, {
+      weights: [77.5, 77.5, 77.5],
+    });
     renderScreen(workout.id);
 
     const card = await screen.findByRole('region', { name: 'Développé couché' });

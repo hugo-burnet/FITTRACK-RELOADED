@@ -4,7 +4,8 @@ import { Card, Toggle } from '@/ui';
 import {
   changedReading,
   holdReading,
-  oneRepMaxReading,
+  minimumReading,
+  oneRepMaxSentence,
   planReading,
   proposalMark,
   pyramidReading,
@@ -36,6 +37,8 @@ export function BenchmarkLineCard({
   const tested = testedReading(line);
   const plan = planReading(line);
   const hold = holdReading(line);
+  const oneRepMax = oneRepMaxSentence(line);
+  const minimum = minimumReading(line);
   const pyramid = pyramidReading(line);
   const routine = routineReading(line);
   const changed = changedReading(line);
@@ -55,16 +58,15 @@ export function BenchmarkLineCard({
         )}
 
         {zone !== undefined && <p className="text-sm text-[var(--text-2)]">{zone}</p>}
-        {line.verdict === 'calibrated' && line.oneRepMax !== undefined && (
-          <p className="text-sm text-[var(--text-2)]">
-            {t('benchmark.oneRepMax', { value: oneRepMaxReading(line.oneRepMax) })}
-          </p>
+        {line.verdict === 'calibrated' && oneRepMax !== undefined && (
+          <p className="text-sm text-[var(--text-2)]">{oneRepMax}</p>
         )}
         {line.verdict === 'calibrated' && plan !== undefined && (
           <div>
             <p className="text-base font-semibold text-[var(--accent-ink)]">{plan}</p>
             {hold !== undefined && <p className="text-sm text-[var(--text-2)]">{hold}</p>}
             {pyramid !== undefined && <p className="text-sm text-[var(--text-2)]">{pyramid}</p>}
+            {minimum !== undefined && <p className="text-sm text-[var(--text-2)]">{minimum}</p>}
           </div>
         )}
         {rough !== undefined && (

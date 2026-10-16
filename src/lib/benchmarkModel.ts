@@ -1,5 +1,6 @@
 import type { BenchmarkGoal, SetType } from '@/data/types';
 import type { ExerciseClass } from '@/lib/exerciseClass';
+import type { LoadStep } from '@/lib/loadIncrement';
 
 /**
  * Le modèle du benchmark : du maximum d'une série à la charge de travail d'une fourchette, tenue sur plusieurs
@@ -36,8 +37,16 @@ export const BENCHMARK_RESERVE_REPS = 2;
 /** La fourchette quand la routine n'en porte pas d'exploitable : le « 8 – 12 » usuel. */
 export const BENCHMARK_DEFAULT_ZONE: RepZone = { low: 8, high: 12 };
 
-/** Au-delà, la série est trop légère pour dire quoi que ce soit : Epley n'est plus une estimation. */
+/** Au-delà, la série est trop légère pour calculer un max : Epley n'est plus une estimation, seulement un plancher. */
 export const BENCHMARK_MAX_REPS = 30;
+
+/**
+ * Le plus grand saut de charge, en part de la charge essayée, qu'une seule série justifie : au-delà, la charge
+ * conseillée est une extrapolation que le bilan ne coche pas d'office et que le coach ne reprend pas. Convertir
+ * 25 répétitions en 8 demande 37 % de plus ; la formule le dit, rien de ce qu'on a mesuré ne le garantit. Un
+ * 15 – 20 testé à 30 répétitions demande 12 % de plus : il n'atteint jamais cette limite.
+ */
+export const BENCHMARK_MAX_JUMP = 0.3;
 
 /**
  * La part de la capacité qu'une série de plus fait perdre, à charge égale, pour un polyarticulaire reposé
@@ -162,6 +171,21 @@ export function loadForReps(oneRepMax: number, reps: number): number | undefined
 }
 
 /**
+ * La charge atteignable la plus proche **sans dépasser** `ideal` : le benchmark ne propose jamais plus que ce que
+ * le maximum autorise.
+ *
+ * Sur la grille du matériel quand le pas est celui de la table. Quand c'est un pas saisi sur l'exercice, la
+ * grille part de la charge essayée et non de zéro : un cran de 1,125 kg sur une pile de 5 ne tombe pas sur un
+ * multiple de 1,125 (cf. `resolveLoadStep`), mais la charge qu'on vient de soulever existe.
+ */
+export function floorLoad(ideal: number, anchor: number, step: LoadStep): number {
+  const base = step.onGrid ? 0 : anchor;
+  // La tolérance absorbe le bruit flottant : 77,49999999999 est un 77,5.
+  const steps = Math.floor((ideal - base) / step.kg + 1e-9);
+  return Math.max(0, Math.round((base + steps * step.kg) * 1000) / 1000);
+}
+
+/**
  * La part de la capacité qu'une série de plus fait perdre à charge égale : 10 % pour un polyarticulaire reposé
  * deux minutes, 8 % pour une isolation, et d'autant plus que le repos est court (le double au plus à une minute,
  * six dixièmes au moins à trois minutes passées).
@@ -230,6 +254,27 @@ export function capacityForSets(lowReps: number | undefined, sets: number, fatig
   const count = Number.isInteger(sets) && sets >= 1 ? Math.min(sets, BENCHMARK_MAX_PLANNED_SETS) : 1;
   const lastSet = low + BENCHMARK_RESERVE_REPS;
   return Math.min(BENCHMARK_MAX_REPS, lastSet / (1 - fatigue) ** (count - 1));
+}
+
+/**
+ * La charge qui remet un max de `oneRepMax` dans une fourchette de bas `lowReps`, tenue sur `sets` séries : celle
+ * dont la dernière série garde la réserve au bas de la fourchette (`capacityForSets`), arrondie vers le bas sur
+ * le matériel (`floorLoad`, compté depuis `anchorKg` quand le pas est celui de l'exercice). 0 quand il n'y a rien
+ * à proposer — un max inutilisable, ou une charge sous le premier cran du matériel.
+ *
+ * Le bilan du benchmark et le coach en séance normale s'en servent tous les deux : ce que le coach propose à une
+ * personne qui dépasse le haut de sa fourchette est la charge qu'un benchmark lui aurait proposée.
+ */
+export function loadForRange(
+  oneRepMax: number,
+  lowReps: number | undefined,
+  sets: number,
+  fatigue: number,
+  anchorKg: number,
+  step: LoadStep,
+): number {
+  const ideal = loadForReps(oneRepMax, capacityForSets(lowReps, sets, fatigue));
+  return ideal === undefined ? 0 : floorLoad(ideal, anchorKg, step);
 }
 
 /**

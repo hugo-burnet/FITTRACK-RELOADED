@@ -33,6 +33,24 @@ function resolvedNextLoadKg(signal: SignalLike): number | undefined {
  */
 function withEvidenceNotes(signal: SignalLike, message: string): string {
   const notes: string[] = [];
+  // Plafond très dépassé : la charge proposée remet dans la fourchette, la phrase dit pourquoi elle monte de plus
+  // d'un cran.
+  if (hasFlag(signal, 'ceiling_rebalanced')) {
+    const weight = resolvedNextLoadKg(signal);
+    const range = repsReading({
+      targetReps: evidenceValue(signal, 'target_reps'),
+      targetRepsMax: evidenceValue(signal, 'target_reps_max'),
+    });
+    if (weight !== undefined && range !== undefined) {
+      notes.push(
+        t('coach.ceilingRebalanced', {
+          reps: evidenceValue(signal, 'top_reps') ?? 0,
+          weight: formatNumber(weight),
+          range: partReading(range),
+        }),
+      );
+    }
+  }
   const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
   if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
   if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {
@@ -174,7 +192,10 @@ function constatMessage(signal: SignalLike): string {
       const values = {
         reps: evidenceValue(signal, 'tested_reps') ?? 0,
         tested: formatNumber(evidenceValue(signal, 'tested_load_kg') ?? 0),
-        max: formatNumber(evidenceValue(signal, 'one_rep_max_kg') ?? 0),
+        // Au-delà de 30 répétitions le max est un plancher : « au moins », pas « environ ».
+        max: t(hasFlag(signal, 'one_rep_max_floor') ? 'coach.benchmarkMaxAtLeast' : 'coach.benchmarkMaxAbout', {
+          value: formatNumber(evidenceValue(signal, 'one_rep_max_kg') ?? 0),
+        }),
         range: range === undefined ? '' : partReading(range),
         weight: formatNumber(resolvedNextLoadKg(signal) ?? 0),
       };

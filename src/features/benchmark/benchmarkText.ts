@@ -95,9 +95,29 @@ export function planReading(line: BenchmarkLine): string | undefined {
   if (line.pyramid === true) return t('benchmark.planPyramid', { value });
   const range = rangeReading(line.zone);
   if (range === undefined) return undefined;
+  // Un minimum (plus de 30 répétitions) se dit « au moins » : la charge ne promet pas ce qu'on tiendra.
+  if (line.minimum === true) {
+    return line.plannedSets === 1
+      ? t('benchmark.planMinimumOne', { value, range })
+      : t('benchmark.planMinimum', { value, sets: line.plannedSets, range });
+  }
   return line.plannedSets === 1
     ? t('benchmark.planOne', { value, range })
     : t('benchmark.plan', { value, sets: line.plannedSets, range });
+}
+
+/** Le max : une estimation, ou — au-delà de 30 répétitions — un plancher (« 1RM : au moins 80 kg »). */
+export function oneRepMaxSentence(line: BenchmarkLine): string | undefined {
+  if (line.oneRepMax === undefined) return undefined;
+  const value = oneRepMaxReading(line.oneRepMax);
+  return line.minimum === true
+    ? t('benchmark.oneRepMaxMinimum', { value })
+    : t('benchmark.oneRepMax', { value });
+}
+
+/** Pourquoi la charge est un minimum : plus de 30 répétitions, le max ne se calcule plus. */
+export function minimumReading(line: BenchmarkLine): string | undefined {
+  return line.minimum === true ? t('benchmark.minimumNote', { max: BENCHMARK_MAX_REPS }) : undefined;
 }
 
 /** Ce que chaque série tient à fond à la charge conseillée : « 13 · 11 · 10 », c'est ainsi qu'on lit trois séries. */
@@ -149,8 +169,8 @@ export function changedReading(line: BenchmarkLine): string | undefined {
 /** Pourquoi une ligne n'a pas de charge à proposer. */
 export function withoutLoadReading(line: BenchmarkLine): string | undefined {
   switch (line.verdict) {
-    case 'too_light':
-      return t('benchmark.tooLight', { max: BENCHMARK_MAX_REPS });
+    case 'unreadable':
+      return t('benchmark.unreadable');
     case 'no_load':
       return t('benchmark.noLoad');
     case 'recorded':

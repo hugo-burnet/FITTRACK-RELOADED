@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_DEFAULT_SETS,
   BENCHMARK_GOALS,
+  BENCHMARK_MAX_JUMP,
   BENCHMARK_MAX_PLANNED_SETS,
   BENCHMARK_MAX_REPS,
   capacityForSets,
   goalZone,
+  loadForRange,
   loadForReps,
   oneRepMaxOf,
   plannedSets,
@@ -246,5 +248,35 @@ describe('repsHeldAt — ce que chaque série tient à fond à une charge donné
   it('lit un nombre de séries inutilisable comme une série', () => {
     expect(repsHeldAt(104, 77.5, 0, 0.1)).toEqual([10]);
     expect(repsHeldAt(104, 77.5, 2.5, 0.1)).toEqual([10]);
+  });
+});
+
+describe('loadForRange — la charge qui remet un max dans une fourchette', () => {
+  const grid = { kg: 2.5, onGrid: true };
+  const typed = { kg: 2.5, onGrid: false };
+
+  // Valeurs de référence calculées à part (script Python hors du dépôt).
+  it('donne la charge qui tient les séries de la fourchette, arrondie vers le bas', () => {
+    // Classique, 52,5 × 13 : un max de 75,25 kg ; trois séries d'un 8 – 12 → 53,3 → 52,5.
+    expect(loadForRange(75.25, 8, 3, 0.1, 52.5, grid)).toBe(52.5);
+    // Léger, 40 × 18 : un max de 64 kg ; trois séries d'un 15 – 20 → 37,7 → 37,5 (pas saisi, compté depuis 40).
+    expect(loadForRange(64, 15, 3, 0.1, 40, typed)).toBe(37.5);
+    // Lourd, 100 × 5 : un max de 116,7 kg ; trois séries d'un 5 – 8 → 90,6 → 90.
+    expect(loadForRange(100 * (1 + 5 / 30), 5, 3, 0.1, 100, grid)).toBe(90);
+  });
+
+  it('monte avec le max : 40 kg × 30 (un max de 80 kg) tient un 15 – 20 sur trois séries à 45 kg', () => {
+    expect(loadForRange(80, 15, 3, 0.1, 40, typed)).toBe(45);
+  });
+
+  it('rend 0 quand il n’y a pas de charge à proposer', () => {
+    expect(loadForRange(0, 15, 3, 0.1, 40, typed)).toBe(0);
+    expect(loadForRange(Number.NaN, 15, 3, 0.1, 40, typed)).toBe(0);
+    // Un max sous le premier cran du matériel.
+    expect(loadForRange(2, 8, 3, 0.1, 1, grid)).toBe(0);
+  });
+
+  it('plafonne le saut de charge qu’un seul essai justifie à 30 %', () => {
+    expect(BENCHMARK_MAX_JUMP).toBe(0.3);
   });
 });

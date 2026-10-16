@@ -379,6 +379,29 @@ describe('coachSignalMessage — benchmark', () => {
     expect(coachSignalMessage(calibrated([5, 5], 5, 95))).toContain('Pour 5 séries de 5 reps, démarre à 95 kg.');
   });
 
+  it('dit « au moins » devant un max qui n’est qu’un plancher (plus de 30 répétitions)', () => {
+    const floor: CoachSignal = {
+      exerciseId: 'bench',
+      code: 'benchmark_calibrated',
+      severity: 36,
+      nextLoadKg: 45,
+      evidence: [
+        { label: 'tested_load_kg', value: 40 },
+        { label: 'tested_reps', value: 35 },
+        { label: 'one_rep_max_kg', value: 80 },
+        { label: 'one_rep_max_floor', value: 1 },
+        { label: 'target_reps', value: 15 },
+        { label: 'target_reps_max', value: 20 },
+        { label: 'planned_sets', value: 3 },
+        { label: 'reference_reps', value: 21 },
+      ],
+    };
+
+    expect(coachSignalMessage(floor)).toBe(
+      'Benchmark : 35 répétitions à 40 kg, soit un max d’au moins 80 kg. Pour 3 séries de 15 – 20 reps, démarre à 45 kg.',
+    );
+  });
+
   it('lit un objectif sans nombre de séries comme une seule série : la fourchette, sans compte', () => {
     expect(coachSignalMessage(calibrated([8, 12]))).toContain('Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.');
   });
@@ -387,5 +410,41 @@ describe('coachSignalMessage — benchmark', () => {
     expect(coachSignalMessage(calibrated([20, 20], 1))).toContain('ta fourchette (20 reps)');
     expect(coachSignalMessage(calibrated([15, 20], 1))).toContain('ta fourchette (15 – 20 reps)');
     expect(coachSignalMessage(calibrated([15, 20], 2))).toContain('Pour 2 séries de 15 – 20 reps');
+  });
+});
+
+describe('coachSignalMessage — remise dans la fourchette', () => {
+  const rebalanced = (extra: { label: string; value: number }[] = []): CoachSignal => ({
+    exerciseId: 'bench',
+    code: 'range_ceiling_reached',
+    severity: 40,
+    nextLoadKg: 45,
+    evidence: [
+      { label: 'working_sets', value: 3 },
+      { label: 'target_reps_max', value: 20 },
+      { label: 'target_reps', value: 15 },
+      { label: 'current_load_kg', value: 40 },
+      { label: 'next_load_kg', value: 45 },
+      ...extra,
+    ],
+  });
+
+  it('explique le saut : jusqu’où on est allé, et que la charge remet dans la fourchette', () => {
+    const message = coachSignalMessage(
+      rebalanced([
+        { label: 'ceiling_rebalanced', value: 1 },
+        { label: 'top_reps', value: 30 },
+      ]),
+    );
+
+    expect(message).toBe(
+      '40 → 45 kg car 3 × 20 a atteint le haut de la fourchette. Tu es allé jusqu’à 30 reps : à 45 kg, tu retombes dans la fourchette (15 – 20 reps).',
+    );
+  });
+
+  it('ne dit rien de plus sans le drapeau : un cran de plus se suffit', () => {
+    expect(coachSignalMessage(rebalanced())).toBe(
+      '40 → 45 kg car 3 × 20 a atteint le haut de la fourchette.',
+    );
   });
 });

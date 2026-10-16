@@ -382,15 +382,18 @@ describe('benchmarkLine — les fourchettes hautes', () => {
     expect(line.suggestedKg).toBe(25);
   });
 
-  it('accepte jusqu’à 30 répétitions, et dit « trop léger » au-delà', () => {
-    expect(benchmarkLine(bench({ sets: [{ weight: 20, reps: 30 }] })).verdict).toBe('calibrated');
+  it('lit jusqu’à 30 répétitions comme un max, et donne un minimum au-delà', () => {
+    const readable = benchmarkLine(bench({ sets: [{ weight: 20, reps: 30 }] }));
+    expect(readable.verdict).toBe('calibrated');
+    expect(readable.minimum).toBeUndefined();
 
     const line = benchmarkLine(bench({ sets: [{ weight: 20, reps: 31 }] }));
-    expect(line.verdict).toBe('too_light');
+    expect(line.verdict).toBe('calibrated');
+    expect(line.minimum).toBe(true);
     expect(line.tested).toEqual({ weight: 20, reps: 31 });
-    expect(line.oneRepMax).toBeUndefined();
-    expect(line.suggestedKg).toBeUndefined();
-    expect(line.proposal).toBeUndefined();
+    // Au-delà de 30 le max ne se calcule plus : on sait seulement qu'il est au moins celui de 30 répétitions.
+    expect(line.oneRepMax).toBe(40);
+    expect(line.holdReps).toBeUndefined();
   });
 
   it('préfère une série lisible à une série trop légère', () => {
@@ -411,22 +414,26 @@ describe('benchmarkLine — les fourchettes hautes', () => {
 describe('benchmarkLine — un essai loin de la fourchette', () => {
   const single = workingRoutine([70]);
 
-  it('reste fiable jusqu’à six répétitions d’écart avec la capacité exigée, approximatif au-delà', () => {
-    // Une série d'un 8 – 12 : la capacité exigée est 10 ; 16 est à six, 17 est à sept.
-    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 16 }] })).rough).toBeUndefined();
-    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 17 }] })).rough).toBe(true);
-    // Dans l'autre sens : 4 est à six, 3 est à sept.
+  it('reste fiable jusqu’à six répétitions sous la capacité exigée, approximatif au-delà', () => {
+    // Une série d'un 8 – 12 : la capacité exigée est 10. En dessous : 4 est à six, 3 est à sept.
     expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 4 }] })).rough).toBeUndefined();
     expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 100, reps: 3 }] })).rough).toBe(true);
   });
 
+  it('au-dessus de la capacité exigée, juge le saut de charge et non l’écart de répétitions : 30 % de plus que l’essai, pas davantage', () => {
+    // Une série d'un 8 – 12 (capacité exigée 10), 60 kg sur la grille de la barre : 23 répétitions → 77,5 kg (+29 %),
+    // 24 → 80 kg (+33 %). Avant, tout écart de plus de six répétitions était approximatif, même vers le haut.
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 23 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: single, sets: [{ weight: 60, reps: 24 }] })).rough).toBe(true);
+  });
+
   it('juge l’écart sur la capacité de la première série, pas sur le bas de la fourchette plus la réserve', () => {
-    // Trois séries d'un 8 – 12 : la capacité exigée est 12,35, pas 10. 18 est à 5,65 : fiable ; 19 est à 6,65.
-    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 18 }] })).rough).toBeUndefined();
-    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 19 }] })).rough).toBe(true);
-    // Dans l'autre sens : 6 est à 6,35, 7 à 5,35.
+    // Trois séries d'un 8 – 12 : la capacité exigée est 12,35, pas 10. En dessous : 7 est à 5,35, 6 à 6,35.
     expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 7 }] })).rough).toBeUndefined();
     expect(benchmarkLine(bench({ sets: [{ weight: 100, reps: 6 }] })).rough).toBe(true);
+    // Au-dessus, le saut de charge : 60 × 26 → 77,5 kg (+29 %), 60 × 27 → 80 kg (+33 %).
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 26 }] })).rough).toBeUndefined();
+    expect(benchmarkLine(bench({ sets: [{ weight: 60, reps: 27 }] })).rough).toBe(true);
   });
 
   it('propose quand même une charge, mais la dit approximative', () => {
@@ -442,6 +449,129 @@ describe('benchmarkLine — un essai loin de la fourchette', () => {
     const sets = [{ weight: 40, reps: 22 }];
     expect(benchmarkLine(bench({ sets, routine: workingRoutine([35], 15, 20) })).rough).toBeUndefined();
     expect(benchmarkLine(bench({ sets, routine: workingRoutine([35], 5, 5) })).rough).toBe(true);
+  });
+});
+
+describe('benchmarkLine — très au-dessus de la fourchette', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt). Une machine au pas de 2,5 kg, compté
+  // depuis la charge essayée ; 40 kg × N répétitions, style léger (15 – 20).
+  const light = (reps: number, routine = workingRoutine([35, 35, 35])) =>
+    benchmarkLine(
+      bench({
+        goal: 'light',
+        equipment: 'machine',
+        loadIncrementKg: 2.5,
+        sets: [{ weight: 40, reps }],
+        routine,
+      }),
+    );
+
+  it('remet dans le 15 – 20 sans « approximatif » : 40 × 27 propose 42,5 kg, cochée et lue par le coach', () => {
+    const line = light(27);
+
+    expect(line.rough).toBeUndefined();
+    expect(line.suggestedKg).toBe(42.5);
+    expect(line.proposal).toBeDefined();
+    expect(benchmarkSignal(line)).toMatchObject({ code: 'benchmark_calibrated', nextLoadKg: 42.5 });
+  });
+
+  it('va jusqu’à 30 répétitions : 40 × 30 propose 45 kg, 12,5 % de plus que l’essai', () => {
+    const line = light(30);
+
+    expect(line.rough).toBeUndefined();
+    expect(line.suggestedKg).toBe(45);
+    expect(benchmarkSignal(line)).toMatchObject({ nextLoadKg: 45 });
+  });
+
+  it('monte plus haut quand la routine n’a qu’une série, sans dépasser 30 % : 40 × 30 → 50 kg', () => {
+    const line = light(30, workingRoutine([35]));
+
+    expect(line.plannedSets).toBe(1);
+    expect(line.suggestedKg).toBe(50);
+    expect(line.rough).toBeUndefined();
+  });
+
+  it('reste approximatif quand la charge dépasse l’essai de plus de 30 % : un 8 – 12 testé à 30 répétitions', () => {
+    // 40 × 30 est un max de 80 kg ; trois séries d'un 8 – 12 : 56,7 → 55 kg, soit +37,5 %.
+    const line = benchmarkLine(
+      bench({ goal: 'classic', sets: [{ weight: 40, reps: 30 }], routine: workingRoutine([35, 35, 35]) }),
+    );
+
+    expect(line.suggestedKg).toBe(55);
+    expect(line.rough).toBe(true);
+    expect(line.proposal).toBeDefined();
+    expect(benchmarkSignal(line)).toBeUndefined();
+  });
+});
+
+describe('benchmarkLine — plus de 30 répétitions : un minimum', () => {
+  const light = (sets: BenchmarkLineInput['sets']) =>
+    benchmarkLine(
+      bench({
+        goal: 'light',
+        equipment: 'machine',
+        loadIncrementKg: 2.5,
+        sets,
+        routine: workingRoutine([35, 35, 35]),
+      }),
+    );
+
+  it('dimensionne comme si l’essai était de 30 répétitions : 40 × 35 propose au moins 45 kg', () => {
+    const line = light([{ weight: 40, reps: 35 }]);
+
+    expect(line.verdict).toBe('calibrated');
+    expect(line.minimum).toBe(true);
+    expect(line.tested).toEqual({ weight: 40, reps: 35 });
+    // Le max d'une série de 30 répétitions : le vrai est au moins celui-là.
+    expect(line.oneRepMax).toBe(80);
+    expect(line.suggestedKg).toBe(45);
+    expect(line.referenceReps).toBeCloseTo(20.99, 2);
+    expect(line.rough).toBeUndefined();
+    expect(line.proposal).toBeDefined();
+  });
+
+  it('ne dit pas ce qu’on tiendra : ce n’est qu’un minimum', () => {
+    expect(light([{ weight: 40, reps: 35 }]).holdReps).toBeUndefined();
+  });
+
+  it('est lu par le coach, avec le drapeau qui dit que le max est un plancher', () => {
+    const signal = benchmarkSignal(light([{ weight: 40, reps: 35 }]));
+
+    expect(signal).toMatchObject({ code: 'benchmark_calibrated', nextLoadKg: 45 });
+    expect(signal!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'tested_reps', value: 35 },
+        { label: 'one_rep_max_kg', value: 80 },
+        { label: 'one_rep_max_floor', value: 1 },
+      ]),
+    );
+  });
+
+  it('ne pose pas le drapeau pour un max qui se calcule', () => {
+    const signal = benchmarkSignal(light([{ weight: 40, reps: 27 }]));
+
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('one_rep_max_floor');
+  });
+
+  it('reste approximatif quand le minimum dépasse l’essai de plus de 30 % : un 8 – 12 testé à 35 répétitions', () => {
+    const line = benchmarkLine(
+      bench({ goal: 'classic', sets: [{ weight: 40, reps: 35 }], routine: workingRoutine([35, 35, 35]) }),
+    );
+
+    expect(line.minimum).toBe(true);
+    expect(line.suggestedKg).toBe(55);
+    expect(line.rough).toBe(true);
+    expect(benchmarkSignal(line)).toBeUndefined();
+  });
+
+  it('laisse une série lisible l’emporter sur un minimum', () => {
+    const line = light([
+      { weight: 40, reps: 35 },
+      { weight: 60, reps: 20 },
+    ]);
+
+    expect(line.minimum).toBeUndefined();
+    expect(line.tested).toEqual({ weight: 60, reps: 20 });
   });
 });
 
@@ -637,13 +767,21 @@ describe('benchmarkLine — le style choisi au lancement', () => {
     expect(fromRoutine.goal).toBeUndefined();
   });
 
-  it('juge « approximatif » sur la fourchette du style : 18 répétitions sont loin d’un 5 – 8', () => {
+  it('juge « approximatif » sur la fourchette du style : 25 répétitions pour un 5 – 8 demandent 55 kg, 37,5 % de plus que l’essai', () => {
     const line = benchmarkLine(
-      bench({ goal: 'heavy', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([90, 90, 90]) }),
+      bench({ goal: 'heavy', sets: [{ weight: 40, reps: 25 }], routine: workingRoutine([90, 90, 90]) }),
     );
 
+    expect(line.suggestedKg).toBe(55);
     expect(line.rough).toBe(true);
     expect(benchmarkSignal(line)).toBeUndefined();
+
+    // 18 répétitions demandent 47,5 kg (+19 %) : une extrapolation qu'on écrit.
+    const lighter = benchmarkLine(
+      bench({ goal: 'heavy', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([90, 90, 90]) }),
+    );
+    expect(lighter.suggestedKg).toBe(47.5);
+    expect(lighter.rough).toBeUndefined();
   });
 
   describe('et la fourchette qu’il écrit dans la routine', () => {
@@ -847,11 +985,21 @@ describe('benchmarkSignal — ce que le coach lit', () => {
   });
 
   it('ne reprend pas une estimation approximative : le coach ne pousse pas une extrapolation', () => {
-    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 40, reps: 25 }] })))).toBeUndefined();
+    // 40 × 30 pour un 8 – 12 sur trois séries demande 55 kg (+37,5 %) ; 100 × 3 est à neuf répétitions sous la capacité exigée.
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 40, reps: 30 }] })))).toBeUndefined();
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 100, reps: 3 }] })))).toBeUndefined();
+  });
+
+  it('reprend un essai très au-dessus quand la charge reste à moins de 30 % de plus : 40 × 25 pour un 8 – 12, 50 kg', () => {
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 40, reps: 25 }] })))).toMatchObject({
+      code: 'benchmark_calibrated',
+      nextLoadKg: 50,
+    });
   });
 
   it('ne dit rien de ce qui n’a pas de charge à proposer', () => {
-    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 20, reps: 40 }] })))).toBeUndefined();
+    // Des répétitions décimales : la formule ne les lit pas.
+    expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ weight: 20, reps: 12.5 }] })))).toBeUndefined();
     expect(benchmarkSignal(benchmarkLine(bench({ sets: [{ reps: 10 }] })))).toBeUndefined();
     expect(benchmarkSignal(benchmarkLine(bench({ sets: [] })))).toBeUndefined();
     expect(
