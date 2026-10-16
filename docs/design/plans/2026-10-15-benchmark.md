@@ -137,6 +137,21 @@ aucune version de schéma.
 - [x] La porte du programme (« Calibrer les charges », une ligne par routine du bloc).
 - [x] E2E : le style léger de bout en bout (40 × 18 → 37,5 kg, routine réécrite, séance suivante), cibles de 48 px et pas de débordement à 200 %.
 
+### Tâche 10 — très au-dessus de la fourchette : le coach remet dedans (suite de la v2.14.0)
+
+**Files :** Modify `src/lib/benchmarkModel.ts` (`floorLoad` déplacé ici, `loadForRange`, `BENCHMARK_MAX_JUMP`), `src/lib/benchmark.ts` (+ test),
+`src/lib/coach/rules/range.ts` (+ test), `src/features/benchmark/{benchmarkText,BenchmarkLineCard}.ts(x)`, `src/features/workout/coachCopy.ts`, `src/i18n/fr.ts`.
+
+- [x] `loadForRange` : le calcul de charge partagé entre le bilan et le coach (valeurs de référence calculées à part en Python).
+- [x] « Approximatif » au-dessus de la capacité exigée : le saut de charge (30 %) et non l'écart de répétitions ; 27 à 30 reps en léger sont cochées et
+      lues par le coach.
+- [x] Plus de 30 répétitions : un minimum (« au moins 45 kg »), sans « tu tiendras » ; le verdict « trop léger » devient `unreadable` (répétitions
+      décimales — le message « plus de 30 » y était faux).
+- [x] Coach, règle de fourchette : quand un cran ne suffit pas à repasser sous le plafond, la charge qui remet dans la fourchette (RPE compté, plafond
+      de 30 %, rien pour une pyramide, une cible unique, un lest, un effort maximal, une reprise). Un test existant du dépôt du coach (100 × 12 sur un
+      5 – 12) a fait ajouter le garde-fou « seulement si un cran ne suffit pas ».
+- [x] Carte du coach : « Tu es allé jusqu'à 30 reps : à 45 kg, tu retombes dans la fourchette (15 – 20 reps). » ; « un max d'au moins 80 kg » pour un plancher.
+
 ## Ce qui reste, et pourquoi
 
 - La fourchette n'est pas affichée sur la ligne de série pendant le benchmark (spec §« Ce qui n'est pas fait »).

@@ -8,9 +8,17 @@
 **Dernière mise à jour :** 2026-10-16 — **v2.14.0 publiée** (PWA et APK) : le benchmark a un style (léger, classique, lourd), six
 défauts relevés par une revue de code sont corrigés, la fiche d'un programme propose « Calibrer les charges ».
 La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait fait lire la fourchette et les séries de chaque exercice, et au coach le benchmark.
+**Non publié, sur la branche `ccr-a1ec0e4b-s9kwdx`** : le coach remet dans la fourchette quand on la dépasse de beaucoup (bilan du benchmark et séance normale).
 
 ## Où on en est
 
+- **Non publié — branche `ccr-a1ec0e4b-s9kwdx`** (`git log d1fff71..`), **pas fusionnée dans `master`** : « ça se passe comment si je tape plus de 20 reps en léger ? »
+  puis « il faut que le coach te rebalance dans une range 15-20 ». Au **bilan du benchmark**, un essai très au-dessus de la fourchette (27 à 30 reps en léger)
+  n'est plus « approximatif » : la charge qui remet dans 15 – 20 est cochée et lue par le coach (« approximatif » se juge au saut de charge, 30 %, au-dessus de
+  la capacité exigée, et à l'écart de répétitions en dessous) ; **plus de 30 reps donnent un minimum** (« au moins 45 kg », sans « tu tiendras »). En **séance
+  normale**, la règle de fourchette propose la charge qui remet dans la fourchette quand un cran ne suffit pas (40 kg × 30 · 28 · 26 sur un 15 – 20 : 45 kg, pas
+  42,5), RPE compté, 30 % au plus. Détail et choix à relire : `docs/progress/decisions-et-pieges.md` (entrée du 2026-10-16), spec benchmark §3 ter, amendement R3
+  du coach v2, recette § 3 ter. **Pour publier** : fusionner `--no-ff` puis la voie de release ci-dessous — sur demande explicite.
 - **Publié : v2.14.0**, à la demande de l'utilisateur (« fusionne et publie ») —
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.14.0), APK `FitTrack-v2.14.0.apk` signé avec la clé de release,
   la même que celle de la v2.13.1 ([journal](docs/journal/2026-10-16-versions-v2-14.md)). Sa demande : « tu as fait 40×18, je te propose … trois fois ; en classique 8-12 … ; la force, je
@@ -45,14 +53,17 @@ La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait
   `archive/fittrack-kb-corpus`.
 - **Pour publier la suivante** : `chore: prepare release vX.Y.Z` (`package.json` et son lock), `master` poussé sans force, puis le
   `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
-  pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant.
+  pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant. **`git merge -F fichier`, pas `-F -`** (il ne lit
+  pas l'entrée standard), et `git fetch origin master` avant de compter les commits d'avance : le `origin/master` d'un clone de session est celui du démarrage.
 
-## À juger sur le terrain (v2.12.0 → v2.14.0)
+## À juger sur le terrain (v2.12.0 → v2.14.0, puis la branche non publiée)
 
 - **Benchmark, les styles** : les trois fourchettes (15 – 20, 8 – 12, 5 – 8, `GOAL_ZONES`) sont celles de l'utilisateur (« lourd 5 – 8, normal 8 – 12, léger
   entre 15 et 20 ») ; les essais conseillés (18, 12, 8) sont des choix de produit. **« 40 × 14 » de la demande est ce que donnerait un léger à 12 – 15**
   (40 kg, on tient 18 · 16 · 14) ; il garde 15 – 20, donc le bilan propose 37,5 kg. « Classique » garde son nom (« Normal » se lirait comme le défaut).
   Si les charges paraissent trop basses, c'est la réserve (ci-dessous), un seul chiffre.
+- **Remise dans la fourchette** (`BENCHMARK_MAX_JUMP`, 30 %) : le plafond de saut, le RPE qui ajoute de la réserve à la capacité du coach, et le cas inverse (sous le
+  bas de la fourchette : toujours « bas manqué deux fois », un cran) qui n'a pas bougé. Le coach ne sait pas la classe ni le repos de l'exercice : polyarticulaire, deux minutes.
 - **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
   séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
   paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ

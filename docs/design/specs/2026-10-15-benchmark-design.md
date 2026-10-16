@@ -134,10 +134,13 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
   tirage, squat, charnière, fente sont polyarticulaires ; les six familles d'isolation le sont par leur nom. « Autre » et l'absence de
   famille (un exercice personnel) se lisent par les muscles : le corps entier ou deux muscles secondaires et plus font un
   polyarticulaire ; sans rien du tout, polyarticulaire — la lecture qui fatigue le plus, donc la plus prudente.
-- **Estimation approximative.** Convertir 22 répétitions en 17 est une petite extrapolation ; convertir 25 en 7 n'est plus une mesure.
-  À plus de six répétitions de la capacité exigée de la première série (`BENCHMARK_ROUGH_GAP`), la charge est proposée mais **dite
-  approximative** : son interrupteur est éteint d'office (la personne le rallume), et le coach n'en tire pas d'objectif. Le seuil se juge
-  sur la fourchette et les séries de chaque exercice : 22 répétitions sont proches d'un 15 – 20 sur deux séries, loin d'un 5.
+- **Estimation approximative.** Une extrapolation trop longue est proposée mais **dite approximative** : son interrupteur est éteint
+  d'office (la personne le rallume), et le coach n'en tire pas d'objectif. Ce qui est « trop long » dépend du côté. **Sous** la capacité
+  exigée de la première série, c'est l'écart de répétitions (`BENCHMARK_ROUGH_GAP`, six) : convertir 3 répétitions en 12 n'est plus une
+  mesure. **Au-dessus** (un essai trop léger), c'est le saut de charge (`BENCHMARK_MAX_JUMP`, 30 % de plus que l'essai) : 27 répétitions
+  pour un 15 – 20 demandent 6 % de plus, une consigne claire — plus lourd — que le bilan applique (§3 ter) ; 25 répétitions pour un 5 – 8
+  en demandent 37 %, et la formule n'est plus une mesure. Le seuil se juge sur la fourchette et les séries de chaque exercice.
+  *(Avant le 2026-10-16, l'écart de six répétitions jugeait les deux côtés.)*
 - **Arrondi vers le bas, jamais vers le haut.** Sur la grille du matériel quand le pas est celui de la table ; à partir de la charge
   essayée quand le pas est celui que la personne a saisi sur l'exercice (un cran de 1,125 kg ne tombe pas sur un multiple de 1,125 —
   cf. `resolveLoadStep`). Le benchmark ne propose jamais plus que ce que le maximum autorise.
@@ -199,6 +202,53 @@ Exemples, calculés à part (script Python hors du dépôt) :
   (et non 40) pour le léger : c'est la même idée, avec deux répétitions de marge. Si les charges paraissent trop basses, c'est
   `BENCHMARK_RESERVE_REPS`, un seul endroit.
 - **Les répétitions du bilan sont celles qu'on tient à fond**, pas une prescription : la fourchette (8 – 12) dit où viser, avec de la marge.
+
+### 3 ter. Très au-dessus de la fourchette : le coach remet dedans
+
+« Ça se passe comment si je choisis une séance légère et que je tape plus de 20 reps ? » — « Eh oui mais il faut que le coach te rebalance dans
+une range 15-20. » Quand l'essai dépasse ce que la fourchette demande, la réponse du coach est la charge qui remet dans la fourchette, pas un
+constat. Choisi par la personne : **au bilan du benchmark et en séance normale**, et **appliqué d'office** pour un essai très au-dessus.
+
+**Au bilan.**
+
+| 40 kg × … (léger 15 – 20, trois séries) | Avant | Maintenant |
+|---|---|---|
+| 21 à 26 reps | charge conseillée, cochée | inchangé |
+| 27 à 30 reps | « approximatif », éteint, pas d'objectif du coach | **cochée et lue par le coach** (27 → 42,5 kg, 30 → 45 kg) |
+| 31 reps et plus | « trop léger… refais plus lourd », aucune charge | **un minimum** : « au moins 45 kg » |
+
+- **Le saut de charge juge, pas l'écart de répétitions** (§3) : un 15 – 20 testé à 30 répétitions demande au plus 12 % de plus avec trois séries
+  (25 % avec une seule), il n'atteint jamais les 30 % ; un 8 – 12 testé à 30 répétitions en demande 37 % et reste approximatif.
+- **Un minimum, au-delà de 30 répétitions.** Epley ne mesure plus, mais il ne décroît pas : le max est au moins celui d'une série de 30
+  (`oneRepMax` = 2 × la charge, `minimum: true`). On dimensionne sur ce plancher, donc la charge est un minimum — jamais trop haute. Le bilan
+  dit « 1RM : au moins 80 kg », « Au moins 45 kg pour 3 séries de 15 – 20 reps » et pourquoi ; il **ne dit pas ce qu'on tiendra** (`holdReps`
+  absent). Écrit et lu par le coach comme les autres (sa carte dit « un max d'au moins 80 kg », preuve `one_rep_max_floor`), sauf s'il dépasse
+  les 30 % (alors approximatif). Une série lisible l'emporte sur un plancher (60 × 20, max 100 kg, contre 40 × 35, plancher 80).
+- **Le verdict « trop léger » disparaît.** Il ne servait plus qu'aux répétitions décimales (« 12,5 »), dont le message disait à tort « plus de
+  30 répétitions » : devenu `unreadable`, « Ces répétitions ne sont pas un nombre entier : rien à estimer. »
+
+**En séance normale** (règle de fourchette du coach, `rangePartitionSignal`). Quand toutes les séries de travail atteignent le plafond, le
+coach proposait un cran de plus. Il propose maintenant **la plus haute de deux charges** : un cran de plus, ou celle qu'un benchmark aurait
+proposée (`loadForRange`, la même formule) quand un cran ne suffit pas à repasser sous le plafond.
+
+- 40 kg × 30 · 28 · 26 sur un 15 – 20 : 45 kg (« Tu es allé jusqu'à 30 reps : à 45 kg, tu retombes dans la fourchette (15 – 20 reps). ») au lieu
+  de 42,5. 22 · 21 · 20 : 42,5, comme avant ; un cran suffit.
+- **Seulement si un cran ne suffit pas** : un cran plus haut, la capacité prévue (`30 × (max / charge − 1)`) doit encore dépasser le plafond.
+  Sinon la double progression garde la main : 100 × 12 sur un 5 – 12 passe à 102,5, pas à 107,5 (viser le bas de la fourchette serait trois
+  crans pour qui vient d'atteindre le haut). Un test existant du dépôt du coach l'a imposé : le premier jet visait le bas dès le plafond atteint.
+- **La capacité est ce que la personne a fait** (sa série la plus longue) **plus la réserve du RPE moyen** quand il existe : 25 répétitions à RPE 7
+  sont une capacité de 28 (45 kg au lieu de 42,5). Sans RPE, un plancher : la proposition ne dépasse jamais ce qu'elle a montré.
+- **Jamais plus de 30 % de plus que la charge d'aujourd'hui** (`BENCHMARK_MAX_JUMP`) : 30 répétitions sur un 5 – 8 diraient 60 kg (+50 %), le
+  coach propose 50.
+- **Ni pyramide, ni cible unique, ni lest ou assistance, ni effort maximal, ni reprise** : rien ne change (une cible unique n'a pas de fourchette
+  où remettre ; R1 et R5 gardent la main). La classe et le repos de l'exercice ne sont pas dans la ligne du coach : polyarticulaire, deux minutes,
+  la lecture la plus prudente.
+- Pas de nouveau signal : même `range_ceiling_reached`, même carte, un « Appliquer » plus haut, et les preuves `ceiling_rebalanced`, `top_reps`,
+  `target_reps`.
+
+**Choix de détail, à relire.** Le plafond de 30 % (`BENCHMARK_MAX_JUMP`) ; que le RPE ajoute de la réserve ; que le cas inverse — sous le bas de la
+fourchette — ne change pas (la règle « bas manqué deux fois » descend toujours d'un cran) ; que « approximatif » ne juge plus les deux côtés de la
+même façon.
 
 ### 4. Le bilan et l'écriture
 

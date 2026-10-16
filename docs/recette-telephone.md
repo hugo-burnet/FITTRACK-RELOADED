@@ -187,6 +187,15 @@ Une séance de deux exercices au moins, dont un en barre.
       ligne de routine. Un échauffement coché ne devient pas l'essai. Pas de carte du coach pendant la séance de benchmark. *(v2.14.0)*
 - [ ] **Depuis un programme.** La fiche d'un programme (même pas encore commencé) propose « Calibrer les charges », une ligne par routine du bloc ;
       grisée pendant une séance en cours ; elle ouvre la même feuille, avec le choix du style. *(v2.14.0)*
+- [ ] **Très au-dessus de la fourchette.** Benchmark léger, un exercice où ta charge est trop légère : taper **25 à 30 répétitions**. Le bilan
+      propose quand même la charge qui te remet dans 15 – 20 (« 45 kg pour 3 séries de 15 – 20 reps »), **interrupteur allumé**, sans « Estimation
+      approximative » ; le coach la reprend à la séance suivante. Taper **plus de 30** : « 1RM : au moins 80 kg », « Au moins 45 kg pour 3 séries… »,
+      avec la phrase qui dit que c'est un minimum — et pas de « tu tiendras environ ». Refaire l'exercice à cette charge pour l'affiner.
+      *(après la v2.14.0, sur la branche)*
+- [ ] **Le coach te remet dans la fourchette, en séance normale.** Une routine en 15 – 20 (par exemple après avoir accepté un benchmark léger), toutes
+      les séries à **28 reps ou plus** à la même charge : à la séance suivante la carte propose **plus d'un cran** (40 → 45 kg) et dit « Tu es allé
+      jusqu'à 30 reps : à 45 kg, tu retombes dans la fourchette ». À 20 à 22 reps partout : un seul cran (40 → 42,5), comme avant. Un 5 – 12 fait à
+      12 × 3 : un cran, pas trois. *(après la v2.14.0, sur la branche)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 
