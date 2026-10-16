@@ -13,6 +13,7 @@ import type {
 import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
 import { applyRoutineTargetProposals, loadRoutineTargetReview } from './routineTargetReview';
+import { setDefaultLoadStepKg } from './settings';
 
 const day = (n: number): number => Date.UTC(2026, 0, 1) + n * 86_400_000;
 
@@ -149,6 +150,36 @@ describe('loadRoutineTargetReview', () => {
       currentWeight: 57.5,
       performedWeight: 70,
       proposedWeight: 70,
+    });
+  });
+
+  it('lit le pas de toute l’appli quand la fiche de l’exercice n’en a pas, et la fiche passe avant lui', async () => {
+    const row = await seedExercise({ name: 'Rowing à la poulie' });
+    const routine = await seedRoutine('Tirage', [
+      { exerciseId: row.id, sets: [{ targetWeight: 60 }, { targetWeight: 60 }, { targetWeight: 60 }] },
+    ]);
+    await seedSession({
+      routineId: routine.id,
+      performedAt: day(10),
+      blocks: [{ exerciseId: row.id, exerciseName: row.name, sets: working(60) }],
+    });
+
+    // La table de la poulie : 2,5 kg.
+    expect((await loadRoutineTargetReview(routine.id))?.proposals[0]).toMatchObject({
+      proposedWeight: 62.5,
+      incrementKg: 2.5,
+    });
+
+    await setDefaultLoadStepKg(1.125);
+    expect((await loadRoutineTargetReview(routine.id))?.proposals[0]).toMatchObject({
+      proposedWeight: 61.125,
+      incrementKg: 1.125,
+    });
+
+    await db.exercises.update(row.id, { loadIncrementKg: 2 });
+    expect((await loadRoutineTargetReview(routine.id))?.proposals[0]).toMatchObject({
+      proposedWeight: 62,
+      incrementKg: 2,
     });
   });
 

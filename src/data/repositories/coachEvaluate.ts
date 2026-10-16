@@ -22,7 +22,7 @@ import { alive } from './base';
 import { recordBenchmarkObjectives } from './benchmark';
 import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
 import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
-import { getCoachVolumeBounds, getOneRepMaxFormula } from './settings';
+import { getCoachVolumeBounds, getDefaultLoadStepKg, getOneRepMaxFormula } from './settings';
 import { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
 
 function cloneSignal(signal: CoachSignal): CoachSignal {
@@ -374,6 +374,8 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
   if (detail.workout.kind === 'benchmark') return [];
 
   const formula = await getOneRepMaxFormula();
+  // Le pas de toute l'appli : celui des exercices dont la fiche n'en a pas.
+  const defaultLoadStepKg = await getDefaultLoadStepKg();
   const exerciseIds = detail.exercises.map((line) => line.row.exerciseId);
 
   const history = await loadCoachHistoryLines(exerciseIds, { excludeWorkoutId: workoutId });
@@ -442,6 +444,7 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
         : muscleVolumeContext(volumeEntries, muscle, volumeBounds, volumeNow);
     const evaluation = evaluatePerformance(latest, newestFirst.slice(1), {
       formula,
+      ...(defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg }),
       ...(volume === undefined ? {} : { muscleVolume: volume }),
     });
     const selected = selectProgramAction(evaluation.allowedActions, target);

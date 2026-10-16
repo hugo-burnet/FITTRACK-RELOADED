@@ -45,6 +45,8 @@ function routineTargets(set: RoutineSet): ProjectedProgramSet {
 export function createDeloadTargets(input: {
   week: DeloadWeekInput;
   exercises: readonly ProgramPrescriptionExerciseInput[];
+  /** Le pas de toute l'appli (Réglages), pour un exercice dont la fiche n'a pas le sien. Absent : la table du matériel. */
+  defaultLoadStepKg?: number;
 }): ProgramPrescriptionProjection {
   void input.week.loadIndex;
   void input.week.phase;
@@ -56,7 +58,7 @@ export function createDeloadTargets(input: {
     const working = ordered.filter((set) => !isWarmup(set));
     const dropId =
       working.length > 1 ? working[working.length - 1]!.id : undefined;
-    const increment = resolveLoadStep(exercise);
+    const increment = resolveLoadStep(exercise, input.defaultLoadStepKg);
 
     for (const set of ordered) {
       if (dropId !== undefined && set.id === dropId) continue;

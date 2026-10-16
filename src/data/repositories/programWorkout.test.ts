@@ -22,6 +22,7 @@ import {
   createRoutine,
   updateRoutineSet,
 } from './routines';
+import { setDefaultLoadStepKg } from './settings';
 import { getWorkoutDetail, startWorkoutFromRoutine } from './workouts';
 import { preflightProgramWorkout, startWorkoutFromProgram } from './programWorkout';
 
@@ -286,6 +287,41 @@ describe('startWorkoutFromProgram', () => {
       { targetWeight: 75, targetReps: 8, targetRepsMax: undefined, targetRpe: undefined },
     ]);
     expect(sets.every((set) => set.rpe === undefined && set.weight === undefined)).toBe(true);
+  });
+
+  it('lit le pas de toute l’appli pour décaler les charges de la semaine, la fiche passant avant', async () => {
+    const bench = await exercise('Développé couché');
+    const { routine, set } = await routineWithExercise('Haut', bench);
+    await updateRoutineSet(set.id, {
+      setType: 'normal',
+      targetWeight: 70,
+      targetReps: 8,
+      targetRepsMax: 12,
+    });
+    const { program, entry } = await readyProgram({
+      routineId: routine.id,
+      weeks: programWeeks({ loadIndex: 105, phase: 'construction' }),
+    });
+    await activateProgram(program.id);
+    const firstTarget = async () => {
+      const { workout } = await startWorkoutFromProgram({
+        programId: program.id,
+        programScheduleEntryId: entry.id,
+        at: MONDAY,
+      });
+      const target = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0).targetWeight;
+      await db.workouts.update(workout.id, { status: 'completed' });
+      return target;
+    };
+
+    // Un cran de plus en semaine 105 : la table de la barre dit 2,5 kg.
+    expect(await firstTarget()).toBe(72.5);
+
+    await setDefaultLoadStepKg(1.125);
+    expect(await firstTarget()).toBe(71.125);
+
+    await updateExercise(bench.id, { loadIncrementKg: 2 });
+    expect(await firstTarget()).toBe(72);
   });
 
   it('fige phase/loadIndex à la création même si la semaine est reclassée ensuite', async () => {

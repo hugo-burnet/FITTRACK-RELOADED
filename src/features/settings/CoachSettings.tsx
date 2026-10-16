@@ -2,12 +2,16 @@ import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { ListRow, SectionTitle } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
+import { DefaultLoadStepRow } from './DefaultLoadStepRow';
 
 /**
- * L'entrée vers les bornes de volume du coach. Une seule ligne : l'écran qu'elle ouvre a trop à dire
- * pour tenir dans les Réglages, et les bornes se règlent une fois, pas à chaque séance.
+ * Ce que le coach lit des Réglages : les bornes de volume et le pas de charge. Deux lignes, parce que
+ * ce sont des réglages qu'on pose une fois, pas à chaque séance.
+ *
+ * Les bornes de volume ouvrent leur propre écran — il a trop à dire pour tenir ici. Le pas de charge
+ * tient dans une feuille.
  */
-export function CoachVolumeSettings() {
+export function CoachSettings() {
   const navigate = useAppNavigate();
 
   return (
@@ -20,6 +24,7 @@ export function CoachVolumeSettings() {
           trailing={<ChevronRightIcon />}
           onClick={() => void navigate('/settings/volume')}
         />
+        <DefaultLoadStepRow />
       </div>
     </section>
   );

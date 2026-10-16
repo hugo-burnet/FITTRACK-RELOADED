@@ -6,11 +6,13 @@ import { resetDb } from '@/test/resetDb';
 import {
   getAvailablePlateWeightsKg,
   getCoachVolumeBounds,
+  getDefaultLoadStepKg,
   getOneRepMaxFormula,
   getRoutineFolderContext,
   getWeeklyTrainingGoalHistory,
   setAvailablePlateWeightsKg,
   setCoachVolumeBounds,
+  setDefaultLoadStepKg,
   setOneRepMaxFormula,
   setRoutineFolderContext,
   setWeeklyTrainingGoal,
@@ -385,5 +387,61 @@ describe('coach volume bounds setting', () => {
     await db.settings.put({ key: 'coachVolumeBounds', value: 'abîmé', updatedAt: 2 });
 
     expect(await getCoachVolumeBounds()).toEqual({});
+  });
+});
+
+describe('le pas de charge de toute l’appli', () => {
+  beforeEach(resetDb);
+
+  it('n’existe pas tant qu’on n’en a pas posé : le coach lit alors la table du matériel', async () => {
+    expect(await getDefaultLoadStepKg()).toBeUndefined();
+  });
+
+  it('retient un pas décimal, au millième près', async () => {
+    expect(await setDefaultLoadStepKg(1.125)).toBe(1.125);
+
+    expect(await getDefaultLoadStepKg()).toBe(1.125);
+  });
+
+  it('change de valeur, et le retire quand on n’en pose plus', async () => {
+    await setDefaultLoadStepKg(1.125);
+    await setDefaultLoadStepKg(2.5);
+    expect(await getDefaultLoadStepKg()).toBe(2.5);
+
+    expect(await setDefaultLoadStepKg(undefined)).toBeUndefined();
+
+    expect(await getDefaultLoadStepKg()).toBeUndefined();
+    expect(await db.settings.get('defaultLoadStepKg')).toBeUndefined();
+  });
+
+  it('écrit dans la table des réglages, donc dans la sauvegarde : aucune version de schéma', async () => {
+    await setDefaultLoadStepKg(1.125);
+
+    expect(await db.settings.get('defaultLoadStepKg')).toMatchObject({
+      key: 'defaultLoadStepKg',
+      value: 1.125,
+    });
+  });
+
+  it.each([
+    ['un pas nul', 0],
+    ['un pas négatif', -1],
+    ['un pas qui n’est pas un nombre', Number.NaN],
+    ['un pas infini', Number.POSITIVE_INFINITY],
+    ['un pas de cinquante et un kilos', 51],
+  ])('refuse %s, sans rien écrire', async (_name, value) => {
+    await setDefaultLoadStepKg(2.5);
+
+    await expect(setDefaultLoadStepKg(value)).rejects.toThrow(RangeError);
+
+    expect(await getDefaultLoadStepKg()).toBe(2.5);
+  });
+
+  it('relit une valeur abîmée par une sauvegarde à la main comme « aucun pas », sans casser', async () => {
+    for (const value of ['beaucoup', 0, -2, null, { kg: 1 }, 80]) {
+      await db.settings.put({ key: 'defaultLoadStepKg', value, updatedAt: 1 });
+
+      expect(await getDefaultLoadStepKg()).toBeUndefined();
+    }
   });
 });

@@ -619,6 +619,37 @@ describe('benchmarkLine — le pas renseigné dans l’appli', () => {
     // 34,94 kg → 35, et non 30 : l'ancien arrondi vers le bas coûtait ici 14 %.
     expect(line.suggestedKg).toBe(35);
   });
+
+  describe('le pas de toute l’appli (Réglages)', () => {
+    const viaSettings = (extra: Partial<Parameters<typeof bench>[0]> = {}) =>
+      benchmarkLine(
+        bench({
+          exerciseClass: 'isolation',
+          equipment: 'machine',
+          goal: 'light',
+          sets: [{ weight: 37.5, reps: 22 }],
+          routine: workingRoutine([32.5, 32.5, 32.5]),
+          ...extra,
+        }),
+      );
+
+    it('le prend quand la fiche n’en a pas : la charge d’un pas saisi sur l’exercice', () => {
+      // 38,93 kg au calcul : 37,5 + 1,125 = 38,625, et non le multiple de 5 de la machine.
+      expect(viaSettings({ defaultLoadStepKg: 1.125 }).suggestedKg).toBe(38.625);
+      expect(viaSettings({ defaultLoadStepKg: 1.125 }).suggestedKg).toBe(
+        machine(37.5, 22).suggestedKg,
+      );
+    });
+
+    it('laisse la fiche passer avant les Réglages', () => {
+      // 37,5 + 2,5 = 40 : le pas de la fiche, pas celui des Réglages.
+      expect(viaSettings({ loadIncrementKg: 2.5, defaultLoadStepKg: 1.125 }).suggestedKg).toBe(40);
+    });
+
+    it('ne change rien tant que les Réglages ne disent rien : la table du matériel', () => {
+      expect(viaSettings().suggestedKg).toBe(40);
+    });
+  });
 });
 
 describe('benchmarkLine — les cas sans charge à proposer', () => {

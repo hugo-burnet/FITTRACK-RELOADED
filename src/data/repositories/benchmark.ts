@@ -14,6 +14,7 @@ import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { isWorkingSet } from '@/lib/records';
 import { alive, newEntity, touch } from './base';
 import { recordCoachSignals } from './coachRecommendations';
+import { getDefaultLoadStepKg } from './settings';
 import { applyRoutineTargetProposals } from './routineTargetReview';
 import {
   assertNoActiveWorkout,
@@ -231,6 +232,9 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
   // à l'échec jamais faite, supprimée à l'enregistrement) ne fait pas un essai : l'exercice est « non fait ».
   const completed = alive(sets).filter((set) => set.isCompleted === 1 && isWorkingSet(set));
 
+  // Le pas de toute l'appli, pour les fiches qui n'en ont pas : lu une fois, pour toutes les lignes.
+  const defaultLoadStepKg = await getDefaultLoadStepKg();
+
   const lines = rows.flatMap((row) => {
     const performed = completed.filter((set) => set.workoutExerciseId === row.id);
     const exercise = library.get(row.exerciseId);
@@ -255,6 +259,7 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
       ...(exercise?.loadIncrementKg === undefined
         ? {}
         : { loadIncrementKg: exercise.loadIncrementKg }),
+      ...(defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg }),
       // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
       // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
       // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.

@@ -180,23 +180,47 @@ describe('previousLoad', () => {
 
 describe('resolveLoadStep', () => {
   it('prend le cran renseigné sur la fiche, tel quel', () => {
-    expect(resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 })).toEqual({
+    expect(resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 }, undefined)).toEqual({
       kg: 1.125,
       onGrid: false,
     });
   });
 
-  it('retombe sur la table du matériel quand la fiche est vide, et garde sa grille', () => {
-    expect(resolveLoadStep({ equipment: 'machine' })).toEqual({ kg: 5, onGrid: true });
-    expect(resolveLoadStep({ equipment: 'machine', loadIncrementKg: 0 })).toEqual({
+  it('retombe sur la table du matériel quand ni la fiche ni les Réglages ne disent rien, et garde sa grille', () => {
+    expect(resolveLoadStep({ equipment: 'machine' }, undefined)).toEqual({ kg: 5, onGrid: true });
+    expect(resolveLoadStep({ equipment: 'machine', loadIncrementKg: 0 }, undefined)).toEqual({
       kg: 5,
       onGrid: true,
     });
   });
+
+  it('prend le pas des Réglages quand la fiche est vide, tel quel lui aussi : il est renseigné, pas deviné', () => {
+    // « De façon générale le pas est de 1,125 » : une machine à 5 kg de table, une barre à 2,5, la même réponse.
+    expect(resolveLoadStep({ equipment: 'machine' }, 1.125)).toEqual({ kg: 1.125, onGrid: false });
+    expect(resolveLoadStep({ equipment: 'barbell' }, 1.125)).toEqual({ kg: 1.125, onGrid: false });
+    expect(resolveLoadStep({ equipment: 'machine', loadIncrementKg: 0 }, 1.125)).toEqual({
+      kg: 1.125,
+      onGrid: false,
+    });
+  });
+
+  it('laisse la fiche passer avant les Réglages', () => {
+    expect(resolveLoadStep({ equipment: 'barbell', loadIncrementKg: 2.5 }, 1.125)).toEqual({
+      kg: 2.5,
+      onGrid: false,
+    });
+  });
+
+  it.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY])(
+    'ignore un pas des Réglages qui n’en est pas un (%s)',
+    (appDefault) => {
+      expect(resolveLoadStep({ equipment: 'machine' }, appDefault)).toEqual({ kg: 5, onGrid: true });
+    },
+  );
 });
 
 describe('cran renseigné : ajouté tel quel, sans grille', () => {
-  const microload = resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 });
+  const microload = resolveLoadStep({ equipment: 'cable', loadIncrementKg: 1.125 }, undefined);
 
   it('ajoute le micro-chargement à la charge du jour', () => {
     // Poulie à 5 kg + plaque de 1,125 : 6,125. Ramené sur la grille des multiples
@@ -206,12 +230,14 @@ describe('cran renseigné : ajouté tel quel, sans grille', () => {
   });
 
   it('garde l’inversion de l’assistance et le plancher à zéro', () => {
-    const step = resolveLoadStep({ equipment: 'machine', loadIncrementKg: 2.5 });
+    const step = resolveLoadStep({ equipment: 'machine', loadIncrementKg: 2.5 }, undefined);
     expect(nextLoad(31, step, 'assisted_weight_reps')).toBe(28.5);
     expect(previousLoad(1, step, 'weight_reps')).toBe(0);
   });
 
   it('ne laisse pas traîner d’écart flottant', () => {
-    expect(nextLoad(0.1, resolveLoadStep({ equipment: 'band', loadIncrementKg: 0.2 }), 'weight_reps')).toBe(0.3);
+    expect(
+      nextLoad(0.1, resolveLoadStep({ equipment: 'band', loadIncrementKg: 0.2 }, undefined), 'weight_reps'),
+    ).toBe(0.3);
   });
 });

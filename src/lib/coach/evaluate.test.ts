@@ -1308,6 +1308,43 @@ describe('cran de la fiche de l’exercice (R3.1 révisée)', () => {
     ]);
     expect(ev.signals.find((s) => s.code === 'range_missed')?.nextLoadKg).toBe(12.5);
   });
+
+  describe('le pas de toute l’appli (Réglages)', () => {
+    it('monte du pas des Réglages quand la fiche est vide, au lieu de la table du matériel', () => {
+      // Sans rien : la table dirait +5 kg sur une machine (55). Les Réglages disent 1,125, ajouté tel quel.
+      const options = { defaultLoadStepKg: 1.125 };
+      const ev = evaluatePerformance(machine('w2', 7, 50, 12), [machine('w1', 0, 45, 12)], options);
+
+      expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(51.125);
+    });
+
+    it('allège du pas des Réglages après deux manques', () => {
+      const options = { defaultLoadStepKg: 1.125 };
+      const ev = evaluatePerformance(
+        machine('w2', 7, 15, 8),
+        [machine('w1', 0, 15, 8)],
+        options,
+      );
+
+      expect(ev.signals.find((s) => s.code === 'range_missed')?.nextLoadKg).toBe(13.875);
+    });
+
+    it('laisse la fiche passer avant les Réglages', () => {
+      const ev = evaluatePerformance(
+        machine('w2', 7, 50, 15, { loadIncrementKg: 2.5 }),
+        [machine('w1', 0, 45, 12, { loadIncrementKg: 2.5 })],
+        { defaultLoadStepKg: 1.125 },
+      );
+
+      expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(52.5);
+    });
+
+    it('ne change rien tant que les Réglages ne disent rien : la table du matériel', () => {
+      const ev = evaluatePerformance(machine('w2', 7, 15, 24), [machine('w1', 0, 15, 12)], {});
+
+      expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(20);
+    });
+  });
 });
 
 describe('effort de séance (R1)', () => {

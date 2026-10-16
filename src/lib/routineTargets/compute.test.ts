@@ -235,6 +235,44 @@ describe('computeRoutineUpdates — hausse de charge', () => {
     expect(review.proposals[0]).toMatchObject({ proposedWeight: 41.25, incrementKg: 1.25 });
   });
 
+  it('prend le pas des Réglages quand l’exercice n’a pas le sien, avant la table du matériel', () => {
+    const review = computeRoutineUpdates({
+      ...input({
+        lines: [
+          routineLine({
+            exerciseId: 'row',
+            equipment: 'machine',
+            sets: [plannedSet({ id: 's1', order: 0, targetWeight: 40 })],
+          }),
+        ],
+        sessions: [session({ workoutId: 'w1', sets: [performedSet({ order: 0, weight: 40 })] })],
+      }),
+      defaultLoadStepKg: 1.125,
+    });
+
+    // La table dirait +5 kg sur une machine ; les Réglages disent 1,125, ajouté tel quel.
+    expect(review.proposals[0]).toMatchObject({ proposedWeight: 41.125, incrementKg: 1.125 });
+  });
+
+  it('laisse le pas de l’exercice passer avant celui des Réglages', () => {
+    const review = computeRoutineUpdates({
+      ...input({
+        lines: [
+          routineLine({
+            exerciseId: 'row',
+            equipment: 'machine',
+            loadIncrementKg: 1.25,
+            sets: [plannedSet({ id: 's1', order: 0, targetWeight: 40 })],
+          }),
+        ],
+        sessions: [session({ workoutId: 'w1', sets: [performedSet({ order: 0, weight: 40 })] })],
+      }),
+      defaultLoadStepKg: 1.125,
+    });
+
+    expect(review.proposals[0]).toMatchObject({ proposedWeight: 41.25, incrementKg: 1.25 });
+  });
+
   it('décale toute la pyramide du même pas, sans l’aplatir', () => {
     const review = computeRoutineUpdates(
       input({

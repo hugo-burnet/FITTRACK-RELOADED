@@ -1687,6 +1687,11 @@ const fr = {
       'Plus petit saut de charge pour cet exercice. Vide = défaut selon le matériel ({value} kg).',
     loadIncrementAssistHint:
       'Sur une machine assistée, progresser baisse l’assistance de ce pas. Vide = défaut ({value} kg).',
+    /** Quand les Réglages portent un pas pour toute l'appli : « vide » veut alors dire celui-là, pas la table. */
+    loadIncrementHintApp:
+      'Plus petit saut de charge pour cet exercice. Vide = le pas des Réglages ({value} kg).',
+    loadIncrementAssistHintApp:
+      'Sur une machine assistée, progresser baisse l’assistance de ce pas. Vide = le pas des Réglages ({value} kg).',
 
     /**
      * « Charge » — comment cet exercice se charge, et ce qu'il pèse déjà.
@@ -1973,6 +1978,20 @@ const fr = {
     coachSection: 'Coach',
     volumeLink: 'Volume par muscle',
     volumeHint: 'Plancher et plafond de séries par semaine',
+    loadStepTitle: 'Pas de charge par défaut',
+    loadStepNone: 'Selon le matériel de chaque exercice',
+    loadStepValue: '{value} kg quand la fiche d’un exercice n’a pas son propre pas',
+    loadStepSheetTitle: 'Pas de charge par défaut',
+    loadStepLabel: 'Pas en kilos',
+    loadStepHint:
+      'Le plus petit saut de charge de ta salle, par exemple 1,125 avec de petites plaques. Le coach, le benchmark ' +
+      'et les cibles de programme s’en servent pour tout exercice dont la fiche (« Incrément de charge ») est vide ; ' +
+      'la fiche passe avant.',
+    loadStepClear: 'Selon le matériel',
+    loadStepInvalid: 'Un pas est un nombre de kilos plus grand que zéro, et d’au plus 50.',
+    loadStepSave: 'Enregistrer',
+    loadStepSaving: 'Enregistrement…',
+    loadStepSaveError: 'Le pas n’a pas pu être enregistré. Le précédent reste utilisé.',
 
     notificationsSection: 'Notifications',
     notificationsRest: 'Fin de repos',

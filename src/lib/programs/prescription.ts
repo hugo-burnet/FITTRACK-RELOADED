@@ -87,18 +87,21 @@ function routineTargets(set: RoutineSet): ProjectedProgramSet {
 export function projectProgramPrescription(input: {
   week: ProgramWeekPrescription;
   exercises: readonly ProgramPrescriptionExerciseInput[];
+  /** Le pas de toute l'appli (Réglages), pour un exercice dont la fiche n'a pas le sien. Absent : la table du matériel. */
+  defaultLoadStepKg?: number;
 }): ProgramPrescriptionProjection {
   if (input.week.phase === 'deload') {
     return createDeloadTargets({
       week: input.week,
       exercises: input.exercises,
+      ...(input.defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg: input.defaultLoadStepKg }),
     });
   }
 
   const steps = loadIndexSteps(input.week.loadIndex);
   const sets: ProjectedProgramSet[] = [];
   for (const { exercise, sets: routineSets } of input.exercises) {
-    const increment = resolveLoadStep(exercise);
+    const increment = resolveLoadStep(exercise, input.defaultLoadStepKg);
     for (const set of orderedSets(routineSets)) {
       const projected = routineTargets(set);
       if (steps !== 0 && !isWarmup(set) && projected.targetWeight !== undefined) {
