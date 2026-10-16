@@ -217,6 +217,25 @@ describe('projectProgramPrescription', () => {
       expect(override.sets[0]?.targetWeight).toBe(71.25);
     });
 
+    it('prend le pas des Réglages quand la fiche n’en a pas, et laisse la fiche passer avant', () => {
+      const viaSettings = projectProgramPrescription({
+        week: week({ loadIndex: 105 }),
+        exercises: [
+          { exercise: exercise({ id: 'leg-press', equipment: 'machine' }), sets: [bench(70)] },
+        ],
+        defaultLoadStepKg: 1.125,
+      });
+      const sheetFirst = projectProgramPrescription({
+        week: week({ loadIndex: 105 }),
+        exercises: [{ exercise: exercise({ loadIncrementKg: 1.25 }), sets: [bench(70)] }],
+        defaultLoadStepKg: 1.125,
+      });
+
+      // La table dirait +5 kg sur une machine (75) ; les Réglages disent 1,125.
+      expect(viaSettings.sets[0]?.targetWeight).toBe(71.125);
+      expect(sheetFirst.sets[0]?.targetWeight).toBe(71.25);
+    });
+
     it('ne touche pas aux échauffements', () => {
       const result = projectProgramPrescription({
         week: week({ loadIndex: 110 }),

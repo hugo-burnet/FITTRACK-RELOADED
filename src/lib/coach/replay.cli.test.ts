@@ -25,7 +25,10 @@ describe.skipIf(!backupPath)('banc de rejeu du coach', () => {
     for (const row of parsed.backup.tables.exercises) {
       if (typeof row.id === 'string' && typeof row.name === 'string') names.set(row.id, row.name);
     }
-    const text = formatReplay(replayCoach(coachLinesFromBackup(parsed.backup)), names);
+    // Le pas de toute l'appli, tel que la sauvegarde le garde : le rejeu juge comme l'app le fait aujourd'hui.
+    const step = parsed.backup.tables.settings.find((row) => row.key === 'defaultLoadStepKg')?.value;
+    const options = typeof step === 'number' && step > 0 ? { defaultLoadStepKg: step } : {};
+    const text = formatReplay(replayCoach(coachLinesFromBackup(parsed.backup), options), names);
 
     const out = process.env.COACH_REPLAY_OUT;
     if (out) writeFileSync(out, text);

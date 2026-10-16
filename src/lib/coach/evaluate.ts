@@ -63,10 +63,10 @@ export function evaluatePerformance(
 
   const signals: CoachSignal[] = [];
 
-  // Le cran est celui de la fiche de l'exercice, sinon celui du matériel. Le
+  // Le cran est celui de la fiche de l'exercice, sinon celui des Réglages, sinon celui du matériel. Le
   // coach v2 l'a d'abord déduit des charges soulevées ; il ne savait pas lire un
   // micro-chargement de 1,125 kg sur une poulie, que l'utilisateur, lui, renseigne.
-  const increment = resolveLoadStep(latest);
+  const increment = resolveLoadStep(latest, options.defaultLoadStepKg);
   const { lines: sinceReturn, gapDays } = sinceLatestReturn(newestFirst);
   const contract = contractKey(latest);
   const comparable = sinceReturn.filter((entry) => contractKey(entry) === contract);

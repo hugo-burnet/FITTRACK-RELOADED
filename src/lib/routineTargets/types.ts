@@ -82,6 +82,8 @@ export interface RoutineUpdateInput {
   sessions: PerformedSessionInput[];
   /** Combien de séances récentes font la fenêtre de référence. Défaut 3. */
   referenceSessionCount?: number;
+  /** Le pas de toute l'appli (Réglages), pour une ligne dont l'exercice n'a pas le sien. Absent : la table du matériel. */
+  defaultLoadStepKg?: number;
 }
 
 /**

@@ -29,7 +29,7 @@ import { AnnouncerSettings } from './AnnouncerSettings';
 import { BackupActions } from './BackupActions';
 import { EffortPromptSettings } from './EffortPromptSettings';
 import { NotificationSettings } from './NotificationSettings';
-import { CoachVolumeSettings } from './CoachVolumeSettings';
+import { CoachSettings } from './CoachSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
 
 const THEME_OPTIONS: {
@@ -249,7 +249,7 @@ export function SettingsScreen() {
 
         <OneRepMaxSettings />
 
-        <CoachVolumeSettings />
+        <CoachSettings />
 
         <EffortPromptSettings />
 

@@ -26,7 +26,7 @@ import {
   replaceProgramWeeks,
 } from './programs';
 import { addExercisesToRoutine, createRoutine } from './routines';
-import { setCoachVolumeBounds } from './settings';
+import { setCoachVolumeBounds, setDefaultLoadStepKg } from './settings';
 import { finishWorkout } from './workoutLifecycle';
 
 const exercise: Exercise = {
@@ -95,13 +95,8 @@ function seedSession(id: string, startedAt: number, reps: number, weight: number
   });
 }
 
-describe('evaluateCoachForWorkout', () => {
-  beforeEach(async () => {
-    await resetDb();
-    await db.exercises.add(exercise);
-  });
-
-  it('proposes the next load when the active session completes the range', async () => {
+/** Une séance ouverte, trois séries de 12 à 100 kg sur un 8 – 12 : le plafond atteint. */
+async function seedLiveCeiling(): Promise<Workout> {
     const startedAt = Date.UTC(2026, 7, 10, 10);
     const workout: Workout = {
       ...newEntity<Workout>({
@@ -149,6 +144,18 @@ describe('evaluateCoachForWorkout', () => {
       })),
     );
 
+  return workout;
+}
+
+describe('evaluateCoachForWorkout', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+  });
+
+  it('proposes the next load when the active session completes the range', async () => {
+    const workout = await seedLiveCeiling();
+
     const signals = await evaluateCoachForWorkout(workout.id);
     expect(signals).toEqual([
       expect.objectContaining({
@@ -156,6 +163,30 @@ describe('evaluateCoachForWorkout', () => {
         exerciseId: 'bench',
         nextLoadKg: 102.5,
       }),
+    ]);
+  });
+
+  it('lit le pas de toute l’appli quand la fiche de l’exercice n’en a pas', async () => {
+    const workout = await seedLiveCeiling();
+    await setDefaultLoadStepKg(1.125);
+
+    const signals = await evaluateCoachForWorkout(workout.id);
+
+    // La table de la barre dirait 102,5 ; les Réglages disent 1,125, ajouté tel quel à la charge du jour.
+    expect(signals).toEqual([
+      expect.objectContaining({ code: 'range_ceiling_reached', nextLoadKg: 101.125 }),
+    ]);
+  });
+
+  it('laisse le pas de la fiche passer avant celui des Réglages', async () => {
+    const workout = await seedLiveCeiling();
+    await setDefaultLoadStepKg(1.125);
+    await db.exercises.update(exercise.id, { loadIncrementKg: 2 });
+
+    const signals = await evaluateCoachForWorkout(workout.id);
+
+    expect(signals).toEqual([
+      expect.objectContaining({ code: 'range_ceiling_reached', nextLoadKg: 102 }),
     ]);
   });
 

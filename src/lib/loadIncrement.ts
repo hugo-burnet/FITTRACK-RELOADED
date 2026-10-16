@@ -52,15 +52,29 @@ export interface LoadStep {
   onGrid: boolean;
 }
 
-/** Exercise sheet first (« Vide = défaut selon le matériel »), then the table. */
-export function resolveLoadStep(exercise: {
-  equipment: Equipment;
-  loadIncrementKg?: number;
-}): LoadStep {
-  const override = exercise.loadIncrementKg;
-  if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
-    return { kg: override, onGrid: false };
-  }
+/** The bounds of a step the user types, on an exercise sheet or in Réglages. */
+export const LOAD_STEP_MIN_KG = 0.25;
+export const LOAD_STEP_MAX_KG = 50;
+
+const isStep = (value: number | undefined): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0;
+
+/**
+ * Exercise sheet first (« Vide = défaut selon le matériel »), then the step set
+ * in Réglages for the whole app, then the table.
+ *
+ * The app-wide step is as much the user's word as the sheet's — « de façon
+ * générale le pas est de 1,125 » — so it is added as is, off the grid, exactly
+ * like a typed one. `appDefaultKg` is required (it may be `undefined`): a caller
+ * that forgot the setting would silently go on reading the table, and nothing
+ * would say so.
+ */
+export function resolveLoadStep(
+  exercise: { equipment: Equipment; loadIncrementKg?: number },
+  appDefaultKg: number | undefined,
+): LoadStep {
+  if (isStep(exercise.loadIncrementKg)) return { kg: exercise.loadIncrementKg, onGrid: false };
+  if (isStep(appDefaultKg)) return { kg: appDefaultKg, onGrid: false };
   return { kg: defaultLoadIncrementKg(exercise.equipment), onGrid: true };
 }
 

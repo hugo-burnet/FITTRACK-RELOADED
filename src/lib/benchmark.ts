@@ -118,6 +118,8 @@ export interface BenchmarkLineInput {
   measurementType: MeasurementType;
   equipment: Equipment;
   loadIncrementKg?: number;
+  /** Le pas de toute l'appli (Réglages), pour une fiche qui n'en a pas. Absent : la table du matériel. */
+  defaultLoadStepKg?: number;
   /** Les séries validées de l'exercice dans la séance, dans l'ordre qu'on veut. */
   sets: readonly Performed[];
   /** La ligne de la routine d'où l'exercice est parti — absente si elle n'existe plus. */
@@ -297,10 +299,13 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   const klass = input.exerciseClass ?? 'compound';
   const fatigue = setFatigue(klass, input.restSeconds);
   const planned = plannedSets(working, klass);
-  const step = resolveLoadStep({
-    equipment: input.equipment,
-    ...(input.loadIncrementKg === undefined ? {} : { loadIncrementKg: input.loadIncrementKg }),
-  });
+  const step = resolveLoadStep(
+    {
+      equipment: input.equipment,
+      ...(input.loadIncrementKg === undefined ? {} : { loadIncrementKg: input.loadIncrementKg }),
+    },
+    input.defaultLoadStepKg,
+  );
 
   /** La charge qui tient `count` séries dont la dernière garde la réserve au bas de la fourchette `low`. */
   const sizeFor = (low: number, count: number): number =>

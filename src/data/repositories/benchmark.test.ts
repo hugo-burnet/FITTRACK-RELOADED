@@ -18,6 +18,7 @@ import {
 } from './benchmark';
 import { finalizeCoachForWorkout } from './coachEvaluate';
 import { listPendingRecommendations } from './coachRecommendations';
+import { setDefaultLoadStepKg } from './settings';
 import { getWorkoutDetail } from './workoutDetail';
 import {
   ProgramWorkoutError,
@@ -310,6 +311,38 @@ describe('loadBenchmarkReport', () => {
     expect(line.referenceReps).toBeCloseTo(18.4783, 3);
     expect(line.suggestedKg).toBe(42.5);
     expect(line.proposal?.deltaKg).toBe(7.5);
+  });
+
+  it('lit le pas de toute l’appli quand la fiche n’en a pas, et la fiche passe avant lui', async () => {
+    const curl = await seedExercise({
+      name: 'Curl poulie',
+      equipment: 'cable',
+      primaryMuscle: 'biceps',
+      secondaryMuscles: [],
+      movementPattern: 'isolation_coude',
+    });
+    const { routine } = await seedRoutine('Bras', [
+      {
+        exercise: curl,
+        sets: [
+          { targetReps: 15, targetRepsMax: 20, targetWeight: 35 },
+          { targetReps: 15, targetRepsMax: 20, targetWeight: 35 },
+        ],
+      },
+    ]);
+    const workout = await benchmarkOf(routine.id, [[40, 22]]);
+    const suggested = async () => (await loadBenchmarkReport(workout.id))!.lines[0]!.suggestedKg;
+
+    // Rien posé : la table de la poulie (2,5 kg), 42,9 kg au calcul → 42,5.
+    expect(await suggested()).toBe(42.5);
+
+    // Les Réglages disent 1,125, compté depuis les 40 kg essayés : 40 + 3 × 1,125.
+    await setDefaultLoadStepKg(1.125);
+    expect(await suggested()).toBe(43.375);
+
+    // Un pas sur la fiche passe avant : 40 + 2,5.
+    await db.exercises.update(curl.id, { loadIncrementKg: 2.5 });
+    expect(await suggested()).toBe(42.5);
   });
 
   it('lit le repos de la séance : une minute de repos baisse la charge, trois minutes la montent', async () => {

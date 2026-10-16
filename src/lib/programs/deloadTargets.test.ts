@@ -27,6 +27,28 @@ const routineSet = (overrides: Partial<RoutineSet> = {}): RoutineSet => ({
 });
 
 describe('createDeloadTargets', () => {
+  it('takes two steps down by the Réglages step when the sheet has none, the sheet first', () => {
+    const run = (movement: ExerciseInput, defaultLoadStepKg?: number) =>
+      createDeloadTargets({
+        week: { phase: 'deload', loadIndex: 60 },
+        exercises: [
+          {
+            exercise: movement,
+            sets: [
+              routineSet({ id: 'w1', order: 0, targetWeight: 100, targetReps: 5 }),
+              routineSet({ id: 'w2', order: 1, targetWeight: 100, targetReps: 5 }),
+            ],
+          },
+        ],
+        ...(defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg }),
+      }).sets[0]?.targetWeight;
+
+    // Machine : la table dit 5 kg (90), les Réglages 1,125 (97,75), la fiche 2,5 (95).
+    expect(run(exercise({ equipment: 'machine' }))).toBe(90);
+    expect(run(exercise({ equipment: 'machine' }), 1.125)).toBe(97.75);
+    expect(run(exercise({ equipment: 'machine', loadIncrementKg: 2.5 }), 1.125)).toBe(95);
+  });
+
   it('ignores loadIndex (60 and 90 produce the same projection)', () => {
     const exercises = [
       {

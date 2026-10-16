@@ -59,6 +59,11 @@ export interface CoachExerciseLine {
 
 export interface CoachEvaluateOptions {
   formula?: OneRepMaxFormula;
+  /**
+   * The load step set in Réglages for every exercise whose sheet has none (`resolveLoadStep`). Absent
+   * when the person set none: the engine then reads the equipment table, as before.
+   */
+  defaultLoadStepKg?: number;
   /** Consecutive sessions without 1RM progress before plateau (default 3). */
   plateauSessions?: number;
   /** Absolute rep drop from the session's first working set (default 2). */

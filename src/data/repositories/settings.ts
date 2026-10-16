@@ -13,6 +13,7 @@ import {
   type VolumeBoundsByMuscle,
 } from '@/lib/coach/volume';
 import type { MuscleGroup } from '@/data/types';
+import { LOAD_STEP_MAX_KG } from '@/lib/loadIncrement';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import {
   normalizeRoutineFolderContext,
@@ -28,6 +29,7 @@ const ONE_REP_MAX_FORMULA_KEY = 'oneRepMaxFormula';
 const REP_SECONDS_KEY = 'repSeconds';
 const HOME_ROUTINE_FOLDER_CONTEXT_KEY = 'homeRoutineFolderContext';
 const COACH_VOLUME_BOUNDS_KEY = 'coachVolumeBounds';
+const DEFAULT_LOAD_STEP_KEY = 'defaultLoadStepKg';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
 const ONE_REP_MAX_FORMULAS: ReadonlySet<OneRepMaxFormula> = new Set([
   'epley',
@@ -244,4 +246,38 @@ export async function setCoachVolumeBounds(
     await db.settings.put({ key: COACH_VOLUME_BOUNDS_KEY, value: next, updatedAt: Date.now() });
     return next;
   });
+}
+
+const isDefaultLoadStep = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0 && value <= LOAD_STEP_MAX_KG;
+
+/**
+ * Le pas de charge de toute l'appli : celui des exercices dont la fiche n'en porte pas (`resolveLoadStep`,
+ * « Vide = le pas des Réglages »). `undefined` tant que la personne n'en a posé aucun — le coach, le
+ * benchmark et les cibles lisent alors la table du matériel, comme avant.
+ *
+ * Un seul réglage plutôt qu'un pas à saisir sur chacune des fiches : « de façon générale le pas est de
+ * 1,125 » est une phrase sur la salle, pas sur un exercice. Dans la table des réglages, donc dans la
+ * sauvegarde et sans version de schéma ; relu défensivement, la sauvegarde n'en valide que la clé.
+ */
+export async function getDefaultLoadStepKg(): Promise<number | undefined> {
+  const value = (await db.settings.get(DEFAULT_LOAD_STEP_KEY))?.value;
+  return isDefaultLoadStep(value) ? value : undefined;
+}
+
+/**
+ * Pose le pas de toute l'appli, ou le retire (`undefined`). Un pas est un nombre de kilos, plus grand que
+ * zéro et d'au plus cinquante : refusé, rien n'est écrit.
+ */
+export async function setDefaultLoadStepKg(kg: number | undefined): Promise<number | undefined> {
+  if (kg === undefined) {
+    await db.settings.delete(DEFAULT_LOAD_STEP_KEY);
+    return undefined;
+  }
+  if (!isDefaultLoadStep(kg)) {
+    throw new RangeError(`A load step is above 0 and at most ${LOAD_STEP_MAX_KG} kg`);
+  }
+
+  await db.settings.put({ key: DEFAULT_LOAD_STEP_KEY, value: kg, updatedAt: Date.now() });
+  return kg;
 }

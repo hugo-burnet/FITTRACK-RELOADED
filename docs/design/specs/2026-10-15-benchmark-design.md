@@ -142,8 +142,8 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
   en demandent 44 %, et la formule n'est plus une mesure. Le seuil se juge sur la fourchette et les séries de chaque exercice.
   *(Avant le 2026-10-16, l'écart de six répétitions jugeait les deux côtés.)*
 - **Arrondi au pas renseigné dans l'appli, au plus proche.** Sur la grille du matériel quand le pas est celui de la table ; à partir de
-  la charge essayée quand le pas est celui que la personne a saisi sur l'exercice (un cran de 1,125 kg ne tombe pas sur un multiple de
-  1,125 — cf. `resolveLoadStep`). La proposition est à un demi-pas au plus de ce que le modèle dit : 0,56 kg avec un pas de 1,125, 2,5 kg avec le
+  la charge essayée quand le pas est celui que la personne a renseigné — sur la fiche de l'exercice, sinon dans Réglages › Coach (« Pas de
+  charge par défaut », pour toute fiche sans incrément) : un cran de 1,125 kg ne tombe pas sur un multiple de 1,125 (cf. `resolveLoadStep`). La proposition est à un demi-pas au plus de ce que le modèle dit : 0,56 kg avec un pas de 1,125, 2,5 kg avec le
   5 kg d'une machine dont le pas n'est pas saisi. *(Jusqu'au 2026-10-16, l'arrondi se faisait vers le bas — « le benchmark ne propose jamais
   plus que ce que le maximum autorise » — et une fraction de kilo pouvait coûter un cran entier : 34,94 kg devenait 33,875 pour une leg
   extension faite à 35, avec un pas de 1,125. Décidé par l'utilisateur : « on arrondit simplement au pas renseigné dans l'App, ça sera bien

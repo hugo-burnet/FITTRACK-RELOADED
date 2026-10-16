@@ -174,6 +174,7 @@ function reviewLine(
   line: RoutineTargetLineInput,
   blocks: readonly ReferenceBlock[],
   referenceCount: number,
+  defaultLoadStepKg: number | undefined,
 ): LineOutcome {
   const planned = line.sets.filter(isWorkingSet);
   if (planned.length === 0) return { kind: 'unchanged', reason: 'no_working_sets' };
@@ -278,7 +279,7 @@ function reviewLine(
     return { kind: 'unchanged', reason: 'effort_too_high' };
   }
 
-  const step = resolveLoadStep(line);
+  const step = resolveLoadStep(line, defaultLoadStepKg);
   const incrementKg = step.kg;
   const proposedWeight = nextLoad(currentWeight, step, line.measurementType);
   // Une assistance déjà à zéro n'a plus de pas à retirer : ne rien proposer
@@ -423,7 +424,12 @@ export function computeRoutineUpdates(input: RoutineUpdateInput): RoutineUpdateR
   const unchanged: RoutineUnchangedLine[] = [];
 
   for (const line of [...input.lines].sort((a, b) => a.order - b.order)) {
-    const outcome = reviewLine(line, blocks.get(line.exerciseId) ?? [], referenceCount);
+    const outcome = reviewLine(
+      line,
+      blocks.get(line.exerciseId) ?? [],
+      referenceCount,
+      input.defaultLoadStepKg,
+    );
     if (outcome.kind === 'proposal') proposals.push(outcome.proposal);
     else {
       unchanged.push({

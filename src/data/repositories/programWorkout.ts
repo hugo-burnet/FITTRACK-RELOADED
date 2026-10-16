@@ -12,6 +12,7 @@ import {
 } from '@/lib/programs';
 import { alive } from './base';
 import { ProgramRepositoryError } from './programLifecycle';
+import { getDefaultLoadStepKg } from './settings';
 import {
   assertNoActiveWorkout,
   buildWorkoutEntities,
@@ -111,9 +112,11 @@ async function resolveProgramWorkoutPlan(
     };
   });
 
+  const defaultLoadStepKg = await getDefaultLoadStepKg();
   const projection = projectProgramPrescription({
     week,
     exercises: prescriptionExercises,
+    ...(defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg }),
   });
   const context: ProgramWorkoutPreflightContext = {
     programId: program.id,
@@ -152,6 +155,7 @@ export async function preflightProgramWorkout(
       db.routineExercises,
       db.routineSets,
       db.exercises,
+      db.settings,
       db.workouts,
     ],
     async () => {
@@ -179,6 +183,7 @@ export async function startWorkoutFromProgram(
       db.routineExercises,
       db.routineSets,
       db.exercises,
+      db.settings,
       db.workouts,
       db.workoutExercises,
       db.workoutSets,

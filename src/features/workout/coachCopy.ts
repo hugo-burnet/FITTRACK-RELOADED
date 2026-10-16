@@ -51,6 +51,24 @@ function withEvidenceNotes(signal: SignalLike, message: string): string {
       );
     }
   }
+  // Bas de fourchette très manqué : la charge proposée enlève plusieurs crans, la phrase dit combien et pourquoi.
+  const floorSteps = evidenceValue(signal, 'floor_steps');
+  if (floorSteps !== undefined && floorSteps >= 2) {
+    const weight = resolvedNextLoadKg(signal);
+    const range = repsReading({
+      targetReps: evidenceValue(signal, 'target_reps'),
+      targetRepsMax: evidenceValue(signal, 'target_reps_max'),
+    });
+    if (weight !== undefined && range !== undefined) {
+      notes.push(
+        t('coach.floorSteps', {
+          steps: floorSteps,
+          weight: formatNumber(weight),
+          range: partReading(range),
+        }),
+      );
+    }
+  }
   const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
   if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
   if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {

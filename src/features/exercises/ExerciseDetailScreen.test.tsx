@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
+import { setDefaultLoadStepKg } from '@/data/repositories/settings';
 import type { Exercise, PersonalRecord, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { ExerciseDetailScreen } from './ExerciseDetailScreen';
@@ -178,6 +179,24 @@ describe('ExerciseDetailScreen load increment', () => {
       const stored = await db.exercises.get('bench');
       expect(stored?.loadIncrementKg).toBe(1.25);
     });
+  });
+
+  it('montre le pas des Réglages, et non la table du matériel, quand la fiche est vide', async () => {
+    await setDefaultLoadStepKg(1.125);
+    renderScreen();
+
+    const field = await screen.findByRole('textbox', { name: 'Incrément de charge' });
+
+    await waitFor(() => expect(field).toHaveAttribute('placeholder', '1,125'));
+    expect(screen.getByText(/Vide = le pas des Réglages \(1,125 kg\)/)).toBeInTheDocument();
+  });
+
+  it('garde la table du matériel dans la phrase tant que les Réglages ne disent rien', async () => {
+    renderScreen();
+
+    await screen.findByRole('textbox', { name: 'Incrément de charge' });
+
+    expect(screen.getByText(/Vide = défaut selon le matériel \(2,5 kg\)/)).toBeInTheDocument();
   });
 });
 

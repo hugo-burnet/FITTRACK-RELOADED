@@ -11,6 +11,7 @@ import {
 } from '@/lib/routineTargets';
 import { alive, touch } from './base';
 import { getRoutineDetail } from './routineLifecycle';
+import { getDefaultLoadStepKg } from './settings';
 import { benchmarkIdsAmong } from './workoutKinds';
 
 /**
@@ -268,11 +269,14 @@ export async function loadRoutineTargetReview(
   // ferait passer pour « tenue en entier » une séance qui ne l'était pas.
   const blocks = await loadBlocks([...historyIds, ...routineIds]);
 
+  const defaultLoadStepKg = await getDefaultLoadStepKg();
+
   return computeRoutineUpdates({
     routineId,
     lines,
     sessions: [...blocks.values()],
     referenceSessionCount,
+    ...(defaultLoadStepKg === undefined ? {} : { defaultLoadStepKg }),
   });
 }
 

@@ -6,6 +6,7 @@ import { Screen } from '@/app/Screen';
 import { listRecommendationsForExercise } from '@/data/repositories/coachRecommendations';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
 import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecords';
+import { getDefaultLoadStepKg } from '@/data/repositories/settings';
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { CoachRecommendation, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
@@ -16,7 +17,7 @@ import {
   recordLabel,
   recordValue,
 } from '@/i18n/labels';
-import { defaultLoadIncrementKg } from '@/lib/loadIncrement';
+import { defaultLoadIncrementKg, LOAD_STEP_MAX_KG, LOAD_STEP_MIN_KG } from '@/lib/loadIncrement';
 import { isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
@@ -112,6 +113,8 @@ export function ExerciseDetailScreen() {
   const sessions = useLiveQuery(() => listSessionsForExercise(id), [id]);
   const records = useLiveQuery(() => listCurrentRecordsForExercise(id), [id]);
   const coachHistory = useLiveQuery(() => listRecommendationsForExercise(id), [id]);
+  // Le pas de toute l'appli : `undefined` tant qu'il n'est pas lu, `null` quand les Réglages n'en ont aucun.
+  const appLoadStep = useLiveQuery(async () => (await getDefaultLoadStepKg()) ?? null, []);
 
   /**
    * Notes, rest and load increment are typed here and written straight through
@@ -185,14 +188,17 @@ export function ExerciseDetailScreen() {
     void updateExercise(exercise.id, { loadIncrementKg });
   };
 
-  const equipmentDefaultIncrement = defaultLoadIncrementKg(exercise.equipment);
+  // « Vide » veut dire le pas des Réglages quand il y en a un, sinon la table du matériel.
+  const fromSettings = typeof appLoadStep === 'number';
+  const emptyIncrement = fromSettings ? appLoadStep : defaultLoadIncrementKg(exercise.equipment);
+  const emptyIncrementReading = emptyIncrement.toLocaleString('fr-FR');
   const loadIncrementHint =
     exercise.measurementType === 'assisted_weight_reps'
-      ? t('exercise.loadIncrementAssistHint', {
-          value: equipmentDefaultIncrement.toLocaleString('fr-FR'),
+      ? t(fromSettings ? 'exercise.loadIncrementAssistHintApp' : 'exercise.loadIncrementAssistHint', {
+          value: emptyIncrementReading,
         })
-      : t('exercise.loadIncrementHint', {
-          value: equipmentDefaultIncrement.toLocaleString('fr-FR'),
+      : t(fromSettings ? 'exercise.loadIncrementHintApp' : 'exercise.loadIncrementHint', {
+          value: emptyIncrementReading,
         });
 
   return (
@@ -389,10 +395,10 @@ export function ExerciseDetailScreen() {
                 value={draft.loadIncrementKg}
                 onChange={writeLoadIncrement}
                 step={0.25}
-                min={0.25}
-                max={50}
+                min={LOAD_STEP_MIN_KG}
+                max={LOAD_STEP_MAX_KG}
                 suffix={t('units.kg')}
-                placeholder={equipmentDefaultIncrement.toLocaleString('fr-FR')}
+                placeholder={emptyIncrementReading}
               />
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
                 {loadIncrementHint}
