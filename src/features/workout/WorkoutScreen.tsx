@@ -9,6 +9,7 @@ import {
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachObjective } from '@/data/repositories/coachApply';
+import { bannerReading } from '@/features/benchmark/benchmarkText';
 import {
   dismissRecommendation,
   markRecommendationFollowed,
@@ -230,7 +231,7 @@ export function WorkoutScreen() {
         {workout.kind === 'benchmark' && (
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
-              {t('benchmark.workoutBanner')}
+              {bannerReading(workout.benchmarkGoal)}
             </p>
           </Card>
         )}

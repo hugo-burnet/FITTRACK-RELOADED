@@ -292,6 +292,25 @@ describe('WorkoutScreen — benchmark', () => {
     expect(screen.queryByRole('textbox', { name: /^Série 2/ })).not.toBeInTheDocument();
   });
 
+  it('rappelle le style choisi et le nombre de répétitions à viser', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée', 'light');
+    renderWorkout();
+
+    expect(
+      await screen.findByText(/Benchmark léger · une série à l’échec par exercice.*environ 18 fois/),
+    ).toBeInTheDocument();
+  });
+
   it('ne valide jamais les répétitions de la dernière fois à la place du maximum', async () => {
     const exercise = await createCustomExercise({
       name: 'Développé couché',
@@ -322,6 +341,47 @@ describe('WorkoutScreen — benchmark', () => {
     await waitFor(async () => {
       expect(await firstSet(workout.id)).toMatchObject({ weight: 80, reps: 9, isCompleted: 1 });
     });
+  });
+
+  it('ne propose pas l’objectif du coach pendant un benchmark : une série à l’échec n’y répond pas', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    // Un objectif en attente, posé par la dernière vraie séance.
+    await recordCoachSignals([
+      {
+        exerciseId: exercise.id,
+        code: 'range_ceiling_reached',
+        severity: 1,
+        nextLoadKg: 82.5,
+        evidence: [
+          { label: 'working_sets', value: 3 },
+          { label: 'target_reps_max', value: 12 },
+          { label: 'current_load_kg', value: 80 },
+          { label: 'next_load_kg', value: 82.5 },
+        ],
+      },
+    ]);
+    await startBenchmarkFromRoutine(routine.id, 'Benchmark · Poussée');
+    renderWorkout();
+
+    await screen.findByRole('textbox', { name: 'Série 1 — kg' });
+    // Les requêtes vivantes se posent : sans cette attente, « la carte est absente » serait vrai trop tôt.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    // « Appliquer » aurait écrasé la charge d'essai que la personne choisit, et marqué l'objectif suivi
+    // avec un essai à fond pour issue ; « Ignorer » aurait réduit au silence cette proposition-là.
+    expect(screen.queryByRole('button', { name: t('coach.dismiss') })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /aux séries restantes/ })).not.toBeInTheDocument();
   });
 
   it('ne dit rien de tel d’une séance ordinaire', async () => {

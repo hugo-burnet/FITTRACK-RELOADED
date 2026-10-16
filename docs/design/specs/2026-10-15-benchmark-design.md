@@ -4,10 +4,15 @@
 **Statut :** livré (v2.12.0), **repris à la demande de l'utilisateur** : « le coach doit lire ce benchmark et te proposer des
 charges adaptées, ça met à jour les routines — et ça doit bien prendre en compte la fourchette : un mec qui fait des séries de
 8, 12, 15, 18, 20 ». Demande d'origine : « une séance avec 1 série, le plus de répétitions possible, ça nous calibre notre
-coach, 1 série par exo ». **Reprise** (non publiée) : « je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on
+coach, 1 série par exo ». **Reprise** (v2.13.0) : « je veux estimer les meilleures charges, je pense que je peux faire 80 kg × 15, on
 teste, je varie à 17, 20 ou 12… 1 série de chaque exo. Le coach récupère ces infos et extrapole la meilleure charge sur x séries — par
 exemple 3 séries sur les poly-articulaires, 2 sur les isolations, c'est un exemple au pif ». Décisions de détail prises en autonomie, à
 relire.
+**Seconde reprise** (v2.14.0) : « Je fais au chest press 40 kg, 18 reps à l'échec. Je voudrais qu'il me propose : ok frero, tu as fait
+40×18, donc maintenant je te propose 40×14 trois fois (j'en sais rien, j'ai pas fait les calculs, mais tu vois l'idée). Je veux faire de la
+classique du 8-12 : 52,5 kg au chest press, échec à la 13e, il me dit « ok mec, je te propose 50×12 trois fois ». Et la force, je connais pas.
+Et s'il faut choisir quel type de benchmark on fait, on peut avoir l'option. Et je trouve que c'est particulièrement pertinent pour commencer
+les programmes. À toi de définir les calculs. » Décisions de détail prises en autonomie, à relire : §3 bis.
 **Périmètre :** une séance spéciale lancée depuis une routine, son bilan, la lecture du benchmark par le coach, et l'écriture —
 acceptée — des charges calibrées dans cette routine. **Hors périmètre :** un benchmark « libre » hors routine, un historique de
 benchmarks comparés entre eux, un coach qui partirait d'un 1RM stocké.
@@ -39,6 +44,9 @@ exercice sans série de travail en reçoit une, vide.
 
 Le type `failure` existe déjà et dit exactement cela ; les records, le volume et l'historique le lisent
 sans rien changer.
+
+Le **style** choisi au lancement (§3 bis) est un second champ optionnel, `Workout.benchmarkGoal`, validé par la sauvegarde de la même façon.
+Chaque ligne de séance porte aussi `WorkoutExercise.routineExerciseId`, la ligne de routine d'où elle part (§4).
 
 **Les répétitions d'une série à l'échec sont le résultat, jamais une proposition.** Une séance de benchmark passe `amrap` aux
 lignes de série : le fantôme des répétitions (la dernière séance de l'exercice, que la cible effacée laissait reprendre) n'est ni
@@ -75,6 +83,11 @@ une séance ordinaire ; il passe par **le chemin des objectifs**, qui est celui 
 - **Pas de signal pour une estimation approximative** (§3) : le coach ne pousse pas une extrapolation. Ni sans charge à proposer.
 - **Les règles de séance ne s'appliquent toujours pas** : plafond atteint, fourchette tenue, hausse, suivi d'objectif. Une série à
   l'échec n'est pas une séance de travail, et sa charge n'est pas la réponse à un objectif.
+- **Pas de carte du coach pendant la séance de benchmark** : `useActiveWorkout` retire les objectifs d'une séance de benchmark comme ceux d'une
+  séance de programme. « Appliquer » y aurait écrasé la charge d'essai que la personne choisit et marqué l'objectif suivi avec un essai à fond
+  pour issue ; « Ignorer » aurait réduit au silence cette proposition. Les objectifs restent en attente pour la séance suivante.
+- **Pas d'objectif pour une pyramide** : un objectif est un seul chiffre, que « Appliquer » met sur toutes les séries restantes — 60 / 70 / 80
+  deviendrait 77,5 trois fois. Le bilan, lui, décale la pyramide en gardant sa forme.
 - **Pas de 1RM stocké pour le coach**, et pas de séance de programme : un bloc possède ses charges, ses objectifs numériques sont
   retirés de la carte (`useActiveWorkout`) — le benchmark n'y change rien.
 
@@ -84,9 +97,9 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
 
 `lib/benchmarkModel.ts` (le modèle) et `lib/benchmark.ts` (la lecture d'une séance de benchmark), purs :
 
-- **La fourchette** est celle de la première série de travail de la routine : « 8 – 12 », « 15 – 20 », ou une cible unique — « 20 » est
-  une fourchette d'un seul point (`repZone`). Sans cible exploitable : 8 – 12. Chaque exercice a la sienne : un squat à 8 – 12 et un
-  mollet à 15 – 20 ne se lisent pas pareil.
+- **La fourchette** est celle du style choisi au lancement (§3 bis) ; sans style, celle de la première série de travail de la routine
+  (jamais une dégressive) : « 8 – 12 », « 15 – 20 », ou une cible unique — « 20 » est une fourchette d'un seul point (`repZone`). Sans cible
+  exploitable : 8 – 12. Chaque exercice a la sienne : un squat à 8 – 12 et un mollet à 15 – 20 ne se lisent pas pareil.
 - **Une seule formule, Epley**, de 1 à 30 répétitions (`oneRepMaxOf`, `loadForReps`, l'inverse exact — il accepte une capacité non
   entière, c'est une grandeur et non un compte), **quelle que soit la formule d'affichage des réglages**. Les trois formules de 1RM
   ne s'accordent qu'entre 1 et 12 répétitions : Brzycki s'effondre au-delà et Lombardi s'aplatit — or celui qui travaille à 15, 18 ou 20
@@ -102,9 +115,14 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
   fait suivre la fourchette, puis les séries : pour un 8 – 12 sur trois séries, le calcul d'une série seule proposait 77,5 kg là où
   72,5 kg tiennent les trois.)*
 - **Combien de séries** (`plannedSets`) : celles de travail de la routine, six au plus — au-delà personne ne les mène toutes près de
-  l'échec. Les échauffements ne comptent pas. **Une pyramide compte pour une série** : dès que les séries de travail portent deux charges
-  différentes, la routine ne dit pas « la même charge, plusieurs fois » ; la première est dimensionnée pour elle-même et les autres
-  suivent du même écart, comme l'écriture le fait. Une routine qui n'en dit rien (échauffement seul, exercice sorti de la routine) reçoit le
+  l'échec. Les échauffements ne comptent pas, **ni les séries dégressives** : plus légères par construction, elles faisaient d'une routine
+  « trois séries à 70 kg puis une dégressive à 55 » une pyramide d'une seule série, et la charge proposée montait de 5 kg ; elles suivent
+  seulement le décalage à l'écriture, comme dans `progressionSets` et la revue des cibles. **Une pyramide compte pour une série** : dès que les
+  séries de travail portent deux charges différentes, la routine ne dit pas « la même charge, plusieurs fois ». **Chaque série se dimensionne
+  seule, sur sa propre fourchette, et l'écart retenu est le plus prudent** : aucune série ne dépasse ce que le max autorise pour elle.
+  Dimensionnée sur la seule première, une pyramide ascendante montait son sommet à 94 % du max (60 / 70 / 80 testé à 80 × 9 : 77,5 / 87,5 /
+  97,5, soit deux répétitions pour du 8 – 12) ; elle devient 57,5 / 67,5 / 77,5. La charge conseillée est celle de la série la plus lourde
+  après le décalage — celle que « Dans la routine » désigne. Une routine qui n'en dit rien (échauffement seul, exercice sorti de la routine) reçoit le
   défaut de sa classe : **3 séries pour un polyarticulaire, 2 pour une isolation** (`BENCHMARK_DEFAULT_SETS`) — un ordre de grandeur, pas
   une règle.
 - **La fatigue d'une série à l'autre** (`setFatigue`) : 10 % de la capacité par série pour un polyarticulaire reposé deux minutes ; 8 %
@@ -129,6 +147,58 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
 Exemple : 80 kg × 17 sur un 15 – 20, trois séries. Max estimé : 125,3 kg. Polyarticulaire reposé deux minutes : la première série doit
 pouvoir faire 17 / 0,9² = 21 répétitions → 125,3 / (1 + 21 / 30) = 73,7 → **72,5 kg**. Une isolation (8 %) : 20,1 répétitions → 75,1 →
 **75 kg**. Même exercice avec une minute de repos (20 %) : 26,6 répétitions → 66,5 → **65 kg** ; avec trois minutes (6,7 %) : **75 kg**.
+
+### 3 bis. Le style du benchmark : léger, classique, lourd
+
+La fourchette que la routine écrit n'est pas toujours celle qu'on veut travailler — au départ d'un programme, elle n'a souvent pas de fourchette
+qui vaille, et « je fais en ce moment des séances légères avec plus de reps » n'est écrit nulle part. Le lancement propose donc un **style**,
+qui remplace la fourchette de la routine pour dimensionner la charge :
+
+| Style | Fourchette | Essai conseillé |
+|---|---|---|
+| **Comme ma routine** (d'office) | celle de chaque exercice dans la routine | celle de chaque exercice |
+| **Classique** | 8 – 12 reps | environ 12 répétitions |
+| **Léger** | 15 – 20 reps | environ 18 répétitions |
+| **Lourd** | 5 – 8 reps | environ 8 répétitions |
+
+Ce n'est rien de plus qu'une fourchette nommée : la capacité exigée, la fatigue, la réserve de deux répétitions, l'arrondi vers le bas et le seuil
+« approximatif » sont ceux du §3. L'essai conseillé est le nombre de répétitions qui garde l'estimation fiable de une à trois séries, polyarticulaire
+ou isolation, repos court ou long (un test le vérifie) ; il s'affiche sur la feuille de lancement et dans le rappel en tête de séance, puisque la
+fourchette n'est pas sur la ligne de série. Le nom de la séance dit le style (« Benchmark léger · Push »).
+
+**Ce que le bilan dit** — la phrase à retenir, puis ce que chaque série tient :
+
+> 52,5 kg pour 3 séries de 8 – 12 reps
+> À 52,5 kg, tu tiendras environ 13 · 11 · 10 reps à fond.
+
+Le second chiffre est le même modèle lu dans l'autre sens (`repsHeldAt`) : la charge est connue — arrondie sur le matériel, donc un peu plus légère
+que l'idéal —, on dit ce qu'elle permet. Arrondi vers le bas : le bilan ne promet jamais une répétition de plus que le modèle. Les trois séries sont
+celles de la routine, ou 3 / 2 à défaut : le bilan dit sur combien la charge est calculée, il n'écrit pas ce nombre.
+
+**Ce que l'acceptation écrit** : la charge, et la fourchette du style sur les séries de travail (pas sur l'échauffement, pas sur une dégressive, qui
+garde ses répétitions) — la routine dit alors ce que la personne a choisi de travailler. Sous la même garde que la charge (§4). Sans style, la routine
+garde sa fourchette. Si la charge est déjà la bonne et que la fourchette ne l'est pas, la proposition est la fourchette seule.
+
+Exemples, calculés à part (script Python hors du dépôt) :
+
+- **Léger**, 40 × 18 (max 64 kg), trois séries : 37,5 kg, on tient 21 · 19 · 17 à fond.
+- **Classique**, 52,5 × 13 (max 75,3 kg), trois séries : 52,5 kg (13 · 11 · 10) — ou **50 kg sur une machine au pas de 5** (15 · 13 · 12).
+- **Lourd**, 100 × 5 (max 116,7 kg), trois séries : 90 kg (8 · 8 · 7) — la dernière en tient 7, deux de plus que le bas du 5 – 8.
+
+**Choix de détail, à relire.**
+
+- **Les trois fourchettes sont celles de la personne.** Proposé d'abord : léger 15 – 20, classique 8 – 12, « force » 3 – 5 (« la force, je connais pas »).
+  Sa réponse : « lourd 5 – 8, normal 8 – 12, léger entre 15 et 20 ». Le troisième style est donc devenu **lourd** (clé `heavy`, 5 – 8 reps) : ce n'est
+  pas de la force pure, et le nom suit la fourchette. Le style n'avait jamais été publié : rien à migrer. **« Classique » garde son nom** : à côté de
+  « Comme ma routine » (d'office), « Normal » se lirait comme le choix par défaut — un mot à changer dans `fr.ts` (`benchmark.goalChoice.classic` et
+  `goalName.classic`) si la personne préfère. Les trois **essais conseillés** (12, 18, 8) restent des choix de produit, comme les constantes du §3 :
+  le lourd garde la réserve de deux répétitions et la fatigue du repos prévu pour l'exercice (un repos de trois minutes la baisse). Ajouter un style,
+  c'est une clé dans `BenchmarkGoal`, une ligne dans `GOAL_ZONES` et `BENCHMARK_GOAL_TEST_REPS`, et son nom dans `fr.ts`.
+- **La réserve de deux répétitions n'a pas bougé**, alors que « 40 × 14 » et « 50 × 12 » (les exemples de la demande) correspondent à une dernière série
+  menée *jusqu'à l'échec* : 18 répétitions à 40 kg font 14,6 à la troisième série, 13 à 50 kg en font 12,3. Avec la réserve, le bilan propose 37,5 kg
+  (et non 40) pour le léger : c'est la même idée, avec deux répétitions de marge. Si les charges paraissent trop basses, c'est
+  `BENCHMARK_RESERVE_REPS`, un seul endroit.
+- **Les répétitions du bilan sont celles qu'on tient à fond**, pas une prescription : la fourchette (8 – 12) dit où viser, avec de la marge.
 
 ### 4. Le bilan et l'écriture
 
@@ -155,22 +225,33 @@ réellement réécrits sont résolus : celui que **ce** benchmark avait posé de
 charge écrite), tout autre devient `superseded` (qui n'est pas un refus). Les observations sans charge restent : le benchmark ne les
 contredit pas. Sans cela, la carte de la séance et la cible de la routine donneraient deux chiffres pour le même exercice.
 
-L'exercice de la séance est rapproché de la ligne de routine par `(exerciseId, order)`. Si la routine a
-été modifiée entre-temps et que rien ne correspond, la ligne n'a pas de proposition : mieux vaut ne rien
-écrire que l'écrire au mauvais endroit.
+L'exercice de la séance est rapproché de la ligne de routine **par l'identifiant posé au lancement**
+(`WorkoutExercise.routineExerciseId`), et pour le même exercice. Le rang ne pouvait pas faire ce travail : la séance le renumérote dès qu'on
+retire, déplace ou remplace un exercice, et l'édition de l'historique aussi — après avoir remonté un curl 15 – 20, il se lisait en 8 – 12 sans ligne
+de routine, et le coach posait « démarre à 40 kg » au lieu de 32,5. L'édition de l'historique conserve le lien ; remplacer l'exercice d'une ligne
+l'efface. Un benchmark lancé avant ce champ retombe sur le rang, comme avant. Si la routine a été modifiée entre-temps et que rien ne correspond,
+la ligne n'a pas de proposition : mieux vaut ne rien écrire que l'écrire au mauvais endroit.
+
+**Un bilan qui date ne s'allume pas d'office.** Le bilan se recalcule contre la routine d'aujourd'hui ; ouvert des semaines plus tard, il proposait
+de ramener à 72,5 kg une routine qui avait progressé à 90, interrupteur allumé et « Appliquer » en bouton principal. Quand une série de la ligne de
+routine a été modifiée après la fin du benchmark, l'interrupteur est éteint d'office et la carte le dit ; la personne peut l'allumer.
 
 Si la personne a fait plusieurs séries du même exercice (elle peut en ajouter), le bilan retient celle
-dont le 1RM estimé est le plus haut.
+dont le 1RM estimé est le plus haut. **Une série d'échauffement n'est jamais l'essai** : l'offre « Ton échauffement de la dernière fois » en met
+dans la séance, et un échauffement coché sans que la série à l'échec soit faite proposait −17,5 kg et un objectif du coach.
 
 ### 5. Le lancement
 
-**Deux portes, une seule feuille.** Dans le menu ⋮ d'une routine (la liste) et sur une ligne de son **éditeur**, sous
+**Trois portes, une seule feuille.** Dans le menu ⋮ d'une routine (la liste), sur une ligne de son **éditeur**, et sur la **fiche d'un
+programme** (« Calibrer les charges », une ligne par routine du bloc, même avant son départ : une séance de programme se construit depuis sa
+routine, les charges d'un bloc sont donc celles de ses routines — c'est le moment où un benchmark sert le plus). Sous
 « Mettre à jour les cibles » : **« Benchmark de cette routine »**, désactivé tant qu'une séance est en cours, comme
 « Démarrer », et absent d'une routine sans exercice. La première porte seule n'a pas suffi : un menu qu'on n'ouvre que pour
 dupliquer ou supprimer n'est pas un endroit où l'on cherche une fonctionnalité — signalé par l'utilisateur après la v2.12.0.
-Les deux ouvrent `BenchmarkLaunchSheet`, qui ne peut donc pas dire deux choses différentes. Une feuille d'explication (trois phrases : une série par exercice, choisis la charge
-avec laquelle tu penses faire la fourchette de l'exercice dans la routine — 8 – 12, 15 – 20, 20… —, va jusqu'à l'échec ; plus l'essai
-en est loin, moins la charge est fiable ; le coach en déduit la charge de toutes les séries de la routine) précède le lancement. Aucun rappel, aucune
+Les trois ouvrent `BenchmarkLaunchSheet`, qui ne peut donc pas dire deux choses différentes. Une feuille d'explication (trois phrases : une série par
+exercice, choisis ton style puis la charge avec laquelle tu penses faire le nombre de répétitions indiqué, va jusqu'à l'échec ; plus l'essai en est
+loin, moins la charge est fiable ; le coach en déduit la charge de toutes les séries) précède le lancement, avec le choix du style (§3 bis) : « Comme
+ma routine » reste choisi d'office, et le dernier choix reste choisi tant que l'écran vit. Aucun rappel, aucune
 périodicité : c'est un geste que la personne décide.
 
 ## Ce qui n'est pas fait, et pourquoi
@@ -182,7 +263,8 @@ périodicité : c'est un geste que la personne décide.
 - Pas de réglage de la réserve de répétitions : une constante nommée, changeable en un endroit, tant
   que personne n'a montré qu'elle était fausse. Il en va de même du seuil d'écart de six répétitions et de la limite de 30, de la
   fatigue par série, de ses bornes de repos, du plafond de six séries et des séries par défaut.
-- **Le coach ne propose pas le nombre de séries.** Il dimensionne la charge sur celles que la routine porte (ou, à défaut, 3 / 2 par
+- **Le coach ne propose pas le nombre de séries.** Le bilan dit sur combien la charge est calculée (« 52,5 kg pour 3 séries de 8 – 12 reps »), et
+  ce nombre est celui de la routine : il ne l'écrit jamais. Il dimensionne la charge sur celles que la routine porte (ou, à défaut, 3 / 2 par
   classe) ; il n'écrit jamais « fais 3 séries ». *Tranché avec la personne* : la demande disait « extrapole la meilleure charge sur x
   séries, par exemple 3 sur les poly-articulaires, 2 sur les isolations » ; interrogée, elle ne savait pas combien (« JSP, tu proposes
   quoi ? ») et a validé la proposition — 3 / 2 en défaut seulement, jamais écrit. Le nombre de séries d'un muscle est déjà l'affaire de R6

@@ -1,5 +1,5 @@
 import { db } from '@/data/db';
-import type { RoutineSet, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type { BenchmarkGoal, RoutineSet, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import {
   benchmarkLine,
   benchmarkSignal,
@@ -7,6 +7,7 @@ import {
   type BenchmarkProposal,
   type BenchmarkRoutineRow,
 } from '@/lib/benchmark';
+import type { RepZone } from '@/lib/benchmarkModel';
 import type { CoachSignal } from '@/lib/coach/types';
 import { exerciseClass } from '@/lib/exerciseClass';
 import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
@@ -20,6 +21,7 @@ import {
   insertWorkoutEntities,
   readWorkoutRoutineSource,
   type WorkoutEntityGraph,
+  type WorkoutRoutineSource,
 } from './workoutLifecycle';
 
 /**
@@ -72,22 +74,48 @@ function reduceToBenchmark(graph: WorkoutEntityGraph): WorkoutEntityGraph {
 }
 
 /**
+ * Pose sur chaque ligne de séance l'identifiant de la ligne de routine d'où elle part.
+ *
+ * `buildWorkoutEntities` fait une ligne de séance par ligne de routine, dans le même ordre : c'est ce qui
+ * permet de les apparier par leur position dans ces deux listes, une seule fois, ici. Le bilan retrouve
+ * ensuite sa ligne par cet identifiant, et non par un rang que la séance renumérote.
+ */
+function linkToRoutine(graph: WorkoutEntityGraph, source: WorkoutRoutineSource): WorkoutEntityGraph {
+  return {
+    ...graph,
+    exercises: graph.exercises.map((row, index) => {
+      const routineRow = source.rows[index];
+      return routineRow === undefined ? row : { ...row, routineExerciseId: routineRow.id };
+    }),
+  };
+}
+
+/**
  * Lance un benchmark depuis une routine. Refuse quand une séance est déjà
  * ouverte (comme « Démarrer ») et quand la routine n'a aucun exercice.
+ *
+ * `goal` est le style choisi au lancement — léger, classique, lourd : la fourchette qu'on y vise. Sans lui, le
+ * bilan lit la fourchette que la routine écrit sur chaque exercice.
  */
 export async function startBenchmarkFromRoutine(
   routineId: string,
   name: string,
+  goal?: BenchmarkGoal,
 ): Promise<Workout> {
   const source = await readWorkoutRoutineSource(routineId);
   if (source === null) throw new Error(`Routine introuvable : ${routineId}`);
   if (source.rows.length === 0) throw new Error(`Routine sans exercice : ${routineId}`);
 
   const built = buildWorkoutEntities({ source, startedAt: Date.now() });
-  const reduced = reduceToBenchmark(built);
+  const reduced = reduceToBenchmark(linkToRoutine(built, source));
   const graph: WorkoutEntityGraph = {
     ...reduced,
-    workout: { ...reduced.workout, name, kind: 'benchmark' },
+    workout: {
+      ...reduced.workout,
+      name,
+      kind: 'benchmark',
+      ...(goal === undefined ? {} : { benchmarkGoal: goal }),
+    },
   };
 
   await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
@@ -100,35 +128,52 @@ export async function startBenchmarkFromRoutine(
 
 export interface BenchmarkReport {
   workout: Workout;
+  /** Le style choisi au lancement. Absent : la fourchette de la routine, exercice par exercice. */
+  goal?: BenchmarkGoal;
   /** Absent quand la routine d'où est parti le benchmark n'existe plus. */
   routineName?: string;
   lines: BenchmarkLine[];
 }
 
 /**
- * La ligne de la routine qui correspond à un exercice de la séance : même
- * exercice, **même rang**. Rapprocher par exercice seul confondrait un exercice
- * présent deux fois ; si la routine a été modifiée depuis, rien ne correspond et
- * il n'y a rien à écrire — mieux vaut ne rien écrire que l'écrire à côté.
+ * La ligne de la routine qui correspond à un exercice de la séance.
+ *
+ * **Par l'identifiant posé au lancement**, et pour le même exercice : la séance renumérote ses rangs dès
+ * qu'on retire, déplace ou remplace un exercice (et l'édition de l'historique aussi), donc un rang ne dit
+ * plus quelle ligne de la routine on a devant soi. Rapprocher par exercice seul confondrait un exercice
+ * présent deux fois. Si la routine a été modifiée depuis — la ligne supprimée, l'exercice changé —, rien
+ * ne correspond et il n'y a rien à écrire : mieux vaut ne rien écrire que l'écrire à côté.
+ *
+ * Un benchmark lancé avant ce lien n'en porte pas : il retombe sur le rang, comme avant.
  */
 function routineRowFor(
   row: WorkoutExercise,
   routineRows: readonly { id: string; exerciseId: string; order: number }[],
   setsByRow: ReadonlyMap<string, readonly RoutineSet[]>,
-): BenchmarkRoutineRow | undefined {
-  const match = routineRows.find(
-    (candidate) => candidate.exerciseId === row.exerciseId && candidate.order === row.order,
-  );
+): { row: BenchmarkRoutineRow; sets: readonly RoutineSet[] } | undefined {
+  const match =
+    row.routineExerciseId === undefined
+      ? routineRows.find(
+          (candidate) => candidate.exerciseId === row.exerciseId && candidate.order === row.order,
+        )
+      : routineRows.find(
+          (candidate) =>
+            candidate.id === row.routineExerciseId && candidate.exerciseId === row.exerciseId,
+        );
   if (match === undefined) return undefined;
+  const sets = setsByRow.get(match.id) ?? [];
   return {
-    routineExerciseId: match.id,
-    sets: (setsByRow.get(match.id) ?? []).map((set) => ({
-      id: set.id,
-      setType: set.setType,
-      ...(set.targetReps === undefined ? {} : { targetReps: set.targetReps }),
-      ...(set.targetRepsMax === undefined ? {} : { targetRepsMax: set.targetRepsMax }),
-      ...(set.targetWeight === undefined ? {} : { targetWeight: set.targetWeight }),
-    })),
+    row: {
+      routineExerciseId: match.id,
+      sets: sets.map((set) => ({
+        id: set.id,
+        setType: set.setType,
+        ...(set.targetReps === undefined ? {} : { targetReps: set.targetReps }),
+        ...(set.targetRepsMax === undefined ? {} : { targetRepsMax: set.targetRepsMax }),
+        ...(set.targetWeight === undefined ? {} : { targetWeight: set.targetWeight }),
+      })),
+    },
+    sets,
   };
 }
 
@@ -181,7 +226,10 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
   const library = new Map(
     exercises.flatMap((exercise) => (exercise === undefined ? [] : [[exercise.id, exercise] as const])),
   );
-  const completed = alive(sets).filter((set) => set.isCompleted === 1);
+  // Jamais un échauffement : sa charge n'est pas celle d'une série menée à l'échec, et l'offre
+  // « Ton échauffement de la dernière fois » en met dans la séance. Un échauffement seul validé (la série
+  // à l'échec jamais faite, supprimée à l'enregistrement) ne fait pas un essai : l'exercice est « non fait ».
+  const completed = alive(sets).filter((set) => set.isCompleted === 1 && isWorkingSet(set));
 
   const lines = rows.flatMap((row) => {
     const performed = completed.filter((set) => set.workoutExerciseId === row.id);
@@ -190,40 +238,47 @@ export async function loadBenchmarkReport(workoutId: string): Promise<BenchmarkR
     // Sans mesure ni nom, ni la ligne ne se lit ni la charge ne se dimensionne.
     if (identity.measurementType === undefined || identity.name === undefined) return [];
 
-    return [
-      benchmarkLine({
-        exerciseId: row.exerciseId,
-        exerciseName: identity.name,
-        measurementType: identity.measurementType,
-        equipment: identity.equipment ?? 'other',
-        ...(exercise?.loadIncrementKg === undefined
-          ? {}
-          : { loadIncrementKg: exercise.loadIncrementKg }),
-        // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
-        // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
-        // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
-        restSeconds: row.restSeconds,
-        exerciseClass: exerciseClass({
-          ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
-          ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
-          ...(identity.secondaryMuscles === undefined ? {} : { secondaryMuscles: identity.secondaryMuscles }),
-        }),
-        sets: performed.map((set) => ({
-          ...(set.weight === undefined ? {} : { weight: set.weight }),
-          ...(set.reps === undefined ? {} : { reps: set.reps }),
-          ...(set.durationSeconds === undefined ? {} : { durationSeconds: set.durationSeconds }),
-          ...(set.distanceMeters === undefined ? {} : { distanceMeters: set.distanceMeters }),
-        })),
-        ...(() => {
-          const routineRow = routineRowFor(row, routineRows, setsByRow);
-          return routineRow === undefined ? {} : { routine: routineRow };
-        })(),
+    const linked = routineRowFor(row, routineRows, setsByRow);
+    // La routine a bougé depuis le benchmark : une de ses séries a été modifiée après la fin de la séance. Le
+    // bilan se recalcule contre la routine d'aujourd'hui, mais sa proposition date : ouvert des semaines plus
+    // tard, il proposait de ramener à 72,5 kg une routine qui avait progressé à 90.
+    const routineChanged =
+      linked !== undefined &&
+      workout.endedAt > 0 &&
+      linked.sets.some((set) => set.updatedAt > workout.endedAt);
+
+    const line = benchmarkLine({
+      exerciseId: row.exerciseId,
+      exerciseName: identity.name,
+      measurementType: identity.measurementType,
+      equipment: identity.equipment ?? 'other',
+      ...(exercise?.loadIncrementKg === undefined
+        ? {}
+        : { loadIncrementKg: exercise.loadIncrementKg }),
+      // Ce qui fatigue d'une série à l'autre : le repos prévu pour l'exercice (résolu à l'entrée en séance,
+      // celui de la routine puis celui de l'exercice) et sa nature. Le benchmark n'a qu'une série par
+      // exercice : il n'a aucun repos réel à mesurer, c'est celui des séries de travail qu'on dimensionne.
+      restSeconds: row.restSeconds,
+      ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
+      exerciseClass: exerciseClass({
+        ...(exercise?.movementPattern === undefined ? {} : { movementPattern: exercise.movementPattern }),
+        ...(identity.primaryMuscle === undefined ? {} : { primaryMuscle: identity.primaryMuscle }),
+        ...(identity.secondaryMuscles === undefined ? {} : { secondaryMuscles: identity.secondaryMuscles }),
       }),
-    ];
+      sets: performed.map((set) => ({
+        ...(set.weight === undefined ? {} : { weight: set.weight }),
+        ...(set.reps === undefined ? {} : { reps: set.reps }),
+        ...(set.durationSeconds === undefined ? {} : { durationSeconds: set.durationSeconds }),
+        ...(set.distanceMeters === undefined ? {} : { distanceMeters: set.distanceMeters }),
+      })),
+      ...(linked === undefined ? {} : { routine: linked.row }),
+    });
+    return [routineChanged ? { ...line, routineChanged: true as const } : line];
   });
 
   return {
     workout,
+    ...(workout.benchmarkGoal === undefined ? {} : { goal: workout.benchmarkGoal }),
     ...(livingRoutine === undefined ? {} : { routineName: livingRoutine.name }),
     lines,
   };
@@ -253,6 +308,18 @@ export async function recordBenchmarkObjectives(workoutId: string): Promise<Coac
   return signals;
 }
 
+/** La série avec la fourchette de `zone` : `targetRepsMax` n'existe que sous une vraie fourchette. */
+function withZone(set: RoutineSet, zone: RepZone): RoutineSet | undefined {
+  const already =
+    set.targetReps === zone.low && (set.targetRepsMax ?? set.targetReps) === zone.high;
+  if (already) return undefined;
+
+  const next: RoutineSet = { ...set, targetReps: zone.low };
+  if (zone.high > zone.low) next.targetRepsMax = zone.high;
+  else delete next.targetRepsMax;
+  return touch(next, {});
+}
+
 /**
  * Écrit les charges acceptées dans la routine — par le chemin d'écriture de la
  * revue des cibles, qui décale chaque série de travail du même écart (une
@@ -263,7 +330,9 @@ export async function recordBenchmarkObjectives(workoutId: string): Promise<Coac
  * avant que l'écran ne se rafraîchisse) ou posé sur une routine modifiée entre
  * temps ne déplace pas deux fois, il ne fait rien.
  *
- * Renvoie le nombre d'**exercices** réécrits, pas de séries.
+ * Renvoie le nombre d'**exercices** réécrits, pas de séries. Quand le benchmark avait un style, les séries de
+ * travail reçoivent aussi sa fourchette de répétitions (« 15 – 20 ») : la routine dit alors ce que la
+ * personne a choisi de travailler, pas ce qu'elle disait avant.
  *
  * **Une charge, une seule source.** Un objectif de charge du coach resté en attente sur l'exercice
  * s'afficherait à côté de la cible que le benchmark vient d'écrire : deux chiffres pour un exercice. Il est
@@ -286,6 +355,25 @@ export async function applyBenchmarkProposals(
       );
     });
     await applyRoutineTargetProposals(current);
+
+    // La fourchette du style choisi, avec la charge et sous la même garde : une proposition dont la série de
+    // référence a changé n'est pas dans `current`, elle n'écrit donc pas non plus de répétitions.
+    const zones = new Map<string, RepZone>();
+    for (const proposal of current) {
+      if (proposal.zone === undefined) continue;
+      const { setIds, ...zone } = proposal.zone;
+      for (const id of setIds) zones.set(id, zone);
+    }
+    if (zones.size > 0) {
+      const rows = alive(
+        (await db.routineSets.bulkGet([...zones.keys()])).flatMap((row) => (row === undefined ? [] : [row])),
+      );
+      const written = rows.flatMap((row) => {
+        const next = withZone(row, zones.get(row.id)!);
+        return next === undefined ? [] : [next];
+      });
+      if (written.length > 0) await db.routineSets.bulkPut(written);
+    }
 
     if (current.length > 0) {
       const writtenKg = new Map(current.map((proposal) => [proposal.exerciseId, proposal.proposedWeight]));

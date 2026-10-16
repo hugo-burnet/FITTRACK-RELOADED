@@ -322,6 +322,13 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
         restSeconds: rowDraft.restSeconds,
         ...snapshot,
         ...(rowDraft.notes === undefined ? {} : { notes: rowDraft.notes }),
+        // Le lien d'un benchmark vers sa ligne de routine traverse la correction — elle renumérote les
+        // rangs, et c'est justement ce que le lien existe pour ne pas lire. Il tombe si l'exercice change :
+        // la ligne de routine parlait de l'autre.
+        ...(existingRow?.routineExerciseId === undefined ||
+        existingRow.exerciseId !== rowDraft.exerciseId
+          ? {}
+          : { routineExerciseId: existingRow.routineExerciseId }),
       };
       const row =
         existingRow === undefined

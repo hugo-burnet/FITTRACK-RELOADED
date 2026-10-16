@@ -9,6 +9,7 @@ import {
   type CoachRecommendationStatus,
   type CoachSignalCode,
   type ExternalExerciseSource,
+  type BenchmarkGoal,
   type PersonalRecordType,
   type ProgramStatus,
   type Side,
@@ -122,6 +123,7 @@ const WORKOUT_STATUSES = [
   'discarded',
 ] as const satisfies readonly WorkoutStatus[];
 const WORKOUT_KINDS = ['benchmark'] as const satisfies readonly WorkoutKind[];
+const BENCHMARK_GOALS = ['light', 'classic', 'heavy'] as const satisfies readonly BenchmarkGoal[];
 const PROGRAM_STATUSES = [
   'draft',
   'active',
@@ -280,6 +282,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
     },
     optional: {
       kind: oneOf(WORKOUT_KINDS),
+      benchmarkGoal: oneOf(BENCHMARK_GOALS),
       programPhase: oneOf(PROGRAM_PHASES),
       programIsDeload: isFlag,
       programWeekIndex: isRank,
@@ -312,6 +315,10 @@ const SPECS: Record<BackupTable, TableSpec> = {
       // la note de routine vient alimenter au démarrage. Les deux bouts du
       // report sont désormais typés du même côté de la porte.
       notes: isString,
+      // Le lien d'un benchmark vers sa ligne de routine. Pas de `links` : une ligne de routine supprimée
+      // reste une référence valide (le bilan ne la trouve simplement plus), et une sauvegarde qui la
+      // perdrait ne doit pas pour autant être refusée.
+      routineExerciseId: isId,
     },
     links: [
       { field: 'workoutId', table: 'workouts' },

@@ -1,7 +1,8 @@
+import type { BenchmarkGoal } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { partReading } from '@/i18n/labels';
 import type { BenchmarkLine, BenchmarkProposal } from '@/lib/benchmark';
-import { BENCHMARK_MAX_REPS, BENCHMARK_RESERVE_REPS } from '@/lib/benchmarkModel';
+import { BENCHMARK_GOAL_TEST_REPS, BENCHMARK_MAX_REPS, type RepZone } from '@/lib/benchmarkModel';
 import { performedParts, repsReading } from '@/lib/measurement';
 
 /**
@@ -25,18 +26,56 @@ export function testedReading(line: BenchmarkLine): string | undefined {
   return parts.length === 0 ? undefined : parts.map(partReading).join(' · ');
 }
 
-/** Le chiffre à côté de l'interrupteur : l'écart quand la routine porte déjà une charge, la charge sinon. */
+/** « 8 – 12 reps », « 15 – 20 reps », « 20 reps » : une fourchette, écrite comme sur la ligne d'une routine. */
+const rangeReading = (zone: RepZone): string | undefined => {
+  const part = repsReading({ targetReps: zone.low, targetRepsMax: zone.high });
+  return part === undefined ? undefined : partReading(part);
+};
+
+/** « classique », « léger », « lourd » : le nom d'un style, en minuscules, pour se glisser dans une phrase. */
+export const goalName = (goal: BenchmarkGoal): string => t(`benchmark.goalName.${goal}`);
+
+/**
+ * Le rappel en tête de la séance de benchmark. Avec un style, il dit aussi le nombre de répétitions à viser :
+ * la fourchette n'est pas sur la ligne de série (la cible de répétitions rouvrirait le défaut des répétitions
+ * proposées), c'est donc ici que la personne le retrouve en choisissant sa charge.
+ */
+export const bannerReading = (goal: BenchmarkGoal | undefined): string =>
+  goal === undefined
+    ? t('benchmark.workoutBanner')
+    : t('benchmark.workoutBannerGoal', { style: goalName(goal), reps: BENCHMARK_GOAL_TEST_REPS[goal] });
+
+/**
+ * Le chiffre à côté de l'interrupteur : l'écart quand la routine porte déjà une charge, la charge sinon — et la
+ * fourchette quand c'est la seule chose à écrire (la charge est déjà la bonne).
+ */
 export function proposalMark(proposal: BenchmarkProposal): string {
-  const { deltaKg } = proposal;
+  const { deltaKg, zone } = proposal;
   if (deltaKg === undefined) return loadReading(proposal.proposedWeight);
+  if (deltaKg === 0 && zone !== undefined) {
+    return rangeReading(zone) ?? loadReading(proposal.proposedWeight);
+  }
   return `${deltaKg < 0 ? '−' : '+'}${loadReading(Math.abs(deltaKg))}`;
 }
 
-/** « 8 – 12 reps », « 15 – 20 reps », « 20 reps » : la fourchette de la routine, écrite comme sur sa ligne. */
+/** Sous l'interrupteur, quand l'écart de charge n'est pas tout ce qu'il écrit : la fourchette du style aussi. */
+export function zoneNoteReading(proposal: BenchmarkProposal): string | undefined {
+  if (proposal.zone === undefined || proposal.deltaKg === 0) return undefined;
+  const range = rangeReading(proposal.zone);
+  return range === undefined ? undefined : t('benchmark.zoneNote', { range });
+}
+
+/**
+ * La fourchette sur laquelle la charge est calculée : « Ton style : classique · 8 – 12 reps » quand la personne
+ * en a choisi un, « Fourchette de la routine : 8 – 12 reps » sinon.
+ */
 export function zoneReading(line: BenchmarkLine): string | undefined {
   if (line.zone === undefined) return undefined;
-  const part = repsReading({ targetReps: line.zone.low, targetRepsMax: line.zone.high });
-  return part === undefined ? undefined : t('benchmark.zone', { range: partReading(part) });
+  const range = rangeReading(line.zone);
+  if (range === undefined) return undefined;
+  return line.goal === undefined
+    ? t('benchmark.zone', { range })
+    : t('benchmark.style', { name: goalName(line.goal), range });
 }
 
 /** Les répétitions que la première série doit tenir : un nombre entier, la précision du modèle n'en dit pas plus. */
@@ -44,36 +83,67 @@ const capacityReps = (line: BenchmarkLine): number | undefined =>
   line.referenceReps === undefined ? undefined : Math.round(line.referenceReps);
 
 /**
- * Sur quoi la charge conseillée est calculée : le nombre de séries, ce que la première tient à fond, ce que la
- * dernière garde en réserve. Une seule série n'a pas de « dernière » à nommer.
+ * La phrase à retenir : la charge, pour les séries et la fourchette sur lesquelles elle est calculée —
+ * « 52,5 kg pour 3 séries de 8 – 12 reps ». Pour une pyramide, la charge de sa série la plus lourde : les autres
+ * suivent du même écart.
  */
-export function basisReading(line: BenchmarkLine): string | undefined {
-  const reps = capacityReps(line);
-  if (line.plannedSets === undefined || reps === undefined) return undefined;
+export function planReading(line: BenchmarkLine): string | undefined {
+  if (line.suggestedKg === undefined || line.zone === undefined || line.plannedSets === undefined) {
+    return undefined;
+  }
+  const value = loadReading(line.suggestedKg);
+  if (line.pyramid === true) return t('benchmark.planPyramid', { value });
+  const range = rangeReading(line.zone);
+  if (range === undefined) return undefined;
   return line.plannedSets === 1
-    ? t('benchmark.suggestedBasisOne', { reps })
-    : t('benchmark.suggestedBasis', {
-        sets: line.plannedSets,
-        reps,
-        reserve: BENCHMARK_RESERVE_REPS,
-      });
+    ? t('benchmark.planOne', { value, range })
+    : t('benchmark.plan', { value, sets: line.plannedSets, range });
 }
 
-/** La mise en garde d'une estimation tirée d'un essai loin de ce que la première série doit tenir. */
+/** Ce que chaque série tient à fond à la charge conseillée : « 13 · 11 · 10 », c'est ainsi qu'on lit trois séries. */
+export function holdReading(line: BenchmarkLine): string | undefined {
+  if (line.suggestedKg === undefined || line.holdReps === undefined || line.holdReps.length === 0) {
+    return undefined;
+  }
+  return t('benchmark.hold', {
+    value: loadReading(line.suggestedKg),
+    reps: line.holdReps.join(' · '),
+  });
+}
+
+/** Une pyramide garde sa forme : le décalage est le même pour toutes ses séries. */
+export function pyramidReading(line: BenchmarkLine): string | undefined {
+  return line.pyramid === true ? t('benchmark.pyramidNote') : undefined;
+}
+
+/**
+ * La mise en garde d'une estimation tirée d'un essai loin de ce que la première série doit tenir. L'interrupteur
+ * n'est nommé que s'il existe : sans proposition — pas de ligne de routine, routine déjà à ce niveau —, il n'y en a pas.
+ */
 export function roughReading(line: BenchmarkLine): string | undefined {
   const target = capacityReps(line);
   if (line.rough !== true || line.tested?.reps === undefined || target === undefined) return undefined;
-  return t('benchmark.rough', { reps: line.tested.reps, target });
+  const warning = t('benchmark.rough', { reps: line.tested.reps, target });
+  return line.proposal === undefined ? warning : `${warning} ${t('benchmark.roughSwitch')}`;
 }
 
 /** Ce que la routine dit de cet exercice — ou rien, quand la ligne se suffit. */
 export function routineReading(line: BenchmarkLine): string | undefined {
   if (line.verdict !== 'calibrated') return undefined;
   if (line.aligned === true) return t('benchmark.aligned');
-  if (line.proposal === undefined) return t('benchmark.noLine');
+  if (line.proposal === undefined) {
+    return line.routineEmpty === true ? t('benchmark.routineEmpty') : t('benchmark.noLine');
+  }
   return line.currentKg === undefined
     ? t('benchmark.inRoutineNone')
     : t('benchmark.inRoutine', { value: loadReading(line.currentKg) });
+}
+
+/** La routine a bougé depuis le benchmark : ce qu'on s'apprête à écrire date. Seulement s'il y a quelque chose à écrire. */
+export function changedReading(line: BenchmarkLine): string | undefined {
+  return line.proposal !== undefined && line.routineChanged === true
+    ? t('benchmark.routineChanged')
+    : undefined;
 }
 
 /** Pourquoi une ligne n'a pas de charge à proposer. */

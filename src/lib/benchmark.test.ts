@@ -5,7 +5,16 @@ import {
   floorLoad,
   type BenchmarkLineInput,
 } from './benchmark';
-import { BENCHMARK_MAX_PLANNED_SETS, BENCHMARK_MAX_REPS } from './benchmarkModel';
+import {
+  BENCHMARK_GOALS,
+  BENCHMARK_GOAL_TEST_REPS,
+  BENCHMARK_MAX_PLANNED_SETS,
+  BENCHMARK_MAX_REPS,
+  capacityForSets,
+  goalZone,
+  setFatigue,
+} from './benchmarkModel';
+import { BENCHMARK_ROUGH_GAP } from './benchmark';
 
 describe('floorLoad', () => {
   const grid = { kg: 2.5, onGrid: true };
@@ -117,14 +126,43 @@ describe('benchmarkLine — une fourchette de 8 à 12', () => {
     expect(line.suggestedKg).toBe(75);
   });
 
-  it('décale une pyramide en bloc au lieu de l’aplatir, la première série dimensionnée pour elle-même', () => {
+  it('décale une pyramide en bloc au lieu de l’aplatir, le sommet fait foi', () => {
     const line = benchmarkLine(bench({ routine: workingRoutine([60, 70, 80]) }));
 
+    // 80 × 9 est un max de 104 kg : la série la plus lourde se dimensionne seule (77,5 kg), et le reste
+    // suit du même écart — 57,5 / 67,5 / 77,5. Dimensionnée sur la première (60 kg), la pyramide montait
+    // à 77,5 / 87,5 / 97,5 : 94 % du max, deux répétitions pour une prescription de 8 à 12.
     expect(line.plannedSets).toBe(1);
+    expect(line.pyramid).toBe(true);
     expect(line.suggestedKg).toBe(77.5);
-    expect(line.proposal?.deltaKg).toBe(17.5);
-    expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2']);
     expect(line.currentKg).toBe(80);
+    expect(line.proposal?.deltaKg).toBe(-2.5);
+    expect(line.proposal?.fromWeight).toBe(60);
+    expect(line.proposal?.anchorSetId).toBe('s0');
+    expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2']);
+    // Une pyramide n'a pas « les répétitions de la série » : chaque série a sa charge.
+    expect(line.holdReps).toBeUndefined();
+  });
+
+  it('lit une série dégressive comme le reste de la routine : elle ne change ni le compte ni la charge, et suit le décalage', () => {
+    const straight = workingRoutine([70, 70, 70]).sets;
+    const withDrop = {
+      routineExerciseId: 'row-1',
+      sets: [
+        ...straight,
+        { id: 'd', setType: 'dropset' as const, targetReps: 8, targetRepsMax: 12, targetWeight: 55 },
+      ],
+    };
+
+    const line = benchmarkLine(bench({ routine: withDrop }));
+
+    // Trois séries à tenir, comme sans la dégressive : 72,5 kg et non les 77,5 d'une « pyramide ».
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(72.5);
+    expect(line.currentKg).toBe(70);
+    expect(line.proposal?.deltaKg).toBe(2.5);
+    // La dégressive est écrite avec les autres : elle garde son écart à la série de travail.
+    expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2', 'd']);
   });
 
   it('propose une charge plus basse quand la routine était trop lourde', () => {
@@ -478,6 +516,269 @@ describe('benchmarkLine — les cas sans charge à proposer', () => {
 
   it('marque un exercice que personne n’a fait', () => {
     expect(benchmarkLine(bench({ sets: [] })).verdict).toBe('skipped');
+  });
+});
+
+describe('benchmarkLine — les pyramides', () => {
+  const routineOf = (...sets: { w: number; lo: number; hi?: number }[]) => ({
+    routineExerciseId: 'row-1',
+    sets: sets.map((set, index) => ({
+      id: `s${index}`,
+      setType: 'normal' as const,
+      targetReps: set.lo,
+      ...(set.hi === undefined ? {} : { targetRepsMax: set.hi }),
+      targetWeight: set.w,
+    })),
+  });
+
+  it('lit une descendante comme avant : la première est déjà la plus lourde', () => {
+    const line = benchmarkLine(bench({ routine: workingRoutine([80, 70, 60]) }));
+
+    expect(line.suggestedKg).toBe(77.5);
+    expect(line.proposal?.deltaKg).toBe(-2.5);
+    expect(line.proposal?.fromWeight).toBe(80);
+  });
+
+  it('plafonne par la fourchette propre à chaque série : 75 kg × 20 puis 80 kg × 8', () => {
+    const line = benchmarkLine(
+      bench({ routine: routineOf({ w: 75, lo: 20 }, { w: 80, lo: 8 }) }),
+    );
+
+    // La série à 20 répétitions se dimensionne à 60 kg (−15), celle à 8 à 77,5 (−2,5) : on prend l'écart
+    // le plus prudent, sans quoi la première se retrouvait à 72,5 kg pour 20 répétitions (13 de possibles).
+    expect(line.proposal?.deltaKg).toBe(-15);
+    expect(line.suggestedKg).toBe(65);
+  });
+
+  it('est alignée quand la pyramide est déjà au plafond', () => {
+    const line = benchmarkLine(bench({ routine: workingRoutine([57.5, 67.5, 77.5]) }));
+
+    expect(line.aligned).toBe(true);
+    expect(line.proposal).toBeUndefined();
+  });
+
+  it('ne fait pas d’une charge unique une pyramide, ni d’une série sans charge', () => {
+    expect(benchmarkLine(bench({ routine: workingRoutine([70, 70, 70]) })).pyramid).toBeUndefined();
+    expect(benchmarkLine(bench({ routine: workingRoutine([70, undefined, 70]) })).pyramid).toBeUndefined();
+  });
+
+  it('ne pose pas d’objectif au coach : un objectif est un seul chiffre, et il aplatirait la pyramide', () => {
+    const line = benchmarkLine(bench({ routine: workingRoutine([60, 70, 80]) }));
+
+    expect(line.verdict).toBe('calibrated');
+    expect(benchmarkSignal(line)).toBeUndefined();
+  });
+});
+
+describe('benchmarkLine — le style choisi au lancement', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt), cf. la spec §3.
+  it('léger : 40 × 18 propose 37,5 kg pour du 15 – 20 sur trois séries, et dit ce qu’on y tient', () => {
+    const line = benchmarkLine(
+      bench({ goal: 'light', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([35, 35, 35]) }),
+    );
+
+    expect(line.goal).toBe('light');
+    expect(line.zone).toEqual({ low: 15, high: 20 });
+    expect(line.plannedSets).toBe(3);
+    expect(line.suggestedKg).toBe(37.5);
+    expect(line.holdReps).toEqual([21, 19, 17]);
+    expect(line.rough).toBeUndefined();
+  });
+
+  it('classique : 52,5 × 13 propose 52,5 kg pour du 8 – 12 sur trois séries', () => {
+    const line = benchmarkLine(
+      bench({ goal: 'classic', sets: [{ weight: 52.5, reps: 13 }], routine: workingRoutine([50, 50, 50]) }),
+    );
+
+    expect(line.zone).toEqual({ low: 8, high: 12 });
+    expect(line.suggestedKg).toBe(52.5);
+    expect(line.holdReps).toEqual([13, 11, 10]);
+  });
+
+  it('classique sur une machine au pas de 5 kg : 50 kg, trois séries tenues à fond de 15, 13 et 12', () => {
+    const line = benchmarkLine(
+      bench({
+        goal: 'classic',
+        equipment: 'machine',
+        sets: [{ weight: 52.5, reps: 13 }],
+        routine: workingRoutine([50, 50, 50]),
+      }),
+    );
+
+    expect(line.suggestedKg).toBe(50);
+    expect(line.holdReps).toEqual([15, 13, 12]);
+  });
+
+  it('lourd : 100 × 5 propose 90 kg pour du 5 – 8 sur trois séries', () => {
+    const line = benchmarkLine(
+      bench({ goal: 'heavy', sets: [{ weight: 100, reps: 5 }], routine: workingRoutine([85, 85, 85]) }),
+    );
+
+    // 100 × 5 est un max de 116,7 kg. Trois séries d'un 5 – 8 : la première doit pouvoir en faire
+    // 7 / 0,9² = 8,64, soit 116,7 / (1 + 8,64 / 30) = 90,6 → 90 kg. On y tient 8 · 8 · 7 : sept à la dernière,
+    // deux de réserve sur le 5.
+    expect(line.zone).toEqual({ low: 5, high: 8 });
+    expect(line.suggestedKg).toBe(90);
+    expect(line.holdReps).toEqual([8, 8, 7]);
+    expect(line.rough).toBeUndefined();
+  });
+
+  it('dimensionne sur la fourchette du style, pas sur celle de la routine', () => {
+    // La routine dit 8 – 12 ; le style léger vise 15 – 20 : la charge est celle d'un 15 – 20.
+    const light = benchmarkLine(
+      bench({ goal: 'light', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([35, 35, 35], 8, 12) }),
+    );
+    const fromRoutine = benchmarkLine(
+      bench({ sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([35, 35, 35], 8, 12) }),
+    );
+
+    expect(light.suggestedKg).toBe(37.5);
+    expect(fromRoutine.suggestedKg).toBeGreaterThan(light.suggestedKg!);
+    expect(fromRoutine.goal).toBeUndefined();
+  });
+
+  it('juge « approximatif » sur la fourchette du style : 18 répétitions sont loin d’un 5 – 8', () => {
+    const line = benchmarkLine(
+      bench({ goal: 'heavy', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([90, 90, 90]) }),
+    );
+
+    expect(line.rough).toBe(true);
+    expect(benchmarkSignal(line)).toBeUndefined();
+  });
+
+  describe('et la fourchette qu’il écrit dans la routine', () => {
+    it('l’écrit avec la charge quand la routine n’est pas dans le style', () => {
+      const line = benchmarkLine(
+        bench({
+          goal: 'light',
+          sets: [{ weight: 40, reps: 18 }],
+          routine: workingRoutine([35, 35, 35], 8, 12),
+        }),
+      );
+
+      expect(line.proposal?.zone).toEqual({ low: 15, high: 20, setIds: ['s0', 's1', 's2'] });
+      expect(line.proposal?.deltaKg).toBe(2.5);
+    });
+
+    it('ne l’écrit pas quand la routine est déjà dans le style', () => {
+      const line = benchmarkLine(
+        bench({
+          goal: 'classic',
+          sets: [{ weight: 52.5, reps: 13 }],
+          routine: workingRoutine([50, 50, 50], 8, 12),
+        }),
+      );
+
+      expect(line.proposal?.zone).toBeUndefined();
+      expect(line.proposal?.deltaKg).toBe(2.5);
+    });
+
+    it('propose la fourchette seule quand la charge est déjà la bonne', () => {
+      const line = benchmarkLine(
+        bench({
+          goal: 'light',
+          sets: [{ weight: 40, reps: 18 }],
+          routine: workingRoutine([37.5, 37.5, 37.5], 8, 12),
+        }),
+      );
+
+      expect(line.aligned).toBeUndefined();
+      expect(line.proposal?.deltaKg).toBe(0);
+      expect(line.proposal?.zone).toEqual({ low: 15, high: 20, setIds: ['s0', 's1', 's2'] });
+    });
+
+    it('est alignée quand la charge et la fourchette sont déjà celles du style', () => {
+      const line = benchmarkLine(
+        bench({
+          goal: 'light',
+          sets: [{ weight: 40, reps: 18 }],
+          routine: workingRoutine([37.5, 37.5, 37.5], 15, 20),
+        }),
+      );
+
+      expect(line.aligned).toBe(true);
+      expect(line.proposal).toBeUndefined();
+    });
+
+    it('ne l’écrit jamais sans style : la routine garde sa fourchette', () => {
+      const line = benchmarkLine(bench({ routine: workingRoutine([35, 35, 35], 15, 20) }));
+
+      expect(line.proposal?.zone).toBeUndefined();
+    });
+
+    it('ne l’écrit pas sur une dégressive, qui garde ses propres répétitions', () => {
+      const routine = {
+        routineExerciseId: 'row-1',
+        sets: [
+          ...workingRoutine([35, 35, 35], 8, 12).sets,
+          { id: 'd', setType: 'dropset' as const, targetReps: 10, targetWeight: 25 },
+        ],
+      };
+      const line = benchmarkLine(
+        bench({ goal: 'light', sets: [{ weight: 40, reps: 18 }], routine }),
+      );
+
+      expect(line.proposal?.zone?.setIds).toEqual(['s0', 's1', 's2']);
+      // Mais elle suit le décalage de charge avec les autres.
+      expect(line.proposal?.targetSetIds).toEqual(['s0', 's1', 's2', 'd']);
+    });
+
+    it('lit une cible unique comme une fourchette d’un seul point : « 5 » est un 5 – 5', () => {
+      // Une routine à `targetReps: 5` sans haut porte le bas du 5 – 8 mais pas son haut : c'est un 5 – 5, pas
+      // un « lourd ». Comparer le seul bas la prendrait pour déjà écrite, et la fourchette ne le serait jamais.
+      const line = benchmarkLine(
+        bench({
+          goal: 'heavy',
+          sets: [{ weight: 100, reps: 5 }],
+          routine: workingRoutine([85, 85, 85], 5, undefined),
+        }),
+      );
+
+      expect(line.proposal?.zone).toEqual({ low: 5, high: 8, setIds: ['s0', 's1', 's2'] });
+    });
+  });
+
+  it('ne dit rien de plus pour un exercice qui ne se mesure pas en charge', () => {
+    const line = benchmarkLine({
+      exerciseId: 'plank',
+      exerciseName: 'Gainage',
+      measurementType: 'time_only',
+      equipment: 'bodyweight',
+      goal: 'light',
+      sets: [{ durationSeconds: 60 }],
+      routine: workingRoutine([undefined]),
+    });
+
+    expect(line.verdict).toBe('recorded');
+    expect(line.proposal).toBeUndefined();
+    expect(line.holdReps).toBeUndefined();
+  });
+});
+
+describe('les répétitions qu’on conseille de viser dans l’essai de chaque style', () => {
+  it('sont assez près de ce que la première série doit tenir pour que l’estimation soit fiable', () => {
+    for (const goal of BENCHMARK_GOALS) {
+      const low = goalZone(goal).low;
+      // De une à trois séries, polyarticulaire (10 %) ou isolation (8 %) : les routines courantes.
+      for (const sets of [1, 2, 3]) {
+        for (const rest of [undefined, 90, 180]) {
+          for (const klass of ['compound', 'isolation'] as const) {
+            const reference = capacityForSets(low, sets, setFatigue(klass, rest));
+            const gap = Math.abs(BENCHMARK_GOAL_TEST_REPS[goal] - reference);
+            expect(gap, `${goal} · ${sets} séries · ${klass} · repos ${rest}`).toBeLessThanOrEqual(
+              BENCHMARK_ROUGH_GAP,
+            );
+          }
+        }
+      }
+    }
+  });
+
+  it('tombent dans la fourchette du style, ou juste au-dessus', () => {
+    for (const goal of BENCHMARK_GOALS) {
+      const zone = goalZone(goal);
+      expect(BENCHMARK_GOAL_TEST_REPS[goal]).toBeGreaterThanOrEqual(zone.low);
+    }
   });
 });
 

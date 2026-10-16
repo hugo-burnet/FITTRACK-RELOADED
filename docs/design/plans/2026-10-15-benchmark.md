@@ -116,12 +116,34 @@ aucune version de schéma.
 - [x] Trente-deux mutations, trente-deux tuées (une a survécu à un test de pyramide à trois charges : un cas à deux charges l'a tuée).
 - [x] Le module a été coupé en deux (`benchmarkModel` / `benchmark`) : il faisait le modèle et la lecture à la fois.
 
+### Tâche 9 — les défauts de la revue, puis le style du benchmark (reprise après la v2.13.1)
+
+**Files :** Modify `src/data/types.ts`, `src/lib/backup/validate.ts` (+ test), `src/lib/exerciseReplacement.ts` (+ test), `src/lib/benchmarkModel.ts`,
+`src/lib/benchmark.ts` (+ tests), `src/data/repositories/{benchmark,history}.ts`, `src/features/benchmark/*`, `src/features/workout/{useActiveWorkout,WorkoutScreen}.ts(x)`,
+`src/features/programs/ProgramDetailScreen.tsx`, `src/i18n/fr.ts`, `e2e/benchmark.spec.ts` ; Create `src/test/routineSeed.ts`,
+`src/data/repositories/{benchmarkRoutineLink,benchmarkSessionSets,benchmarkGoal}.test.ts`, `src/features/benchmark/{ProgramBenchmarkCard,BenchmarkLaunchSheet}.tsx` (+ tests).
+
+- [x] Le lien stable séance ↔ routine (`WorkoutExercise.routineExerciseId`) : le rang cassait dès qu'on retirait, déplaçait ou remplaçait un exercice, et
+      à l'édition de l'historique. Cinq cas rouges avant le code (déplacé, retiré, doublon croisé, historique, objectif du coach) ; remplacement et
+      anciennes séances gardés.
+- [x] Un échauffement n'est pas l'essai ; une dégressive ne compte pas et ne fait pas une pyramide (rouges avant le code).
+- [x] Pas de carte du coach pendant un benchmark (test d'écran rouge avant le code, avec l'attente que la requête vive se pose).
+- [x] La pyramide se dimensionne série par série, l'écart le plus prudent ; la charge conseillée est celle de la série la plus lourde ; pas d'objectif
+      du coach pour une pyramide. Valeurs de référence calculées à part (script Python hors du dépôt).
+- [x] Le style (`Workout.benchmarkGoal`, `BENCHMARK_GOALS`, `goalZone`) : sa fourchette remplace celle de la routine ; `repsHeldAt` dit ce que chaque série
+      tient à fond ; l'acceptation écrit la charge et la fourchette (jamais sur l'échauffement ni sur une dégressive), sous la même garde d'ancre.
+- [x] Le bilan périmé (`routineChanged`, posé par le dépôt) : interrupteur éteint d'office, avec sa phrase.
+- [x] La feuille de lancement avec le choix du style, le rappel en tête de séance, le nom de la séance qui dit le style, le bilan en mots simples.
+- [x] La porte du programme (« Calibrer les charges », une ligne par routine du bloc).
+- [x] E2E : le style léger de bout en bout (40 × 18 → 37,5 kg, routine réécrite, séance suivante), cibles de 48 px et pas de débordement à 200 %.
+
 ## Ce qui reste, et pourquoi
 
 - La fourchette n'est pas affichée sur la ligne de série pendant le benchmark (spec §« Ce qui n'est pas fait »).
 - Le bilan n'est pas dans la matrice de mise en page des trois thèmes : sa route porte un identifiant de
   séance qu'un test générique ne connaît pas. Il est vérifié en thème sombre à 100 et 200 % dans son propre
   parcours ; TTY1 et le thème clair restent à l'œil, sur le téléphone.
-- La réserve de 2, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les séries par défaut (3 / 2) et la
-  limite de 30 répétitions sont des constantes à juger à l'usage, toutes dans `benchmarkModel.ts`.
+- La réserve de 2, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les séries par défaut (3 / 2), la
+  limite de 30 répétitions et les trois fourchettes des styles (15 – 20, 8 – 12, 5 – 8 : celles de l'utilisateur) sont des constantes à juger à l'usage, toutes dans
+  `benchmarkModel.ts`.
 - Le coach ne propose pas le nombre de séries : il dimensionne la charge sur celles de la routine (question posée à l'utilisateur).

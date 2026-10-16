@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_DEFAULT_SETS,
+  BENCHMARK_GOALS,
   BENCHMARK_MAX_PLANNED_SETS,
   BENCHMARK_MAX_REPS,
   capacityForSets,
+  goalZone,
   loadForReps,
   oneRepMaxOf,
   plannedSets,
+  repsHeldAt,
   repZone,
   setFatigue,
 } from './benchmarkModel';
@@ -93,6 +96,17 @@ describe('plannedSets — sur combien de séries la charge doit tenir', () => {
     expect(plannedSets(sets(70, undefined, 70), 'compound')).toBe(3);
   });
 
+  it('ne compte pas une série dégressive, et elle ne fait pas une pyramide', () => {
+    const straight = [70, 70, 70].map((targetWeight) => ({ targetWeight, setType: 'normal' as const }));
+    const drop = { targetWeight: 55, setType: 'dropset' as const };
+
+    // Trois séries à 70 kg puis une dégressive à 55 : trois séries à tenir, pas une « pyramide ».
+    expect(plannedSets([...straight, drop], 'compound')).toBe(3);
+    expect(plannedSets([...straight.slice(0, 2), drop], 'compound')).toBe(2);
+    // Et une routine qui ne serait que dégressives retombe sur le défaut de sa classe.
+    expect(plannedSets([drop, drop], 'isolation')).toBe(BENCHMARK_DEFAULT_SETS.isolation);
+  });
+
   it('plafonne : au-delà de six séries à charge égale, personne ne les mène toutes près de l’échec', () => {
     expect(plannedSets(sets(...Array.from({ length: 10 }, () => 50)), 'compound')).toBe(
       BENCHMARK_MAX_PLANNED_SETS,
@@ -171,5 +185,66 @@ describe('repZone', () => {
     expect(repZone(0, 5)).toEqual({ low: 8, high: 12 });
     expect(repZone(-3, undefined)).toEqual({ low: 8, high: 12 });
     expect(repZone(6.5, 8)).toEqual({ low: 8, high: 12 });
+  });
+});
+
+describe('goalZone — le style qu’on choisit au lancement', () => {
+  it('range chaque style dans sa fourchette : léger 15 – 20, classique 8 – 12, lourd 5 – 8', () => {
+    expect(goalZone('light')).toEqual({ low: 15, high: 20 });
+    expect(goalZone('classic')).toEqual({ low: 8, high: 12 });
+    expect(goalZone('heavy')).toEqual({ low: 5, high: 8 });
+  });
+
+  it('donne une copie : la modifier ne change pas le style', () => {
+    const zone = goalZone('classic');
+    zone.high = 99;
+    expect(goalZone('classic')).toEqual({ low: 8, high: 12 });
+  });
+
+  it('liste les trois styles, du plus courant au plus rare', () => {
+    expect(BENCHMARK_GOALS).toEqual(['classic', 'light', 'heavy']);
+  });
+});
+
+describe('repsHeldAt — ce que chaque série tient à fond à une charge donnée', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt) : un max de 64 kg est une série de
+  // 21,1 répétitions à 37,5 kg, et chaque série de plus en perd 10 %.
+  it('compte les répétitions que tient chacune des séries, la fatigue en moins à chaque fois', () => {
+    expect(repsHeldAt(64, 37.5, 3, 0.1)).toEqual([21, 19, 17]);
+    expect(repsHeldAt(75.25, 52.5, 3, 0.1)).toEqual([13, 11, 10]);
+    expect(repsHeldAt(116.67, 95, 3, 0.1)).toEqual([6, 6, 5]);
+    expect(repsHeldAt(116.67, 90, 3, 0.1)).toEqual([8, 8, 7]);
+  });
+
+  it('ne perd pas une répétition à une erreur d’arrondi : 100 × 5 tient exactement 8 puis 8 à 90 kg', () => {
+    // 100 × (1 + 5/30) = 116,666… ; à 90 kg la première série en tient 8,888…, la deuxième 8,888… × 0,9 = 8
+    // pile — et la virgule flottante peut en faire 7,999…, qui retomberait à 7.
+    expect(repsHeldAt(100 * (1 + 5 / 30), 90, 3, 0.1)).toEqual([8, 8, 7]);
+  });
+
+  it('arrondit vers le bas : le bilan ne promet jamais une répétition de plus que le modèle', () => {
+    // 52,5 kg tient 13,0 puis 11,7 puis 10,5 répétitions.
+    expect(repsHeldAt(75.25, 52.5, 3, 0.1)).toEqual([13, 11, 10]);
+  });
+
+  it('donne une seule valeur pour une seule série', () => {
+    expect(repsHeldAt(104, 77.5, 1, 0.1)).toEqual([10]);
+  });
+
+  it('ne dépasse pas ce que la formule sait dire', () => {
+    // Un max de 100 kg à 10 kg ferait 270 répétitions : la formule s'arrête à trente.
+    expect(repsHeldAt(100, 10, 2, 0.1)).toEqual([BENCHMARK_MAX_REPS, 27]);
+  });
+
+  it('ne compte pas plus de six séries, et ne dit rien d’une charge qui n’en est pas une', () => {
+    expect(repsHeldAt(104, 70, 9, 0.1)).toHaveLength(BENCHMARK_MAX_PLANNED_SETS);
+    expect(repsHeldAt(104, 0, 3, 0.1)).toEqual([]);
+    expect(repsHeldAt(0, 70, 3, 0.1)).toEqual([]);
+    expect(repsHeldAt(104, Number.NaN, 3, 0.1)).toEqual([]);
+  });
+
+  it('lit un nombre de séries inutilisable comme une série', () => {
+    expect(repsHeldAt(104, 77.5, 0, 0.1)).toEqual([10]);
+    expect(repsHeldAt(104, 77.5, 2.5, 0.1)).toEqual([10]);
   });
 });

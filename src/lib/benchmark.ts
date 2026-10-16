@@ -1,4 +1,4 @@
-import type { Equipment, MeasurementType, SetType } from '@/data/types';
+import type { BenchmarkGoal, Equipment, MeasurementType, SetType } from '@/data/types';
 import { SEVERITY } from '@/lib/coach/constants';
 import type { CoachSignal } from '@/lib/coach/types';
 import type { ExerciseClass } from '@/lib/exerciseClass';
@@ -7,9 +7,12 @@ import type { Performed } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import {
   capacityForSets,
+  goalZone,
+  isPyramid,
   loadForReps,
   oneRepMaxOf,
   plannedSets,
+  repsHeldAt,
   repZone,
   setFatigue,
   type RepZone,
@@ -79,9 +82,15 @@ export interface BenchmarkRoutineRow {
   sets: readonly BenchmarkRoutineSet[];
 }
 
+/** Une fourchette de répétitions à écrire sur des séries de travail de la routine. */
+export interface BenchmarkZoneWrite extends RepZone {
+  /** Les séries qui la reçoivent : celles de travail, sans les dégressives, qui gardent leurs répétitions. */
+  setIds: string[];
+}
+
 /**
  * Ce qu'accepter écrit — la partie de `RoutineTargetProposal` que
- * `applyRoutineTargetProposals` lit, et rien de plus.
+ * `applyRoutineTargetProposals` lit, plus la fourchette du style choisi.
  */
 export interface BenchmarkProposal {
   routineExerciseId: string;
@@ -101,6 +110,12 @@ export interface BenchmarkProposal {
   proposedWeight: number;
   /** Absent quand la ligne ne portait aucune charge : les séries reçoivent `proposedWeight`. */
   deltaKg?: number;
+  /**
+   * La fourchette du style choisi au lancement, écrite avec la charge : la routine dit alors « 15 – 20 » et
+   * non plus ce qu'elle disait. Absente sans style (la routine garde sa fourchette), et quand les séries
+   * portent déjà celle du style.
+   */
+  zone?: BenchmarkZoneWrite;
 }
 
 export interface BenchmarkLineInput {
@@ -117,6 +132,11 @@ export interface BenchmarkLineInput {
   restSeconds?: number;
   /** Polyarticulaire ou isolation (`exerciseClass`). Absent : polyarticulaire, la lecture la plus prudente. */
   exerciseClass?: ExerciseClass;
+  /**
+   * Le style choisi au lancement : sa fourchette remplace celle de la routine, et la routine reçoit la sienne
+   * en acceptant. Absent : la fourchette de la première série de travail de la routine, exercice par exercice.
+   */
+  goal?: BenchmarkGoal;
 }
 
 export interface BenchmarkLine {
@@ -125,7 +145,9 @@ export interface BenchmarkLine {
   measurementType: MeasurementType;
   verdict: BenchmarkVerdict;
   tested?: Performed;
-  /** La fourchette de la routine sur laquelle la charge est dimensionnée. */
+  /** Le style du benchmark, quand la personne en a choisi un au lancement. */
+  goal?: BenchmarkGoal;
+  /** La fourchette sur laquelle la charge est dimensionnée : celle du style, ou celle de la routine. */
   zone?: RepZone;
   oneRepMax?: number;
   /** Sur combien de séries la charge est dimensionnée (`plannedSets`) : celles de la routine, ou le défaut de la classe. */
@@ -136,11 +158,32 @@ export interface BenchmarkLine {
    * approcher pour que l'estimation soit fiable.
    */
   referenceReps?: number;
+  /**
+   * La charge conseillée. Pour une pyramide, celle de sa série la plus lourde après le décalage : c'est la
+   * série qui limite, et celle que `currentKg` désigne dans la routine.
+   */
   suggestedKg?: number;
+  /**
+   * Ce que chacune des séries tient à fond à la charge conseillée (`repsHeldAt`) — « 13, 11, 10 » : c'est ainsi
+   * qu'on lit une charge sur trois séries. Absent pour une pyramide, dont chaque série a sa charge.
+   */
+  holdReps?: number[];
   /** La cible actuelle de la routine : la plus dure de ses séries de travail. */
   currentKg?: number;
   proposal?: BenchmarkProposal;
-  /** `true` quand la routine porte déjà la charge calibrée — rien à écrire. */
+  /** `true` quand la ligne de routine existe mais ne porte aucune série de travail (des échauffements seuls). */
+  routineEmpty?: true;
+  /**
+   * `true` quand une série de la routine a été modifiée après ce benchmark : la proposition date, et le bilan
+   * ne l'allume pas d'office. Posé par le dépôt, seul à connaître les dates de la routine.
+   */
+  routineChanged?: true;
+  /**
+   * `true` quand les séries de travail de la routine portent des charges différentes. Le décalage garde la
+   * forme de la pyramide ; un objectif du coach, lui, est un seul chiffre qui l'aplatirait : il n'en pose pas.
+   */
+  pyramid?: true;
+  /** `true` quand la routine porte déjà la charge calibrée — et la fourchette du style, s'il y en a un : rien à écrire. */
   aligned?: true;
   /**
    * `true` quand l'essai est à plus de `BENCHMARK_ROUGH_GAP` répétitions de la capacité exigée de la première
@@ -172,8 +215,9 @@ function bestRecorded(sets: readonly Performed[]): Performed {
 }
 
 /**
- * Les séries de travail de la ligne de routine. La première donne la fourchette et la charge de départ,
- * les autres suivent du même écart ; leur nombre est celui sur lequel la charge doit tenir.
+ * Les séries de travail de la ligne de routine (l'échauffement n'en est pas une). Leur nombre est celui sur
+ * lequel la charge doit tenir ; elles reçoivent toutes le même décalage de charge. La première série « droite »
+ * donne la fourchette et la charge de départ — sauf pour une pyramide, dont chaque série se dimensionne seule.
  */
 function routineWorkingSets(routine: BenchmarkRoutineRow | undefined): BenchmarkRoutineSet[] {
   return routine === undefined ? [] : routine.sets.filter(isWorkingSet);
@@ -199,8 +243,16 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   }
 
   const working = routineWorkingSets(input.routine);
-  const first = working[0];
-  const zone = repZone(first?.targetReps, first?.targetRepsMax);
+  // Les séries qui donnent sa forme au bloc : jamais une dégressive (plus légère par construction). Celles-ci
+  // suivent le décalage de charge avec les autres, via `targetSetIds`, mais ne donnent ni fourchette ni départ.
+  const straight = working.filter((set) => set.setType !== 'dropset');
+  const block = straight.length > 0 ? straight : working;
+  const first = block[0];
+  // Le style choisi au lancement, sinon la fourchette que la routine écrit sur la série concernée.
+  const style = input.goal === undefined ? undefined : goalZone(input.goal);
+  const zoneOf = (set: BenchmarkRoutineSet | undefined): RepZone =>
+    style === undefined ? repZone(set?.targetReps, set?.targetRepsMax) : { ...style };
+  const zone = zoneOf(first);
 
   const loaded = input.sets.filter(
     (set) => set.weight !== undefined && set.weight > 0 && set.reps !== undefined && set.reps >= 1,
@@ -230,64 +282,104 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   const tested = resultOf(best.set);
 
   const klass = input.exerciseClass ?? 'compound';
+  const fatigue = setFatigue(klass, input.restSeconds);
   const planned = plannedSets(working, klass);
-  const reference = capacityForSets(zone.low, planned, setFatigue(klass, input.restSeconds));
-  const ideal = loadForReps(best.oneRepMax, reference);
   const step = resolveLoadStep({
     equipment: input.equipment,
     ...(input.loadIncrementKg === undefined ? {} : { loadIncrementKg: input.loadIncrementKg }),
   });
-  const suggested = ideal === undefined ? 0 : floorLoad(ideal, best.set.weight!, step);
+
+  /** La charge qui tient `count` séries dont la dernière garde la réserve au bas de la fourchette `low`. */
+  const sizeFor = (low: number, count: number): number => {
+    const ideal = loadForReps(best.oneRepMax, capacityForSets(low, count, fatigue));
+    return ideal === undefined ? 0 : floorLoad(ideal, best.set.weight!, step);
+  };
+
+  const loads = block.flatMap((set) =>
+    set.targetWeight === undefined ? [] : [{ set, weight: set.targetWeight }],
+  );
+  const pyramid = isPyramid(block);
+
+  // Une charge, ou une pyramide. Une pyramide se dimensionne série par série, chacune seule et sur sa propre
+  // fourchette ; l'écart retenu est le plus prudent des écarts, de sorte qu'aucune série ne dépasse ce que le
+  // max autorise pour elle. Dimensionnée sur la seule première, une pyramide ascendante montait son sommet à
+  // 94 % du max (77,5 / 87,5 / 97,5 pour 60 / 70 / 80 testé à 80 × 9).
+  let suggested: number;
+  let reference: number;
+  let pyramidShift: number | undefined;
+  if (pyramid) {
+    const sizes = loads.map(({ set, weight }) => {
+      const low = zoneOf(set).low;
+      return { low, weight, gap: sizeFor(low, 1) - weight };
+    });
+    const tightest = sizes.reduce((a, b) => (b.gap < a.gap ? b : a));
+    pyramidShift = round3(tightest.gap);
+    suggested = round3(Math.max(...loads.map((load) => load.weight)) + pyramidShift);
+    reference = capacityForSets(tightest.low, 1, fatigue);
+  } else {
+    suggested = sizeFor(zone.low, planned);
+    reference = capacityForSets(zone.low, planned, fatigue);
+  }
 
   if (!(suggested > 0)) {
     // Une charge sous le premier cran du matériel n'est pas une proposition.
     return { ...base, verdict: 'no_load', zone, tested, oneRepMax: best.oneRepMax };
   }
 
-  const weights = working.flatMap((set) => (set.targetWeight === undefined ? [] : [set.targetWeight]));
-  const currentKg = weights.length === 0 ? undefined : Math.max(...weights);
+  const currentKg = loads.length === 0 ? undefined : Math.max(...loads.map((load) => load.weight));
   const rough = Math.abs(best.set.reps! - reference) > BENCHMARK_ROUGH_GAP;
+  const held = pyramid ? [] : repsHeldAt(best.oneRepMax, suggested, planned, fatigue);
 
   const line: BenchmarkLine = {
     ...base,
     verdict: 'calibrated',
     tested,
+    ...(input.goal === undefined ? {} : { goal: input.goal }),
     zone,
     oneRepMax: best.oneRepMax,
     plannedSets: planned,
     referenceReps: reference,
     suggestedKg: suggested,
+    ...(held.length === 0 ? {} : { holdReps: held }),
     ...(currentKg === undefined ? {} : { currentKg }),
+    ...(pyramid ? { pyramid: true as const } : {}),
     ...(rough ? { rough: true as const } : {}),
   };
 
-  if (input.routine === undefined || first === undefined) return line;
+  if (input.routine === undefined) return line;
+  if (first === undefined) return { ...line, routineEmpty: true };
 
-  if (first.targetWeight !== undefined && first.targetWeight === suggested) {
-    return { ...line, aligned: true };
-  }
+  // La série dont le bilan lit la charge : la première de travail — la première qui en porte une, dans une
+  // pyramide, pour que « ce qu'elle portait alors » existe.
+  const anchor = pyramid ? (loads[0]?.set ?? first) : first;
+  const deltaKg =
+    anchor.targetWeight === undefined
+      ? undefined
+      : (pyramidShift ?? round3(suggested - anchor.targetWeight));
+  const zoneWrite: BenchmarkZoneWrite | undefined =
+    style !== undefined && block.some((set) => !carriesZone(set, style))
+      ? { ...style, setIds: block.map((set) => set.id) }
+      : undefined;
 
-  const targetSetIds = working.map((set) => set.id);
-  const proposal: BenchmarkProposal =
-    first.targetWeight === undefined
-      ? {
-          routineExerciseId: input.routine.routineExerciseId,
-          exerciseId: input.exerciseId,
-          targetSetIds,
-          anchorSetId: first.id,
-          proposedWeight: suggested,
-        }
-      : {
-          routineExerciseId: input.routine.routineExerciseId,
-          exerciseId: input.exerciseId,
-          targetSetIds,
-          anchorSetId: first.id,
-          fromWeight: first.targetWeight,
-          proposedWeight: suggested,
-          deltaKg: round3(suggested - first.targetWeight),
-        };
+  if (deltaKg === 0 && zoneWrite === undefined) return { ...line, aligned: true };
+
+  const proposal: BenchmarkProposal = {
+    routineExerciseId: input.routine.routineExerciseId,
+    exerciseId: input.exerciseId,
+    targetSetIds: working.map((set) => set.id),
+    anchorSetId: anchor.id,
+    ...(anchor.targetWeight === undefined ? {} : { fromWeight: anchor.targetWeight }),
+    proposedWeight: suggested,
+    ...(deltaKg === undefined ? {} : { deltaKg }),
+    ...(zoneWrite === undefined ? {} : { zone: zoneWrite }),
+  };
 
   return { ...line, proposal };
+}
+
+/** La série porte-t-elle déjà cette fourchette ? Une cible unique est une fourchette d'un seul point. */
+function carriesZone(set: BenchmarkRoutineSet, zone: RepZone): boolean {
+  return set.targetReps === zone.low && (set.targetRepsMax ?? set.targetReps) === zone.high;
 }
 
 const round1 = (value: number): number => Math.round(value * 10) / 10;
@@ -301,13 +393,16 @@ const round1 = (value: number): number => Math.round(value * 10) / 10;
  *
  * **Aucun signal pour une estimation approximative** : le coach ne pousse pas une extrapolation, la
  * personne la lit sur le bilan et décide de l'écrire ou non dans la routine. Aucun non plus sans charge à
- * proposer (trop léger, sans charge, au poids du corps). **Un signal même quand la routine porte déjà la
+ * proposer (trop léger, sans charge, au poids du corps), ni pour une pyramide : un objectif est un seul chiffre,
+ * que « Appliquer » met sur toutes les séries restantes — 60 / 70 / 80 deviendrait 77,5 trois fois. Le bilan,
+ * lui, décale la pyramide en gardant sa forme. **Un signal même quand la routine porte déjà la
  * charge** : il remplace l'objectif que le coach avait posé avant, qui sinon resterait affiché à côté.
  */
 export function benchmarkSignal(line: BenchmarkLine): CoachSignal | undefined {
   if (
     line.verdict !== 'calibrated' ||
     line.rough === true ||
+    line.pyramid === true ||
     line.suggestedKg === undefined ||
     line.tested?.weight === undefined ||
     line.tested.reps === undefined ||

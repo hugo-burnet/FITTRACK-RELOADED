@@ -149,8 +149,8 @@ Une séance de deux exercices au moins, dont un en barre.
       tant que les répétitions manquent — **y compris sur un exercice déjà fait la semaine dernière**, dont le « Précédent » ne doit
       jamais se valider tout seul. *(v2.12.0 ; l'exercice avec historique : après la v2.12.2)*
 - [ ] **Le bilan, la fourchette et les séries.** Enregistrer ouvre « Bilan du benchmark » (pas l'accueil, pas de carte du coach) : par
-      exercice la **fourchette de la routine**, ce qui a été fait, le 1RM estimé, la charge conseillée, **« Pour N séries : environ … répétitions
-      à fond à la première, 2 en réserve à la dernière »** et la routine. Un exercice à 15 – 20 doit proposer une charge **adaptée à ses
+      exercice la **fourchette de la routine**, ce qui a été fait, le 1RM estimé, la charge conseillée en une phrase (**« 52,5 kg pour 3 séries
+      de 8 – 12 reps »**), **ce que chaque série tient à fond (« À 52,5 kg, tu tiendras environ 13 · 11 · 10 reps à fond »)** et la routine. Un exercice à 15 – 20 doit proposer une charge **adaptée à ses
       séries** (plus elle en compte, plus la charge est basse), pas à 12 répétitions. **Relire la charge comme un geste** : trois séries à
       cette charge, à la fourchette, doivent laisser environ deux répétitions en réserve à la dernière ; sinon la fatigue du modèle (10 %
       par série, 8 % pour une isolation) est à régler — dis-le moi avec l'exercice et les chiffres. Un essai très loin de ce que la
@@ -168,6 +168,25 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Depuis l'historique.** La fiche d'un benchmark propose « Voir le bilan ». *(v2.12.0)*
 - [ ] **Pas de « ? » sur le bilan.** L'en-tête du bilan ne porte que la flèche de retour : un « ? » y expliquerait l'accueil, pas le bilan.
       *(v2.13.1)*
+- [ ] **Choisir son style.** Dans la feuille de lancement : « Comme ma routine » est choisi d'office ; Classique 8 – 12, Léger 15 – 20 et Lourd
+      5 – 8 se touchent d'une main (cibles de 48 px) ; chacun dit « Choisis une charge que tu penses tenir environ N fois » (12, 18, 8). En
+      séance, le rappel en tête redit le style et ce nombre ; le nom de la séance, dans l'historique, dit « Benchmark léger · … ». *(v2.14.0)*
+- [ ] **Le bilan d'un style — c'est ton exemple.** Léger, sur un exercice : 40 kg × 18 à l'échec → « Ton style : léger · 15 – 20 reps »,
+      **« 37,5 kg pour 3 séries de 15 – 20 reps »**, « tu tiendras environ 21 · 19 · 17 reps à fond ». Classique, 52,5 kg × 13 → 52,5 kg (50 kg
+      sur une machine au pas de 5). **Relire comme un geste** : trois séries à cette charge doivent laisser environ deux répétitions en réserve à
+      la dernière ; si c'est trop léger, c'est la réserve (`BENCHMARK_RESERVE_REPS`, un seul chiffre) — dis-le moi avec l'exercice et les chiffres.
+      Essaie aussi le **lourd** (5 – 8 reps) : sur un développé couché à trois séries, 100 kg × 5 → 90 kg, et on y tient 8 · 8 · 7. *(v2.14.0)*
+- [ ] **Appliquer écrit aussi la fourchette.** Après « Appliquer à la routine » sur un style : la routine porte la charge **et** « 15 – 20 » (ou le
+      style choisi) ; la séance d'après affiche « objectif 15 – 20 » sur la série. L'échauffement et une série dégressive gardent leurs répétitions.
+      *(v2.14.0)*
+- [ ] **Une pyramide.** Une routine à 60 / 70 / 80 : le bilan dit « … pour ta série la plus lourde » et que les autres suivent du même écart ; le
+      résultat garde la forme (57,5 / 67,5 / 77,5 pour un 80 × 9) ; le coach ne pose pas d'objectif pour cet exercice. *(v2.14.0)*
+- [ ] **Un bilan qui date.** Faire un benchmark sans l'appliquer, modifier la charge de la routine, rouvrir le bilan depuis l'historique :
+      l'interrupteur est **éteint** et la carte dit que la routine a changé ; on peut l'allumer. *(v2.14.0)*
+- [ ] **Déplacer ou retirer un exercice pendant un benchmark** : au bilan, chaque exercice garde sa fourchette (un 15 – 20 reste un 15 – 20) et sa
+      ligne de routine. Un échauffement coché ne devient pas l'essai. Pas de carte du coach pendant la séance de benchmark. *(v2.14.0)*
+- [ ] **Depuis un programme.** La fiche d'un programme (même pas encore commencé) propose « Calibrer les charges », une ligne par routine du bloc ;
+      grisée pendant une séance en cours ; elle ouvre la même feuille, avec le choix du style. *(v2.14.0)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 

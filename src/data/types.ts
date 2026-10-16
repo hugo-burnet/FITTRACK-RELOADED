@@ -292,11 +292,23 @@ export type WorkoutStatus = 'active' | 'completed' | 'discarded';
  */
 export type WorkoutKind = 'benchmark';
 
+/**
+ * Le style d'un benchmark : la fourchette de répétitions qu'on y vise, choisie au lancement. Absent : celle de
+ * chaque exercice dans la routine, lue exercice par exercice.
+ *
+ * `light` 15 – 20 répétitions, `classic` 8 – 12, `heavy` 5 – 8 (`lib/benchmarkModel`). Le style dit ce que
+ * la personne veut travailler, pas ce que la routine écrit : au départ d'un programme, la routine n'a souvent
+ * pas encore de fourchette qui vaille.
+ */
+export type BenchmarkGoal = 'light' | 'classic' | 'heavy';
+
 export interface Workout extends Syncable {
   routineId: string; // '' for an empty workout (RF-17)
   name: string;
   status: WorkoutStatus; // 'active' = resumed on startup (RF-25)
   kind?: WorkoutKind;
+  /** Pour un benchmark seulement : le style choisi au lancement. Absent : la fourchette de la routine. */
+  benchmarkGoal?: BenchmarkGoal;
   startedAt: number;
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close
@@ -324,6 +336,16 @@ export interface WorkoutExercise extends Syncable {
   order: number;
   supersetGroup: number;
   notes?: string;
+
+  /**
+   * La ligne de routine d'où cette ligne de séance est partie — posée au lancement d'un benchmark, qui a
+   * besoin de retrouver sa ligne (zone, séries, charges à écrire) quoi que la séance devienne.
+   *
+   * Le rang ne peut pas faire ce travail : la séance le renumérote dès qu'on retire, déplace ou remplace
+   * un exercice, et l'édition de l'historique aussi. Absent d'une séance ordinaire, d'un exercice ajouté
+   * en séance, et d'un benchmark lancé avant ce champ (le bilan retombe alors sur le rang).
+   */
+  routineExerciseId?: string;
 
   /** Resolved once on session entry; always positive and independent of later edits. */
   restSeconds: number;

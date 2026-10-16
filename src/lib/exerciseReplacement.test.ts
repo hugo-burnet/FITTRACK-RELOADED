@@ -120,9 +120,10 @@ describe('rowWithoutExerciseIdentity', () => {
     exerciseEquipment: 'barbell',
     exerciseBodyweightLoadFactor: 0.65,
     exerciseIsUnilateral: 0,
+    routineExerciseId: 'routine-row-1',
   };
 
-  it('retire tout ce que l’ancien exercice disait de lui, jusqu’à sa cadence', () => {
+  it('retire tout ce que l’ancien exercice disait de lui, jusqu’à sa cadence et à sa ligne de routine', () => {
     const next = rowWithoutExerciseIdentity(row);
     for (const key of [
       'exerciseName',
@@ -133,6 +134,7 @@ describe('rowWithoutExerciseIdentity', () => {
       'exerciseBodyweightLoadFactor',
       'exerciseIsUnilateral',
       'repSeconds',
+      'routineExerciseId',
     ]) {
       expect(next, key).not.toHaveProperty(key);
     }

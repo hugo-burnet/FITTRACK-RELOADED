@@ -24,8 +24,11 @@ const longDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long
  *
  * **Il se recalcule en direct** et ne retient aucun état d'« appliqué » : une
  * fois la routine écrite, sa cible égale la proposition et la ligne se lit « la
- * routine est déjà à ce niveau ». Les interrupteurs sont tous allumés au départ —
- * le bilan propose, mais le geste utile est d'accepter — et se décochent un à un.
+ * routine est déjà à ce niveau ». Les interrupteurs sont allumés au départ —
+ * le bilan propose, mais le geste utile est d'accepter — et se décochent un à un,
+ * sauf deux cas où le geste utile est de regarder d'abord : une estimation
+ * approximative, et une routine qui a changé depuis le benchmark (ouvert des semaines
+ * plus tard, le bilan proposait de ramener à 72,5 kg une routine qui avait progressé à 90).
  */
 export function BenchmarkScreen() {
   const { workoutId = '' } = useParams();
@@ -33,8 +36,9 @@ export function BenchmarkScreen() {
   const fresh = (useLocation().state as BenchmarkLocationState | null)?.benchmarkFresh === true;
   const report = useLiveQuery(() => loadBenchmarkReport(workoutId), [workoutId]);
 
-  // Ce que la personne a retourné par rapport au défaut : allumé pour une charge fiable, éteint pour une
-  // estimation approximative. Retenir le retournement, et non l'état, laisse le défaut à `line.rough`.
+  // Ce que la personne a retourné par rapport au défaut : allumé pour une charge fiable et à jour, éteint pour
+  // une estimation approximative ou une routine qui a changé depuis. Retenir le retournement, et non l'état,
+  // laisse le défaut à la ligne (`defaultIncluded`).
   const [flipped, setFlipped] = useState<ReadonlySet<string>>(new Set());
   const [applying, setApplying] = useState(false);
   const [outcome, setOutcome] = useState<{ count: number } | 'failed' | null>(null);
@@ -72,9 +76,11 @@ export function BenchmarkScreen() {
   }
 
   const lines = report.lines.filter((line) => line.verdict !== 'skipped');
+  const defaultIncluded = (line: BenchmarkLine): boolean =>
+    line.rough !== true && line.routineChanged !== true;
   const isIncluded = (line: BenchmarkLine): boolean =>
     line.proposal !== undefined &&
-    (line.rough !== true) !== flipped.has(line.proposal.routineExerciseId);
+    defaultIncluded(line) !== flipped.has(line.proposal.routineExerciseId);
   const selected = lines.flatMap((line) =>
     line.proposal !== undefined && isIncluded(line) ? [line.proposal] : [],
   );

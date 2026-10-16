@@ -5,29 +5,41 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-15 — **v2.13.1 publiée** (PWA et APK) : le « ? » du bilan du benchmark n'explique plus l'accueil ;
-la v2.13.0 avait fait lire au benchmark la fourchette et les séries de chaque exercice, et au coach le benchmark.
+**Dernière mise à jour :** 2026-10-16 — **v2.14.0 en cours de publication** (PWA et APK) : le benchmark a un style (léger, classique, lourd), six
+défauts relevés par une revue de code sont corrigés, la fiche d'un programme propose « Calibrer les charges ».
+La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait fait lire la fourchette et les séries de chaque exercice, et au coach le benchmark.
 
 ## Où on en est
 
-- **Publié : v2.13.1** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.1), APK `FitTrack-v2.13.1.apk`
-  signé avec la clé de release ([journal](docs/journal/2026-10-15-versions-v2-13.md)). Le « ? » de l'écran de bilan du benchmark proposait
-  « Expliquer cette page : Accueil » (route inconnue du didacticiel, depuis la v2.12.0) : il n'y est plus (`showTutorialHelp={false}`), et un
-  test garde toutes les routes contre ce piège (`tutorialRoutes.test.ts`). Rien d'autre ne change dans l'application.
-- **Avant : v2.13.0** — [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.0), APK `FitTrack-v2.13.0.apk`.
-  Le benchmark repris, à la demande de l'utilisateur : il lit la fourchette de chaque exercice (Epley, 1 à 30 répétitions) et propose la
-  charge qui **tient toutes les séries de la routine** (la dernière garde deux répétitions en réserve ; fatigue de 10 % par série, 8 % pour une
-  isolation, plus haute quand le repos est court — des chiffres **au pif**, `lib/benchmarkModel.ts`) ; le coach le lit (`benchmark_calibrated`) et
-  accepter le bilan suit son objectif ; la coche ne propose plus les répétitions de la dernière fois comme maximum ; la feuille de saisie des
-  mensurations ne reprend plus le brouillon d'avant. Le coach n'écrit jamais un nombre de séries (tranché : R6 s'en charge). Le détail, la
-  voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-13.md`](docs/journal/2026-10-15-versions-v2-13.md) ;
+- **v2.14.0** — publication en cours (voir le journal pour l'issue), à la demande de l'utilisateur (« fusionne et publie ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.14.0), APK `FitTrack-v2.14.0.apk`
+  ([journal](docs/journal/2026-10-16-versions-v2-14.md)). Sa demande : « tu as fait 40×18, je te propose … trois fois ; en classique 8-12 … ; la force, je
+  connais pas ; on peut avoir l'option ; c'est pertinent pour commencer les programmes ; à toi de définir les calculs », puis « lourd 5-8, normal 8-12,
+  léger entre 15 et 20 ». **Le style** (`Workout.benchmarkGoal`) : classique 8 – 12, léger 15 – 20, lourd 5 – 8, ou « Comme ma routine » (d'office, le
+  benchmark d'avant) ; sa fourchette remplace celle de la routine pour dimensionner la charge, et accepter le bilan écrit la charge **et** la
+  fourchette. Le bilan se lit en une phrase (« 52,5 kg pour 3 séries de 8 – 12 reps ») puis « tu tiendras environ 13 · 11 · 10 reps à fond ». La fiche
+  d'un programme propose « Calibrer les charges ». **Six défauts d'une revue de code**, reproduits puis corrigés : le bilan retrouvait sa ligne de
+  routine par le rang (cassé dès qu'on retire ou déplace un exercice, ou qu'on corrige l'historique) — il le fait maintenant par un lien posé au
+  lancement ; un vieux bilan réécrivait une routine qui avait progressé (90 → 72,5) — interrupteur éteint d'office ; une pyramide ascendante montait
+  son sommet à 94 % du max ; une dégressive faisait une « pyramide » ; un échauffement coché devenait l'essai ; la carte du coach restait proposée
+  pendant un benchmark. Le coach ne pose pas d'objectif pour une pyramide. Détail et choix à relire : `docs/progress/decisions-et-pieges.md` (entrée
+  « revue de code, puis les styles »), spec §3 bis, recette §3 ter.
+- **Avant : v2.13.0 → v2.13.1** — [v2.13.1](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.1) : le « ? » de l'écran de bilan du
+  benchmark proposait « Expliquer cette page : Accueil » (route inconnue du didacticiel, depuis la v2.12.0) ; il n'y est plus
+  (`showTutorialHelp={false}`), et un test garde toutes les routes contre ce piège (`tutorialRoutes.test.ts`).
+  [v2.13.0](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.13.0) : le benchmark lit la fourchette de chaque exercice (Epley, 1 à 30
+  répétitions) et propose la charge qui **tient toutes les séries de la routine** (la dernière garde deux répétitions en réserve ; fatigue de 10 % par
+  série, 8 % pour une isolation, plus haute quand le repos est court — des chiffres **au pif**, `lib/benchmarkModel.ts`) ; le coach le lit
+  (`benchmark_calibrated`) et accepter le bilan suit son objectif ; la coche ne propose plus les répétitions de la dernière fois comme maximum ; la
+  feuille de saisie des mensurations ne reprend plus le brouillon d'avant. Le coach n'écrit jamais un nombre de séries (tranché : R6 s'en charge).
+  Le détail, la voie de la publication et ses vérifications : [`docs/journal/2026-10-15-versions-v2-13.md`](docs/journal/2026-10-15-versions-v2-13.md) ;
   les choix à relire : `docs/progress/decisions-et-pieges.md`, entrées du 2026-10-15.
 - **Avant : v2.12.0 → v2.12.2** — la coche qui n'écrase plus la saisie, le coach R6 (volume par muscle), le benchmark (puis sa porte dans
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 608 tests**, 302 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**35 parcours**, 8 fichiers, à 390 px) — verts sur `master` à la v2.13.1.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 695 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**36 parcours**, 8 fichiers, à 390 px) — verts à la v2.14.0 ; la v2.13.1 : 3 608 tests, 35 parcours.
 - **Branches distantes.** `ccr-57f17af8-maxzqv`, fusionnée, est à supprimer à la main (`ccr-449df1c1-etmya3` l'a été) : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
@@ -35,8 +47,12 @@ la v2.13.0 avait fait lire au benchmark la fourchette et les séries de chaque e
   `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
   pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant.
 
-## À juger sur le terrain (v2.12.0 → v2.13.1)
+## À juger sur le terrain (v2.12.0 → v2.14.0)
 
+- **Benchmark, les styles** : les trois fourchettes (15 – 20, 8 – 12, 5 – 8, `GOAL_ZONES`) sont celles de l'utilisateur (« lourd 5 – 8, normal 8 – 12, léger
+  entre 15 et 20 ») ; les essais conseillés (18, 12, 8) sont des choix de produit. **« 40 × 14 » de la demande est ce que donnerait un léger à 12 – 15**
+  (40 kg, on tient 18 · 16 · 14) ; il garde 15 – 20, donc le bilan propose 37,5 kg. « Classique » garde son nom (« Normal » se lirait comme le défaut).
+  Si les charges paraissent trop basses, c'est la réserve (ci-dessous), un seul chiffre.
 - **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
   séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
   paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ
@@ -94,6 +110,7 @@ résultat attendu de chaque ligne. L'ancienne liste figure en bas de l'archive d
 
 | Fichier | Contenu |
 | --- | --- |
+| [2026-10-16-versions-v2-14.md](docs/journal/2026-10-16-versions-v2-14.md) | Version v2.14.0 (2026-10-16) |
 | [2026-10-15-versions-v2-13.md](docs/journal/2026-10-15-versions-v2-13.md) | Versions v2.13.0 et v2.13.1 (2026-10-15) |
 | [2026-10-15-versions-v2-12.md](docs/journal/2026-10-15-versions-v2-12.md) | Versions v2.12.0 à v2.12.2 (2026-10-14 → 2026-10-15) |
 | [2026-10-14-versions-v2.md](docs/journal/2026-10-14-versions-v2.md) | Versions v2.4 à v2.11.1 (2026-08-29 → 2026-10-13) |

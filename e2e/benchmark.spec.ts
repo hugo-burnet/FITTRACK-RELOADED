@@ -60,10 +60,10 @@ test.describe('benchmark', () => {
     await expect(squat).toContainText('Fourchette de la routine : 5 reps');
     await expect(squat).toContainText('Fait : 9 reps · 100 kg');
     await expect(squat).toContainText('1RM estimé : 130 kg');
-    await expect(squat).toContainText('Charge de travail conseillée : 95 kg');
-    await expect(squat).toContainText(
-      'Pour 5 séries : environ 11 répétitions à fond à la première, 2 en réserve à la dernière.',
-    );
+    await expect(squat).toContainText('95 kg pour 5 séries de 5 reps');
+    // À 95 kg le max de 130 kg tient 11 répétitions à fond, puis 9, 8, 8 et 7 : la dernière en garde deux
+    // de plus que les 5 de la fourchette.
+    await expect(squat).toContainText('À 95 kg, tu tiendras environ 11 · 9 · 8 · 8 · 7 reps à fond.');
     await expect(squat).toContainText('Aucune charge dans la routine.');
     // Les exercices qu'on n'a pas faits n'y figurent pas.
     await expect(page.getByRole('region', { name: /Développé couché/ })).toHaveCount(0);
@@ -154,6 +154,70 @@ test.describe('benchmark', () => {
     await page.getByRole('button', { name: /^Squat \(barre, nuque\)/ }).first().click();
     await expect(page.getByRole('textbox', { name: 'Série 1 — kg' }).first()).toHaveValue('100');
     await expect(page.getByRole('textbox', { name: 'Série 1 — reps' }).first()).toHaveValue('9');
+  });
+
+  test('le style léger : 40 × 18 propose 37,5 kg pour du 15 – 20, et la routine reçoit la charge et la fourchette', async ({
+    page,
+  }) => {
+    await openApp(page);
+    await createRoutineFromTemplate(page, /Full-body/);
+
+    await page.getByRole('link', { name: 'Planifier' }).click();
+    await page.getByRole('button', { name: 'Routine — Full-body' }).click();
+    await page.getByRole('button', { name: /Benchmark de cette routine/ }).click();
+
+    // « Comme ma routine » reste choisi d'office ; chaque style est une cible tactile de 48 px.
+    await expect(page.getByRole('button', { name: 'Comme ma routine' })).toHaveAttribute('aria-pressed', 'true');
+    for (const name of ['Comme ma routine', 'Classique · 8 – 12 reps', 'Léger · 15 – 20 reps', 'Lourd · 5 – 8 reps']) {
+      const box = await page.getByRole('button', { name }).boundingBox();
+      expect(box, `${name} doit être à l’écran`).not.toBeNull();
+      expect(box!.height, name).toBeGreaterThanOrEqual(47.5);
+    }
+    for (const percent of [100, 200]) {
+      await page.evaluate((value) => {
+        document.documentElement.style.fontSize = `${value}%`;
+      }, percent);
+      await settleLayout(page);
+      expect(await findHorizontalOverflow(page), `police à ${percent} %`).toEqual([]);
+    }
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '';
+    });
+
+    await page.getByRole('button', { name: 'Léger · 15 – 20 reps' }).click();
+    await expect(page.getByText(/Choisis une charge que tu penses tenir environ 18 fois/)).toBeVisible();
+    await page.getByRole('button', { name: 'Lancer le benchmark' }).click();
+
+    await expect(page).toHaveURL(/#\/workout$/);
+    await expect(page.getByText(/Benchmark léger · une série à l’échec par exercice.*environ 18 fois/)).toBeVisible();
+    await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('40');
+    await page.getByRole('textbox', { name: 'Série 1 — reps' }).fill('18');
+    await page.getByRole('button', { name: 'Valider la série 1' }).click();
+    await expect(page.getByText('1 série sur 5')).toBeVisible();
+    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+
+    // 40 × 18 est un max de 64 kg. Trois séries d'un 15 – 20 : la première doit pouvoir en faire 21, la
+    // dernière en garde 17 ; 64 / (1 + 21 / 30) = 37,7 → 37,5 kg sur la grille de la barre.
+    await expect(page).toHaveURL(/#\/benchmark\/[^/]+$/);
+    const squat = page.getByRole('region', { name: 'Squat (barre, nuque)' });
+    await expect(squat).toContainText('Fait : 18 reps · 40 kg');
+    await expect(squat).toContainText('Ton style : léger · 15 – 20 reps');
+    await expect(squat).toContainText('37,5 kg pour 3 séries de 15 – 20 reps');
+    await expect(squat).toContainText('À 37,5 kg, tu tiendras environ 21 · 19 · 17 reps à fond.');
+    await expect(squat).toContainText('Écrit aussi la fourchette 15 – 20 reps sur les séries de travail.');
+
+    await page.getByRole('button', { name: 'Appliquer à la routine · 1' }).click();
+    await expect(page.getByText('1 exercice mis à jour dans la routine.')).toBeVisible();
+    await expect(squat).toContainText('La routine est déjà à ce niveau.');
+    await page.getByRole('button', { name: 'Terminé' }).click();
+    await expect(page).toHaveURL(/#\/$/);
+
+    // La séance suivante part de la charge et de la fourchette écrites.
+    await startSuggestedWorkout(page, 'Full-body');
+    await expect(page.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute('placeholder', '37,5');
+    // La fourchette du style est devenue l'objectif de la série : le champ la dit dans son nom.
+    await expect(page.getByRole('textbox', { name: 'Série 1 — reps — objectif 15 – 20' })).toBeVisible();
   });
 
   test('avec un historique : la coche attend les répétitions, puis le coach lit le benchmark', async ({
