@@ -7,14 +7,14 @@
 
 **Dernière mise à jour :** 2026-10-15 — **v2.13.1 publiée** (PWA et APK) : le « ? » du bilan du benchmark n'explique plus l'accueil ;
 la v2.13.0 avait fait lire au benchmark la fourchette et les séries de chaque exercice, et au coach le benchmark.
-**Non publié, sur la branche `ccr-a1ec0e4b-s9kwdx`** : le benchmark a un style (léger, classique, force), six défauts relevés par une revue de code sont
+**Non publié, sur la branche `ccr-a1ec0e4b-s9kwdx`** : le benchmark a un style (léger, classique, lourd), six défauts relevés par une revue de code sont
 corrigés, la fiche d'un programme propose « Calibrer les charges ».
 
 ## Où on en est
 
 - **Non publié — branche `ccr-a1ec0e4b-s9kwdx`** (`git log 10f08c9..`), **pas fusionnée dans `master`**, à la demande de l'utilisateur :
   « tu as fait 40×18, je te propose … trois fois ; en classique 8-12 … ; la force, je connais pas ; on peut avoir l'option ; c'est pertinent pour
-  commencer les programmes ; à toi de définir les calculs ». **Le style** (`Workout.benchmarkGoal`) : classique 8 – 12, léger 15 – 20, force 3 – 5, ou
+  commencer les programmes ; à toi de définir les calculs ». **Le style** (`Workout.benchmarkGoal`) : classique 8 – 12, léger 15 – 20, lourd 5 – 8, ou
   « Comme ma routine » (d'office, le benchmark d'avant) ; sa fourchette remplace celle de la routine pour dimensionner la charge, et accepter le bilan
   écrit la charge **et** la fourchette. Le bilan se lit en une phrase (« 52,5 kg pour 3 séries de 8 – 12 reps ») puis « tu tiendras environ 13 · 11 · 10
   reps à fond ». **Six défauts d'une revue de code**, reproduits puis corrigés : le bilan retrouvait sa ligne de routine par le rang (cassé dès qu'on
@@ -39,7 +39,7 @@ corrigés, la fiche d'un programme propose « Calibrer les charges ».
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 694 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 695 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
   (**36 parcours**, 8 fichiers, à 390 px) — verts sur la branche `ccr-a1ec0e4b-s9kwdx` ; `master` à la v2.13.1 : 3 608 tests, 35 parcours.
 - **Branches distantes.** `ccr-57f17af8-maxzqv`, fusionnée, est à supprimer à la main (`ccr-449df1c1-etmya3` l'a été) : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
@@ -50,9 +50,10 @@ corrigés, la fiche d'un programme propose « Calibrer les charges ».
 
 ## À juger sur le terrain (v2.12.0 → v2.13.1, puis la branche non publiée)
 
-- **Benchmark, les styles** : les trois fourchettes (15 – 20, 8 – 12, 3 – 5, `GOAL_ZONES`) et les essais conseillés (18, 12, 6) sont des choix de
-  produit. **« 40 × 14 » de la demande est ce que donnerait un léger à 12 – 15** (40 kg, on tient 18 · 16 · 14) ; à 15 – 20 le bilan propose 37,5 kg. La
-  force est le style que l'utilisateur connaît le moins. Si les charges paraissent trop basses, c'est la réserve (ci-dessous), un seul chiffre.
+- **Benchmark, les styles** : les trois fourchettes (15 – 20, 8 – 12, 5 – 8, `GOAL_ZONES`) sont celles de l'utilisateur (« lourd 5 – 8, normal 8 – 12, léger
+  entre 15 et 20 ») ; les essais conseillés (18, 12, 8) sont des choix de produit. **« 40 × 14 » de la demande est ce que donnerait un léger à 12 – 15**
+  (40 kg, on tient 18 · 16 · 14) ; il garde 15 – 20, donc le bilan propose 37,5 kg. « Classique » garde son nom (« Normal » se lirait comme le défaut).
+  Si les charges paraissent trop basses, c'est la réserve (ci-dessous), un seul chiffre.
 - **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
   séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
   paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ

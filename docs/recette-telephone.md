@@ -168,14 +168,14 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Depuis l'historique.** La fiche d'un benchmark propose « Voir le bilan ». *(v2.12.0)*
 - [ ] **Pas de « ? » sur le bilan.** L'en-tête du bilan ne porte que la flèche de retour : un « ? » y expliquerait l'accueil, pas le bilan.
       *(v2.13.1)*
-- [ ] **Choisir son style.** Dans la feuille de lancement : « Comme ma routine » est choisi d'office ; Classique 8 – 12, Léger 15 – 20 et Force
-      3 – 5 se touchent d'une main (cibles de 48 px) ; chacun dit « Choisis une charge que tu penses tenir environ N fois » (12, 18, 6). En
+- [ ] **Choisir son style.** Dans la feuille de lancement : « Comme ma routine » est choisi d'office ; Classique 8 – 12, Léger 15 – 20 et Lourd
+      5 – 8 se touchent d'une main (cibles de 48 px) ; chacun dit « Choisis une charge que tu penses tenir environ N fois » (12, 18, 8). En
       séance, le rappel en tête redit le style et ce nombre ; le nom de la séance, dans l'historique, dit « Benchmark léger · … ». *(cette session)*
 - [ ] **Le bilan d'un style — c'est ton exemple.** Léger, sur un exercice : 40 kg × 18 à l'échec → « Ton style : léger · 15 – 20 reps »,
       **« 37,5 kg pour 3 séries de 15 – 20 reps »**, « tu tiendras environ 21 · 19 · 17 reps à fond ». Classique, 52,5 kg × 13 → 52,5 kg (50 kg
       sur une machine au pas de 5). **Relire comme un geste** : trois séries à cette charge doivent laisser environ deux répétitions en réserve à
       la dernière ; si c'est trop léger, c'est la réserve (`BENCHMARK_RESERVE_REPS`, un seul chiffre) — dis-le moi avec l'exercice et les chiffres.
-      Essaie aussi la **force** (3 – 5 reps) : c'est le style que je connais le moins. *(cette session)*
+      Essaie aussi le **lourd** (5 – 8 reps) : sur un développé couché à trois séries, 100 kg × 5 → 90 kg, et on y tient 8 · 8 · 7. *(cette session)*
 - [ ] **Appliquer écrit aussi la fourchette.** Après « Appliquer à la routine » sur un style : la routine porte la charge **et** « 15 – 20 » (ou le
       style choisi) ; la séance d'après affiche « objectif 15 – 20 » sur la série. L'échauffement et une série dégressive gardent leurs répétitions.
       *(cette session)*

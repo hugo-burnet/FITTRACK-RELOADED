@@ -148,7 +148,7 @@ Exemple : 80 kg × 17 sur un 15 – 20, trois séries. Max estimé : 125,3 kg. P
 pouvoir faire 17 / 0,9² = 21 répétitions → 125,3 / (1 + 21 / 30) = 73,7 → **72,5 kg**. Une isolation (8 %) : 20,1 répétitions → 75,1 →
 **75 kg**. Même exercice avec une minute de repos (20 %) : 26,6 répétitions → 66,5 → **65 kg** ; avec trois minutes (6,7 %) : **75 kg**.
 
-### 3 bis. Le style du benchmark : léger, classique, force
+### 3 bis. Le style du benchmark : léger, classique, lourd
 
 La fourchette que la routine écrit n'est pas toujours celle qu'on veut travailler — au départ d'un programme, elle n'a souvent pas de fourchette
 qui vaille, et « je fais en ce moment des séances légères avec plus de reps » n'est écrit nulle part. Le lancement propose donc un **style**,
@@ -159,7 +159,7 @@ qui remplace la fourchette de la routine pour dimensionner la charge :
 | **Comme ma routine** (d'office) | celle de chaque exercice dans la routine | celle de chaque exercice |
 | **Classique** | 8 – 12 reps | environ 12 répétitions |
 | **Léger** | 15 – 20 reps | environ 18 répétitions |
-| **Force** | 3 – 5 reps | environ 6 répétitions |
+| **Lourd** | 5 – 8 reps | environ 8 répétitions |
 
 Ce n'est rien de plus qu'une fourchette nommée : la capacité exigée, la fatigue, la réserve de deux répétitions, l'arrondi vers le bas et le seuil
 « approximatif » sont ceux du §3. L'essai conseillé est le nombre de répétitions qui garde l'estimation fiable de une à trois séries, polyarticulaire
@@ -183,13 +183,17 @@ Exemples, calculés à part (script Python hors du dépôt) :
 
 - **Léger**, 40 × 18 (max 64 kg), trois séries : 37,5 kg, on tient 21 · 19 · 17 à fond.
 - **Classique**, 52,5 × 13 (max 75,3 kg), trois séries : 52,5 kg (13 · 11 · 10) — ou **50 kg sur une machine au pas de 5** (15 · 13 · 12).
-- **Force**, 100 × 5 (max 116,7 kg), trois séries : 95 kg (6 · 6 · 5).
+- **Lourd**, 100 × 5 (max 116,7 kg), trois séries : 90 kg (8 · 8 · 7) — la dernière en tient 7, deux de plus que le bas du 5 – 8.
 
 **Choix de détail, à relire.**
 
-- **Les trois fourchettes** (15 – 20, 8 – 12, 3 – 5) et les trois essais conseillés sont des choix de produit, comme les constantes du §3.
-  « Force » est le moins bien connu de la personne : 3 – 5 reps, en conservant la réserve de deux répétitions et la fatigue du repos prévu pour
-  l'exercice (un repos de trois minutes la baisse). Si la force doit se travailler à un seul chiffre (5×5), c'est une ligne dans `GOAL_ZONES`.
+- **Les trois fourchettes sont celles de la personne.** Proposé d'abord : léger 15 – 20, classique 8 – 12, « force » 3 – 5 (« la force, je connais pas »).
+  Sa réponse : « lourd 5 – 8, normal 8 – 12, léger entre 15 et 20 ». Le troisième style est donc devenu **lourd** (clé `heavy`, 5 – 8 reps) : ce n'est
+  pas de la force pure, et le nom suit la fourchette. Le style n'avait jamais été publié : rien à migrer. **« Classique » garde son nom** : à côté de
+  « Comme ma routine » (d'office), « Normal » se lirait comme le choix par défaut — un mot à changer dans `fr.ts` (`benchmark.goalChoice.classic` et
+  `goalName.classic`) si la personne préfère. Les trois **essais conseillés** (12, 18, 8) restent des choix de produit, comme les constantes du §3 :
+  le lourd garde la réserve de deux répétitions et la fatigue du repos prévu pour l'exercice (un repos de trois minutes la baisse). Ajouter un style,
+  c'est une clé dans `BenchmarkGoal`, une ligne dans `GOAL_ZONES` et `BENCHMARK_GOAL_TEST_REPS`, et son nom dans `fr.ts`.
 - **La réserve de deux répétitions n'a pas bougé**, alors que « 40 × 14 » et « 50 × 12 » (les exemples de la demande) correspondent à une dernière série
   menée *jusqu'à l'échec* : 18 répétitions à 40 kg font 14,6 à la troisième série, 13 à 50 kg en font 12,3. Avec la réserve, le bilan propose 37,5 kg
   (et non 40) pour le léger : c'est la même idée, avec deux répétitions de marge. Si les charges paraissent trop basses, c'est

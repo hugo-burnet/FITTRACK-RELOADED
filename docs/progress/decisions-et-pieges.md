@@ -29,7 +29,7 @@ Deux autres constats de la revue étaient des messages faux sur des cas rares et
 une machine au pas de 5 réutilise « aucune charge exploitable ». Hors périmètre, constatés en passant (R6) : `DAY_MS` redéfini dans `lib/coach/volume.ts`,
 deux `effectiveCeiling` (`sets.ts`, `volume.ts`), `coachEvaluate.ts` à 505 lignes sans entrée ici.
 
-**Le style.** Léger 15 – 20, classique 8 – 12, force 3 – 5 : une fourchette nommée, choisie à la feuille de lancement (« Comme ma routine » d'office), qui
+**Le style.** Léger 15 – 20, classique 8 – 12, lourd 5 – 8 : une fourchette nommée, choisie à la feuille de lancement (« Comme ma routine » d'office), qui
 remplace celle de la routine pour dimensionner la charge ; l'acceptation écrit la charge **et** la fourchette. Le bilan se lit en une phrase (« 52,5 kg pour
 3 séries de 8 – 12 reps ») et dit ce que chaque série tient à fond (« 13 · 11 · 10 »). La fiche d'un programme propose « Calibrer les charges » : une
 séance de programme se construit depuis sa routine, les charges d'un bloc sont celles de ses routines.
@@ -38,7 +38,10 @@ séance de programme se construit depuis sa routine, les charges d'un bloc sont 
 
 - **La réserve de deux répétitions n'a pas bougé.** Les exemples de la demande (40×14, 50×12) correspondent à une dernière série menée jusqu'à l'échec ;
   avec la réserve, le léger propose 37,5 kg et non 40. Si les charges paraissent trop basses : `BENCHMARK_RESERVE_REPS`, un seul endroit.
-- **La force est la moins connue** : 3 – 5 reps, même réserve, la fatigue du repos prévu pour l'exercice. Un 5×5 se dirait en une ligne de `GOAL_ZONES`.
+- **Les fourchettes sont celles de l'utilisateur.** Proposé d'abord : « force » 3 – 5 (« la force, je connais pas »). Sa réponse : « lourd 5 – 8, normal
+  8 – 12, léger entre 15 et 20 ». Le style est devenu **lourd** (clé `heavy` ; un 5 – 8 n'est pas de la force pure) ; jamais publié, rien à migrer.
+  « Classique » garde son nom : « Normal » à côté de « Comme ma routine » (d'office) se lirait comme le choix par défaut — un mot dans `fr.ts`
+  (`benchmark.goalChoice.classic`, `goalName.classic`) si l'utilisateur préfère. Même réserve, même fatigue du repos prévu pour l'exercice.
 - **Pas d'objectif du coach pour une pyramide** : un objectif est un seul chiffre, que « Appliquer » met sur toutes les séries restantes (60 / 70 / 80 devient
   77,5 trois fois — constaté). Le bilan, lui, garde la forme.
 - **« Périmé » se juge à la date de modification des séries de la ligne de routine**, comparée à la fin du benchmark. Une modification faite *pendant* la séance

@@ -144,6 +144,6 @@ aucune version de schéma.
   séance qu'un test générique ne connaît pas. Il est vérifié en thème sombre à 100 et 200 % dans son propre
   parcours ; TTY1 et le thème clair restent à l'œil, sur le téléphone.
 - La réserve de 2, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les séries par défaut (3 / 2), la
-  limite de 30 répétitions et les trois fourchettes des styles (15 – 20, 8 – 12, 3 – 5) sont des constantes à juger à l'usage, toutes dans
+  limite de 30 répétitions et les trois fourchettes des styles (15 – 20, 8 – 12, 5 – 8 : celles de l'utilisateur) sont des constantes à juger à l'usage, toutes dans
   `benchmarkModel.ts`.
 - Le coach ne propose pas le nombre de séries : il dimensionne la charge sur celles de la routine (question posée à l'utilisateur).
