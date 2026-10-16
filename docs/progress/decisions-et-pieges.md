@@ -10,7 +10,7 @@ avec la date et la raison.)_
 ### 2026-10-16 (suite de la v2.15.0) — « Oui et oui » : un pas pour toute l'appli, et le coach par en dessous
 
 **Demande.** Le compte rendu de la v2.15.0 laissait deux questions ouvertes : « veux-tu un pas global à 1,125 dans les Réglages ? » et « veux-tu que le coach te
-remette aussi dans la fourchette quand tu es en dessous ? » — « Oui et oui. » (Non publié : sur la branche, `git log 125fb1c..`.)
+remette aussi dans la fourchette quand tu es en dessous ? » — « Oui et oui. » (Publié en v2.16.0.)
 
 **Le pas de toute l'appli.** Spec benchmark §3 (arrondi), tâche 12 du plan, recette § 3 ter.
 

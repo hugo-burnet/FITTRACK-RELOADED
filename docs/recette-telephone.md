@@ -202,10 +202,10 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Le pas de toute l'appli.** Réglages › Coach › **Pas de charge par défaut** : taper **1,125**, enregistrer ; la ligne dit « 1,125 kg quand la fiche d'un
       exercice n'a pas son propre pas ». Ouvrir la fiche d'un exercice sans incrément : son champ vide affiche **1,125** en gris et la phrase dit « Vide = le pas des
       Réglages (1,125 kg) ». Un benchmark sur cet exercice propose une charge à 1,125 kg près de l'essai (37,5 → 38,625), et la carte du coach monte de 1,125. Une fiche qui a
-      son propre pas (2,5 sur une barre) le garde. « Selon le matériel » dans la feuille retire le réglage. *(après la v2.15.0, sur la branche)*
+      son propre pas (2,5 sur une barre) le garde. « Selon le matériel » dans la feuille retire le réglage. *(v2.16.0)*
 - [ ] **Le coach te remet dans la fourchette par en dessous.** Une routine en 15 – 20, deux séances de suite à la même charge très sous le bas (par exemple 40 kg, 8 · 7 · 6) :
       la carte propose **plusieurs crans de moins** (40 → 32,5 kg) et dit « 3 crans de moins plutôt qu'un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps) ».
-      Quand on est à une répétition du bas (14 · 13 · 13), un seul cran, comme avant. Jamais plus de 30 % de moins. *(après la v2.15.0, sur la branche)*
+      Quand on est à une répétition du bas (14 · 13 · 13), un seul cran, comme avant. Jamais plus de 30 % de moins. *(v2.16.0)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 
