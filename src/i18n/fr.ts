@@ -619,6 +619,12 @@ const fr = {
     ceilingRebalanced:
       'Tu es allé jusqu’à {reps} reps : à {weight} kg, tu retombes dans la fourchette ({range}).',
     /**
+     * Bas de fourchette très manqué : un cran de moins ne remet pas dedans, la charge proposée en enlève autant qu'il
+     * faut. La phrase dit combien, pour que le saut se comprenne.
+     */
+    floorSteps:
+      '{steps} crans de moins plutôt qu’un seul : à {weight} kg, tu retombes dans la fourchette ({range}).',
+    /**
      * Coach v2, R6. La phase de surcharge aurait ajouté une série ; le volume du muscle est déjà au plus
      * haut. Une règle de l'app, pas une vérité : la phrase dit ce qui a été lu, et à qui est le plafond.
      */

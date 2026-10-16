@@ -110,6 +110,51 @@ function repsNeededForStep(
 }
 
 /**
+ * Ce qu'une séance dit du maximum de la personne, quand la remise dans la fourchette peut le lire — dans un sens
+ * comme dans l'autre : une fourchette ouverte, une seule charge sur toutes les séries, une charge qu'on soulève.
+ *
+ * La capacité est ce que la personne a fait (sa série la plus longue) plus la réserve que dit le RPE moyen quand il
+ * existe : 25 répétitions à RPE 7 sont une capacité de 28. Sans RPE, c'est un plancher — on ne compte que sur ce
+ * qu'elle a montré. Epley en tire un max (`oneRepMax`).
+ *
+ * Une cible unique n'a pas de fourchette où remettre ; une pyramide n'a pas « la » charge ; le poids du corps, lesté ou
+ * assisté, ne suit pas la formule.
+ */
+function capacityReading(
+  line: CoachExerciseLine,
+  working: readonly CoachSetInput[],
+  load: number,
+  effort: number | undefined,
+):
+  | {
+      targetReps: number;
+      targetRepsMax: number;
+      topReps: number;
+      reserve: number;
+      capacity: number;
+      oneRepMax: number;
+    }
+  | undefined {
+  if (measurementShape(line.measurementType).weightRole !== 'load') return undefined;
+  const first = working[0];
+  if (first?.targetReps === undefined || first.targetRepsMax === undefined) return undefined;
+  if (first.targetRepsMax <= first.targetReps) return undefined;
+  if (working.some((set) => set.weight !== load || set.reps === undefined)) return undefined;
+
+  const topReps = Math.max(...working.map((set) => set.reps!));
+  const reserve = effort === undefined ? 0 : Math.max(0, 10 - effort);
+  const capacity = Math.min(BENCHMARK_MAX_REPS, topReps + reserve);
+  return {
+    targetReps: first.targetReps,
+    targetRepsMax: first.targetRepsMax,
+    topReps,
+    reserve,
+    capacity,
+    oneRepMax: load * (1 + capacity / 30),
+  };
+}
+
+/**
  * La charge qui remet dans la fourchette quelqu'un qui en dépasse le plafond : celle qu'un benchmark lui aurait
  * proposée (même formule, `loadForRange`), pas un cran de plus.
  *
@@ -139,23 +184,17 @@ function rebalancedLoad(
   increment: LoadStep,
   effort: number | undefined,
 ): { loadKg: number; topReps: number } | undefined {
-  if (measurementShape(line.measurementType).weightRole !== 'load') return undefined;
-  const first = working[0];
-  if (first?.targetReps === undefined || first.targetRepsMax === undefined) return undefined;
-  if (first.targetRepsMax <= first.targetReps) return undefined;
-  if (working.some((set) => set.weight !== load || set.reps === undefined)) return undefined;
+  const reading = capacityReading(line, working, load, effort);
+  if (reading === undefined) return undefined;
 
-  const topReps = Math.max(...working.map((set) => set.reps!));
-  const reserve = effort === undefined ? 0 : Math.max(0, 10 - effort);
-  const capacity = Math.min(BENCHMARK_MAX_REPS, topReps + reserve);
-  const oneRepMax = load * (1 + capacity / 30);
+  const { oneRepMax, reserve, topReps } = reading;
   // Un cran plus haut, les répétitions qu'on taperait retombent-elles sous le plafond ? Ce qu'on tape est la capacité
   // d'alors moins la réserve qu'on se garde : 12 répétitions à RPE 8 sont une capacité de 14, et un cran la ramène à 13,
   // soit 11 tapées. Alors le cran suffit, la règle le garde.
-  if (30 * (oneRepMax / oneStepUp - 1) - reserve <= first.targetRepsMax) return undefined;
+  if (30 * (oneRepMax / oneStepUp - 1) - reserve <= reading.targetRepsMax) return undefined;
   const wanted = loadForRange(
     oneRepMax,
-    first.targetReps,
+    reading.targetReps,
     working.length,
     setFatigue('compound'),
     load,
@@ -164,6 +203,65 @@ function rebalancedLoad(
   const ceiling = floorLoad(load * (1 + BENCHMARK_MAX_JUMP), load, increment);
   const loadKg = Math.min(wanted, ceiling);
   return loadKg > 0 ? { loadKg, topReps } : undefined;
+}
+
+/** Des répétitions, c'est un compte entier : 7,97 prévues, c'est 8. */
+const HALF_REP = 0.5;
+/** Le bruit flottant d'une comparaison de charges ou de répétitions calculées. */
+const FLOAT_EPSILON = 1e-9;
+
+/**
+ * Le nombre de crans de moins qui remettent dans la fourchette quelqu'un qui en manque le bas deux séances de suite —
+ * pas un seul quand un seul ne suffit pas. Le cas inverse du plafond très dépassé.
+ *
+ * Une série de 8 répétitions sur un 15 – 20 à 40 kg ne se corrige pas d'un cran de 2,5 kg : il en faudrait quatre
+ * séances. On enlève donc des crans, un par un, jusqu'à ce que la pire série retombe au bas de la fourchette d'après
+ * ce que la personne a fait : ce qu'elle a tenu, plus ce que chaque cran lui rend (`(30 + capacité) × (charge /
+ * charge allégée − 1)`, la même lecture d'Epley que le benchmark), à une demi-répétition près — des répétitions, c'est
+ * un compte entier.
+ *
+ * - **Le moins de crans possible.** C'est une correction, pas un réétalonnage : 14, 13, 13 sur un 15 – 20 gardent un
+ *   cran ; 8, 8, 7 sur un 8 – 12 aussi. La charge qu'un benchmark proposerait garde deux répétitions de réserve à la
+ *   dernière série, ce qu'une correction n'a pas à exiger — elle ferait passer 100 kg à 87,5 pour une répétition de
+ *   manque.
+ * - **Même lecture que le plafond** (`capacityReading`) : une fourchette ouverte, une seule charge sur toutes les
+ *   séries, la capacité du meilleur set et la réserve du RPE moyen. Sinon, un cran, comme avant.
+ * - **Jamais plus de 30 % de moins que la charge d'aujourd'hui** (`BENCHMARK_MAX_JUMP`) : deux séances ne
+ *   justifient pas davantage, et un cran déjà plus loin que ça (5 kg, un pas de 2,5) reste ce qu'il était.
+ */
+function stepsBackIntoRange(
+  line: CoachExerciseLine,
+  load: number,
+  lowReps: number,
+  floorReps: number,
+  oneStepDown: number,
+  increment: LoadStep,
+): { loadKg: number; steps: number; targetReps: number; targetRepsMax: number } | undefined {
+  if (!(oneStepDown > 0)) return undefined;
+  const reading = capacityReading(line, progressionSets(line), load, sessionEffort(line));
+  if (reading === undefined) return undefined;
+
+  /** Les répétitions de la pire série à `candidate` : celles d'aujourd'hui, plus ce que l'allègement rend. */
+  const worstRepsAt = (candidate: number): number =>
+    lowReps + (30 + reading.capacity) * (load / candidate - 1);
+  const lightest = load * (1 - BENCHMARK_MAX_JUMP);
+
+  let candidate = oneStepDown;
+  let steps = 1;
+  while (worstRepsAt(candidate) < floorReps - HALF_REP - FLOAT_EPSILON) {
+    const next = previousLoad(candidate, increment, line.measurementType);
+    if (!(next < candidate) || next <= 0 || next < lightest - FLOAT_EPSILON) break;
+    candidate = next;
+    steps += 1;
+  }
+  return steps > 1
+    ? {
+        loadKg: candidate,
+        steps,
+        targetReps: reading.targetReps,
+        targetRepsMax: reading.targetRepsMax,
+      }
+    : undefined;
 }
 
 /**
@@ -307,7 +405,9 @@ function floorMiss(
 
 /**
  * The other half of double progression, promised by the roadmap: a range missed
- * twice in a row at the same load earns one increment back down.
+ * twice in a row at the same load earns one increment back down — or as many as
+ * it takes to put the worst set back at the floor, when one is not enough
+ * (`stepsBackIntoRange`).
  *
  * **Two sessions, not one.** A single miss is a bad day — bad sleep, a late
  * meal, a busy rack. Backing off on one is how a coach teaches you to stop
@@ -333,8 +433,8 @@ export function rangeMissedSignal(
   if (earlier.some((miss) => miss.loadKg !== latest!.loadKg)) return undefined;
 
   const line = window[0]!;
-  const proposed = previousLoad(latest!.loadKg, increment, line.measurementType);
-  if (proposed === latest!.loadKg) return undefined;
+  const oneStepDown = previousLoad(latest!.loadKg, increment, line.measurementType);
+  if (oneStepDown === latest!.loadKg) return undefined;
 
   const evidence: CoachEvidence[] = [
     { label: 'sessions', value: MISSED_SESSIONS },
@@ -342,6 +442,24 @@ export function rangeMissedSignal(
     { label: 'low_reps', value: latest!.lowReps },
     { label: 'current_load_kg', value: latest!.loadKg },
   ];
+
+  // Très sous le bas de la fourchette, un cran de moins ne remet pas dedans : on en enlève autant qu'il faut,
+  // jamais moins d'un.
+  const back = stepsBackIntoRange(
+    line,
+    latest!.loadKg,
+    latest!.lowReps,
+    latest!.floor,
+    oneStepDown,
+    increment,
+  );
+  const proposed = back?.loadKg ?? oneStepDown;
+  if (back !== undefined) {
+    evidence.push(
+      { label: 'floor_steps', value: back.steps },
+      { label: 'target_reps_max', value: back.targetRepsMax },
+    );
+  }
 
   // Alléger, c'est charger moins — pas ne rien charger. Un pas de 2,5 kg sous
   // une charge de 3,5 kg retombe sur la grille à zéro, et « → 0 kg » n'est pas

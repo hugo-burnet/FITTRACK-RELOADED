@@ -343,6 +343,166 @@ describe('range_ceiling_reached — remise dans la fourchette', () => {
   });
 });
 
+describe('range_missed — remise dans la fourchette par en dessous', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt). Barre, grille de 2,5 kg ; trois séries d'un
+  // 15 – 20 à 40 kg. On enlève des crans jusqu'à ce que la pire série, d'après les répétitions faites, retombe au bas de
+  // la fourchette (à une demi-répétition près), et jamais plus de 30 % de moins que la charge du jour.
+  const day = 86_400_000;
+  const session = (
+    workoutId: string,
+    dayIndex: number,
+    reps: number[],
+    extra: Partial<CoachSetInput> = {},
+    range: [number, number | undefined] = [15, 20],
+    weight = 40,
+    lineExtra: Partial<CoachExerciseLine> = {},
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'bench',
+      workoutId,
+      workoutStartedAt: t0 + dayIndex * day,
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight,
+          targetReps: range[0],
+          targetRepsMax: range[1],
+          performedAt: t0 + dayIndex * day + order * 120_000,
+          ...extra,
+        }),
+      ),
+      ...lineExtra,
+    });
+  /** Deux séances de suite, mêmes répétitions, même charge : le bas de la fourchette manqué deux fois. */
+  const missed = (
+    reps: number[],
+    extra: Partial<CoachSetInput> = {},
+    range: [number, number | undefined] = [15, 20],
+    weight = 40,
+    lineExtra: Partial<CoachExerciseLine> = {},
+  ): CoachSignal | undefined =>
+    evaluatePerformance(session('w2', 7, reps, extra, range, weight, lineExtra), [
+      session('w1', 0, reps, extra, range, weight, lineExtra),
+    ]).signals.find((signal) => signal.code === 'range_missed');
+
+  it('enlève d’un coup les crans qui remettent la pire série dans la fourchette : 8, 7, 6 sur un 15 – 20', () => {
+    // Un cran (37,5) ferait 8,5 répétitions à la pire série, deux (35) 11,4, trois (32,5) 14,8 : le bas, à une
+    // demi-répétition près. Un seul cran ne remettait pas dans la fourchette, il en fallait trois séances.
+    const signal = missed([8, 7, 6]);
+
+    expect(signal).toMatchObject({ code: 'range_missed', nextLoadKg: 32.5 });
+    expect(signal!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'floor_steps', value: 3 },
+        { label: 'target_reps', value: 15 },
+        { label: 'target_reps_max', value: 20 },
+        { label: 'low_reps', value: 6 },
+        { label: 'current_load_kg', value: 40 },
+        { label: 'next_load_kg', value: 32.5 },
+      ]),
+    );
+  });
+
+  it('garde un cran quand un cran suffit : 14, 13, 13 retombent à 15,9 avec un cran de moins', () => {
+    const signal = missed([14, 13, 13]);
+
+    expect(signal).toMatchObject({ nextLoadKg: 37.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('floor_steps');
+  });
+
+  it('compte la réserve que dit le RPE : 6, 6, 6 à RPE 7 sont une capacité de 9, donc un cran de moins en moins', () => {
+    // Sans RPE : 4 crans (30). À RPE 7, chaque cran rend plus de répétitions : 3 crans (32,5) suffisent.
+    expect(missed([6, 6, 6])).toMatchObject({ nextLoadKg: 30 });
+    expect(missed([6, 6, 6], { rpe: 7 })).toMatchObject({ nextLoadKg: 32.5 });
+  });
+
+  it('va aussi loin que le dit la pire série sur un 5 – 8 : 3, 3, 2 à 100 kg demandent trois crans', () => {
+    const signal = missed([3, 3, 2], {}, [5, 8], 100);
+
+    expect(signal).toMatchObject({ nextLoadKg: 92.5 });
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'floor_steps', value: 3 }]));
+  });
+
+  it('n’enlève pas plus d’un cran pour une répétition de moins : 8, 8, 7 sur un 8 – 12', () => {
+    // La pire série passerait de 7 à 7,97 avec un cran : à une demi-répétition près, c'est le bas.
+    const signal = missed([8, 8, 7], {}, [8, 12], 100);
+
+    expect(signal).toMatchObject({ nextLoadKg: 97.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('floor_steps');
+  });
+
+  it('enlève deux crans pour 7 puis 6 à 80 kg sur un 8 – 12, là où un seul laissait la pire série à 7,2', () => {
+    const signal = missed([7, 6], {}, [8, 12], 80);
+
+    expect(signal).toMatchObject({ nextLoadKg: 75 });
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'floor_steps', value: 2 }]));
+  });
+
+  it('ne dépasse pas 30 % de moins que la charge d’aujourd’hui', () => {
+    // 2, 2, 1 à 40 kg : le calcul irait plus bas que 30 kg (27,5 serait un cran de trop).
+    const signal = missed([2, 2, 1]);
+
+    expect(signal).toMatchObject({ nextLoadKg: 30 });
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'floor_steps', value: 4 }]));
+  });
+
+  it('compte les crans de la fiche : un pas de 1,125 en demande plus, pour la même charge à peu près', () => {
+    const signal = missed([8, 7, 6], {}, [15, 20], 40, { loadIncrementKg: 1.125 });
+
+    expect(signal).toMatchObject({ nextLoadKg: 32.125 });
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'floor_steps', value: 7 }]));
+  });
+
+  it('ne lit que la dernière séance pour savoir jusqu’où : la précédente a seulement manqué, à la même charge', () => {
+    const signal = evaluatePerformance(session('w2', 7, [8, 7, 6]), [
+      session('w1', 0, [13, 12, 12]),
+    ]).signals.find((candidate) => candidate.code === 'range_missed');
+
+    expect(signal).toMatchObject({ nextLoadKg: 32.5 });
+  });
+
+  it('ne change rien à une pyramide : un cran de moins depuis la dernière série', () => {
+    const pyramid = (workoutId: string, dayIndex: number) =>
+      line({
+        exerciseId: 'bench',
+        workoutId,
+        workoutStartedAt: t0 + dayIndex * day,
+        sets: [37.5, 40, 42.5].map((weight, order) =>
+          set({
+            order,
+            reps: 8,
+            weight,
+            targetReps: 15,
+            targetRepsMax: 20,
+            performedAt: t0 + dayIndex * day + order * 120_000,
+          }),
+        ),
+      });
+    const signal = evaluatePerformance(pyramid('w2', 7), [pyramid('w1', 0)]).signals.find(
+      (candidate) => candidate.code === 'range_missed',
+    );
+
+    expect(signal).toMatchObject({ nextLoadKg: 40 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('floor_steps');
+  });
+
+  it('ne change rien à une cible unique : sans fourchette, il n’y a pas de fourchette où remettre', () => {
+    const signal = missed([3, 3, 3], {}, [8, undefined]);
+
+    expect(signal).toMatchObject({ nextLoadKg: 37.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('floor_steps');
+  });
+
+  it('ne change rien quand le cran de moins tombe déjà sous le plancher de 30 % : l’ancienne règle', () => {
+    // 5 kg, un cran de 2,5 : -50 %. Rien de plus léger n'est permis, la règle d'avant garde la main.
+    const signal = missed([3, 3, 3], {}, [15, 20], 5);
+
+    expect(signal).toMatchObject({ nextLoadKg: 2.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('floor_steps');
+  });
+});
+
 describe('range_ceiling_reached (was range_completed)', () => {
   it('proposes nextLoad when every working set hits the ceiling', () => {
     const signals = evaluateCoach([
@@ -513,7 +673,9 @@ describe('range_missed', () => {
       workoutStartedAt: startedAt,
       sets: [
         set({ order: 0, reps: 7, weight, performedAt: startedAt }),
-        set({ order: 1, reps: 6, weight, performedAt: startedAt + 120_000 }),
+        // Une répétition sous le bas de 8 : un cran de moins suffit à la remettre dedans. 7 puis 6 en demandait deux
+        // (cf. « remise dans la fourchette par en dessous »).
+        set({ order: 1, reps: 7, weight, performedAt: startedAt + 120_000 }),
       ],
     });
 

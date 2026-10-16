@@ -448,3 +448,39 @@ describe('coachSignalMessage — remise dans la fourchette', () => {
     );
   });
 });
+
+describe('coachSignalMessage — remise dans la fourchette par en dessous', () => {
+  const missed = (extra: { label: string; value: number }[] = []): CoachSignal => ({
+    exerciseId: 'bench',
+    code: 'range_missed',
+    severity: 50,
+    nextLoadKg: 32.5,
+    evidence: [
+      { label: 'sessions', value: 2 },
+      { label: 'target_reps', value: 15 },
+      { label: 'low_reps', value: 6 },
+      { label: 'current_load_kg', value: 40 },
+      { label: 'next_load_kg', value: 32.5 },
+      ...extra,
+    ],
+  });
+
+  it('explique que la charge enlève plusieurs crans, et qu’elle remet dans la fourchette', () => {
+    const message = coachSignalMessage(
+      missed([
+        { label: 'floor_steps', value: 3 },
+        { label: 'target_reps_max', value: 20 },
+      ]),
+    );
+
+    expect(message).toBe(
+      '40 → 32,5 kg car le bas de fourchette (15) a été manqué 2 séances de suite (descendu à 6). 3 crans de moins plutôt qu’un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps).',
+    );
+  });
+
+  it('ne dit rien de plus sans le compte des crans : un cran de moins se suffit', () => {
+    expect(coachSignalMessage(missed())).toBe(
+      '40 → 32,5 kg car le bas de fourchette (15) a été manqué 2 séances de suite (descendu à 6).',
+    );
+  });
+});
