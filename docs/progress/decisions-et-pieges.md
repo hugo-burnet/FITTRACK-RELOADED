@@ -51,6 +51,14 @@ remette aussi dans la fourchette quand tu es en dessous ? » — « Oui et oui. 
   Toute nouvelle lecture de réglage dans un dépôt appelé depuis une transaction ajoute `db.settings` à sa liste de tables.
 - **`useLiveQuery` réserve `undefined` à « pas encore répondu »** : le pas absent se lit `null` (`(await getDefaultLoadStepKg()) ?? null`), sinon la ligne ne sait pas
   distinguer « charge » de « aucun pas posé ».
+- **Un test qui comptait des appels en croyant compter des écritures** : « n'écrit qu'une fois sur un double appui » (`BenchmarkScreen.test.tsx`) a rougi le build Android du push de la
+  v2.16.0 (1 test sur 3 788, vert en local trois fois). L'écran ne verrouille « Appliquer » que pendant l'écriture ; sur un exécuteur chargé, le second appui arrive après la fin de la
+  première, avant que le bilan soit relu, et redemande la même acceptation — `applyBenchmarkProposals` est appelé deux fois. **Reproduit sans toucher au code** (un rafraîchissement du
+  bilan ralenti, un second appui séparé du premier : « called 2 times », le message exact de la CI). Les données ne risquaient rien : le dépôt ne décale pas deux fois une acceptation rejouée
+  (`repositories/benchmark.test.ts`), la seconde demande n'écrit rien. Le test tient maintenant la première écriture en l'air, ce qui rend la course impossible, et échoue sans les deux gardes de
+  l'écran. **Reste, volontairement** (pas touché le jour d'une release) : après une écriture réussie et avant la relecture du bilan, un second appui redemande l'acceptation et l'écran dit alors
+  « La routine a changé depuis le bilan : rien n'a été écrit » — vrai mais déroutant juste après un succès. Le correctif propre serait de ne plus proposer ce qui vient d'être écrit sans attendre
+  la relecture. Un changement du chemin de lecture du bilan (ici : un `await` de plus pour le pas de l'appli) suffit à élargir cette fenêtre.
 
 ### 2026-10-16 (suite de la v2.14.0) — « Il faut que le coach te rebalance dans une range 15-20 »
 

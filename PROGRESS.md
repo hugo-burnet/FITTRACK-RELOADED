@@ -5,14 +5,14 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-16 — **v2.16.0 en cours de publication** (PWA et APK) : un pas de charge pour toute l'appli (Réglages › Coach), et le coach
+**Dernière mise à jour :** 2026-10-16 — **v2.16.0 publiée** (PWA et APK) : un pas de charge pour toute l'appli (Réglages › Coach), et le coach
 qui remet dans la fourchette par en dessous.
 La v2.15.0 avait fait remettre dans la fourchette quand on la dépasse de beaucoup (bilan du benchmark et séance normale), donné un minimum au bilan au-delà de
 30 reps, et arrondi les propositions de charge au pas renseigné, au plus proche.
 
 ## Où on en est
 
-- **v2.16.0** — publication en cours (voir le journal pour l'issue), à la demande de l'utilisateur (« fusionne et publie ») :
+- **Publié : v2.16.0**, à la demande de l'utilisateur (« fusionne et publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.16.0), APK `FitTrack-v2.16.0.apk`
   ([journal](docs/journal/2026-10-16-versions-v2-16.md)). Sa demande : « Oui et oui » aux deux questions qui restaient ouvertes. **Un pas de charge pour toute l'appli** :
   Réglages › Coach › « Pas de charge par défaut » (vide d'office = la table du matériel ; « 1,125 » vaut pour toute fiche sans incrément, la fiche passant avant) — lu par le
@@ -51,6 +51,8 @@ La v2.15.0 avait fait remettre dans la fourchette quand on la dépasse de beauco
   `workflow_dispatch` d'`android.yml` avec `release_tag`. **Un commit poussé pendant un déploiement annule celui-ci** (groupe `pages`) :
   pousser les commits de documentation avant de lancer la release, ou accepter le déploiement du suivant. **`git merge -F fichier`, pas `-F -`** (il ne lit
   pas l'entrée standard), et `git fetch origin master` avant de compter les commits d'avance : le `origin/master` d'un clone de session est celui du démarrage.
+  **Un test qui rougit sur le push de la fusion** (v2.16.0, un test intermittent du bilan du benchmark) : chercher la cause avant de relancer, la corriger, pousser après la fin du
+  déploiement, attendre les trois workflows, puis lancer la release sur le nouveau commit — le tag suit le commit construit.
 
 ## À juger sur le terrain (v2.12.0 → v2.16.0)
 
