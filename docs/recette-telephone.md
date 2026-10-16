@@ -191,14 +191,14 @@ Une séance de deux exercices au moins, dont un en barre.
       propose quand même la charge qui te remet dans 15 – 20 (40 kg × 28 : « 45 kg pour 3 séries de 15 – 20 reps »), **interrupteur allumé**, sans « Estimation
       approximative » ; le coach la reprend à la séance suivante. Taper **plus de 30** : « 1RM : au moins 80 kg », « Au moins 47,5 kg pour 3 séries… »,
       avec la phrase qui dit que c'est un minimum — et pas de « tu tiendras environ ». Refaire l'exercice à cette charge pour l'affiner.
-      *(après la v2.14.0, sur la branche)*
+      *(v2.15.0)*
 - [ ] **Le pas de l'exercice.** Saisir **1,125** dans la fiche d'une machine (« Incrément de charge »), faire un benchmark dessus : la charge proposée
       est à moins d'un demi-pas (0,56 kg) de ce que le calcul dit, et un essai déjà juste ne perd pas un cran — une leg extension faite à 35 × 20
-      propose 35, pas 33,875. Sans pas saisi, une machine arrondit au multiple de 5 le plus proche. *(après la v2.14.0, sur la branche)*
+      propose 35, pas 33,875. Sans pas saisi, une machine arrondit au multiple de 5 le plus proche. *(v2.15.0)*
 - [ ] **Le coach te remet dans la fourchette, en séance normale.** Une routine en 15 – 20 (par exemple après avoir accepté un benchmark léger), toutes
       les séries à **28 reps ou plus** à la même charge : à la séance suivante la carte propose **plus d'un cran** (40 → 47,5 kg) et dit « Tu es allé
       jusqu'à 30 reps : à 47,5 kg, tu retombes dans la fourchette ». À 20 à 22 reps partout : un seul cran (40 → 42,5), comme avant. Un 5 – 12 fait à
-      12 × 3 : un cran, pas trois. *(après la v2.14.0, sur la branche)*
+      12 × 3 : un cran, pas trois. *(v2.15.0)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 
