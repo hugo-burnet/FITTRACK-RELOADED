@@ -2,14 +2,17 @@ import type { BenchmarkGoal, Equipment, MeasurementType, SetType } from '@/data/
 import { SEVERITY } from '@/lib/coach/constants';
 import type { CoachSignal } from '@/lib/coach/types';
 import type { ExerciseClass } from '@/lib/exerciseClass';
-import { resolveLoadStep, type LoadStep } from '@/lib/loadIncrement';
+import { resolveLoadStep } from '@/lib/loadIncrement';
 import type { Performed } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import {
+  BENCHMARK_MAX_JUMP,
+  BENCHMARK_MAX_REPS,
   capacityForSets,
+  floorLoad,
   goalZone,
   isPyramid,
-  loadForReps,
+  loadForRange,
   oneRepMaxOf,
   plannedSets,
   repsHeldAt,
@@ -33,35 +36,26 @@ import {
  */
 
 /**
- * L'écart, en répétitions, entre l'essai et la capacité que la première série doit avoir au-delà duquel
- * l'estimation est dite approximative. Convertir 22 répétitions en 17 est une petite extrapolation ;
- * convertir 25 en 7 n'est plus une mesure, et la charge qui en sort ne s'écrit pas d'office dans la routine.
+ * L'écart, en répétitions, entre l'essai et la capacité que la première série doit avoir, **quand l'essai est en
+ * dessous**, au-delà duquel l'estimation est dite approximative : convertir 3 répétitions en 12 est une extrapolation
+ * que la formule fait mal, et la charge qui en sort ne s'écrit pas d'office dans la routine.
+ *
+ * Au-dessus de la capacité exigée, ce n'est plus l'écart de répétitions qui juge mais le saut de charge
+ * (`BENCHMARK_MAX_JUMP`) : 27 répétitions pour un 15 – 20 ne demandent que 13 % de plus, c'est une consigne claire
+ * — plus lourd — que le bilan applique ; 25 répétitions pour un 5 – 8 en demandent 44 %, et la formule n'est plus
+ * une mesure.
  */
 export const BENCHMARK_ROUGH_GAP = 6;
 
 const round3 = (value: number): number => Math.round(value * 1000) / 1000;
 
-/**
- * La charge atteignable la plus proche **sans dépasser** `ideal` : le benchmark
- * ne propose jamais plus que ce que le maximum autorise.
- *
- * Sur la grille du matériel quand le pas est celui de la table. Quand c'est un
- * pas saisi sur l'exercice, la grille part de la charge essayée et non de zéro :
- * un cran de 1,125 kg sur une pile de 5 ne tombe pas sur un multiple de 1,125
- * (cf. `resolveLoadStep`), mais la charge qu'on vient de soulever existe.
- */
-export function floorLoad(ideal: number, anchor: number, step: LoadStep): number {
-  const base = step.onGrid ? 0 : anchor;
-  // La tolérance absorbe le bruit flottant : 77,49999999999 est un 77,5.
-  const steps = Math.floor((ideal - base) / step.kg + 1e-9);
-  return Math.max(0, round3(base + steps * step.kg));
-}
+export { floorLoad };
 
 export type BenchmarkVerdict =
   /** Un maximum lisible, une charge de travail en découle. */
   | 'calibrated'
-  /** Plus de 30 répétitions : trop léger pour que la formule dise quoi que ce soit. */
-  | 'too_light'
+  /** Des répétitions que la formule ne sait pas lire (pas un nombre entier) : rien à dimensionner. */
+  | 'unreadable'
   /** Pas de charge exploitable : rien à dimensionner. */
   | 'no_load'
   /** Un résultat sans charge à proposer (répétitions au poids du corps, durée, assistance). */
@@ -186,17 +180,31 @@ export interface BenchmarkLine {
   /** `true` quand la routine porte déjà la charge calibrée — et la fourchette du style, s'il y en a un : rien à écrire. */
   aligned?: true;
   /**
-   * `true` quand l'essai est à plus de `BENCHMARK_ROUGH_GAP` répétitions de la capacité exigée de la première
-   * série : la charge est une extrapolation. Elle est proposée, mais n'est cochée ni écrite d'office, et le
-   * coach ne la reprend pas.
+   * `true` quand la charge est une extrapolation trop longue : l'essai est à plus de `BENCHMARK_ROUGH_GAP`
+   * répétitions **sous** la capacité exigée de la première série, ou la charge conseillée dépasse l'essai de plus
+   * de `BENCHMARK_MAX_JUMP`. Elle est proposée, mais n'est cochée ni écrite d'office, et le coach ne la reprend pas.
    */
   rough?: true;
+  /**
+   * `true` quand l'essai a plus de `BENCHMARK_MAX_REPS` répétitions : le max ne se calcule plus, on sait
+   * seulement qu'il est au moins celui d'une série de 30 (`oneRepMax`). La charge conseillée est alors un
+   * **minimum** — elle ne dit pas ce qu'on tiendra, donc pas de `holdReps` — et la personne la reprend pour
+   * refaire l'exercice. Elle est écrite et lue par le coach comme les autres, sauf si elle est approximative.
+   */
+  minimum?: true;
 }
 
 interface Estimated {
   set: Performed;
   oneRepMax: number;
+  /** Plus de 30 répétitions : `oneRepMax` est le plancher d'une série de 30, pas une estimation. */
+  minimum?: true;
 }
+
+/** Le meilleur max : celui qui monte le plus haut ; à égalité, un max qui se calcule l'emporte sur un plancher. */
+const beats = (candidate: Estimated, top: Estimated): boolean =>
+  candidate.oneRepMax > top.oneRepMax ||
+  (candidate.oneRepMax === top.oneRepMax && top.minimum === true && candidate.minimum !== true);
 
 /** Les champs définis d'une série, et eux seuls : un `undefined` explicite n'est pas un résultat. */
 function resultOf(set: Performed): Performed {
@@ -263,22 +271,27 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
 
   const estimated: Estimated[] = loaded.flatMap((set) => {
     const oneRepMax = oneRepMaxOf(set.weight!, set.reps!);
-    return oneRepMax === undefined ? [] : [{ set, oneRepMax }];
+    if (oneRepMax !== undefined) return [{ set, oneRepMax }];
+    // Plus de 30 répétitions : Epley ne mesure plus, mais il ne décroît pas — le max est au moins celui d'une
+    // série de 30. On dimensionne sur ce plancher : la charge qui en sort est un minimum, à un demi-pas près.
+    if (Number.isInteger(set.reps) && set.reps! > BENCHMARK_MAX_REPS) {
+      return [{ set, oneRepMax: oneRepMaxOf(set.weight!, BENCHMARK_MAX_REPS)!, minimum: true as const }];
+    }
+    return [];
   });
 
   if (estimated.length === 0) {
-    // Tout est au-delà de 30 : on garde la série la plus chargée, puis la plus longue.
+    // Aucune série que la formule sache lire, ni plancher à en tirer : des répétitions qui ne sont pas un compte
+    // entier. On garde la série la plus chargée, puis la plus longue.
     const heaviest = loaded.reduce((best, set) =>
       set.weight! > best.weight! || (set.weight === best.weight && set.reps! > best.reps!)
         ? set
         : best,
     );
-    return { ...base, verdict: 'too_light', zone, tested: resultOf(heaviest) };
+    return { ...base, verdict: 'unreadable', zone, tested: resultOf(heaviest) };
   }
 
-  const best = estimated.reduce((top, candidate) =>
-    candidate.oneRepMax > top.oneRepMax ? candidate : top,
-  );
+  const best = estimated.reduce((top, candidate) => (beats(candidate, top) ? candidate : top));
   const tested = resultOf(best.set);
 
   const klass = input.exerciseClass ?? 'compound';
@@ -290,10 +303,8 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   });
 
   /** La charge qui tient `count` séries dont la dernière garde la réserve au bas de la fourchette `low`. */
-  const sizeFor = (low: number, count: number): number => {
-    const ideal = loadForReps(best.oneRepMax, capacityForSets(low, count, fatigue));
-    return ideal === undefined ? 0 : floorLoad(ideal, best.set.weight!, step);
-  };
+  const sizeFor = (low: number, count: number): number =>
+    loadForRange(best.oneRepMax, low, count, fatigue, best.set.weight!, step);
 
   const loads = block.flatMap((set) =>
     set.targetWeight === undefined ? [] : [{ set, weight: set.targetWeight }],
@@ -327,8 +338,16 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
   }
 
   const currentKg = loads.length === 0 ? undefined : Math.max(...loads.map((load) => load.weight));
-  const rough = Math.abs(best.set.reps! - reference) > BENCHMARK_ROUGH_GAP;
-  const held = pyramid ? [] : repsHeldAt(best.oneRepMax, suggested, planned, fatigue);
+  // Au-dessus de la capacité exigée, ce qui compte est de combien la charge monte (la consigne est claire : plus
+  // lourd) ; en dessous, de combien de répétitions on est loin de ce que la formule fait bien.
+  const testedKg = best.set.weight!;
+  const testedReps = best.set.reps!;
+  const rough =
+    testedReps > reference
+      ? suggested - testedKg > testedKg * BENCHMARK_MAX_JUMP + 1e-9
+      : reference - testedReps > BENCHMARK_ROUGH_GAP;
+  // Un plancher ne dit pas ce qu'on tiendra, une pyramide a une charge par série.
+  const held = pyramid || best.minimum === true ? [] : repsHeldAt(best.oneRepMax, suggested, planned, fatigue);
 
   const line: BenchmarkLine = {
     ...base,
@@ -344,6 +363,7 @@ export function benchmarkLine(input: BenchmarkLineInput): BenchmarkLine {
     ...(currentKg === undefined ? {} : { currentKg }),
     ...(pyramid ? { pyramid: true as const } : {}),
     ...(rough ? { rough: true as const } : {}),
+    ...(best.minimum === true ? { minimum: true as const } : {}),
   };
 
   if (input.routine === undefined) return line;
@@ -385,7 +405,8 @@ function carriesZone(set: BenchmarkRoutineSet, zone: RepZone): boolean {
 const round1 = (value: number): number => Math.round(value * 10) / 10;
 
 /**
- * Ce que le coach lit du benchmark : la charge de la fourchette de l'exercice, tenue sur ses séries, comme objectif.
+ * Ce que le coach lit du benchmark : la charge de la fourchette de l'exercice, tenue sur ses séries, comme objectif
+ * — y compris un minimum (plus de 30 répétitions), que sa carte dit « au moins ».
  *
  * Un objectif de charge comme un autre — affiché sur la carte de l'exercice à la séance suivante, jamais
  * prérempli, écrit sur les séries restantes sur un geste —, avec les chiffres qui l'ont produit : jamais
@@ -393,7 +414,7 @@ const round1 = (value: number): number => Math.round(value * 10) / 10;
  *
  * **Aucun signal pour une estimation approximative** : le coach ne pousse pas une extrapolation, la
  * personne la lit sur le bilan et décide de l'écrire ou non dans la routine. Aucun non plus sans charge à
- * proposer (trop léger, sans charge, au poids du corps), ni pour une pyramide : un objectif est un seul chiffre,
+ * proposer (sans charge, répétitions illisibles, au poids du corps), ni pour une pyramide : un objectif est un seul chiffre,
  * que « Appliquer » met sur toutes les séries restantes — 60 / 70 / 80 deviendrait 77,5 trois fois. Le bilan,
  * lui, décale la pyramide en gardant sa forme. **Un signal même quand la routine porte déjà la
  * charge** : il remplace l'objectif que le coach avait posé avant, qui sinon resterait affiché à côté.
@@ -423,6 +444,8 @@ export function benchmarkSignal(line: BenchmarkLine): CoachSignal | undefined {
       { label: 'tested_load_kg', value: line.tested.weight },
       { label: 'tested_reps', value: line.tested.reps },
       { label: 'one_rep_max_kg', value: round1(line.oneRepMax) },
+      // Au-delà de 30 répétitions le max est un plancher : la carte du coach dit « au moins », pas « environ ».
+      ...(line.minimum === true ? [{ label: 'one_rep_max_floor', value: 1 }] : []),
       { label: 'target_reps', value: line.zone.low },
       { label: 'target_reps_max', value: line.zone.high },
       { label: 'planned_sets', value: line.plannedSets },

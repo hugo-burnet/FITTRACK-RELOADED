@@ -7,7 +7,9 @@ import {
   goalName,
   holdReading,
   loadReading,
+  minimumReading,
   oneRepMaxReading,
+  oneRepMaxSentence,
   planReading,
   proposalMark,
   pyramidReading,
@@ -42,6 +44,25 @@ describe('les lectures du bilan', () => {
   it('arrondit un 1RM au dixième : une estimation ne promet pas mieux', () => {
     expect(oneRepMaxReading(103.9999)).toBe('104 kg');
     expect(oneRepMaxReading(103.84)).toBe('103,8 kg');
+  });
+
+  it('dit le max comme une estimation, ou comme un plancher au-delà de 30 répétitions', () => {
+    expect(oneRepMaxSentence(line())).toBe('1RM estimé : 104 kg');
+    expect(oneRepMaxSentence(line({ minimum: true, oneRepMax: 80 }))).toBe('1RM : au moins 80 kg');
+    expect(oneRepMaxSentence(line({ oneRepMax: undefined }))).toBeUndefined();
+  });
+
+  it('dit « au moins » devant la charge d’un minimum', () => {
+    const base = line({ minimum: true, zone: { low: 15, high: 20 }, suggestedKg: 45 });
+    expect(planReading(base)).toBe('Au moins 45 kg pour 3 séries de 15 – 20 reps');
+    expect(planReading({ ...base, plannedSets: 1 })).toBe('Au moins 45 kg pour une série de 15 – 20 reps');
+  });
+
+  it('explique un minimum : le max ne se calcule plus, la charge est un plancher à affiner', () => {
+    expect(minimumReading(line({ minimum: true }))).toBe(
+      'Plus de 30 répétitions : ton max ne se calcule plus, on sait seulement qu’il est au moins celui-ci. Prends au moins cette charge, puis refais cet exercice pour l’affiner.',
+    );
+    expect(minimumReading(line())).toBeUndefined();
   });
 
   it('écrit ce qui a été fait comme une série d’historique', () => {
@@ -105,7 +126,7 @@ describe('les lectures du bilan', () => {
     expect(routineReading(line({ routineEmpty: true }))).toBe(
       'La routine n’a aucune série de travail pour cet exercice : rien à écrire.',
     );
-    expect(routineReading(line({ verdict: 'too_light' }))).toBeUndefined();
+    expect(routineReading(line({ verdict: 'unreadable' }))).toBeUndefined();
   });
 
   it('prévient quand la routine a changé depuis le benchmark, mais seulement s’il y a quelque chose à écrire', () => {
@@ -124,7 +145,7 @@ describe('les lectures du bilan', () => {
   });
 
   it('dit pourquoi un exercice n’a pas de charge', () => {
-    expect(withoutLoadReading(line({ verdict: 'too_light' }))).toMatch(/Plus de 30 répétitions/);
+    expect(withoutLoadReading(line({ verdict: 'unreadable' }))).toMatch(/pas un nombre entier/);
     expect(withoutLoadReading(line({ verdict: 'no_load' }))).toMatch(/Aucune charge exploitable/);
     expect(withoutLoadReading(line({ verdict: 'recorded' }))).toMatch(/Résultat noté/);
     expect(withoutLoadReading(line())).toBeUndefined();

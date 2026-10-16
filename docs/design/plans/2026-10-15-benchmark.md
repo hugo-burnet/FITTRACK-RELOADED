@@ -32,7 +32,8 @@ aucune version de schéma.
 
 - [x] `loadForReps` : l'inverse exact des trois formules, aller-retour testé pour 1 à 12 répétitions.
 - [x] `referenceReps` : bas de fourchette + 2, plafonné à 12, 8 par défaut. *(remplacé par `capacityForSets`, tâche 8)*
-- [x] `floorLoad` : vers le bas, sur la grille du matériel ou à partir de la charge essayée.
+- [x] `floorLoad` : vers le bas, sur la grille du matériel ou à partir de la charge essayée. *(Ne sert plus qu'au plafond du saut de charge du coach ; les
+      propositions s'arrondissent au plus proche, `roundLoad`, tâche 11.)*
 - [x] `benchmarkLine` : meilleure série, verdicts (`calibrated`, `too_light`, `no_load`, `recorded`, `skipped`),
       proposition qui décale toutes les séries de travail et préserve une pyramide.
 - [x] Douze mutations, douze tuées.
@@ -136,6 +137,30 @@ aucune version de schéma.
 - [x] La feuille de lancement avec le choix du style, le rappel en tête de séance, le nom de la séance qui dit le style, le bilan en mots simples.
 - [x] La porte du programme (« Calibrer les charges », une ligne par routine du bloc).
 - [x] E2E : le style léger de bout en bout (40 × 18 → 37,5 kg, routine réécrite, séance suivante), cibles de 48 px et pas de débordement à 200 %.
+
+### Tâche 10 — très au-dessus de la fourchette : le coach remet dedans (suite de la v2.14.0)
+
+**Files :** Modify `src/lib/benchmarkModel.ts` (`floorLoad` déplacé ici, `loadForRange`, `BENCHMARK_MAX_JUMP`), `src/lib/benchmark.ts` (+ test),
+`src/lib/coach/rules/range.ts` (+ test), `src/features/benchmark/{benchmarkText,BenchmarkLineCard}.ts(x)`, `src/features/workout/coachCopy.ts`, `src/i18n/fr.ts`.
+
+- [x] `loadForRange` : le calcul de charge partagé entre le bilan et le coach (valeurs de référence calculées à part en Python).
+- [x] « Approximatif » au-dessus de la capacité exigée : le saut de charge (30 %) et non l'écart de répétitions ; 27 à 30 reps en léger sont cochées et
+      lues par le coach.
+- [x] Plus de 30 répétitions : un minimum (« au moins 47,5 kg »), sans « tu tiendras » ; le verdict « trop léger » devient `unreadable` (répétitions
+      décimales — le message « plus de 30 » y était faux).
+- [x] Coach, règle de fourchette : quand un cran ne suffit pas à repasser sous le plafond, la charge qui remet dans la fourchette (RPE compté, plafond
+      de 30 %, rien pour une pyramide, une cible unique, un lest, un effort maximal, une reprise). Un test existant du dépôt du coach (100 × 12 sur un
+      5 – 12) a fait ajouter le garde-fou « seulement si un cran ne suffit pas ».
+- [x] Carte du coach : « Tu es allé jusqu'à 30 reps : à 47,5 kg, tu retombes dans la fourchette (15 – 20 reps). » ; « un max d'au moins 80 kg » pour un plancher.
+
+### Tâche 11 — arrondir au pas renseigné, au plus proche
+
+**Files :** Modify `src/lib/benchmarkModel.ts` (`roundLoad`, `loadForRange`), `src/lib/benchmark.ts` et ses tests, `src/lib/coach/evaluate.test.ts`.
+
+- [x] `roundLoad` : le multiple du pas de l'exercice le plus proche (depuis la charge essayée quand le pas est saisi, depuis zéro sur la grille du
+      matériel) ; `loadForRange` s'en sert, donc le bilan et le coach avec lui. Leg extension 35 × 20 à 1,125 : 35 et non 33,875.
+- [x] Une vingtaine d'attendus recalculés à part en Python (le 8 – 12 sur 1 à 6 séries, les repos, la cible unique, les seuils de 30 %, le minimum).
+- [x] Seuls les propositions changent ; les répétitions que « tu tiendras » restent arrondies vers le bas.
 
 ## Ce qui reste, et pourquoi
 

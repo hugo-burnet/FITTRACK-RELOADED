@@ -613,6 +613,12 @@ const fr = {
      */
     failureMargin: 'Série à l’échec : {reps} rép. au-delà du plafond.',
     /**
+     * Plafond très dépassé : la charge proposée n'est pas un cran de plus mais celle qui remet dans la fourchette
+     * (le calcul du benchmark). La phrase dit jusqu'où la personne est allée, pour que le saut se comprenne.
+     */
+    ceilingRebalanced:
+      'Tu es allé jusqu’à {reps} reps : à {weight} kg, tu retombes dans la fourchette ({range}).',
+    /**
      * Coach v2, R6. La phase de surcharge aurait ajouté une série ; le volume du muscle est déjà au plus
      * haut. Une règle de l'app, pas une vérité : la phrase dit ce qui a été lu, et à qui est le plafond.
      */
@@ -636,9 +642,12 @@ const fr = {
      * Pas de flèche : elle est réservée à la charge à mettre.
      */
     benchmark_calibrated:
-      'Benchmark : {reps} répétitions à {tested} kg, soit un max d’environ {max} kg. Pour ta fourchette ({range}), démarre à {weight} kg.',
+      'Benchmark : {reps} répétitions à {tested} kg, soit un max {max}. Pour ta fourchette ({range}), démarre à {weight} kg.',
     benchmarkCalibratedSets:
-      'Benchmark : {reps} répétitions à {tested} kg, soit un max d’environ {max} kg. Pour {sets} séries de {range}, démarre à {weight} kg.',
+      'Benchmark : {reps} répétitions à {tested} kg, soit un max {max}. Pour {sets} séries de {range}, démarre à {weight} kg.',
+    /** Le max d'un benchmark : une estimation, ou — au-delà de 30 répétitions — un plancher. */
+    benchmarkMaxAbout: 'd’environ {value} kg',
+    benchmarkMaxAtLeast: 'd’au moins {value} kg',
     /**
      * R3.2 : le cran est celui du matériel. La phrase dit ce qu'il pèse et le
      * compte de répétitions qui permet de le prendre sans sortir de la fourchette.
@@ -2732,9 +2741,12 @@ const fr = {
     contextNoRoutine: '{date}',
     done: 'Fait : {reading}',
     oneRepMax: '1RM estimé : {value}',
+    oneRepMaxMinimum: '1RM : au moins {value}',
     /** La phrase à retenir : la charge, pour les séries et la fourchette sur lesquelles elle est calculée. */
     plan: '{value} pour {sets} séries de {range}',
     planOne: '{value} pour une série de {range}',
+    planMinimum: 'Au moins {value} pour {sets} séries de {range}',
+    planMinimumOne: 'Au moins {value} pour une série de {range}',
     planPyramid: '{value} pour ta série la plus lourde',
     pyramidNote: 'Les autres séries suivent du même écart : la forme de ta pyramide ne change pas.',
     /** Ce que chaque série tient à fond à cette charge — « 13 · 11 · 10 » : une charge se lit sur plusieurs séries. */
@@ -2745,8 +2757,11 @@ const fr = {
     noLine: 'Cet exercice n’est pas dans la routine : rien à écrire.',
     routineEmpty: 'La routine n’a aucune série de travail pour cet exercice : rien à écrire.',
     routineChanged: 'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
-    tooLight:
-      'Plus de {max} répétitions : trop léger pour estimer une charge. Refais cet exercice plus lourd.',
+    /** Des répétitions qui ne sont pas un compte entier (« 12,5 ») : la formule ne sait pas les lire. */
+    unreadable: 'Ces répétitions ne sont pas un nombre entier : rien à estimer.',
+    /** Au-delà de 30 répétitions : le max est un plancher, la charge un minimum. */
+    minimumNote:
+      'Plus de {max} répétitions : ton max ne se calcule plus, on sait seulement qu’il est au moins celui-ci. Prends au moins cette charge, puis refais cet exercice pour l’affiner.',
     noLoad: 'Aucune charge exploitable : rien à estimer.',
     recorded: 'Résultat noté. Ce type d’exercice n’a pas de charge à proposer.',
     toggleText: 'Appliquer à la routine',

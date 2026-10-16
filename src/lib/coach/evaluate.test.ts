@@ -230,6 +230,119 @@ describe('evaluatePerformance — exclusive range partition + allowedActions', (
   });
 });
 
+describe('range_ceiling_reached — remise dans la fourchette', () => {
+  // Valeurs de référence calculées à part (script Python hors du dépôt). Barre, grille de 2,5 kg ; trois séries
+  // d'un 15 – 20 à 40 kg ; la même formule que le benchmark (spec benchmark §3).
+  const light = (reps: number[], extra: Partial<CoachSetInput> = {}, range: [number, number] = [15, 20]) =>
+    evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: reps.map((value, order) =>
+          set({ order, reps: value, weight: 40, targetReps: range[0], targetRepsMax: range[1], ...extra }),
+        ),
+      }),
+    ]);
+
+  it('propose d’un coup la charge qui remet dans la fourchette quand on est très au-dessus du plafond', () => {
+    // 30 répétitions à 40 kg : un max d'au moins 80 kg ; trois séries d'un 15 – 20 en demandent 21 à la première,
+    // soit 80 / (1 + 21/30) = 47,1 → 47,5 kg (le pas de 2,5 le plus proche), et non un cran de plus (42,5).
+    const [signal] = light([30, 28, 26]);
+
+    expect(signal).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 47.5 });
+    expect(signal!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'ceiling_rebalanced', value: 1 },
+        { label: 'top_reps', value: 30 },
+        { label: 'target_reps', value: 15 },
+        { label: 'next_load_kg', value: 47.5 },
+      ]),
+    );
+  });
+
+  it('garde un cran de plus quand un cran suffit : 22, 21, 20 répétitions', () => {
+    const [signal] = light([22, 21, 20]);
+
+    expect(signal).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 42.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('ceiling_rebalanced');
+  });
+
+  it('ne descend jamais sous le cran de plus : la charge qui remet dans la fourchette peut être celle-là', () => {
+    // 25, 24, 22 répétitions : 73,3 / (1 + 21/30) = 43,1 → 42,5, c'est le cran de plus.
+    const [signal] = light([25, 24, 22]);
+
+    expect(signal).toMatchObject({ nextLoadKg: 42.5 });
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('ceiling_rebalanced');
+  });
+
+  it('compte la réserve que dit le RPE : 25 répétitions à RPE 7 sont une capacité de 28', () => {
+    // 40 × (1 + 28/30) = 77,3 ; 77,3 / (1 + 21/30) = 45,5 → 45 kg.
+    const [signal] = light([25, 24, 22], { rpe: 7 });
+
+    expect(signal).toMatchObject({ nextLoadKg: 45 });
+    expect(signal!.evidence).toEqual(expect.arrayContaining([{ label: 'ceiling_rebalanced', value: 1 }]));
+  });
+
+  it('garde un cran sur une large fourchette : 12 répétitions sur un 5 – 12 ne demandent pas de viser le bas', () => {
+    // 100 × 12 : un max de 140 kg. Un cran (102,5) laisse 11 répétitions à fond, sous le plafond : le benchmark, lui,
+    // viserait 107,5 (le bas de la fourchette plus la réserve) — trois crans pour qui vient d'atteindre le haut.
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [12, 12, 12].map((value, order) =>
+          set({ order, reps: value, weight: 100, targetReps: 5, targetRepsMax: 12 }),
+        ),
+      }),
+    ]);
+
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 102.5 });
+    expect(signals[0]!.evidence.map((item) => item.label)).not.toContain('ceiling_rebalanced');
+  });
+
+  it('ne dépasse pas 30 % de plus que la charge d’aujourd’hui', () => {
+    // 30 répétitions sur un 5 – 8 : la formule dirait 60 kg (+50 %) ; un seul essai n'en justifie pas autant.
+    expect(light([30, 30, 30], {}, [5, 8])[0]).toMatchObject({ nextLoadKg: 50 });
+  });
+
+  it('ne change rien à une pyramide : un cran de plus depuis la dernière série', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [40, 42.5, 45].map((weight, order) =>
+          set({ order, reps: 30, weight, targetReps: 15, targetRepsMax: 20 }),
+        ),
+      }),
+    ]);
+
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 47.5 });
+    expect(signals[0]!.evidence.map((item) => item.label)).not.toContain('ceiling_rebalanced');
+  });
+
+  it('ne change rien à une cible unique : sans fourchette, il n’y a pas de fourchette où remettre', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [30, 30, 30].map((value, order) =>
+          set({ order, reps: value, weight: 40, targetReps: 8, targetRepsMax: undefined }),
+        ),
+      }),
+    ]);
+
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 42.5 });
+  });
+
+  it('se tait sur la charge quand l’effort était maximal : le plafond arraché se consolide', () => {
+    const [signal] = light([30, 28, 26], { rpe: 10 });
+
+    expect(signal).toMatchObject({ code: 'range_ceiling_reached' });
+    expect(signal!.nextLoadKg).toBeUndefined();
+    expect(signal!.evidence.map((item) => item.label)).not.toContain('ceiling_rebalanced');
+  });
+});
+
 describe('range_ceiling_reached (was range_completed)', () => {
   it('proposes nextLoad when every working set hits the ceiling', () => {
     const signals = evaluateCoach([

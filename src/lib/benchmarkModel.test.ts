@@ -2,15 +2,18 @@ import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_DEFAULT_SETS,
   BENCHMARK_GOALS,
+  BENCHMARK_MAX_JUMP,
   BENCHMARK_MAX_PLANNED_SETS,
   BENCHMARK_MAX_REPS,
   capacityForSets,
   goalZone,
+  loadForRange,
   loadForReps,
   oneRepMaxOf,
   plannedSets,
   repsHeldAt,
   repZone,
+  roundLoad,
   setFatigue,
 } from './benchmarkModel';
 
@@ -246,5 +249,74 @@ describe('repsHeldAt — ce que chaque série tient à fond à une charge donné
   it('lit un nombre de séries inutilisable comme une série', () => {
     expect(repsHeldAt(104, 77.5, 0, 0.1)).toEqual([10]);
     expect(repsHeldAt(104, 77.5, 2.5, 0.1)).toEqual([10]);
+  });
+});
+
+describe('loadForRange — la charge qui remet un max dans une fourchette', () => {
+  const grid = { kg: 2.5, onGrid: true };
+  const typed = { kg: 2.5, onGrid: false };
+
+  // Valeurs de référence calculées à part (script Python hors du dépôt).
+  it('donne la charge qui tient les séries de la fourchette, arrondie vers le bas', () => {
+    // Classique, 52,5 × 13 : un max de 75,25 kg ; trois séries d'un 8 – 12 → 53,3 → 52,5.
+    expect(loadForRange(75.25, 8, 3, 0.1, 52.5, grid)).toBe(52.5);
+    // Léger, 40 × 18 : un max de 64 kg ; trois séries d'un 15 – 20 → 37,7 → 37,5 (pas saisi, compté depuis 40).
+    expect(loadForRange(64, 15, 3, 0.1, 40, typed)).toBe(37.5);
+    // Lourd, 100 × 5 : un max de 116,7 kg ; trois séries d'un 5 – 8 → 90,6 → 90.
+    expect(loadForRange(100 * (1 + 5 / 30), 5, 3, 0.1, 100, grid)).toBe(90);
+  });
+
+  it('monte avec le max : 40 kg × 30 (un max de 80 kg) tient un 15 – 20 sur trois séries à 47,5 kg', () => {
+    // 80 / (1 + 21/30) = 47,07 → le cran le plus proche de 2,5 kg à partir de 40 : 47,5.
+    expect(loadForRange(80, 15, 3, 0.1, 40, typed)).toBe(47.5);
+  });
+
+  it('arrondit au pas renseigné, au plus proche : un pas de 1,125 kg compté depuis la charge essayée', () => {
+    const micro = { kg: 1.125, onGrid: false };
+    // Leg extension, 35 × 20 (un max de 58,3 kg), trois séries d'un 15 – 20 en isolation : 34,94 kg. Arrondi vers le bas,
+    // c'était 33,875 (un cran sous 35, pour 0,06 kg) ; au plus proche, c'est 35.
+    expect(loadForRange(35 * (1 + 20 / 30), 15, 3, 0.08, 35, micro)).toBe(35);
+    // Leg curl, 37,5 × 22 : 38,93 → 37,5 + 1,125.
+    expect(loadForRange(37.5 * (1 + 22 / 30), 15, 3, 0.08, 37.5, micro)).toBe(38.625);
+  });
+
+  it('rend 0 quand il n’y a pas de charge à proposer', () => {
+    expect(loadForRange(0, 15, 3, 0.1, 40, typed)).toBe(0);
+    expect(loadForRange(Number.NaN, 15, 3, 0.1, 40, typed)).toBe(0);
+    // Un max sous le premier cran du matériel : 0,7 kg ne fait pas un demi-cran de 2,5.
+    expect(loadForRange(1, 8, 3, 0.1, 1, grid)).toBe(0);
+  });
+
+  it('plafonne le saut de charge qu’un seul essai justifie à 30 %', () => {
+    expect(BENCHMARK_MAX_JUMP).toBe(0.3);
+  });
+});
+
+describe('roundLoad — la charge du pas la plus proche', () => {
+  const grid = { kg: 2.5, onGrid: true };
+  const micro = { kg: 1.125, onGrid: false };
+
+  it('arrondit au plus proche, en haut comme en bas', () => {
+    expect(roundLoad(73.7, 80, grid)).toBe(72.5);
+    expect(roundLoad(74.0, 80, grid)).toBe(75);
+    expect(roundLoad(53.31, 52.5, grid)).toBe(52.5);
+  });
+
+  it('monte à la moitié d’un pas, pas avant', () => {
+    expect(roundLoad(61.24, 0, grid)).toBe(60);
+    expect(roundLoad(61.25, 0, grid)).toBe(62.5);
+    expect(roundLoad(61.2499999999, 0, grid)).toBe(62.5);
+  });
+
+  it('compte un pas saisi sur l’exercice depuis la charge essayée, pas depuis zéro', () => {
+    // 35 + 1,125 × k : un 36,0 sur une grille de multiples de 1,125 n'existerait pas sur cette pile.
+    expect(roundLoad(34.94, 35, micro)).toBe(35);
+    expect(roundLoad(36.2, 35, micro)).toBe(36.125);
+    expect(roundLoad(33.8, 35, micro)).toBe(33.875);
+  });
+
+  it('ne descend jamais sous zéro', () => {
+    expect(roundLoad(0.3, 80, grid)).toBe(0);
+    expect(roundLoad(-4, 80, grid)).toBe(0);
   });
 });

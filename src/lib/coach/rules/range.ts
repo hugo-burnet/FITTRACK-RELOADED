@@ -1,3 +1,10 @@
+import {
+  BENCHMARK_MAX_JUMP,
+  BENCHMARK_MAX_REPS,
+  floorLoad,
+  loadForRange,
+  setFatigue,
+} from '@/lib/benchmarkModel';
 import { measurementShape } from '@/lib/measurement';
 import { nextLoad, previousLoad, type LoadStep } from '@/lib/loadIncrement';
 import { repsToAbsorbStep } from '@/lib/oneRepMax';
@@ -103,6 +110,63 @@ function repsNeededForStep(
 }
 
 /**
+ * La charge qui remet dans la fourchette quelqu'un qui en dépasse le plafond : celle qu'un benchmark lui aurait
+ * proposée (même formule, `loadForRange`), pas un cran de plus.
+ *
+ * Un cran de plus suffit presque toujours — 22 répétitions sur un 15 – 20 —, et la règle le garde. Mais 30
+ * répétitions à 40 kg disent un max d'au moins 80 kg : trois séries d'un 15 – 20 en demandent 21 à la première,
+ * soit 47 kg et non 42,5. Le cran ne remettrait pas dans la fourchette, il en faudrait trois séances.
+ *
+ * - **Seulement si un cran ne suffit pas.** Si, un cran plus haut, les répétitions qu'on taperait retombent sous le
+ *   plafond (la capacité d'alors, moins la réserve qu'on se garde), la règle garde le cran : c'est la double
+ *   progression. Sur une large fourchette (un 5 – 12), viser le bas serait un saut de trois crans pour qui vient
+ *   d'atteindre le haut — 100 × 12 passe à 102,5, pas à 107,5 — et 12 × 3 à RPE 8 a de la marge : un cran suffit.
+ * - **Une fourchette ouverte, une seule charge, une charge.** Une cible unique n'a pas de fourchette où remettre ;
+ *   une pyramide n'a pas « la » charge ; le poids du corps, lesté ou assisté, ne suit pas la formule.
+ * - **La capacité est ce que la personne a fait** (sa série la plus longue), plus la réserve que dit le RPE moyen
+ *   quand il existe : 25 répétitions à RPE 7 sont une capacité de 28. Sans RPE, c'est un plancher — la proposition
+ *   ne compte que sur ce que la personne a montré, à un demi-pas près (arrondie au pas le plus proche, `roundLoad`).
+ * - **La classe et le repos de l'exercice ne sont pas dans la ligne du coach** : polyarticulaire, deux minutes,
+ *   la lecture la plus prudente (la fatigue la plus haute demande la charge la plus basse).
+ * - **Jamais plus de 30 % de plus que la charge d'aujourd'hui** (`BENCHMARK_MAX_JUMP`) : un seul essai n'en
+ *   justifie pas davantage.
+ */
+function rebalancedLoad(
+  line: CoachExerciseLine,
+  working: readonly CoachSetInput[],
+  load: number,
+  oneStepUp: number,
+  increment: LoadStep,
+  effort: number | undefined,
+): { loadKg: number; topReps: number } | undefined {
+  if (measurementShape(line.measurementType).weightRole !== 'load') return undefined;
+  const first = working[0];
+  if (first?.targetReps === undefined || first.targetRepsMax === undefined) return undefined;
+  if (first.targetRepsMax <= first.targetReps) return undefined;
+  if (working.some((set) => set.weight !== load || set.reps === undefined)) return undefined;
+
+  const topReps = Math.max(...working.map((set) => set.reps!));
+  const reserve = effort === undefined ? 0 : Math.max(0, 10 - effort);
+  const capacity = Math.min(BENCHMARK_MAX_REPS, topReps + reserve);
+  const oneRepMax = load * (1 + capacity / 30);
+  // Un cran plus haut, les répétitions qu'on taperait retombent-elles sous le plafond ? Ce qu'on tape est la capacité
+  // d'alors moins la réserve qu'on se garde : 12 répétitions à RPE 8 sont une capacité de 14, et un cran la ramène à 13,
+  // soit 11 tapées. Alors le cran suffit, la règle le garde.
+  if (30 * (oneRepMax / oneStepUp - 1) - reserve <= first.targetRepsMax) return undefined;
+  const wanted = loadForRange(
+    oneRepMax,
+    first.targetReps,
+    working.length,
+    setFatigue('compound'),
+    load,
+    increment,
+  );
+  const ceiling = floorLoad(load * (1 + BENCHMARK_MAX_JUMP), load, increment);
+  const loadKg = Math.min(wanted, ceiling);
+  return loadKg > 0 ? { loadKg, topReps } : undefined;
+}
+
+/**
  * One of `range_ceiling_reached` | `range_satisfied`, never both, never on deload.
  * `range_completed` is not written — journal rows keep it as a read alias only.
  */
@@ -178,8 +242,21 @@ export function rangePartitionSignal(
         { label: 'target_reps', value: working[0]!.targetReps! },
       );
     } else if (proposed !== lastWeight) {
-      nextLoadKg = proposed;
-      evidence.push({ label: 'next_load_kg', value: proposed });
+      // Très au-dessus du plafond, un cran ne remet pas dans la fourchette : on propose la charge qui le fait,
+      // jamais moins qu'un cran de plus.
+      const back = rebalancedLoad(line, working, lastWeight, proposed, increment, effort);
+      if (back !== undefined && back.loadKg > proposed) {
+        nextLoadKg = back.loadKg;
+        evidence.push(
+          { label: 'next_load_kg', value: back.loadKg },
+          { label: 'ceiling_rebalanced', value: 1 },
+          { label: 'top_reps', value: back.topReps },
+          { label: 'target_reps', value: working[0]!.targetReps! },
+        );
+      } else {
+        nextLoadKg = proposed;
+        evidence.push({ label: 'next_load_kg', value: proposed });
+      }
     }
   }
   evidence.push(...failureEvidence);

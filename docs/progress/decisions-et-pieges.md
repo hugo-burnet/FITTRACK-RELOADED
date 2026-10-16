@@ -7,6 +7,53 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-16 (suite de la v2.14.0) — « Il faut que le coach te rebalance dans une range 15-20 »
+
+**Demande.** « Ça se passe comment si je choisis une séance légère et que je tape plus de 20 rep ? » (réponse : rien ne bloque la saisie ; au bilan, 21 à
+26 reps proposaient plus lourd, 27 à 30 étaient « approximatives » et éteintes, au-delà de 30 rien) — « Eh oui mais il faut que le coach te rebalance dans une
+range 15-20. » Deux questions posées, deux réponses : **au bilan et en séance normale** ; **appliqué d'office** pour un essai très au-dessus.
+
+**Ce qui a changé.** Spec benchmark §3 ter, tâche 10 du plan, amendement R3 du coach v2. En trois lignes : « approximatif » au-dessus de la capacité exigée
+se juge au saut de charge (30 %), plus à l'écart de répétitions ; plus de 30 répétitions donnent un minimum (« au moins 47,5 kg ») ; la règle de fourchette du
+coach propose la charge qui remet dans la fourchette quand un cran ne suffit pas.
+
+**Choix de détail, à relire.**
+
+- **30 % de saut maximal** (`BENCHMARK_MAX_JUMP`), pour le bilan comme pour le coach. Le léger n'y arrive jamais (19 % à 30 reps sur trois séries) ; un 8 – 12
+  testé à 30 reps (44 %) et un 5 – 8 testé à 25 (44 %) restent approximatifs. Un chiffre à juger à l'usage.
+- **Le côté « trop lourd » n'a pas bougé** : sous la capacité exigée, six répétitions d'écart restent le seuil. Les deux côtés ne sont plus jugés de la même
+  façon : au-dessus, la consigne est claire (plus lourd) ; en dessous, la formule extrapole mal.
+- **Le minimum est appliqué comme une charge** (interrupteur allumé, objectif du coach « au moins »), parce que c'est la réponse « d'office » choisie ; il ne
+  promet rien (pas de « tu tiendras »).
+- **Le RPE ajoute de la réserve à la capacité** du coach en séance normale (25 reps à RPE 7 → capacité 28). Sans RPE, un plancher. Le RPE moyen de la
+  séance, comme R1.
+- **Seulement si un cran ne suffit pas.** Un premier jet visait le bas de la fourchette dès le plafond atteint ; un test existant (100 × 12 sur un 5 – 12 →
+  102,5) l'a refusé à raison — sur une large fourchette, c'était trois crans d'un coup pour quelqu'un qui vient d'atteindre le haut.
+- **Le cas inverse n'est pas touché** : sous le bas de la fourchette, « bas manqué deux fois » descend toujours d'un cran. À rouvrir si la personne le demande.
+
+**L'arrondi, tranché dans la foulée.** Sa séance du 16 octobre (un benchmark léger, des machines, « de façon générale le pas est de 1,125, car il y a des
+petits poids de 1,125 ») a montré que l'arrondi vers le bas coûtait un cran entier pour une fraction de kilo : le calcul disait 34,94 kg pour une leg extension
+faite à 35 × 20, le bilan proposait 33,875. J'avais proposé « au cran le plus proche quand l'écart est de moins de 1 % » ; sa réponse : « on arrondit simplement au
+pas renseigné dans l'App, ça sera bien plus simple ». Donc `roundLoad` : le multiple du pas de l'exercice **le plus proche**, depuis la charge essayée quand le pas est
+saisi (l'ancrage de R3 ne change pas), depuis zéro sur la grille du matériel, sans tolérance ni règle de plus. `loadForRange` s'en sert : le bilan et le coach.
+
+- **Ce que ça change.** La proposition est à un demi-pas au plus du calcul : 0,56 kg avec 1,125, **2,5 kg avec le 5 kg d'une machine dont le pas n'est pas saisi**
+  (52,5 × 13 en classique passe de 50 à 55 kg, dont on ne tient que 11 · 9 · 8 : moins de réserve que les deux répétitions visées). Le principe « le benchmark ne
+  propose jamais plus que ce que le maximum autorise » est abandonné ; le seul arrondi vers le bas qui reste est le **plafond du saut de 30 %** du coach
+  (`floorLoad`), qui ne doit pas le dépasser. Les répétitions qu'on « tiendra » restent arrondies vers le bas.
+- **Un minimum se dit « à un demi-pas près »** (« au moins 47,5 kg » pour un plancher de 47,07 kg).
+- **Seul le pas se règle exercice par exercice** (fiche › Incrément de charge, « Vide = défaut selon le matériel ») : il n'y a pas de pas par défaut global, et
+  « de façon générale 1,125 » veut dire le saisir sur chaque machine. Un réglage global est une décision qui attend l'utilisateur (PROGRESS.md).
+- **Une vingtaine d'attendus du lecteur recalculés à part** (le 8 – 12 sur 1 à 6 séries : 77,5 · 75 · 72,5 · **72,5** — trois et quatre séries donnent la même charge —,
+  les repos, la cible unique, les seuils de 30 %).
+
+**Pièges rencontrés.**
+
+- **`git merge` ne lit pas son message sur l'entrée standard** (`-F -` : « could not read file '-' »), contrairement à `git commit`. Le shell de l'outil ne
+  s'arrête pas à la première erreur : la suite du script a tourné sur un `master` non fusionné. Le message va dans un fichier, et on relit les parents du commit.
+- **Un `origin/master` périmé** : un clone de session garde les références distantes de son démarrage. `git log origin/master..HEAD` disait 67 commits d'avance
+  avant un `git fetch origin master`, 10 après. Fetch d'abord.
+
 ### 2026-10-15 (revue de code, puis les styles) — Six défauts du benchmark, et un benchmark qui a un style
 
 **Demande.** Une revue de code de la feature et de son intégration au coach, puis : « tu as fait 40×18, je te propose 40×14 trois fois ; en classique
@@ -24,9 +71,9 @@ l'option ; c'est particulièrement pertinent pour commencer les programmes ; à 
 4. **Une dégressive à la fin faisait une « pyramide »** et montait la charge de 5 kg. 5. **Un échauffement coché sans la série à l'échec devenait l'essai.**
 6. **La carte du coach restait proposée pendant un benchmark** (« Appliquer » y écrasait la charge d'essai).
 
-Deux autres constats de la revue étaient des messages faux sur des cas rares et **ne sont pas corrigés** : des répétitions décimales (« 12,5 ») donnent
-« trop léger » — la règle entière est celle de `lib/oneRepMax.ts` pour toute l'app, c'est le message qui est faux —, et une charge arrondie à zéro sur
-une machine au pas de 5 réutilise « aucune charge exploitable ». Hors périmètre, constatés en passant (R6) : `DAY_MS` redéfini dans `lib/coach/volume.ts`,
+Deux autres constats de la revue étaient des messages faux sur des cas rares : des répétitions décimales (« 12,5 ») donnent
+« trop léger » — la règle entière est celle de `lib/oneRepMax.ts` pour toute l'app, c'est le message qui est faux ; **corrigé le 2026-10-16** (verdict
+`unreadable`, voir l'entrée du jour) —, et une charge arrondie à zéro sur une machine au pas de 5 réutilise « aucune charge exploitable » (**non corrigé**). Hors périmètre, constatés en passant (R6) : `DAY_MS` redéfini dans `lib/coach/volume.ts`,
 deux `effectiveCeiling` (`sets.ts`, `volume.ts`), `coachEvaluate.ts` à 505 lignes sans entrée ici.
 
 **Le style.** Léger 15 – 20, classique 8 – 12, lourd 5 – 8 : une fourchette nommée, choisie à la feuille de lancement (« Comme ma routine » d'office), qui
@@ -293,7 +340,7 @@ qu'il réutilise compte des séries.
 - **Bas de fourchette + 2 répétitions de réserve** (`BENCHMARK_RESERVE_REPS`). Une série de travail commence deux
   répétitions avant l'échec ; la double progression a ensuite la place de monter. À juger sur le terrain : si les
   charges proposées paraissent trop basses ou trop hautes, c'est une constante.
-- **Arrondi vers le bas, toujours.** Sur la grille du matériel ; à partir de la charge essayée quand le pas est
+- **Arrondi vers le bas, toujours** *(remplacé le 2026-10-16 par l'arrondi au plus proche du pas renseigné — entrée du jour)*. Sur la grille du matériel ; à partir de la charge essayée quand le pas est
   celui que la personne a saisi (un cran de 1,125 kg ne tombe pas sur un multiple de 1,125).
 - **Seul `weight_reps` reçoit une charge.** Pour un lest ou une assistance, la charge n'est qu'une part de ce qui
   est soulevé ; pour un temps, il n'y a pas de charge. Leur résultat est noté, rien n'est proposé.

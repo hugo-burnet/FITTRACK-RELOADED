@@ -174,6 +174,15 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
    passer par `npm run coach:replay` avec la sauvegarde avant de se fier aux chiffres
    ci-dessus.*
 
+   **Amendement du 2026-10-16 — très au-dessus du plafond, un cran ne remet pas dans la fourchette.** Quelqu'un qui fait 30 répétitions à
+   40 kg sur un 15 – 20 (un max d'au moins 80 kg) se voyait proposer 42,5 kg : un cran, après lequel il en fait encore 26 — trois séances pour
+   revenir dans la fourchette. Quand, un cran plus haut, la capacité prévue (`30 × (max / charge − 1)` : le max d'Epley de la série la plus
+   longue, plus la réserve du RPE moyen) dépasse encore le plafond, le coach propose **la charge qu'un benchmark aurait proposée**
+   (`loadForRange`, spec benchmark §3 ter) au lieu du cran — jamais moins qu'un cran, jamais plus de 30 % de plus que la charge d'aujourd'hui.
+   Sinon la règle est celle d'avant : 100 × 12 sur un 5 – 12 passe à 102,5, pas à 107,5. Une fourchette ouverte, une seule charge,
+   `weightRole: 'load'` ; R1 (effort maximal) et R5 (reprise) gardent la main. Preuves ajoutées : `ceiling_rebalanced`, `top_reps`,
+   `target_reps`. À la demande de l'utilisateur : « il faut que le coach te rebalance dans une range 15-20 ». *Non rejoué sur l'historique réel.*
+
 ### R4 — Ne comparer que ce qui est comparable
 
 **Constat.** La moitié des exercices est pratiquée sous plusieurs fourchettes (variantes A/B,
