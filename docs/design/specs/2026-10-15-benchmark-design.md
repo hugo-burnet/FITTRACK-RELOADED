@@ -138,18 +138,23 @@ Un objectif posé par le benchmark est résolu à l'acceptation du bilan (§4).
   d'office (la personne le rallume), et le coach n'en tire pas d'objectif. Ce qui est « trop long » dépend du côté. **Sous** la capacité
   exigée de la première série, c'est l'écart de répétitions (`BENCHMARK_ROUGH_GAP`, six) : convertir 3 répétitions en 12 n'est plus une
   mesure. **Au-dessus** (un essai trop léger), c'est le saut de charge (`BENCHMARK_MAX_JUMP`, 30 % de plus que l'essai) : 27 répétitions
-  pour un 15 – 20 demandent 6 % de plus, une consigne claire — plus lourd — que le bilan applique (§3 ter) ; 25 répétitions pour un 5 – 8
-  en demandent 37 %, et la formule n'est plus une mesure. Le seuil se juge sur la fourchette et les séries de chaque exercice.
+  pour un 15 – 20 demandent 13 % de plus, une consigne claire — plus lourd — que le bilan applique (§3 ter) ; 25 répétitions pour un 5 – 8
+  en demandent 44 %, et la formule n'est plus une mesure. Le seuil se juge sur la fourchette et les séries de chaque exercice.
   *(Avant le 2026-10-16, l'écart de six répétitions jugeait les deux côtés.)*
-- **Arrondi vers le bas, jamais vers le haut.** Sur la grille du matériel quand le pas est celui de la table ; à partir de la charge
-  essayée quand le pas est celui que la personne a saisi sur l'exercice (un cran de 1,125 kg ne tombe pas sur un multiple de 1,125 —
-  cf. `resolveLoadStep`). Le benchmark ne propose jamais plus que ce que le maximum autorise.
+- **Arrondi au pas renseigné dans l'appli, au plus proche.** Sur la grille du matériel quand le pas est celui de la table ; à partir de
+  la charge essayée quand le pas est celui que la personne a saisi sur l'exercice (un cran de 1,125 kg ne tombe pas sur un multiple de
+  1,125 — cf. `resolveLoadStep`). La proposition est à un demi-pas au plus de ce que le modèle dit : 0,56 kg avec un pas de 1,125, 2,5 kg avec le
+  5 kg d'une machine dont le pas n'est pas saisi. *(Jusqu'au 2026-10-16, l'arrondi se faisait vers le bas — « le benchmark ne propose jamais
+  plus que ce que le maximum autorise » — et une fraction de kilo pouvait coûter un cran entier : 34,94 kg devenait 33,875 pour une leg
+  extension faite à 35, avec un pas de 1,125. Décidé par l'utilisateur : « on arrondit simplement au pas renseigné dans l'App, ça sera bien
+  plus simple » — sans règle de tolérance en plus.)*
 - **Seul `weight_reps` reçoit une charge.** Pour un exercice lesté ou assisté, la charge n'est qu'une partie de ce qui est soulevé ; le
   pas d'une cible de temps n'a pas de sens. Ces exercices ont leur résultat dans le bilan (répétitions, durée), sans proposition.
 
 Exemple : 80 kg × 17 sur un 15 – 20, trois séries. Max estimé : 125,3 kg. Polyarticulaire reposé deux minutes : la première série doit
 pouvoir faire 17 / 0,9² = 21 répétitions → 125,3 / (1 + 21 / 30) = 73,7 → **72,5 kg**. Une isolation (8 %) : 20,1 répétitions → 75,1 →
-**75 kg**. Même exercice avec une minute de repos (20 %) : 26,6 répétitions → 66,5 → **65 kg** ; avec trois minutes (6,7 %) : **75 kg**.
+**75 kg**. Même exercice avec une minute de repos (20 %) : 26,6 répétitions → 66,5 → **67,5 kg** ; avec trois minutes (6,7 %) : **75 kg**
+(sur la grille de 2,5 kg de la barre, au plus proche).
 
 ### 3 bis. Le style du benchmark : léger, classique, lourd
 
@@ -164,7 +169,7 @@ qui remplace la fourchette de la routine pour dimensionner la charge :
 | **Léger** | 15 – 20 reps | environ 18 répétitions |
 | **Lourd** | 5 – 8 reps | environ 8 répétitions |
 
-Ce n'est rien de plus qu'une fourchette nommée : la capacité exigée, la fatigue, la réserve de deux répétitions, l'arrondi vers le bas et le seuil
+Ce n'est rien de plus qu'une fourchette nommée : la capacité exigée, la fatigue, la réserve de deux répétitions, l'arrondi au pas de l'exercice et le seuil
 « approximatif » sont ceux du §3. L'essai conseillé est le nombre de répétitions qui garde l'estimation fiable de une à trois séries, polyarticulaire
 ou isolation, repos court ou long (un test le vérifie) ; il s'affiche sur la feuille de lancement et dans le rappel en tête de séance, puisque la
 fourchette n'est pas sur la ligne de série. Le nom de la séance dit le style (« Benchmark léger · Push »).
@@ -174,8 +179,8 @@ fourchette n'est pas sur la ligne de série. Le nom de la séance dit le style (
 > 52,5 kg pour 3 séries de 8 – 12 reps
 > À 52,5 kg, tu tiendras environ 13 · 11 · 10 reps à fond.
 
-Le second chiffre est le même modèle lu dans l'autre sens (`repsHeldAt`) : la charge est connue — arrondie sur le matériel, donc un peu plus légère
-que l'idéal —, on dit ce qu'elle permet. Arrondi vers le bas : le bilan ne promet jamais une répétition de plus que le modèle. Les trois séries sont
+Le second chiffre est le même modèle lu dans l'autre sens (`repsHeldAt`) : la charge est connue — arrondie au pas, donc un peu plus légère
+ou plus lourde que l'idéal —, on dit ce qu'elle permet. Répétitions arrondies vers le bas : le bilan ne promet jamais une répétition de plus que le modèle. Les trois séries sont
 celles de la routine, ou 3 / 2 à défaut : le bilan dit sur combien la charge est calculée, il n'écrit pas ce nombre.
 
 **Ce que l'acceptation écrit** : la charge, et la fourchette du style sur les séries de travail (pas sur l'échauffement, pas sur une dégressive, qui
@@ -185,7 +190,8 @@ garde sa fourchette. Si la charge est déjà la bonne et que la fourchette ne l'
 Exemples, calculés à part (script Python hors du dépôt) :
 
 - **Léger**, 40 × 18 (max 64 kg), trois séries : 37,5 kg, on tient 21 · 19 · 17 à fond.
-- **Classique**, 52,5 × 13 (max 75,3 kg), trois séries : 52,5 kg (13 · 11 · 10) — ou **50 kg sur une machine au pas de 5** (15 · 13 · 12).
+- **Classique**, 52,5 × 13 (max 75,3 kg), trois séries : 52,5 kg (13 · 11 · 10) — ou **55 kg sur une machine au pas de 5 non saisi** (11 · 9 · 8) :
+  le multiple de 5 le plus proche de 53,3, qui laisse moins de réserve (avec un pas saisi de 1,125 : 53,625).
 - **Lourd**, 100 × 5 (max 116,7 kg), trois séries : 90 kg (8 · 8 · 7) — la dernière en tient 7, deux de plus que le bas du 5 – 8.
 
 **Choix de détail, à relire.**
@@ -214,14 +220,15 @@ constat. Choisi par la personne : **au bilan du benchmark et en séance normale*
 | 40 kg × … (léger 15 – 20, trois séries) | Avant | Maintenant |
 |---|---|---|
 | 21 à 26 reps | charge conseillée, cochée | inchangé |
-| 27 à 30 reps | « approximatif », éteint, pas d'objectif du coach | **cochée et lue par le coach** (27 → 42,5 kg, 30 → 45 kg) |
-| 31 reps et plus | « trop léger… refais plus lourd », aucune charge | **un minimum** : « au moins 45 kg » |
+| 27 à 30 reps | « approximatif », éteint, pas d'objectif du coach | **cochée et lue par le coach** (27 → 45 kg, 30 → 47,5 kg) |
+| 31 reps et plus | « trop léger… refais plus lourd », aucune charge | **un minimum** : « au moins 47,5 kg » |
 
-- **Le saut de charge juge, pas l'écart de répétitions** (§3) : un 15 – 20 testé à 30 répétitions demande au plus 12 % de plus avec trois séries
-  (25 % avec une seule), il n'atteint jamais les 30 % ; un 8 – 12 testé à 30 répétitions en demande 37 % et reste approximatif.
+- **Le saut de charge juge, pas l'écart de répétitions** (§3) : un 15 – 20 testé à 30 répétitions demande au plus 19 % de plus avec trois séries
+  (25 % avec une seule), il n'atteint jamais les 30 % ; un 8 – 12 testé à 30 répétitions en demande 44 % et reste approximatif.
 - **Un minimum, au-delà de 30 répétitions.** Epley ne mesure plus, mais il ne décroît pas : le max est au moins celui d'une série de 30
-  (`oneRepMax` = 2 × la charge, `minimum: true`). On dimensionne sur ce plancher, donc la charge est un minimum — jamais trop haute. Le bilan
-  dit « 1RM : au moins 80 kg », « Au moins 45 kg pour 3 séries de 15 – 20 reps » et pourquoi ; il **ne dit pas ce qu'on tiendra** (`holdReps`
+  (`oneRepMax` = 2 × la charge, `minimum: true`). On dimensionne sur ce plancher, donc la charge est un minimum — à un demi-pas près, comme
+  toute proposition. Le bilan
+  dit « 1RM : au moins 80 kg », « Au moins 47,5 kg pour 3 séries de 15 – 20 reps » et pourquoi ; il **ne dit pas ce qu'on tiendra** (`holdReps`
   absent). Écrit et lu par le coach comme les autres (sa carte dit « un max d'au moins 80 kg », preuve `one_rep_max_floor`), sauf s'il dépasse
   les 30 % (alors approximatif). Une série lisible l'emporte sur un plancher (60 × 20, max 100 kg, contre 40 × 35, plancher 80).
 - **Le verdict « trop léger » disparaît.** Il ne servait plus qu'aux répétitions décimales (« 12,5 »), dont le message disait à tort « plus de
@@ -231,15 +238,16 @@ constat. Choisi par la personne : **au bilan du benchmark et en séance normale*
 coach proposait un cran de plus. Il propose maintenant **la plus haute de deux charges** : un cran de plus, ou celle qu'un benchmark aurait
 proposée (`loadForRange`, la même formule) quand un cran ne suffit pas à repasser sous le plafond.
 
-- 40 kg × 30 · 28 · 26 sur un 15 – 20 : 45 kg (« Tu es allé jusqu'à 30 reps : à 45 kg, tu retombes dans la fourchette (15 – 20 reps). ») au lieu
+- 40 kg × 30 · 28 · 26 sur un 15 – 20 : 47,5 kg (« Tu es allé jusqu'à 30 reps : à 47,5 kg, tu retombes dans la fourchette (15 – 20 reps). ») au lieu
   de 42,5. 22 · 21 · 20 : 42,5, comme avant ; un cran suffit.
 - **Seulement si un cran ne suffit pas** : un cran plus haut, la capacité prévue (`30 × (max / charge − 1)`) doit encore dépasser le plafond.
   Sinon la double progression garde la main : 100 × 12 sur un 5 – 12 passe à 102,5, pas à 107,5 (viser le bas de la fourchette serait trois
   crans pour qui vient d'atteindre le haut). Un test existant du dépôt du coach l'a imposé : le premier jet visait le bas dès le plafond atteint.
 - **La capacité est ce que la personne a fait** (sa série la plus longue) **plus la réserve du RPE moyen** quand il existe : 25 répétitions à RPE 7
-  sont une capacité de 28 (45 kg au lieu de 42,5). Sans RPE, un plancher : la proposition ne dépasse jamais ce qu'elle a montré.
-- **Jamais plus de 30 % de plus que la charge d'aujourd'hui** (`BENCHMARK_MAX_JUMP`) : 30 répétitions sur un 5 – 8 diraient 60 kg (+50 %), le
-  coach propose 50.
+  sont une capacité de 28 (45 kg au lieu de 42,5). Sans RPE, un plancher : la proposition ne compte que sur ce qu'elle a montré, à un demi-pas
+  près (arrondie au pas le plus proche).
+- **Jamais plus de 30 % de plus que la charge d'aujourd'hui** (`BENCHMARK_MAX_JUMP`) : 30 répétitions sur un 5 – 8 diraient 62,5 kg (+56 %), le
+  coach propose 50. Ce plafond-là reste un arrondi vers le bas (`floorLoad`) : il ne doit pas dépasser les 30 %.
 - **Ni pyramide, ni cible unique, ni lest ou assistance, ni effort maximal, ni reprise** : rien ne change (une cible unique n'a pas de fourchette
   où remettre ; R1 et R5 gardent la main). La classe et le repos de l'exercice ne sont pas dans la ligne du coach : polyarticulaire, deux minutes,
   la lecture la plus prudente.

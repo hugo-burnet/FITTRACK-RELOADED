@@ -172,8 +172,8 @@ Une séance de deux exercices au moins, dont un en barre.
       5 – 8 se touchent d'une main (cibles de 48 px) ; chacun dit « Choisis une charge que tu penses tenir environ N fois » (12, 18, 8). En
       séance, le rappel en tête redit le style et ce nombre ; le nom de la séance, dans l'historique, dit « Benchmark léger · … ». *(v2.14.0)*
 - [ ] **Le bilan d'un style — c'est ton exemple.** Léger, sur un exercice : 40 kg × 18 à l'échec → « Ton style : léger · 15 – 20 reps »,
-      **« 37,5 kg pour 3 séries de 15 – 20 reps »**, « tu tiendras environ 21 · 19 · 17 reps à fond ». Classique, 52,5 kg × 13 → 52,5 kg (50 kg
-      sur une machine au pas de 5). **Relire comme un geste** : trois séries à cette charge doivent laisser environ deux répétitions en réserve à
+      **« 37,5 kg pour 3 séries de 15 – 20 reps »**, « tu tiendras environ 21 · 19 · 17 reps à fond ». Classique, 52,5 kg × 13 → 52,5 kg (55 kg
+      sur une machine dont le pas n'est pas saisi : le multiple de 5 le plus proche). **Relire comme un geste** : trois séries à cette charge doivent laisser environ deux répétitions en réserve à
       la dernière ; si c'est trop léger, c'est la réserve (`BENCHMARK_RESERVE_REPS`, un seul chiffre) — dis-le moi avec l'exercice et les chiffres.
       Essaie aussi le **lourd** (5 – 8 reps) : sur un développé couché à trois séries, 100 kg × 5 → 90 kg, et on y tient 8 · 8 · 7. *(v2.14.0)*
 - [ ] **Appliquer écrit aussi la fourchette.** Après « Appliquer à la routine » sur un style : la routine porte la charge **et** « 15 – 20 » (ou le
@@ -188,13 +188,16 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Depuis un programme.** La fiche d'un programme (même pas encore commencé) propose « Calibrer les charges », une ligne par routine du bloc ;
       grisée pendant une séance en cours ; elle ouvre la même feuille, avec le choix du style. *(v2.14.0)*
 - [ ] **Très au-dessus de la fourchette.** Benchmark léger, un exercice où ta charge est trop légère : taper **25 à 30 répétitions**. Le bilan
-      propose quand même la charge qui te remet dans 15 – 20 (« 45 kg pour 3 séries de 15 – 20 reps »), **interrupteur allumé**, sans « Estimation
-      approximative » ; le coach la reprend à la séance suivante. Taper **plus de 30** : « 1RM : au moins 80 kg », « Au moins 45 kg pour 3 séries… »,
+      propose quand même la charge qui te remet dans 15 – 20 (40 kg × 28 : « 45 kg pour 3 séries de 15 – 20 reps »), **interrupteur allumé**, sans « Estimation
+      approximative » ; le coach la reprend à la séance suivante. Taper **plus de 30** : « 1RM : au moins 80 kg », « Au moins 47,5 kg pour 3 séries… »,
       avec la phrase qui dit que c'est un minimum — et pas de « tu tiendras environ ». Refaire l'exercice à cette charge pour l'affiner.
       *(après la v2.14.0, sur la branche)*
+- [ ] **Le pas de l'exercice.** Saisir **1,125** dans la fiche d'une machine (« Incrément de charge »), faire un benchmark dessus : la charge proposée
+      est à moins d'un demi-pas (0,56 kg) de ce que le calcul dit, et un essai déjà juste ne perd pas un cran — une leg extension faite à 35 × 20
+      propose 35, pas 33,875. Sans pas saisi, une machine arrondit au multiple de 5 le plus proche. *(après la v2.14.0, sur la branche)*
 - [ ] **Le coach te remet dans la fourchette, en séance normale.** Une routine en 15 – 20 (par exemple après avoir accepté un benchmark léger), toutes
-      les séries à **28 reps ou plus** à la même charge : à la séance suivante la carte propose **plus d'un cran** (40 → 45 kg) et dit « Tu es allé
-      jusqu'à 30 reps : à 45 kg, tu retombes dans la fourchette ». À 20 à 22 reps partout : un seul cran (40 → 42,5), comme avant. Un 5 – 12 fait à
+      les séries à **28 reps ou plus** à la même charge : à la séance suivante la carte propose **plus d'un cran** (40 → 47,5 kg) et dit « Tu es allé
+      jusqu'à 30 reps : à 47,5 kg, tu retombes dans la fourchette ». À 20 à 22 reps partout : un seul cran (40 → 42,5), comme avant. Un 5 – 12 fait à
       12 × 3 : un cran, pas trois. *(après la v2.14.0, sur la branche)*
 
 ## 4. Guide, paliers, tutoriel (3 min)

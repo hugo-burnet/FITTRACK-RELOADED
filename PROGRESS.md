@@ -15,9 +15,10 @@ La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait
 - **Non publié — branche `ccr-a1ec0e4b-s9kwdx`** (`git log d1fff71..`), **pas fusionnée dans `master`** : « ça se passe comment si je tape plus de 20 reps en léger ? »
   puis « il faut que le coach te rebalance dans une range 15-20 ». Au **bilan du benchmark**, un essai très au-dessus de la fourchette (27 à 30 reps en léger)
   n'est plus « approximatif » : la charge qui remet dans 15 – 20 est cochée et lue par le coach (« approximatif » se juge au saut de charge, 30 %, au-dessus de
-  la capacité exigée, et à l'écart de répétitions en dessous) ; **plus de 30 reps donnent un minimum** (« au moins 45 kg », sans « tu tiendras »). En **séance
-  normale**, la règle de fourchette propose la charge qui remet dans la fourchette quand un cran ne suffit pas (40 kg × 30 · 28 · 26 sur un 15 – 20 : 45 kg, pas
-  42,5), RPE compté, 30 % au plus. Détail et choix à relire : `docs/progress/decisions-et-pieges.md` (entrée du 2026-10-16), spec benchmark §3 ter, amendement R3
+  la capacité exigée, et à l'écart de répétitions en dessous) ; **plus de 30 reps donnent un minimum** (« au moins 47,5 kg », sans « tu tiendras »). En **séance
+  normale**, la règle de fourchette propose la charge qui remet dans la fourchette quand un cran ne suffit pas (40 kg × 30 · 28 · 26 sur un 15 – 20 : 47,5 kg, pas
+  42,5), RPE compté, 30 % au plus. **Les propositions s'arrondissent simplement au pas renseigné sur l'exercice, au plus proche** (« ça sera bien plus simple ») :
+  une leg extension faite à 35 × 20 avec un pas de 1,125 propose 35, et non plus 33,875 ; sans pas saisi, une machine arrondit au multiple de 5 le plus proche. Détail et choix à relire : `docs/progress/decisions-et-pieges.md` (entrée du 2026-10-16), spec benchmark §3 ter, amendement R3
   du coach v2, recette § 3 ter. **Pour publier** : fusionner `--no-ff` puis la voie de release ci-dessous — sur demande explicite.
 - **Publié : v2.14.0**, à la demande de l'utilisateur (« fusionne et publie ») —
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.14.0), APK `FitTrack-v2.14.0.apk` signé avec la clé de release,
@@ -46,7 +47,7 @@ La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 727 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 735 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
   (**36 parcours**, 8 fichiers, à 390 px) — verts sur la branche `ccr-a1ec0e4b-s9kwdx` ; à la v2.14.0 : 3 695 tests, 36 parcours.
 - **Branches distantes.** `ccr-57f17af8-maxzqv`, fusionnée, est à supprimer à la main (`ccr-449df1c1-etmya3` l'a été) : le refus de
   supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
@@ -90,6 +91,8 @@ règle**, pas des défauts, et demandent l'historique réel pour être jugés (`
 
 ### Décisions qui attendent l'utilisateur
 
+- **Un pas de charge par défaut global** : « de façon générale le pas est de 1,125 » — aujourd'hui le pas se saisit exercice par exercice (fiche › Incrément de
+  charge, vide = défaut du matériel : barre 2,5, machine 5…). Un réglage unique dans Réglages › Coach, pour toutes les fiches qui n'en ont pas, est possible.
 - **Le wiki et le corpus** (`fittrack-kb-contract`, 9 Mo ; ~1,8 Mo de JSON embarqués ; le `prebuild`
   dépend de `kb:check-articles`) sont la plus grosse surface de maintenance hors du cœur de l'app : les
   faire vivre, ou les figer.
