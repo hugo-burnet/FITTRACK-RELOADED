@@ -5,15 +5,15 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-16 — **v2.14.0 en cours de publication** (PWA et APK) : le benchmark a un style (léger, classique, lourd), six
+**Dernière mise à jour :** 2026-10-16 — **v2.14.0 publiée** (PWA et APK) : le benchmark a un style (léger, classique, lourd), six
 défauts relevés par une revue de code sont corrigés, la fiche d'un programme propose « Calibrer les charges ».
 La v2.13.1 avait retiré le « ? » du bilan du benchmark ; la v2.13.0 lui avait fait lire la fourchette et les séries de chaque exercice, et au coach le benchmark.
 
 ## Où on en est
 
-- **v2.14.0** — publication en cours (voir le journal pour l'issue), à la demande de l'utilisateur (« fusionne et publie ») :
-  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.14.0), APK `FitTrack-v2.14.0.apk`
-  ([journal](docs/journal/2026-10-16-versions-v2-14.md)). Sa demande : « tu as fait 40×18, je te propose … trois fois ; en classique 8-12 … ; la force, je
+- **Publié : v2.14.0**, à la demande de l'utilisateur (« fusionne et publie ») —
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.14.0), APK `FitTrack-v2.14.0.apk` signé avec la clé de release,
+  la même que celle de la v2.13.1 ([journal](docs/journal/2026-10-16-versions-v2-14.md)). Sa demande : « tu as fait 40×18, je te propose … trois fois ; en classique 8-12 … ; la force, je
   connais pas ; on peut avoir l'option ; c'est pertinent pour commencer les programmes ; à toi de définir les calculs », puis « lourd 5-8, normal 8-12,
   léger entre 15 et 20 ». **Le style** (`Workout.benchmarkGoal`) : classique 8 – 12, léger 15 – 20, lourd 5 – 8, ou « Comme ma routine » (d'office, le
   benchmark d'avant) ; sa fourchette remplace celle de la routine pour dimensionner la charge, et accepter le bilan écrit la charge **et** la
