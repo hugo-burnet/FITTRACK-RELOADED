@@ -10,9 +10,17 @@ beaucoup (bilan du benchmark et séance normale), plus de 30 reps donnent un min
 renseigné sur l'exercice, au plus proche.
 La v2.14.0 avait donné un style au benchmark (léger, classique, lourd), fait corriger six défauts relevés par une revue de code et ajouté « Calibrer les
 charges » à la fiche d'un programme.
+**Non publié, sur la branche `ccr-a1ec0e4b-s9kwdx`** : un pas de charge pour toute l'appli (Réglages › Coach), et le coach qui remet dans la fourchette par en dessous.
 
 ## Où on en est
 
+- **Non publié — branche `ccr-a1ec0e4b-s9kwdx`** (`git log 125fb1c..`), **pas fusionnée dans `master`** : « Oui et oui » aux deux questions qui restaient ouvertes.
+  **Un pas de charge pour toute l'appli** : Réglages › Coach › « Pas de charge par défaut » (vide d'office = la table du matériel ; « 1,125 » vaut pour toute fiche sans
+  incrément, la fiche passant avant) — lu par le coach, le benchmark, la revue des cibles et les programmes ; la fiche d'un exercice le montre dans son champ vide.
+  **Le coach par en dessous** : quand le bas de la fourchette est manqué deux séances de suite et qu'un cran de moins ne ramène pas la pire série dedans, il enlève
+  autant de crans qu'il en faut (40 kg, 8 · 7 · 6 sur un 15 – 20 : 32,5 kg, pas 37,5), 30 % de moins au plus ; à une répétition du bas, un cran comme avant. Détail et choix
+  à relire : `docs/progress/decisions-et-pieges.md` (entrée « Oui et oui »), amendement R3 du coach v2, recette § 3 ter. **Pour publier** : fusionner `--no-ff` puis la voie de
+  release ci-dessous — sur demande explicite (ce serait la v2.16.0).
 - **Publié : v2.15.0**, à la demande de l'utilisateur (« fusionne et publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.15.0), APK `FitTrack-v2.15.0.apk`
   ([journal](docs/journal/2026-10-16-versions-v2-15.md)). Sa demande : « ça se passe comment si je tape plus de 20 reps en léger ? » puis « il faut que le coach
@@ -42,8 +50,8 @@ charges » à la fiche d'un programme.
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 735 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**36 parcours**, 8 fichiers, à 390 px) — verts à la v2.15.0 ; la v2.14.0 : 3 695 tests, 36 parcours.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 787 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**39 parcours**, 9 fichiers, à 390 px) — verts sur la branche `ccr-a1ec0e4b-s9kwdx` ; à la v2.15.0 : 3 735 tests, 36 parcours.
 - **Branches distantes.** `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 et v2.15.0), fusionnées, sont à supprimer à la main
   (`ccr-449df1c1-etmya3` l'a été) : le refus de supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
@@ -58,11 +66,13 @@ charges » à la fiche d'un programme.
   entre 15 et 20 ») ; les essais conseillés (18, 12, 8) sont des choix de produit. **« 40 × 14 » de la demande est ce que donnerait un léger à 12 – 15**
   (40 kg, on tient 18 · 16 · 14) ; il garde 15 – 20, donc le bilan propose 37,5 kg. « Classique » garde son nom (« Normal » se lirait comme le défaut).
   Si les charges paraissent trop basses, c'est la réserve (ci-dessous), un seul chiffre.
-- **Remise dans la fourchette** (`BENCHMARK_MAX_JUMP`, 30 %) : le plafond de saut, le RPE qui ajoute de la réserve à la capacité du coach, et le cas inverse (sous le
-  bas de la fourchette : toujours « bas manqué deux fois », un cran) qui n'a pas bougé. Le coach ne sait pas la classe ni le repos de l'exercice : polyarticulaire, deux minutes.
+- **Remise dans la fourchette** (`BENCHMARK_MAX_JUMP`, 30 %) : le plafond de saut, le RPE qui ajoute de la réserve à la capacité du coach. Le coach ne sait pas la classe ni le repos
+  de l'exercice : polyarticulaire, deux minutes. **Par en dessous** (branche) : le moins de crans qui remet la pire série au bas, à une demi-répétition près, 30 % de moins au
+  plus ; sans RPE la capacité est lue à l'échec (réserve zéro), la lecture qui allège le plus. Deux cibles différentes, voulues : au-dessus le bas de la fourchette avec réserve,
+  en dessous le bas à l'échec.
 - **L'arrondi au plus proche** (`roundLoad`) : une proposition peut dépasser le calcul d'un demi-pas — 0,56 kg avec un pas de 1,125, **2,5 kg sur une machine dont le pas
-  n'est pas saisi** (le 5 kg du matériel). Si des charges paraissent trop hautes sur une machine, c'est le pas à saisir sur sa fiche (Incrément de charge) — ou un pas
-  global, décision qui attend l'utilisateur (ci-dessous).
+  n'est pas saisi** (le 5 kg du matériel). Si des charges paraissent trop hautes sur une machine, c'est le pas à saisir sur sa fiche (Incrément de charge) — ou le pas
+  de toute l'appli (Réglages › Coach, branche). **Ce pas vaut aussi pour une barre ou des haltères** sans incrément saisi, où 1,125 n'existe pas : y saisir 2,5 sur la fiche.
 - **Benchmark** : la réserve de 2 répétitions, la fatigue par série (10 % / 8 %), ses bornes de repos, le plafond de six séries, les
   séries par défaut (3 / 2) et la limite de 30 répétitions sont des constantes (`lib/benchmarkModel.ts`) ; si les charges proposées
   paraissent trop basses ou trop hautes, c'est là. Le test sur le terrain : trois séries à la charge conseillée doivent laisser environ
@@ -89,8 +99,6 @@ règle**, pas des défauts, et demandent l'historique réel pour être jugés (`
 
 ### Décisions qui attendent l'utilisateur
 
-- **Un pas de charge par défaut global** : « de façon générale le pas est de 1,125 » — aujourd'hui le pas se saisit exercice par exercice (fiche › Incrément de
-  charge, vide = défaut du matériel : barre 2,5, machine 5…). Un réglage unique dans Réglages › Coach, pour toutes les fiches qui n'en ont pas, est possible.
 - **Le wiki et le corpus** (`fittrack-kb-contract`, 9 Mo ; ~1,8 Mo de JSON embarqués ; le `prebuild`
   dépend de `kb:check-articles`) sont la plus grosse surface de maintenance hors du cœur de l'app : les
   faire vivre, ou les figer.

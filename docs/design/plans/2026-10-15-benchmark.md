@@ -162,6 +162,35 @@ aucune version de schéma.
 - [x] Une vingtaine d'attendus recalculés à part en Python (le 8 – 12 sur 1 à 6 séries, les repos, la cible unique, les seuils de 30 %, le minimum).
 - [x] Seuls les propositions changent ; les répétitions que « tu tiendras » restent arrondies vers le bas.
 
+### Tâche 12 — le pas de toute l'appli (Réglages › Coach)
+
+**Files :** Modify `src/lib/loadIncrement.ts` (`resolveLoadStep(exercice, pasDeLAppli)`, `LOAD_STEP_MIN_KG`, `LOAD_STEP_MAX_KG`), `src/data/repositories/settings.ts`
+(`getDefaultLoadStepKg`, `setDefaultLoadStepKg`), les cinq appelants du pas (`lib/coach/evaluate`, `lib/benchmark`, `lib/routineTargets/compute`,
+`lib/programs/{prescription,deloadTargets}`) et leurs dépôts, `src/features/settings/{CoachSettings,DefaultLoadStepRow}.tsx`,
+`src/features/exercises/ExerciseDetailScreen.tsx`, `src/i18n/fr.ts`. Create `DefaultLoadStepRow.tsx`.
+
+- [x] `resolveLoadStep` prend le pas des Réglages en second argument **obligatoire** (il peut valoir `undefined`) : la fiche d'abord, les Réglages ensuite, la
+      table du matériel en dernier. Le pas des Réglages est ajouté tel quel, hors grille, comme un pas saisi — c'est la parole de la personne sur sa salle.
+- [x] Réglage `defaultLoadStepKg` dans la table des réglages (sauvegardé, sans version de schéma), relu défensivement ; refusé hors de ]0 ; 50] kg.
+- [x] Les cinq appelants le reçoivent (`CoachEvaluateOptions.defaultLoadStepKg`, `BenchmarkLineInput`, `RoutineUpdateInput`, la prescription et sa décharge) ; les
+      dépôts le lisent une fois. Un test de câblage par dépôt — celui des programmes a attrapé une lecture de `settings` dans une transaction qui ne la déclarait pas.
+- [x] Une ligne et une feuille dans Réglages › Coach (« Pas de charge par défaut », « Selon le matériel » pour le retirer) ; la fiche d'un exercice montre le pas
+      des Réglages dans son champ vide et dans sa phrase.
+- [x] Le banc de rejeu lit le pas dans la sauvegarde.
+
+### Tâche 13 — le coach remet dans la fourchette par en dessous
+
+**Files :** Modify `src/lib/coach/rules/range.ts` (`capacityReading` partagé avec le plafond, `stepsBackIntoRange`, `rangeMissedSignal`),
+`src/features/workout/coachCopy.ts`, `src/i18n/fr.ts`, leurs tests (`evaluate.test.ts`, `coachCopy.test.ts`).
+
+- [x] Quand le bas de la fourchette est manqué deux séances de suite et qu'un cran de moins laisse la pire série sous le bas, le coach enlève **autant de crans qu'il
+      en faut** (la pire série, d'après ses répétitions et la capacité, retombe au bas à une demi-répétition près), 30 % de moins au plus. Le moins de crans
+      possible, et non la charge d'un benchmark (premier jet écarté : 100 kg à 8 · 8 · 7 passaient à 90).
+- [x] Même lecture que le plafond : fourchette ouverte, une seule charge, RPE compté ; sinon un cran de moins, comme avant.
+- [x] Preuves `floor_steps` et `target_reps_max` (seulement au-delà d'un cran) ; la carte dit « 3 crans de moins plutôt qu'un seul : à 32,5 kg, tu retombes dans la
+      fourchette (15 – 20 reps). ».
+- [x] Un test existant se lisait « 7 puis 6 → un cran » : il devient « 7 puis 7 », et « 7 puis 6 → deux crans » a son propre test.
+
 ## Ce qui reste, et pourquoi
 
 - La fourchette n'est pas affichée sur la ligne de série pendant le benchmark (spec §« Ce qui n'est pas fait »).

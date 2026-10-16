@@ -7,6 +7,51 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-10-16 (suite de la v2.15.0) — « Oui et oui » : un pas pour toute l'appli, et le coach par en dessous
+
+**Demande.** Le compte rendu de la v2.15.0 laissait deux questions ouvertes : « veux-tu un pas global à 1,125 dans les Réglages ? » et « veux-tu que le coach te
+remette aussi dans la fourchette quand tu es en dessous ? » — « Oui et oui. » (Non publié : sur la branche, `git log 125fb1c..`.)
+
+**Le pas de toute l'appli.** Spec benchmark §3 (arrondi), tâche 12 du plan, recette § 3 ter.
+
+- **Un réglage, vide d'office.** `defaultLoadStepKg`, Réglages › Coach › « Pas de charge par défaut ». Vide = la table du matériel, comme avant : poser 1,125 d'office à
+  la mise à jour aurait changé en silence la montée de toutes les barres. La personne le pose une fois (« 1,125 »), et « Selon le matériel » le retire.
+- **Il vaut pour toute fiche sans incrément, barre comprise** — « de façon générale ». **À relire** : sur une barre ou des haltères, 1,125 n'existe pas (les petits
+  disques donnent 2,5 kg au total) ; pour cet exercice-là, on saisit son pas sur la fiche, qui passe avant les Réglages. Limiter le réglage aux machines et aux poulies
+  était possible, mais la phrase de la personne n'en parlait pas.
+- **Ajouté tel quel, hors grille**, comme un pas saisi sur la fiche : c'est la parole de la personne sur sa salle, pas une estimation du matériel. Le benchmark et les
+  cibles comptent donc depuis la charge essayée (37,5 → 38,625), et le coach depuis la charge du jour.
+- **`resolveLoadStep(exercice, pasDeLAppli)` : second argument obligatoire**, qui peut valoir `undefined`. Un argument facultatif aurait laissé un appelant futur lire
+  la table du matériel sans que rien le dise ; l'obligatoire a listé les cinq appelants à la compilation (coach, benchmark, revue des cibles, prescription d'un
+  programme, sa décharge). Les dépôts lisent le réglage une fois et le passent ; les fonctions pures n'importent rien.
+- **La fiche d'un exercice** montre le pas des Réglages dans son champ vide (« Vide = le pas des Réglages (1,125 kg) ») quand il y en a un.
+
+**Le coach par en dessous.** Spec coach v2, amendement du 2026-10-16 (suite) de R3, tâche 13 du plan, recette § 3 ter.
+
+- **Le moins de crans possible, pas la charge d'un benchmark.** Premier jet : le symétrique exact du plafond — quand un cran ne suffit pas, la charge qu'un benchmark
+  aurait proposée. Rejeté sur les chiffres avant d'être écrit : cette charge garde deux répétitions de réserve à la dernière série, donc 100 kg à 8 · 8 · 7 sur un 8 – 12 passaient
+  à 90 kg pour une répétition de manque (et 13 · 12 · 12 sur un 15 – 20 à 32,5 au lieu de 37,5). Le plafond, lui, veut la charge du bas de la fourchette : la personne y est
+  loin au-dessus. Par en dessous, c'est une **correction** : on enlève des crans, un par un, jusqu'à ce que la pire série retombe au bas.
+- **La porte et la cible sont une seule et même question** : « avec ce nombre de crans de moins, la pire série atteint-elle le bas ? ». Un cran garde la main quand oui
+  (14 · 13 · 13, 8 · 8 · 7) ; sinon on continue. Pas de seuil de plus, donc pas de falaise entre « un cran » et « la charge du benchmark ».
+- **Ce qu'un cran rend** : `(30 + capacité) × (charge / charge allégée − 1)` répétitions, où la capacité est la meilleure série plus la réserve du RPE moyen. C'est la
+  lecture d'Epley du benchmark, et du plafond. **À une demi-répétition près** : des répétitions, c'est un compte entier.
+- **30 % de moins au plus** (`BENCHMARK_MAX_JUMP`, comme dans l'autre sens). Un cran déjà plus loin que ça — 5 kg, un pas de 2,5 — reste ce qu'il était.
+- **Un test existant a changé de sens** : « 7 puis 6 à 80 kg sur un 8 – 12 → 77,5 (un cran) ». Un cran ne rend que 1,2 répétition à la pire série (6 → 7,2) ; le bas est 8 :
+  c'est maintenant 75. Le test garde son titre (« un cran ») avec 7 puis 7, et « 7 puis 6 → deux crans » a le sien.
+- **Pas touché** : une pyramide, une cible unique (sans fourchette où remettre), une assistance ou un lest — un cran de moins, comme avant. Les deux séances doivent toujours
+  manquer le bas, à la même charge ; une seule mauvaise journée ne déclenche rien.
+- **Deux cibles différentes, voulues.** Au-dessus, la charge du bas de la fourchette avec réserve (la personne a de la marge, et on veut lui laisser des répétitions à
+  gagner) ; en dessous, le moins de crans qui remet la pire série au bas. **À juger à l'usage** : sans RPE, la capacité est lue à l'échec (réserve zéro) — la lecture qui allège le plus.
+
+**Pièges rencontrés.**
+
+- **Un `db.settings.get` dans une transaction qui ne déclare pas `settings`** : `NotFoundError: an object store did not exist`. Lire le réglage du pas dans
+  `resolveProgramWorkoutPlan`, que deux transactions de `programWorkout` enveloppent, a cassé le démarrage d'une séance de programme — seul le test de câblage l'a vu.
+  Toute nouvelle lecture de réglage dans un dépôt appelé depuis une transaction ajoute `db.settings` à sa liste de tables.
+- **`useLiveQuery` réserve `undefined` à « pas encore répondu »** : le pas absent se lit `null` (`(await getDefaultLoadStepKg()) ?? null`), sinon la ligne ne sait pas
+  distinguer « charge » de « aucun pas posé ».
+
 ### 2026-10-16 (suite de la v2.14.0) — « Il faut que le coach te rebalance dans une range 15-20 »
 
 **Demande.** « Ça se passe comment si je choisis une séance légère et que je tape plus de 20 rep ? » (réponse : rien ne bloque la saisie ; au bilan, 21 à

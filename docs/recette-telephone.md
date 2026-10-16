@@ -10,7 +10,7 @@
 > dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
 > série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les trois
 > thèmes à 100, 130 et 200 % (TTY1 : 130 %), l'app qui démarre sans réseau, la sauvegarde, le
-> remplacement d'un exercice, les mensurations (hors sélecteur de date natif) et le benchmark de bout en bout.
+> remplacement d'un exercice, les mensurations (hors sélecteur de date natif), le benchmark de bout en bout et le pas de charge de l'appli (posé, relu après un rechargement, lu sur la fiche d'un exercice).
 > Reste ici **ce qu'un navigateur ne dit pas** : le toucher, le son, les notifications, le bouton
 > retour d'Android, la vraie WebView, une police de 16 px à bout de bras.
 >
@@ -199,6 +199,13 @@ Une séance de deux exercices au moins, dont un en barre.
       les séries à **28 reps ou plus** à la même charge : à la séance suivante la carte propose **plus d'un cran** (40 → 47,5 kg) et dit « Tu es allé
       jusqu'à 30 reps : à 47,5 kg, tu retombes dans la fourchette ». À 20 à 22 reps partout : un seul cran (40 → 42,5), comme avant. Un 5 – 12 fait à
       12 × 3 : un cran, pas trois. *(v2.15.0)*
+- [ ] **Le pas de toute l'appli.** Réglages › Coach › **Pas de charge par défaut** : taper **1,125**, enregistrer ; la ligne dit « 1,125 kg quand la fiche d'un
+      exercice n'a pas son propre pas ». Ouvrir la fiche d'un exercice sans incrément : son champ vide affiche **1,125** en gris et la phrase dit « Vide = le pas des
+      Réglages (1,125 kg) ». Un benchmark sur cet exercice propose une charge à 1,125 kg près de l'essai (37,5 → 38,625), et la carte du coach monte de 1,125. Une fiche qui a
+      son propre pas (2,5 sur une barre) le garde. « Selon le matériel » dans la feuille retire le réglage. *(après la v2.15.0, sur la branche)*
+- [ ] **Le coach te remet dans la fourchette par en dessous.** Une routine en 15 – 20, deux séances de suite à la même charge très sous le bas (par exemple 40 kg, 8 · 7 · 6) :
+      la carte propose **plusieurs crans de moins** (40 → 32,5 kg) et dit « 3 crans de moins plutôt qu'un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps) ».
+      Quand on est à une répétition du bas (14 · 13 · 13), un seul cran, comme avant. Jamais plus de 30 % de moins. *(après la v2.15.0, sur la branche)*
 
 ## 4. Guide, paliers, tutoriel (3 min)
 

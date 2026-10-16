@@ -183,6 +183,29 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
    `weightRole: 'load'` ; R1 (effort maximal) et R5 (reprise) gardent la main. Preuves ajoutées : `ceiling_rebalanced`, `top_reps`,
    `target_reps`. À la demande de l'utilisateur : « il faut que le coach te rebalance dans une range 15-20 ». *Non rejoué sur l'historique réel.*
 
+   **Amendement du 2026-10-16 (suite) — le cas inverse : très sous le bas de la fourchette.** « Veux-tu que le coach te remette aussi dans la
+   fourchette quand tu es en dessous ? » — « Oui. » La règle « bas manqué deux fois » (R3, `range_missed`) enlevait **un** cran : 8, 7, 6 à 40 kg
+   sur un 15 – 20 ne se corrige pas d'un cran de 2,5 kg, il en fallait quatre séances de deux. Quand un cran de moins laisse la pire série sous
+   le bas de la fourchette, le coach en **enlève autant qu'il en faut** (`stepsBackIntoRange`), un par un, jusqu'à ce que la pire série y retombe :
+
+   - ce qu'elle a tenu, plus ce que chaque cran lui rend — `(30 + capacité) × (charge / charge allégée − 1)`, la même lecture d'Epley que le
+     benchmark, la capacité étant la meilleure série plus la réserve du RPE moyen —, **à une demi-répétition près** (des répétitions, c'est un
+     compte entier : 7,97 prévues, c'est 8) ;
+   - **le moins de crans possible**, pas la charge d'un benchmark. Celle-là garde deux répétitions de réserve à la dernière série, ce qu'une
+     correction n'a pas à exiger : 100 kg à 8 · 8 · 7 sur un 8 – 12 passeraient à 90 kg pour une répétition de manque. Premier jet écarté pour
+     cette raison (il rendait le cran de la règle d'avant trop souvent inutile) ;
+   - **au plus 30 % de moins** que la charge du jour (`BENCHMARK_MAX_JUMP`, comme dans l'autre sens), et un cran déjà plus loin que ça (5 kg,
+     un pas de 2,5) reste ce qu'il était ;
+   - même lecture que le plafond (`capacityReading`) : une fourchette ouverte, une seule charge sur toutes les séries, une charge qu'on soulève.
+     Une pyramide, une cible unique, une assistance ou un lest gardent un cran de moins, comme avant ;
+   - preuves ajoutées, seulement quand il y a plus d'un cran : `floor_steps` (le compte) et `target_reps_max` ; la carte dit « 3 crans de moins
+     plutôt qu'un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps). ».
+
+   Valeurs de référence calculées à part (script Python hors du dépôt) : 40 kg, 8 · 7 · 6 sur un 15 – 20 → 32,5 (3 crans) ; 14 · 13 · 13 → 37,5 (un cran) ;
+   7 puis 6 à 80 kg sur un 8 – 12 → 75 (deux crans, là où un seul laissait la pire série à 7,2) ; 2 · 2 · 1 → 30 (le plancher de 30 %).
+   *Conséquence sur un test existant : « 7 puis 6 à 80 kg → 77,5 » est devenu « 7 puis 7 → 77,5 », 7 puis 6 en demandant deux.*
+   *Non rejoué sur l'historique réel.*
+
 ### R4 — Ne comparer que ce qui est comparable
 
 **Constat.** La moitié des exercices est pratiquée sous plusieurs fourchettes (variantes A/B,
