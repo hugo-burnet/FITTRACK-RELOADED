@@ -51,7 +51,7 @@ describe('BenchmarkLaunchSheet', () => {
       'Comme ma routine',
       'Classique · 8 – 12 reps',
       'Léger · 15 – 20 reps',
-      'Force · 3 – 5 reps',
+      'Lourd · 5 – 8 reps',
     ]);
   });
 
@@ -106,8 +106,8 @@ describe('BenchmarkLaunchSheet', () => {
     const user = userEvent.setup();
     renderSheet(routine);
 
-    await user.click(await screen.findByRole('button', { name: 'Force · 3 – 5 reps' }));
-    expect(screen.getByText(/environ 6 fois/)).toBeInTheDocument();
+    await user.click(await screen.findByRole('button', { name: 'Lourd · 5 – 8 reps' }));
+    expect(screen.getByText(/environ 8 fois/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Classique · 8 – 12 reps' }));
     expect(screen.getByText(/environ 12 fois/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));

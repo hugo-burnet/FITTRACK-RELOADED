@@ -123,7 +123,7 @@ const WORKOUT_STATUSES = [
   'discarded',
 ] as const satisfies readonly WorkoutStatus[];
 const WORKOUT_KINDS = ['benchmark'] as const satisfies readonly WorkoutKind[];
-const BENCHMARK_GOALS = ['light', 'classic', 'strength'] as const satisfies readonly BenchmarkGoal[];
+const BENCHMARK_GOALS = ['light', 'classic', 'heavy'] as const satisfies readonly BenchmarkGoal[];
 const PROGRAM_STATUSES = [
   'draft',
   'active',

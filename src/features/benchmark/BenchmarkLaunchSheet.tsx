@@ -14,7 +14,7 @@ type Choice = BenchmarkGoal | 'routine';
  * La feuille qui précède un benchmark : ce qu'il demande, dit avant de lancer — et le style qu'on y vise.
  *
  * **Le style est un choix, pas une obligation.** « Comme ma routine » reste choisi d'office : c'est le
- * benchmark d'avant, qui lit la fourchette que la routine écrit sur chaque exercice. Léger, classique et force
+ * benchmark d'avant, qui lit la fourchette que la routine écrit sur chaque exercice. Léger, classique et lourd
  * disent à la place la fourchette qu'on veut travailler — au départ d'un programme, la routine n'en a souvent
  * pas encore qui vaille — et le nombre de répétitions à viser dans l'essai.
  *

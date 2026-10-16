@@ -83,27 +83,29 @@ export interface RepZone {
  *
  * Un style n'est qu'une fourchette nommée : toute la suite du modèle (la capacité exigée, la fatigue, la
  * réserve) est la même qu'on lise la fourchette dans la routine ou qu'on la prenne ici. Les trois fourchettes
- * sont des choix de produit, comme le reste de ce module : « léger » est le 15 – 20 de qui travaille avec
- * plus de répétitions, « classique » le 8 – 12 usuel, « force » les séries courtes et lourdes.
+ * sont celles que la personne s'est données — lourd 5 – 8, classique 8 – 12, léger 15 – 20 —, pas un choix du
+ * module. D'où « lourd » et pas « force » : un 5 – 8 chargé n'est pas de la force pure (1 – 5). Elles ne se
+ * raccordent pas (8 est dans deux d'entre elles, 13 et 14 dans aucune) et c'est voulu : une fourchette n'est
+ * pas un découpage des répétitions, c'est ce qu'on veut travailler ce jour-là.
  */
-export const BENCHMARK_GOALS: readonly BenchmarkGoal[] = ['classic', 'light', 'strength'];
+export const BENCHMARK_GOALS: readonly BenchmarkGoal[] = ['classic', 'light', 'heavy'];
 
 const GOAL_ZONES: Readonly<Record<BenchmarkGoal, RepZone>> = {
   light: { low: 15, high: 20 },
   classic: { low: 8, high: 12 },
-  strength: { low: 3, high: 5 },
+  heavy: { low: 5, high: 8 },
 };
 
 /**
  * Les répétitions qu'on conseille de viser dans l'essai, pour chaque style : assez près de ce que la première
- * série doit tenir (17 à 21 en léger, 10 à 12 en classique, 5 à 6 en force, selon le nombre de séries) pour que
+ * série doit tenir (17 à 21 en léger, 10 à 12 en classique, 7 à 9 en lourd, selon le nombre de séries) pour que
  * l'estimation ne soit pas « approximative ». Affichées avant l'essai — la feuille de lancement et le rappel en
  * tête de séance — : la personne choisit sa charge, et c'est ce nombre qui la guide.
  */
 export const BENCHMARK_GOAL_TEST_REPS: Readonly<Record<BenchmarkGoal, number>> = {
   light: 18,
   classic: 12,
-  strength: 6,
+  heavy: 8,
 };
 
 /** La fourchette d'un style. Une copie : la modifier ne change pas le style. */

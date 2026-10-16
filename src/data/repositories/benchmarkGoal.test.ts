@@ -13,7 +13,7 @@ import { finishWorkout } from './workoutLifecycle';
 import { completeSet } from './workoutSets';
 
 /**
- * Le style d'un benchmark — léger, classique, force — se choisit au lancement : sa fourchette remplace celle
+ * Le style d'un benchmark — léger, classique, lourd — se choisit au lancement : sa fourchette remplace celle
  * de la routine pour dimensionner la charge, et la routine la reçoit avec elle quand on accepte le bilan.
  */
 
@@ -32,7 +32,7 @@ async function chestPress(sets = POWER_SETS) {
 
 async function benchmarked(
   routineId: string,
-  goal: 'light' | 'classic' | 'strength' | undefined,
+  goal: 'light' | 'classic' | 'heavy' | undefined,
   result: [weight: number, reps: number],
 ) {
   const workout = await startBenchmarkFromRoutine(routineId, 'Benchmark', goal);
@@ -172,16 +172,18 @@ describe('accepter un benchmark de style : la charge et la fourchette', () => {
     expect(set).toMatchObject({ targetWeight: 37.5, targetReps: 15, targetRepsMax: 20 });
   });
 
-  it('écrit la fourchette de la force : 3 – 5', async () => {
+  it('écrit la fourchette du lourd : 5 – 8, et la charge qui la tient', async () => {
     const { routine, sets } = await chestPress();
-    const workout = await benchmarked(routine.id, 'strength', [100, 5]);
-    const proposal = (await loadBenchmarkReport(workout.id))!.lines[0]!.proposal!;
+    const workout = await benchmarked(routine.id, 'heavy', [100, 5]);
+    const line = (await loadBenchmarkReport(workout.id))!.lines[0]!;
+    expect(line).toMatchObject({ goal: 'heavy', suggestedKg: 90, holdReps: [8, 8, 7] });
 
-    await applyBenchmarkProposals([proposal], workout.id);
+    await applyBenchmarkProposals([line.proposal!], workout.id);
 
     expect(await db.routineSets.get(sets[0]![0]!.id)).toMatchObject({
-      targetReps: 3,
-      targetRepsMax: 5,
+      targetWeight: 90,
+      targetReps: 5,
+      targetRepsMax: 8,
     });
   });
 

@@ -94,7 +94,7 @@ function linkToRoutine(graph: WorkoutEntityGraph, source: WorkoutRoutineSource):
  * Lance un benchmark depuis une routine. Refuse quand une séance est déjà
  * ouverte (comme « Démarrer ») et quand la routine n'a aucun exercice.
  *
- * `goal` est le style choisi au lancement — léger, classique, force : la fourchette qu'on y vise. Sans lui, le
+ * `goal` est le style choisi au lancement — léger, classique, lourd : la fourchette qu'on y vise. Sans lui, le
  * bilan lit la fourchette que la routine écrit sur chaque exercice.
  */
 export async function startBenchmarkFromRoutine(

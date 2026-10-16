@@ -131,7 +131,7 @@ describe('validateBackupTables', () => {
 
   it('accepte le style d’un benchmark et refuse un style inconnu', () => {
     const tables = account();
-    for (const goal of ['light', 'classic', 'strength']) {
+    for (const goal of ['light', 'classic', 'heavy']) {
       tables.workouts[0]!.kind = 'benchmark';
       tables.workouts[0]!.benchmarkGoal = goal;
       expect(validateBackupTables(tables, NOW_SCHEMA).ok, goal).toBe(true);

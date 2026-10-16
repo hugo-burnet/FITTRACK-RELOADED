@@ -2700,12 +2700,12 @@ const fr = {
     goalChoice: {
       classic: 'Classique · 8 – 12 reps',
       light: 'Léger · 15 – 20 reps',
-      strength: 'Force · 3 – 5 reps',
+      heavy: 'Lourd · 5 – 8 reps',
     },
     goalName: {
       classic: 'classique',
       light: 'léger',
-      strength: 'force',
+      heavy: 'lourd',
     },
     goalHint:
       'Choisis une charge que tu penses tenir environ {reps} fois. Si tu acceptes le bilan, la routine prend cette fourchette et la charge.',

@@ -144,16 +144,16 @@ describe('les lectures du bilan', () => {
     expect(zoneReading(line({ goal: 'classic', zone: { low: 8, high: 12 } }))).toBe(
       'Ton style : classique · 8 – 12 reps',
     );
-    expect(zoneReading(line({ goal: 'strength', zone: { low: 3, high: 5 } }))).toBe(
-      'Ton style : force · 3 – 5 reps',
+    expect(zoneReading(line({ goal: 'heavy', zone: { low: 5, high: 8 } }))).toBe(
+      'Ton style : lourd · 5 – 8 reps',
     );
   });
 
   it('nomme les trois styles', () => {
-    expect(['classic', 'light', 'strength'].map((goal) => goalName(goal as 'classic'))).toEqual([
+    expect(['classic', 'light', 'heavy'].map((goal) => goalName(goal as 'classic'))).toEqual([
       'classique',
       'léger',
-      'force',
+      'lourd',
     ]);
   });
 
@@ -232,7 +232,7 @@ describe('les lectures du bilan', () => {
       'Benchmark léger · une série à l’échec par exercice, avec la charge que tu penses tenir environ 18 fois.',
     );
     expect(bannerReading('classic')).toMatch(/Benchmark classique .* environ 12 fois\.$/);
-    expect(bannerReading('strength')).toMatch(/Benchmark force .* environ 6 fois\.$/);
+    expect(bannerReading('heavy')).toMatch(/Benchmark lourd .* environ 8 fois\.$/);
   });
 
   it('accorde le compte des exercices mis à jour', () => {

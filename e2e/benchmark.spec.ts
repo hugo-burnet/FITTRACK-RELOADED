@@ -168,7 +168,7 @@ test.describe('benchmark', () => {
 
     // « Comme ma routine » reste choisi d'office ; chaque style est une cible tactile de 48 px.
     await expect(page.getByRole('button', { name: 'Comme ma routine' })).toHaveAttribute('aria-pressed', 'true');
-    for (const name of ['Comme ma routine', 'Classique · 8 – 12 reps', 'Léger · 15 – 20 reps', 'Force · 3 – 5 reps']) {
+    for (const name of ['Comme ma routine', 'Classique · 8 – 12 reps', 'Léger · 15 – 20 reps', 'Lourd · 5 – 8 reps']) {
       const box = await page.getByRole('button', { name }).boundingBox();
       expect(box, `${name} doit être à l’écran`).not.toBeNull();
       expect(box!.height, name).toBeGreaterThanOrEqual(47.5);

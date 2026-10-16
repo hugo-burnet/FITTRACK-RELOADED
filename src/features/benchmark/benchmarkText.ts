@@ -32,7 +32,7 @@ const rangeReading = (zone: RepZone): string | undefined => {
   return part === undefined ? undefined : partReading(part);
 };
 
-/** « classique », « léger », « force » : le nom d'un style, en minuscules, pour se glisser dans une phrase. */
+/** « classique », « léger », « lourd » : le nom d'un style, en minuscules, pour se glisser dans une phrase. */
 export const goalName = (goal: BenchmarkGoal): string => t(`benchmark.goalName.${goal}`);
 
 /**

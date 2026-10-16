@@ -189,10 +189,10 @@ describe('repZone', () => {
 });
 
 describe('goalZone — le style qu’on choisit au lancement', () => {
-  it('range chaque style dans sa fourchette : léger 15 – 20, classique 8 – 12, force 3 – 5', () => {
+  it('range chaque style dans sa fourchette : léger 15 – 20, classique 8 – 12, lourd 5 – 8', () => {
     expect(goalZone('light')).toEqual({ low: 15, high: 20 });
     expect(goalZone('classic')).toEqual({ low: 8, high: 12 });
-    expect(goalZone('strength')).toEqual({ low: 3, high: 5 });
+    expect(goalZone('heavy')).toEqual({ low: 5, high: 8 });
   });
 
   it('donne une copie : la modifier ne change pas le style', () => {
@@ -202,7 +202,7 @@ describe('goalZone — le style qu’on choisit au lancement', () => {
   });
 
   it('liste les trois styles, du plus courant au plus rare', () => {
-    expect(BENCHMARK_GOALS).toEqual(['classic', 'light', 'strength']);
+    expect(BENCHMARK_GOALS).toEqual(['classic', 'light', 'heavy']);
   });
 });
 
@@ -213,6 +213,13 @@ describe('repsHeldAt — ce que chaque série tient à fond à une charge donné
     expect(repsHeldAt(64, 37.5, 3, 0.1)).toEqual([21, 19, 17]);
     expect(repsHeldAt(75.25, 52.5, 3, 0.1)).toEqual([13, 11, 10]);
     expect(repsHeldAt(116.67, 95, 3, 0.1)).toEqual([6, 6, 5]);
+    expect(repsHeldAt(116.67, 90, 3, 0.1)).toEqual([8, 8, 7]);
+  });
+
+  it('ne perd pas une répétition à une erreur d’arrondi : 100 × 5 tient exactement 8 puis 8 à 90 kg', () => {
+    // 100 × (1 + 5/30) = 116,666… ; à 90 kg la première série en tient 8,888…, la deuxième 8,888… × 0,9 = 8
+    // pile — et la virgule flottante peut en faire 7,999…, qui retomberait à 7.
+    expect(repsHeldAt(100 * (1 + 5 / 30), 90, 3, 0.1)).toEqual([8, 8, 7]);
   });
 
   it('arrondit vers le bas : le bilan ne promet jamais une répétition de plus que le modèle', () => {

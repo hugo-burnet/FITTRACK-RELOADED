@@ -609,14 +609,18 @@ describe('benchmarkLine — le style choisi au lancement', () => {
     expect(line.holdReps).toEqual([15, 13, 12]);
   });
 
-  it('force : 100 × 5 propose 95 kg pour du 3 – 5 sur trois séries', () => {
+  it('lourd : 100 × 5 propose 90 kg pour du 5 – 8 sur trois séries', () => {
     const line = benchmarkLine(
-      bench({ goal: 'strength', sets: [{ weight: 100, reps: 5 }], routine: workingRoutine([90, 90, 90]) }),
+      bench({ goal: 'heavy', sets: [{ weight: 100, reps: 5 }], routine: workingRoutine([85, 85, 85]) }),
     );
 
-    expect(line.zone).toEqual({ low: 3, high: 5 });
-    expect(line.suggestedKg).toBe(95);
-    expect(line.holdReps).toEqual([6, 6, 5]);
+    // 100 × 5 est un max de 116,7 kg. Trois séries d'un 5 – 8 : la première doit pouvoir en faire
+    // 7 / 0,9² = 8,64, soit 116,7 / (1 + 8,64 / 30) = 90,6 → 90 kg. On y tient 8 · 8 · 7 : sept à la dernière,
+    // deux de réserve sur le 5.
+    expect(line.zone).toEqual({ low: 5, high: 8 });
+    expect(line.suggestedKg).toBe(90);
+    expect(line.holdReps).toEqual([8, 8, 7]);
+    expect(line.rough).toBeUndefined();
   });
 
   it('dimensionne sur la fourchette du style, pas sur celle de la routine', () => {
@@ -633,9 +637,9 @@ describe('benchmarkLine — le style choisi au lancement', () => {
     expect(fromRoutine.goal).toBeUndefined();
   });
 
-  it('juge « approximatif » sur la fourchette du style : 18 répétitions sont loin d’un 3 – 5', () => {
+  it('juge « approximatif » sur la fourchette du style : 18 répétitions sont loin d’un 5 – 8', () => {
     const line = benchmarkLine(
-      bench({ goal: 'strength', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([90, 90, 90]) }),
+      bench({ goal: 'heavy', sets: [{ weight: 40, reps: 18 }], routine: workingRoutine([90, 90, 90]) }),
     );
 
     expect(line.rough).toBe(true);
@@ -720,16 +724,17 @@ describe('benchmarkLine — le style choisi au lancement', () => {
     });
 
     it('lit une cible unique comme une fourchette d’un seul point : « 5 » est un 5 – 5', () => {
-      // Une routine à `targetReps: 5` sans haut est déjà un 5 – 5, pas un 3 – 5 : elle n'est pas « force ».
+      // Une routine à `targetReps: 5` sans haut porte le bas du 5 – 8 mais pas son haut : c'est un 5 – 5, pas
+      // un « lourd ». Comparer le seul bas la prendrait pour déjà écrite, et la fourchette ne le serait jamais.
       const line = benchmarkLine(
         bench({
-          goal: 'strength',
+          goal: 'heavy',
           sets: [{ weight: 100, reps: 5 }],
-          routine: workingRoutine([90, 90, 90], 5, undefined),
+          routine: workingRoutine([85, 85, 85], 5, undefined),
         }),
       );
 
-      expect(line.proposal?.zone).toEqual({ low: 3, high: 5, setIds: ['s0', 's1', 's2'] });
+      expect(line.proposal?.zone).toEqual({ low: 5, high: 8, setIds: ['s0', 's1', 's2'] });
     });
   });
 
