@@ -308,16 +308,39 @@ describe('BenchmarkScreen', () => {
     expect(await screen.findByText('Ce benchmark n’existe plus.')).toBeInTheDocument();
   });
 
-  it('n’écrit qu’une fois sur un double appui', async () => {
+  it('ne relance pas l’écriture sur un double appui tant que la première n’est pas finie', async () => {
+    // La première écriture est tenue en l'air : le test ne dépend plus de la vitesse de la machine. Sans cela, le second
+    // appui pouvait arriver après la fin de la première (un exécuteur chargé suffit), avant que l'écran ne relise le bilan —
+    // et l'écran, qui ne verrouille que pendant l'écriture, redemandait la même acceptation. Elle n'écrit alors rien (le
+    // dépôt ne décale pas deux fois : « does not move twice when the same acceptance arrives twice », dans
+    // `repositories/benchmark.test.ts`), mais le compte des appels, lui, valait deux.
     const { workout, setIds } = await seedBenchmark([[80, 9]]);
-    const write = vi.spyOn(benchmarkRepository, 'applyBenchmarkProposals');
-    const user = userEvent.setup();
-    renderScreen(workout.id);
+    const real = benchmarkRepository.applyBenchmarkProposals;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const write = vi
+      .spyOn(benchmarkRepository, 'applyBenchmarkProposals')
+      .mockImplementation(async (...args) => {
+        await gate;
+        return real(...args);
+      });
+    try {
+      const user = userEvent.setup();
+      renderScreen(workout.id);
 
-    await user.dblClick(await screen.findByRole('button', { name: 'Appliquer à la routine · 1' }));
+      await user.dblClick(await screen.findByRole('button', { name: 'Appliquer à la routine · 1' }));
+      // Les deux appuis sont passés, la première écriture n'est pas finie : le second a trouvé l'écran occupé.
+      expect(write).toHaveBeenCalledTimes(1);
 
-    await waitFor(async () => expect(await targetWeights(setIds)).toEqual([75, 75]));
-    expect(write).toHaveBeenCalledTimes(1);
+      release();
+      await waitFor(async () => expect(await targetWeights(setIds)).toEqual([75, 75]));
+      expect(write).toHaveBeenCalledTimes(1);
+    } finally {
+      release();
+      write.mockRestore();
+    }
   });
 
   it('dimensionne la charge sur le nombre de séries de la routine : trois séries, trois séries tenues', async () => {
