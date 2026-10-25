@@ -206,6 +206,13 @@ kilos est conçue pour des charges où le pas est petit devant la charge.
    *Conséquence sur un test existant : « 7 puis 6 à 80 kg → 77,5 » est devenu « 7 puis 7 → 77,5 », 7 puis 6 en demandant deux.*
    *Non rejoué sur l'historique réel.*
 
+   **Amendement du 2026-10-25 — au-delà de 30 répétitions, le cran passe.** « Fais 60 répétitions pour augmenter de 2,5 » : 2,5 → 5 kg sur un
+   15 – 20 en demandait 60, 5 → 7,5 sur un 12 – 15 en demandait 33. Personne ne les fait, et tant qu'elles manquaient la règle n'autorisait que des
+   répétitions : la charge ne montait plus jamais. Au-delà de 30 (`BENCHMARK_MAX_REPS`, la limite où Epley cesse d'estimer), le coach propose le
+   cran quand même et le dit (`step_oversized`, « Ce cran pèse +100 % sur l'exercice : attends-toi à retomber sous 15 reps quelques séances. Un
+   incrément plus petit sur la fiche… »). Jusqu'à 30 compris, la règle est celle d'avant. R1 et R5 gardent la main. Choix de l'utilisateur parmi
+   deux (l'autre : ne rien proposer et renvoyer vers la fiche). *Non rejoué sur l'historique réel.*
+
 ### R4 — Ne comparer que ce qui est comparable
 
 **Constat.** La moitié des exercices est pratiquée sous plusieurs fourchettes (variantes A/B,

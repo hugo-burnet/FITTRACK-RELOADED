@@ -20,7 +20,11 @@ import {
 import { isWorkingSet } from '@/lib/records';
 import { alive } from './base';
 import { recordBenchmarkObjectives } from './benchmark';
-import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
+import {
+  recordCoachSignals,
+  reconcileFollowedLoads,
+  supersedePendingRecommendations,
+} from './coachRecommendations';
 import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
 import { getCoachVolumeBounds, getDefaultLoadStepKg, getOneRepMaxFormula } from './settings';
 import { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
@@ -499,9 +503,21 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
     await reconcileFollowedLoads(outcomes);
   }
 
+  // Après le suivi des charges (un objectif atteint est `followed`, pas `superseded`), avant les nouvelles
+  // cartes : chaque exercice travaillé repart de cette séance, même quand le coach n'a rien de neuf à dire.
+  const recommendedAt = Date.now();
+  if (detail !== null) {
+    await supersedePendingRecommendations(
+      detail.exercises
+        .filter((line) => line.sets.some((set) => set.isCompleted === 1 && isWorkingSet(set)))
+        .map((line) => line.row.exerciseId),
+      recommendedAt,
+    );
+  }
+
   await recordCoachSignals(signals, {
     workoutId,
-    recommendedAt: Date.now(),
+    recommendedAt,
   });
 
   return signals;

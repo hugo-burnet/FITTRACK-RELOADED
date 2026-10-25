@@ -12,6 +12,14 @@ La v2.15.0 avait fait remettre dans la fourchette quand on la dépasse de beauco
 
 ## Où on en est
 
+- **Non publié, branche `ccr-coach-cran-et-cartes-perimees` (2026-10-25)** : deux défauts du coach signalés par l'utilisateur. **Le cran
+  trop gros** : « fais 60 répétitions pour augmenter de 2,5 » — au-delà de 30 répétitions exigées, le coach propose le cran et dit qu'il est
+  gros (amendement R3 du 2026-10-25). **La carte périmée** : une séance où le coach n'avait rien de neuf à dire laissait la carte d'avant
+  affichée (« Reprise après 20 jours » sur un exercice fait deux jours plus tôt, dans une autre routine) ; chaque exercice travaillé retire
+  désormais ses cartes en attente en fin de séance (`supersedePendingRecommendations`). Le test « ne marque pas suivie une ancienne charge
+  Coach reprise par un programme » attend `superseded` et non plus `pending` : son intention (pas `followed`) tient. Recette § 2. À fusionner
+  et publier sur demande.
+
 - **Publié : v2.16.0**, à la demande de l'utilisateur (« fusionne et publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.16.0), APK `FitTrack-v2.16.0.apk`
   ([journal](docs/journal/2026-10-16-versions-v2-16.md)). Sa demande : « Oui et oui » aux deux questions qui restaient ouvertes. **Un pas de charge pour toute l'appli** :

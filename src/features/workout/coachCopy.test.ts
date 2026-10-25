@@ -349,6 +349,35 @@ describe('coachSignalMessage — cran à absorber (R3.2)', () => {
   });
 });
 
+describe('coachSignalMessage — cran trop gros pour l’exercice (R3.2)', () => {
+  const oversized = (withLoad: boolean) =>
+    coachSignalMessage({
+      code: 'range_ceiling_reached',
+      ...(withLoad ? { nextLoadKg: 5 } : {}),
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 20 },
+        { label: 'current_load_kg', value: 2.5 },
+        ...(withLoad ? [{ label: 'next_load_kg', value: 5 }] : []),
+        { label: 'step_oversized', value: 1 },
+        { label: 'target_reps', value: 15 },
+      ],
+    });
+
+  it('propose la charge, et dit que la marche est haute', () => {
+    expect(oversized(true)).toBe(
+      `${t('coach.range_ceiling_reached', { current: '2,5', weight: '5', sets: 3, reps: 20 })} ${t(
+        'coach.stepOversized',
+        { percent: 100, floor: 15 },
+      )}`,
+    );
+  });
+
+  it('se tait quand la phase a retiré la charge : il n’y a plus de marche à annoncer', () => {
+    expect(oversized(false)).toBe(t('coach.range_ceiling_reached_constat', { sets: 3, reps: 20 }));
+  });
+});
+
 describe('coachSignalMessage — benchmark', () => {
   const calibrated = (range: [number, number], plannedSets?: number, nextLoadKg = 77.5): CoachSignal => ({
     exerciseId: 'bench',

@@ -660,6 +660,12 @@ const fr = {
      */
     stepNeedsReps:
       '{sets} × {reps} a atteint le haut de la fourchette. Le prochain cran ({weight} kg) pèse +{percent} % : vise {needed} répétitions à {current} kg pour retomber à {floor} au moins après la hausse.',
+    /**
+     * R3.2, au-delà de 30 répétitions : le cran passe quand même — l'exiger bloquait la charge pour
+     * toujours. La note dit ce qu'il pèse, ce qui va se passer, et comment adoucir la marche.
+     */
+    stepOversized:
+      'Ce cran pèse +{percent} % sur l’exercice : attends-toi à retomber sous {floor} reps quelques séances. Un incrément plus petit sur la fiche de l’exercice adoucirait la marche.',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',

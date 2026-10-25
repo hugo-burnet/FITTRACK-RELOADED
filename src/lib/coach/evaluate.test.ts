@@ -1846,6 +1846,60 @@ describe('répétitions pour absorber le cran (R3.2)', () => {
     expect(ceiling?.evidence.map((e) => e.label)).not.toContain('step_needs_reps');
   });
 
+  it('demande encore des répétitions tant qu’il en faut 30 au plus', () => {
+    // 4 → 6 kg sur un 10 – 12 : pile 30 répétitions, la règle tient encore.
+    const ev = evaluatePerformance(curl([12, 12, 12], {}, 4));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ceiling?.evidence).toEqual(
+      expect.arrayContaining([{ label: 'step_needs_reps', value: 30 }]),
+    );
+  });
+
+  it('propose le cran quand il faudrait plus de 30 répétitions pour l’absorber', () => {
+    // 2 → 4 kg sur un 10 – 12 en demanderait 50 ; 2,5 → 5 kg sur un 15 – 20 en
+    // demandait 60. Au-delà de 30, Epley ne mesure plus rien et personne ne les
+    // fera : la règle bloquait la charge pour toujours. On monte, et la carte dit
+    // que la marche est haute.
+    const ev = evaluatePerformance(curl([12, 12, 12], {}, 2));
+    const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+    expect(ceiling?.nextLoadKg).toBe(4);
+    const labels = ceiling?.evidence.map((e) => e.label);
+    expect(labels).not.toContain('step_needs_reps');
+    expect(ceiling?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'step_oversized', value: 1 },
+        { label: 'next_load_kg', value: 4 },
+        { label: 'current_load_kg', value: 2 },
+        { label: 'target_reps', value: 10 },
+      ]),
+    );
+    expect(ev.allowedActions).toContain('increase_load');
+
+    const raise = evaluatePerformance(
+      line({
+        exerciseId: 'raise',
+        workoutId: 'w1',
+        equipment: 'dumbbell',
+        loadIncrementKg: 2.5,
+        sets: [0, 1, 2].map((order) =>
+          set({ order, reps: 20, weight: 2.5, targetReps: 15, targetRepsMax: 20 }),
+        ),
+      }),
+    );
+    expect(raise.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBe(5);
+  });
+
+  it('ne propose toujours rien sur une reprise, même quand le cran est trop gros', () => {
+    const history = [curl([12, 12, 12], { workoutId: 'w0', workoutStartedAt: 0 }, 2)];
+    const ev = evaluatePerformance(
+      curl([12, 12, 12], { workoutStartedAt: 30 * 86_400_000 }, 2),
+      history,
+    );
+    expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.nextLoadKg).toBeUndefined();
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
   it('laisse le lest et l’assistance tels quels', () => {
     // Dips lestés de 4 kg : +2 kg, c'est +50 % du lest mais une broutille devant
     // le poids du corps — le rapport entre deux crans n'y dit rien.

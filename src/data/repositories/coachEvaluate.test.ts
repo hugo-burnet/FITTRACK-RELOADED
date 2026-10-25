@@ -16,6 +16,7 @@ import {
   resolveTargetProgramContext,
 } from './coachEvaluate';
 import {
+  listPendingRecommendations,
   listRecommendationsForExercise,
   recordCoachSignals,
 } from './coachRecommendations';
@@ -544,8 +545,10 @@ describe('evaluateCoachForWorkout', () => {
     await finishWorkout(workout.id);
     await finalizeCoachForWorkout(workout.id);
 
+    // Pas `followed`. Elle n'est plus `pending` non plus : l'exercice a été refait, et une carte
+    // parle de sa dernière séance ou se retire (`supersedePendingRecommendations`).
     expect((await listRecommendationsForExercise(exercise.id))[0]).toMatchObject({
-      status: 'pending',
+      status: 'superseded',
       nextLoadKg: 102.5,
     });
   });
@@ -1331,5 +1334,56 @@ describe('R6 — le plafond de volume, de bout en bout', () => {
     expect(labels(signal!)).not.toContain('volume_at_ceiling');
     expect(labels(signal!)).not.toContain('add_set');
     expect(signal!.nextLoadKg).toBe(102.5);
+  });
+});
+
+describe('la carte d’un exercice suit sa dernière séance', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+  });
+
+  const day = 86_400_000;
+  const t0 = Date.UTC(2026, 8, 1, 10);
+
+  it('retire la carte « Reprise » dès que l’exercice est refait, même sans rien de neuf à dire', async () => {
+    // Le coach ne remplaçait une carte qu'avec un nouveau signal : une séance « sans
+    // histoire » laissait « Reprise après 20 jours » affichée aux séances suivantes,
+    // quelle que soit la routine — alors que l'exercice venait d'être fait.
+    await seedSession('s1', t0, 8, 100);
+    await seedSession('s2', t0 + 20 * day, 8, 100);
+    expect((await finalizeCoachForWorkout('s2')).map((s) => s.code)).toEqual(['returning']);
+
+    // Une seule séance sous le bas (4 sur un 5 – 12) : pas encore un manque confirmé.
+    await seedSession('s3', t0 + 22 * day, 4, 100);
+    expect(await finalizeCoachForWorkout('s3')).toEqual([]);
+
+    expect(await listPendingRecommendations(['bench'])).toEqual([]);
+    const rows = await listRecommendationsForExercise('bench');
+    expect(rows.find((row) => row.code === 'returning')?.status).toBe('superseded');
+  });
+
+  it('garde la carte d’un exercice absent de la séance', async () => {
+    await seedSession('s1', t0, 8, 100);
+    await seedSession('s2', t0 + 20 * day, 8, 100);
+    await finalizeCoachForWorkout('s2');
+
+    // Une séance sans le développé couché ne dit rien de lui.
+    await db.workouts.add({
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Jambes',
+        status: 'completed',
+        startedAt: t0 + 22 * day,
+        endedAt: t0 + 22 * day + 3_600_000,
+        durationSeconds: 3_600,
+      }),
+      id: 'legs',
+    });
+    await finalizeCoachForWorkout('legs');
+
+    expect((await listPendingRecommendations(['bench'])).map((row) => row.code)).toEqual([
+      'returning',
+    ]);
   });
 });
