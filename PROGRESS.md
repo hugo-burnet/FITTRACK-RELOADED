@@ -5,22 +5,19 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-16 — **v2.16.0 publiée** (PWA et APK) : un pas de charge pour toute l'appli (Réglages › Coach), et le coach
-qui remet dans la fourchette par en dessous.
-La v2.15.0 avait fait remettre dans la fourchette quand on la dépasse de beaucoup (bilan du benchmark et séance normale), donné un minimum au bilan au-delà de
-30 reps, et arrondi les propositions de charge au pas renseigné, au plus proche.
+**Dernière mise à jour :** 2026-10-25 — **v2.16.1 publiée** (PWA et APK) : le coach propose le cran trop gros au lieu de 60 répétitions, et ne
+laisse plus de carte « Reprise » périmée.
+La v2.16.0 avait ajouté un pas de charge pour toute l'appli (Réglages › Coach) et le coach qui remet dans la fourchette par en dessous.
 
 ## Où on en est
 
-- **Non publié, branche `ccr-coach-cran-et-cartes-perimees` (2026-10-25)** : deux défauts du coach signalés par l'utilisateur. **Le cran
-  trop gros** : « fais 60 répétitions pour augmenter de 2,5 » — au-delà de 30 répétitions exigées, le coach propose le cran et dit qu'il est
-  gros (amendement R3 du 2026-10-25). **La carte périmée** : une séance où le coach n'avait rien de neuf à dire laissait la carte d'avant
-  affichée (« Reprise après 20 jours » sur un exercice fait deux jours plus tôt, dans une autre routine) ; chaque exercice travaillé retire
-  désormais ses cartes en attente en fin de séance (`supersedePendingRecommendations`). Le test « ne marque pas suivie une ancienne charge
-  Coach reprise par un programme » attend `superseded` et non plus `pending` : son intention (pas `followed`) tient. Recette § 2. À fusionner
-  et publier sur demande.
-
-- **Publié : v2.16.0**, à la demande de l'utilisateur (« fusionne et publie ») :
+- **Publié : v2.16.1**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.16.1), APK `FitTrack-v2.16.1.apk`
+  ([journal](docs/journal/2026-10-25-versions-v2-16-1.md)). **Le cran trop gros** : au-delà de 30 répétitions exigées pour l'absorber, le coach
+  propose le cran et dit qu'il est gros (amendement R3 du 2026-10-25). **La carte périmée** : chaque exercice travaillé retire ses cartes en
+  attente en fin de séance (`supersedePendingRecommendations`). Recette § 2. Publiée par le tag `v2.16.1` poussé depuis le poste de
+  l'utilisateur (le chemin normal d'`android.yml`) ; `gh` n'y est pas installé.
+- **Avant : v2.16.0**, à la demande de l'utilisateur (« fusionne et publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.16.0), APK `FitTrack-v2.16.0.apk`
   ([journal](docs/journal/2026-10-16-versions-v2-16.md)). Sa demande : « Oui et oui » aux deux questions qui restaient ouvertes. **Un pas de charge pour toute l'appli** :
   Réglages › Coach › « Pas de charge par défaut » (vide d'office = la table du matériel ; « 1,125 » vaut pour toute fiche sans incrément, la fiche passant avant) — lu par le
@@ -50,8 +47,8 @@ La v2.15.0 avait fait remettre dans la fourchette quand on la dépasse de beauco
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 787 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**39 parcours**, 9 fichiers, à 390 px) — verts à la v2.16.0 ; la v2.15.0 : 3 735 tests, 36 parcours.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 794 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**39 parcours**, 9 fichiers, à 390 px) — verts à la v2.16.1 ; la v2.16.0 : 3 787 tests.
 - **Branches distantes.** `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 à v2.16.0), fusionnées, sont à supprimer à la main
   (`ccr-449df1c1-etmya3` l'a été) : le refus de supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
@@ -132,6 +129,7 @@ résultat attendu de chaque ligne. L'ancienne liste figure en bas de l'archive d
 
 | Fichier | Contenu |
 | --- | --- |
+| [2026-10-25-versions-v2-16-1.md](docs/journal/2026-10-25-versions-v2-16-1.md) | Version v2.16.1 (2026-10-25) |
 | [2026-10-16-versions-v2-16.md](docs/journal/2026-10-16-versions-v2-16.md) | Version v2.16.0 (2026-10-16) |
 | [2026-10-16-versions-v2-15.md](docs/journal/2026-10-16-versions-v2-15.md) | Version v2.15.0 (2026-10-16) |
 | [2026-10-16-versions-v2-14.md](docs/journal/2026-10-16-versions-v2-14.md) | Version v2.14.0 (2026-10-16) |
