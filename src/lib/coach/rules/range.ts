@@ -331,7 +331,17 @@ export function rangePartitionSignal(
   if (lastWeight !== undefined && !grinding && !returning) {
     const proposed = nextLoad(lastWeight, increment, line.measurementType);
     const needed = repsNeededForStep(line, working, lastWeight, proposed);
-    if (needed !== undefined) {
+    if (needed !== undefined && needed > BENCHMARK_MAX_REPS) {
+      // **Au-delà de 30, la règle n'a plus de sortie.** 2,5 → 5 kg aux élévations sur un 15 – 20
+      // demandait 60 répétitions : Epley n'y mesure plus rien, personne ne les fera, et la charge ne
+      // montait plus jamais. Le cran passe, et la carte dit que la marche est haute.
+      nextLoadKg = proposed;
+      evidence.push(
+        { label: 'next_load_kg', value: proposed },
+        { label: 'step_oversized', value: 1 },
+        { label: 'target_reps', value: working[0]!.targetReps! },
+      );
+    } else if (needed !== undefined) {
       // Le cran est celui du matériel ; tant que les répétitions ne l'absorbent
       // pas, on vise des répétitions, pas des kilos (R3.2).
       evidence.push(

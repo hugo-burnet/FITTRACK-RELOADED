@@ -69,6 +69,20 @@ function withEvidenceNotes(signal: SignalLike, message: string): string {
       );
     }
   }
+  // Cran trop gros pour l'exercice (plus de 30 répétitions pour l'absorber) : la charge monte quand même,
+  // la phrase dit que la marche est haute. Seulement si la carte propose encore cette charge.
+  if (hasFlag(signal, 'step_oversized')) {
+    const weight = resolvedNextLoadKg(signal);
+    const current = evidenceValue(signal, 'current_load_kg');
+    if (weight !== undefined && current !== undefined && current > 0) {
+      notes.push(
+        t('coach.stepOversized', {
+          percent: Math.round(((weight - current) / current) * 100),
+          floor: evidenceValue(signal, 'target_reps') ?? 0,
+        }),
+      );
+    }
+  }
   const margin = evidenceValue(signal, 'failure_reps_over_ceiling');
   if (margin !== undefined) notes.push(t('coach.failureMargin', { reps: margin }));
   if (signal.code === 'plateau' && hasFlag(signal, 'at_failure')) {

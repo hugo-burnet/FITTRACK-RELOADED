@@ -89,6 +89,37 @@ export async function supersedePendingLoadRecommendations(
 }
 
 /**
+ * Retire every pending card of exercises a closed session worked — observations included.
+ *
+ * `recordCoachSignals` only replaces a card with a new one. A session where the coach has nothing new to
+ * say left the old card live: « Reprise après 20 jours » kept showing in the next sessions, whatever the
+ * routine, on an exercise done two days earlier. A card speaks for the latest session of its exercise or
+ * not at all. `superseded`, never `dismissed`: the user did not answer it.
+ */
+export async function supersedePendingRecommendations(
+  exerciseIds: readonly string[],
+  resolvedAt = Date.now(),
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'pending']);
+  const pending = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  );
+  if (pending.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    pending.map((row) =>
+      touch(row, {
+        status: 'superseded' as CoachRecommendationStatus,
+        resolvedAt,
+      }),
+    ),
+  );
+}
+
+/**
  * Persist signals the user will see. Skips a proposal already dismissed with the
  * same exercise + code + next load so a refused tip does not come back.
  */

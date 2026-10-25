@@ -93,6 +93,12 @@ Une séance de deux exercices au moins, dont un en barre.
       une série en plus, et dit pourquoi. *(cette session)*
 - [ ] **Cran de la fiche.** Renseigner 1,125 kg sur les élévations latérales ; au plafond avec assez de
       répétitions, la charge proposée depuis 5 kg est 6,125. *(v2.11.0)*
+- [ ] **Cran trop gros.** Un exercice léger au haut de sa fourchette (élévations à 2,5 kg, 3 × 20 sur un
+      15 – 20, cran de 2,5) : la carte propose 2,5 → 5 kg et ajoute « Ce cran pèse +100 % … », au lieu de
+      réclamer 60 répétitions. *(cette session)*
+- [ ] **Plus de carte « Reprise » périmée.** Après une carte « Reprise après N jours », refaire l'exercice
+      dans une autre routine une séance sans rien de particulier : à la séance suivante, la carte n'est
+      plus là. Un exercice absent de la séance garde la sienne. *(cette session)*
 - [ ] Série validée en thème **TTY1** : `[x]`, le repos qui clignote, la jauge d'effort ; la feuille
       des plaques ; l'historique. Police lisible à bout de bras. *(v2.8.0)*
 
