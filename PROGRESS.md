@@ -5,11 +5,18 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-01 — **v2.17.0 publiée** (PWA et APK) : le thème Cyber, et −15 s / +15 s pendant le repos.
+**Dernière mise à jour :** 2026-11-01 — **v2.17.1 publiée** (PWA et APK) : Cyber au doigt — le son à chaque validation, la perte qui
+s'évapore, le filigrane intégré, la fluidité (tous thèmes).
 
 ## Où on en est
 
-- **Publié : v2.17.0**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
+- **Publié : v2.17.1**, à la demande de l'utilisateur (« Merge, push, versionne ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.1), APK `FitTrack-v2.17.1.apk`
+  ([journal](docs/journal/2026-11-01-versions-v2-17-1.md)). Ses retours sur la v2.17.0 : l'impact à **chaque** validation ; la perte en
+  barres qui s'évaporent (repos) et en lambeaux (compteur) ; le filigrane cinétique en arrière-plan derrière des plaques translucides ;
+  « Exporter » ; et la fluidité — la barre de repos anime un `scaleX`, tous thèmes, Cyber au niveau de Sombre. **Dû** : la recette § 6.
+  **Question ouverte** : « sans changé da pas des routine », non compris — à reposer.
+- **Avant : v2.17.0**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.0), APK `FitTrack-v2.17.0.apk`
   ([journal](docs/journal/2026-11-01-versions-v2-17.md)). **Le thème Cyber** (Réglages › Apparence) : la grammaire visuelle de Cyberpunk 2077
   sans ses marques — coche percutante, barres de vie, glitchs, police Cyber Sans, fonds de grille et de halos. **−15 s / +15 s** pendant le repos,
@@ -51,8 +58,8 @@
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 855 tests**, 318 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**43 parcours**, 9 fichiers, à 390 px) — verts à la v2.17.0 ; la v2.16.1 : 3 794 tests, 39 parcours.
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 865 tests**, 320 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**43 parcours**, 9 fichiers, à 390 px) — verts à la v2.17.1 ; la v2.16.1 : 3 794 tests, 39 parcours.
 - **Branches distantes.** `ccr-8abf77c4-43lck3` (v2.17.0), `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 à v2.16.0), fusionnées, sont à supprimer à la main
   (`ccr-449df1c1-etmya3` l'a été) : le refus de supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
