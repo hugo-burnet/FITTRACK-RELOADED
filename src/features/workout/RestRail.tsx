@@ -55,18 +55,20 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
     return () => clearTimeout(id);
   }, [endsAt]);
 
-  // Commit the current position before transitioning to the deadline.
+  // Commit the current position before transitioning to the deadline. A `scaleX` and not a `width`:
+  // the compositor runs it alone, with no layout and no paint on any frame of a two-minute rest —
+  // animating the width repainted the whole page sixty times a second, twice as costly in Cyber.
   useLayoutEffect(() => {
     if (reduced) return;
     const bar = barRef.current;
     if (bar === null) return;
     const remaining = Math.max(0, endsAt - Date.now());
     bar.style.transition = 'none';
-    bar.style.width = `${restProgress(startedAt, endsAt, Date.now()) * 100}%`;
+    bar.style.transform = `scaleX(${restProgress(startedAt, endsAt, Date.now())})`;
     if (remaining === 0) return;
     void bar.offsetWidth;
-    bar.style.transition = `width ${remaining}ms linear`;
-    bar.style.width = '100%';
+    bar.style.transition = `transform ${remaining}ms linear`;
+    bar.style.transform = 'scaleX(1)';
   }, [startedAt, endsAt, reduced]);
 
   /*
@@ -153,8 +155,8 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
       >
         <span
           ref={barRef}
-          className="block h-full rounded-full bg-[var(--accent-ink)]"
-          style={reduced ? { width: `${progress * 100}%` } : undefined}
+          className="block h-full w-full origin-left rounded-full bg-[var(--accent-ink)]"
+          style={reduced ? { transform: `scaleX(${progress})` } : undefined}
         />
       </span>
       {/* Hors de la barre, qui rogne : le morceau perdu doit pouvoir monter. Caché hors de Cyber. */}

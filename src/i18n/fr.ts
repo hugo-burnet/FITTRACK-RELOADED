@@ -278,7 +278,8 @@ const fr = {
       'Dernière sauvegarde : {ago}. {sessions} depuis, que rien ne protège hors de ce téléphone.',
     backupSessionsOne: '1 séance',
     backupSessionsMany: '{count} séances',
-    backupAction: 'Sauvegarder',
+    /** Court : en demi-largeur, en capitales interlettrées (thème Cyber), « Sauvegarder » débordait. */
+    backupAction: 'Exporter',
     backupLater: 'Plus tard',
     backupFailed:
       'La sauvegarde n’a pas pu être enregistrée. Réessaie, ou passe par les Réglages.',

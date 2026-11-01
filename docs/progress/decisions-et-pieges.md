@@ -7,6 +7,29 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-01 (après la v2.17.0) — Le son à chaque validation, la perte qui s'évapore, « Exporter », la fluidité
+
+**Demandes, au téléphone.** « Je voudrais entendre le bruit à chaque validation de la série » ; « la perte de PV […]
+illumine entièrement lors d'une perte de 15 s ; je voudrais qu'après chaque perte, les traînées partent vers le ciel en
+s'évaporant » ; « Sauvegarder est un mot trop long, il rentre dans les cosmétiques des boutons » ; « un frame rate
+équivalent au skin sombre ou clair ».
+
+- **Le son.** L'impact n'était branché que sur « série validée » ; « dernière série » et « exercice terminé » gardaient
+  le petit ton, et leur délai de 20 s rendait le plan muet quand on valide vite. Il est joué à part, à chaque validation
+  (`announceSetValidation`), muet seulement en silence. *Si l'utilisateur n'entend toujours rien* : Annonces › Silence,
+  le mode que « Passer » choisit au premier lancement.
+- **La perte.** Plus d'éclair sur toute la partie écoulée : le morceau perdu (mesuré par `RestRail` / `SeriesMeter`) se
+  détache dans un calque hors de la barre et monte en s'évaporant.
+- **« Exporter »** remplace « Sauvegarder » sur le rappel de sauvegarde, et la cause est corrigée : la hachure et le plot
+  du bouton principal ne vont qu'aux boutons pleine largeur.
+- **La fluidité, mesurée** (Playwright + trace Chrome, processeur ralenti six fois, 3 s de repos qui tourne) : Cyber
+  peignait 189 ms contre 99 pour Sombre. La vraie cause n'était pas le thème : **la barre de repos animait sa largeur**,
+  soit une mise en page et une peinture de toute la page à chaque image, dans tous les thèmes — plus chère en Cyber, plus
+  décoré. Elle anime désormais un `scaleX` (compositeur seul) : **11 ms de peinture pour les deux thèmes**, la mise en page
+  de 113–150 ms à 9–14 ms. En plus, en Cyber : le fond sur un calque fixe peint une fois, la zone qui défile signalée
+  comme composée, les barres sur leur propre calque, et plus aucun `:has()` (des attributs posés par les composants).
+  Le script de mesure n'est pas commité ; il est décrit ici pour être refait.
+
 ### 2026-11-01 — Le skin Cyber, et −15 s / +15 s pendant le repos
 
 **Demande.** « Je verrai bien un nouveau skin cyberpunk sur fittrack », puis « une inspiration de

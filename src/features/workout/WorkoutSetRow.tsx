@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type SVGProps } from 'react';
 import type { SetValues } from '@/data/repositories/workouts';
 import { sideStageFor } from './sideProgress';
 import type { SetType, WorkoutSet } from '@/data/types';
@@ -195,6 +195,7 @@ export function WorkoutSetRow({
    */
   const [impact, setImpact] = useState<{ key: number; tag: string } | null>(null);
   const [firing, setFiring] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!firing) return;
     const id = setTimeout(() => setFiring(false), 900);
@@ -206,6 +207,16 @@ export function WorkoutSetRow({
       setImpact((last) => ({ key: (last?.key ?? 0) + 1, tag: setImpactTag(resolved, set.setType) }));
       setFiring(true);
       buzzSetImpact();
+      /*
+       * La carte qui encaisse et l'éclair d'écran : deux attributs posés ici, le temps de leur
+       * animation, et non des sélecteurs `:has()` dans la feuille — ceux-là faisaient réévaluer la
+       * page entière à chaque changement d'un attribut, et Cyber doit rester aussi fluide que Sombre.
+       */
+      const card = rowRef.current?.closest('.rounded-2xl');
+      card?.setAttribute('data-jolt', '');
+      document.documentElement.setAttribute('data-impact', '');
+      setTimeout(() => card?.removeAttribute('data-jolt'), 220);
+      setTimeout(() => document.documentElement.removeAttribute('data-impact'), 130);
     }
     onComplete(collect(ghostNumberOf));
   };
@@ -228,6 +239,9 @@ export function WorkoutSetRow({
   return (
     <div
       data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
+      ref={rowRef}
+      data-part="set-row"
+      data-done={done || undefined}
       data-fired={firing || undefined}
       className={`relative flex min-h-[3.75rem] flex-wrap items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
