@@ -1,7 +1,9 @@
 # Sons du skin Cyber
 
-**Retenus** (2026-11-01) : `surcharge` pour la coche, `decocher` pour l'annuler, `glitch` pour
-l'arrivée sur un écran. Les trois autres recettes restent pour mémoire.
+**Retenus** (2026-11-01) : pour la coche, **l'impact de la cadence** (`public/audio/rep-impact.wav`,
+déjà dans l'app, CC0, voir `public/audio/README.md`) ; `decocher` pour l'annuler ; `glitch` pour
+l'arrivée sur un écran. Les quatre recettes de coche d'ici (dont `surcharge`, un temps retenu) restent
+pour mémoire.
 
 Quatre sons de validation, un pour décocher et un glitch, mixés à partir d'enregistrements des packs de
 **Kenney** (kenney.nl), versés au domaine public (CC0, voir `sources/LICENSE-Kenney-CC0.txt`) :
