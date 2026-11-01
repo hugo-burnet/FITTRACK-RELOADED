@@ -8,8 +8,8 @@
 >
 > **Ce que cette liste ne contient plus.** Les parcours E2E (`npm run test:e2e`) vérifient déjà,
 > dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
-> série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les trois
-> thèmes à 100, 130 et 200 % (TTY1 : 130 %), l'app qui démarre sans réseau, la sauvegarde, le
+> série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les quatre
+> thèmes à 100, 130 et 200 % (TTY1 : 130 %), −15 s / +15 s sur un vrai repos, l'app qui démarre sans réseau, la sauvegarde, le
 > remplacement d'un exercice, les mensurations (hors sélecteur de date natif), le benchmark de bout en bout et le pas de charge de l'appli (posé, relu après un rechargement, lu sur la fiche d'un exercice).
 > Reste ici **ce qu'un navigateur ne dit pas** : le toucher, le son, les notifications, le bouton
 > retour d'Android, la vraie WebView, une police de 16 px à bout de bras.
@@ -240,6 +240,30 @@ Une séance de deux exercices au moins, dont un en barre.
       `docs/ANDROID.md`)*
 - [ ] Notifications : valider une série, verrouiller l'écran, poser le téléphone : le repos sonne à
       l'heure ; remplacer puis annuler un repos : aucune ancienne alarme ne sonne. *(v1)*
+
+## 6. Thème Cyber et −15 s / +15 s (6 min) *(skin Cyber, 2026-11-01)*
+
+- [ ] **−15 s / +15 s, en thème Sombre d'abord** : valider une série, toucher +15 puis −15 deux fois ;
+      la barre de repos avance ou recule, le temps suit. Ramener le repos à zéro avec −15 : il se
+      termine comme un repos écoulé (même son, même vibration), la cadence prend le relais si elle
+      est réglée. Recharger l'app pendant un repos allongé : il reprend où il en était.
+- [ ] Réglages › Apparence : quatre boutons sur deux lignes ; **Cyber** s'applique tout de suite, sans
+      déblocage. Les barres système deviennent presque noires. Relancer l'app : Cyber est gardé.
+- [ ] **Les fonds et les formes** : grille, trame et halo rouge visibles derrière les plaques ; plaques à
+      coins coupés (si la WebView est trop ancienne pour les coins coupés : arrondis, et rien d'autre ne
+      casse). Les chiffres du chrono et du repos ne tremblent pas en défilant.
+- [ ] **La coche, au doigt, en salle** : valider une série — l'impact de la cadence sonne, le téléphone
+      vibre (un coup et son écho), la case frappe et se déchire, l'étiquette « +… kg » monte. Juger :
+      est-ce percutant ? Trop long, trop fort, trop souvent ? Décocher : rien de tout cela.
+- [ ] **La barre de vie du repos** : elle se vide vers la gauche, rouge et palpitante dans les dix
+      dernières secondes ; un −15 la fait trembler.
+- [ ] **Changer d'onglet** : l'écran se déchire un quart de seconde, le son glitch tombe avec. En
+      Annonces › Silence : la déchirure reste, le son se tait.
+- [ ] **L'ambiance** : rester une minute sur l'accueil sans toucher — un libellé tressaute de temps en
+      temps, une déchirure au plus par demi-minute. Jamais pendant une saisie de charge.
+- [ ] Réglages Android › Accessibilité › Supprimer les animations : plus de déchirure, plus d'éclats ;
+      la coche se coche simplement.
+- [ ] Repasser en Sombre : la coche redevient discrète, l'arrivée sur un écran glisse comme avant.
 
 ## Si quelque chose ne va pas
 

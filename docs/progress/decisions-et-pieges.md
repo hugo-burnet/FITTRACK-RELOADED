@@ -7,6 +7,49 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-01 — Le skin Cyber, et −15 s / +15 s pendant le repos
+
+**Demande.** « Je verrai bien un nouveau skin cyberpunk sur fittrack », puis « une inspiration de
+cyberpunk 2077 ». Douze maquettes (`docs/design/mockups/2026-11-01-skin-cyber.html`), validées une à une
+en conversation, puis « vas-y, implémente le thème ». Spec : `docs/design/specs/2026-11-01-skin-cyber-design.md`.
+
+**Décisions de l'utilisateur, dans l'ordre où elles sont tombées.** L'inspiration du jeu plutôt qu'un
+néon générique ; les formes, les animations et les fonds poussés ; la coche « percutante et
+satisfaisante » ; « on garde tout » (entrée d'écran à chaque navigation, libellés rouges, sursaut du
+record dans la maquette, nom « Cyber », libre d'office) ; des glitchs de temps en temps (« Rares ») ;
+les barres de repos en barres de vie ; « J'aime bcp ton +15 -15 » (une fonctionnalité, tous thèmes) ;
+pas de barre bleue à l'entrée d'écran, « simplement l'animation du glitch » avec un son glitch ; la
+coche prend le son de la cadence.
+
+**Refus consigné.** L'utilisateur a demandé les sons des menus du jeu. Ils appartiennent à leur studio,
+et l'app est publiée (Pages, APK) : les embarquer serait les redistribuer. Remplacés par des sons CC0
+(Kenney, mixés par `scripts/cyber-sounds/`), puis, pour la coche, par l'impact de la cadence existant.
+
+**Le son de la coche, quatre essais.** Synthèse (« pas satisfaisant, pas ASMR ») ; enregistrements CC0
+(« ça fait pas impact » : le coup sourd était à 42–95 Hz, qu'un haut-parleur de téléphone ne rend pas) ;
+corps à 150–400 Hz compressé (« ça doit être percutant ») ; courts et écrêtés, Surcharge retenu — puis
+remplacé par l'impact de la cadence. Leçon, pour un prochain son : mesurer ce qu'un téléphone garde
+(deux passe-haut à 250 Hz suffisent à l'estimer), pas ce qu'un casque entend.
+
+**Choix techniques à relire.**
+
+- *Coins coupés par `corner-shape: bevel`, pas `clip-path`.* Le filet suit la diagonale et rien n'est
+  rogné ; repli arrondi sur une WebView d'avant Chrome 139. La maquette, elle, utilise `clip-path`.
+- *−15 s / +15 s déplacent le début avec la fin.* Sinon la barre se redessine contre une durée plus
+  courte et ment (« 0:13 » en barre presque pleine, vu à la capture). Le début ne dépasse jamais
+  maintenant : `readRestSnapshot` refuserait l'instantané au rechargement.
+- *La barre de vie ne change pas le composant de sens* : `direction: rtl` en CSS, la piste devient la vie.
+- *Le hit-stop est un palier d'images-clés*, pas une pause JavaScript des animations.
+- *La déchirure est un filtre SVG sur `#root`* pendant 250 ms, et remplace la transition de vue en
+  Cyber (les deux se coupaient).
+- *La coquille (`AppShell`) peignait `--surface-0` sur tout l'écran* : les fonds posés sur `body` étaient
+  invisibles. Transparente en Cyber seulement.
+
+**Ce que la maquette montre et que l'app ne fait pas** (dette assumée, à redemander si elle manque) : le
+compteur de séries en barre de vie (l'app n'a pas cette jauge), le titre qui se décode lettre à lettre
+(réécrire un nœud texte que React possède serait fragile), le filigrane du nom de l'écran, le chargement
+de l'ouverture en barre de vie.
+
 ### 2026-10-16 (suite de la v2.15.0) — « Oui et oui » : un pas pour toute l'appli, et le coach par en dessous
 
 **Demande.** Le compte rendu de la v2.15.0 laissait deux questions ouvertes : « veux-tu un pas global à 1,125 dans les Réglages ? » et « veux-tu que le coach te

@@ -5,9 +5,23 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-10-25 — **v2.16.1 publiée** (PWA et APK) : le coach propose le cran trop gros au lieu de 60 répétitions, et ne
-laisse plus de carte « Reprise » périmée.
-La v2.16.0 avait ajouté un pas de charge pour toute l'appli (Réglages › Coach) et le coach qui remet dans la fourchette par en dessous.
+**Dernière mise à jour :** 2026-11-01 — **skin Cyber et −15 s / +15 s, sur la branche `ccr-8abf77c4-43lck3`, non publiés.**
+Dernière version publiée : v2.16.1 (2026-10-25).
+
+## En cours (non publié)
+
+- **Le thème Cyber**, d'après la grammaire visuelle de Cyberpunk 2077 et sans ses marques : rouge qui encadre,
+  jaune qui agit, cyan qui compte ; police Cyber Sans (Rajdhani aux chiffres tabulaires) ; plaques à coins coupés,
+  fonds de grille et de halos ; coche percutante (l'impact de la cadence, vibration, frappe, déchirure, étiquette
+  du tonnage) ; repos en barre de vie ; déchirure glitch et son à chaque arrivée sur un écran ; glitchs d'ambiance
+  rares. Spec `docs/design/specs/2026-11-01-skin-cyber-design.md`, maquette
+  `docs/design/mockups/2026-11-01-skin-cyber.html`, décisions et refus (les sons du jeu) dans
+  `docs/progress/decisions-et-pieges.md` (entrée du 2026-11-01).
+- **−15 s / +15 s pendant le repos, pour tous les thèmes** (`restTimer.shift`, `RestShift`).
+- **Dû** : la recette téléphone § 6 (`docs/recette-telephone.md`) — le son, la vibration et le ressenti de la coche
+  ne se jugent qu'au doigt. La fusion dans `master` et la release se font sur demande.
+- **Portes** (2026-11-01, sur la branche) : `typecheck`, `lint`, `test:run` (**3 847 tests**, 315 fichiers, 1 ignoré), `build` et
+  `test:e2e` (**43 parcours**, dont Cyber à 100, 130 et 200 % et −15 / +15 sur un vrai repos) — verts.
 
 ## Où on en est
 
