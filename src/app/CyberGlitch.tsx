@@ -86,7 +86,7 @@ function tearScreen(): void {
 /** Le micro-glitch : un seul libellé, titre ou pictogramme visible tressaute. */
 function glitchOne(): void {
   const pool = [
-    ...document.querySelectorAll<HTMLElement>('main h1, main .label-xs, .bottom-nav svg'),
+    ...document.querySelectorAll<HTMLElement>('main h1, main .label-xs, .bottom-nav svg, [data-part="ghost"] [data-letter]'),
   ].filter((element) => element.getClientRects().length > 0);
   const element = pool[Math.floor(Math.random() * pool.length)];
   if (element === undefined) return;

@@ -29,6 +29,18 @@ s'évaporant » ; « Sauvegarder est un mot trop long, il rentre dans les cosmé
   de 113–150 ms à 9–14 ms. En plus, en Cyber : le fond sur un calque fixe peint une fois, la zone qui défile signalée
   comme composée, les barres sur leur propre calque, et plus aucun `:has()` (des attributs posés par les composants).
   Le script de mesure n'est pas commité ; il est décrit ici pour être refait.
+- **Les lambeaux** (« bien découpés, comme des lambeaux ») : le morceau perdu se déchire en sept bandes au bord
+  irrégulier (`LossShreds`), chacune avec sa dérive, sa rotation, son retard et sa teinte, données par le rang.
+- **Le filigrane cinétique** (« les noms en watermark ne se voient pas bien — on ne se ferait pas un peu de kinetic
+  typography ? ») : il passe **devant** le contenu, en simple contour pâle sans capter de toucher, défile en boucle,
+  ses lettres tombent une à une à l'arrivée, l'une grésille parfois (par le micro-glitch d'ambiance : une animation
+  infinie par lettre coûtait 58 ms de style sur 3 s, mesuré). **Pas sur la séance en direct** (`Screen watermark={false}`) :
+  rien ne se pose sur la colonne des coches. Deux débordements vus par l'E2E à 200 % et corrigés : les lettres entraient
+  de côté (hors de l'écran), elles tombent désormais d'en haut.
+- **Piège, rattrapé avant commit** : un remplacement de bloc dans `cyber.css`, borné par un repère que je croyais voisin,
+  a emporté 476 lignes (la coche, les glitchs, la règle qui cache le filigrane hors de Cyber). L'E2E l'a révélé par le
+  filigrane apparu en Sombre ; la feuille a été reconstruite depuis le dernier commit plus les deux seuls blocs voulus,
+  et le diff relu ligne à ligne. Leçon : borner un remplacement par le bloc **suivant immédiat**, et relire le `--stat`.
 
 ### 2026-11-01 — Le skin Cyber, et −15 s / +15 s pendant le repos
 

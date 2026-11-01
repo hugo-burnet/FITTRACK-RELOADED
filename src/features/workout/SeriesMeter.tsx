@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { LossShreds } from './LossShreds';
 
 /**
  * Le compteur de séries de la séance, en barre de vie — que seul le thème Cyber montre (sa feuille le
@@ -46,16 +47,19 @@ export function SeriesMeter({ done, total }: { done: number; total: number }) {
   } as CSSProperties;
 
   return (
-    <span data-part="series-meter" data-dir={direction ?? undefined} aria-hidden="true" style={style}>
+    <span
+      data-part="series-meter"
+      data-dir={direction ?? undefined}
+      aria-hidden="true"
+      style={style}
+    >
       <span data-hp="bar">
         <i data-hp="fill" />
       </span>
       {loss !== null && (
-        <i
-          key={loss.key}
-          data-hp="loss"
-          style={{ left: `${loss.left}%`, width: `${loss.width}%` }}
-        />
+        <i key={loss.key} data-hp="loss" style={{ left: `${loss.left}%`, width: `${loss.width}%` }}>
+          <LossShreds />
+        </i>
       )}
     </span>
   );

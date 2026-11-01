@@ -461,82 +461,97 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: #fff;
   pointer-events: none;
-  animation: cyber-evaporate 800ms steps(16, end) both;
 }
-:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::before,
-:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::after {
-  content: '';
+/*
+ * Les lambeaux (LossShreds) : sept bandes au bord déchiré, qui se séparent et montent chacune à sa façon —
+ * dérive, rotation, hauteur, retard et teinte donnés par le rang. Blanches au départ, elles prennent la
+ * couleur de la barre, se floutent et s'effacent ; deux d'entre elles virent au rouge et au cyan du glitch.
+ */
+:root[data-theme='cyber'] [data-shred] {
+  --dx: 0px;
+  --dy: -30px;
+  --rot: 0deg;
+  --late: 0ms;
+  --tint: var(--accent-ink);
   position: absolute;
-  inset: 0;
-  opacity: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 7 + 1px);
+  background: #fff;
+  clip-path: polygon(0 12%, 38% 0, 70% 18%, 100% 4%, 92% 52%, 100% 96%, 58% 84%, 24% 100%, 6% 70%);
+  animation: cyber-shred 820ms steps(18, end) var(--late) both;
 }
-:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::before {
-  right: 50%;
-  background: var(--cyber-red);
-  animation: cyber-wisp-left 700ms steps(14, end) 60ms both;
+:root[data-theme='cyber'] [data-shred]:nth-child(1) {
+  --dx: -9px;
+  --dy: -26px;
+  --rot: -38deg;
+  --late: 0ms;
 }
-:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::after {
-  left: 50%;
-  background: var(--cyber-cyan);
-  animation: cyber-wisp-right 760ms steps(14, end) 100ms both;
+:root[data-theme='cyber'] [data-shred]:nth-child(2) {
+  --dx: 5px;
+  --dy: -40px;
+  --rot: 24deg;
+  --late: 40ms;
+  --tint: var(--cyber-red);
+  clip-path: polygon(10% 0, 64% 10%, 100% 0, 84% 46%, 100% 100%, 40% 88%, 0 100%, 14% 50%);
 }
-@keyframes cyber-evaporate {
+:root[data-theme='cyber'] [data-shred]:nth-child(3) {
+  --dx: -4px;
+  --dy: -48px;
+  --rot: -12deg;
+  --late: 15ms;
+  clip-path: polygon(0 0, 46% 14%, 100% 2%, 96% 60%, 72% 100%, 30% 82%, 0 96%, 8% 40%);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(4) {
+  --dx: 8px;
+  --dy: -34px;
+  --rot: 46deg;
+  --late: 60ms;
+  --tint: var(--cyber-cyan);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(5) {
+  --dx: -6px;
+  --dy: -44px;
+  --rot: 18deg;
+  --late: 25ms;
+  clip-path: polygon(6% 6%, 52% 0, 100% 14%, 88% 54%, 100% 90%, 56% 100%, 12% 86%, 0 44%);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(6) {
+  --dx: 10px;
+  --dy: -28px;
+  --rot: -30deg;
+  --late: 75ms;
+  --tint: var(--cyber-red);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(7) {
+  --dx: 3px;
+  --dy: -52px;
+  --rot: 34deg;
+  --late: 35ms;
+  clip-path: polygon(0 20%, 30% 0, 100% 8%, 82% 50%, 96% 100%, 50% 80%, 4% 100%, 16% 56%);
+}
+@keyframes cyber-shred {
   0% {
     opacity: 1;
     transform: none;
     filter: none;
   }
-  18% {
+  14% {
     opacity: 1;
-    transform: translateY(-3px) scale(1.04, 1.3);
-    background: color-mix(in srgb, var(--accent-ink) 50%, #fff);
+    transform: translate(calc(var(--dx) * 0.2), -3px) rotate(calc(var(--rot) * 0.2));
   }
-  55% {
-    opacity: 0.6;
-    transform: translateY(-16px) scale(1.15, 0.8);
-    filter: blur(1.5px);
-    background: var(--accent-ink);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-34px) scale(1.3, 0.25);
-    filter: blur(4px);
-    background: var(--accent-ink);
-  }
-}
-@keyframes cyber-wisp-left {
-  /* Le morceau blanc se voit d'abord seul ; les volutes s'en échappent ensuite. */
-  0%,
-  15% {
-    opacity: 0;
-    transform: none;
-  }
-  30% {
-    opacity: 0.8;
-    transform: translateY(-4px);
+  50% {
+    opacity: 0.75;
+    background: var(--tint);
+    transform: translate(calc(var(--dx) * 0.7), calc(var(--dy) * 0.5)) rotate(calc(var(--rot) * 0.6))
+      scale(0.9, 1.15);
+    filter: blur(0.6px);
   }
   100% {
     opacity: 0;
-    transform: translate(-10px, -24px) scale(0.6, 0.4);
-    filter: blur(3px);
-  }
-}
-@keyframes cyber-wisp-right {
-  /* Le morceau blanc se voit d'abord seul ; les volutes s'en échappent ensuite. */
-  0%,
-  15% {
-    opacity: 0;
-    transform: none;
-  }
-  30% {
-    opacity: 0.8;
-    transform: translateY(-4px);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(10px, -28px) scale(0.6, 0.4);
+    background: var(--tint);
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.5, 0.3);
     filter: blur(3px);
   }
 }
@@ -1011,31 +1026,84 @@
   margin-right: 12px;
 }
 
-/* Le filigrane : le nom de l'écran, en lettres creuses, couché le long du bord droit, derrière le
-   contenu (la section s'isole pour qu'il reste au-dessus des fonds de `body`). */
-:root[data-theme='cyber'] [data-part='screen'] {
-  isolation: isolate;
-}
+/*
+ * Le filigrane cinétique : le nom de l'écran, en lettres creuses, le long du bord droit.
+ *
+ * « Les noms des pages en watermark ne se voient pas bien » : derrière les plaques, on n'en voyait que
+ * des miettes. Il passe devant, en simple contour très pâle et sans capter un toucher, et il bouge —
+ * il défile en boucle (deux passages du titre, 26 s), ses lettres entrent une à une à l'arrivée d'un
+ * écran, et l'une d'elles grésille de temps en temps (le micro-glitch d'ambiance la choisit). Rien que `transform` et `opacity` : le
+ * compositeur le joue seul. Le mouvement réduit le fige (règle globale d'index.css).
+ */
 :root[data-theme='cyber'] [data-part='ghost'] {
   position: absolute;
-  top: 5.5rem;
-  /* Au bord, pas au-delà : un filigrane qui déborde fait défiler la page de côté (l'E2E l'a vu). */
+  top: 4.75rem;
+  bottom: 0;
   right: 0;
-  z-index: -1;
+  z-index: 20;
   display: block;
-  max-height: calc(100% - 7rem);
+  width: 5.5rem;
   overflow: hidden;
-  writing-mode: vertical-rl;
-  white-space: nowrap;
   pointer-events: none;
   user-select: none;
+  /* Les bords du bandeau s'estompent : le texte apparaît et disparaît au lieu d'être tranché. */
+  mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+}
+:root[data-theme='cyber'] [data-part='ghost'] > [data-track] {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  /* Un `transform` : le compositeur le joue. Mesuré, environ 0,5 ms de style par image — le même ordre
+     que la barre de repos en Sombre ; 60 images par seconde dans les deux thèmes. */
+  animation: cyber-ghost-scroll 26s linear infinite;
+}
+:root[data-theme='cyber'] [data-part='ghost'] [data-run] {
+  display: block;
+  padding-bottom: 2.5rem;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 1px rgb(255 107 99 / 0.13);
-  font-size: 8rem;
+  /* Assez pour se voir, assez peu pour qu'un chevron ou une durée dessous se lisent sans effort. */
+  -webkit-text-stroke: 1px rgb(255 107 99 / 0.24);
+  font-size: 5.5rem;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+:root[data-theme='cyber'] [data-part='ghost'] [data-letter] {
+  display: inline-block;
+  /* Le retard est plafonné à douze lettres : un titre long ne met pas trois secondes à s'écrire. */
+  animation: cyber-ghost-in 260ms steps(4, end) calc(min(var(--i), 12) * 45ms + 120ms) both;
+}
+/* Une lettre sur sept, jaune. Le grésillement passe par les glitchs d'ambiance (CyberGlitch) : une
+   animation infinie par lettre recalculait le style à chaque image — 58 ms sur 3 s, mesuré. */
+:root[data-theme='cyber'] [data-part='ghost'] [data-letter]:nth-child(7n) {
+  -webkit-text-stroke-color: rgb(252 238 10 / 0.3);
+}
+@keyframes cyber-ghost-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+/* Les lettres tombent dans le sens de la lecture verticale. Jamais de côté : décalées vers la droite,
+   elles sortaient de l'écran à 200 % de police (l'E2E l'a vu). */
+@keyframes cyber-ghost-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Le chargement de l'ouverture : une barre de vie qui se soigne par paliers, son pourcentage compté

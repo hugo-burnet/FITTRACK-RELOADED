@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { DecodedTitle } from './DecodedTitle';
+import { KineticGhost } from './KineticGhost';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { HeaderAction } from '@/ui/HeaderAction';
@@ -40,6 +41,11 @@ export type ScreenProps = {
    * home screen passes it: one cursor per screen, and one screen with a name that is the app's.
    */
   cursor?: boolean;
+  /**
+   * Le nom de l'écran en filigrane cinétique (thème Cyber seulement). Vrai par défaut ; la séance en
+   * direct le refuse : il passe devant le contenu, et rien ne doit se poser sur la colonne des coches.
+   */
+  watermark?: boolean;
   children: ReactNode;
 };
 
@@ -76,6 +82,7 @@ export function Screen({
   footer,
   showTutorialHelp = true,
   cursor = false,
+  watermark = true,
   children,
 }: ScreenProps) {
   const tutorial = useTutorialControls();
@@ -86,11 +93,8 @@ export function Screen({
       data-part="screen"
       className="relative mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col"
     >
-      {/* Le nom de l'écran en filigrane, couché le long du bord droit : le thème Cyber seul le
-          montre, derrière le contenu. Décoratif, donc caché aux lecteurs d'écran. */}
-      <span data-part="ghost" aria-hidden="true">
-        {title}
-      </span>
+      {/* Le nom de l'écran en filigrane cinétique, le long du bord droit : Cyber seul le montre. */}
+      {watermark && <KineticGhost text={title} />}
       {/* Ni l'en-tête ni le contenu n'ont plus d'animation de montage à eux.
           C'est la transition de vue qui porte l'arrivée d'un écran, et surtout
           son départ — que ces `animate-*` ne savaient pas faire : ils jouaient

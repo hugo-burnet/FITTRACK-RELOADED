@@ -161,6 +161,8 @@ describe('RestRail — la perte qui s’évapore', () => {
     // La vie restante est à gauche : elle passe de 75 % à 62,5 % ; le morceau perdu est entre les deux.
     expect(piece?.style.left).toBe('62.5%');
     expect(piece?.style.width).toBe('12.5%');
+    // Déchiré en lambeaux, qui partent chacun de leur côté.
+    expect(piece?.querySelectorAll('[data-shred]')).toHaveLength(7);
 
     act(() => vi.advanceTimersByTime(1_000));
     expect(view.container.querySelector('[data-part="rest-loss"] > i')).toBeNull();
