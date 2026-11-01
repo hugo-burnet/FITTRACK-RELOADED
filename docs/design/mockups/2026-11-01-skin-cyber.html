@@ -347,6 +347,8 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 .rest { display: flex; align-items: center; gap: 7px; color: var(--accent-ink); font-weight: 700; font-size: 16px; letter-spacing: 0.04em; }
 .rest .dot { width: 7px; height: 7px; background: var(--accent-ink); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0.2; } }
+.rest.crit { color: #ff3c46; }
+.rest.crit .dot { background: #ff3c46; animation-duration: 0.5s; }
 .rest.idle { color: var(--text-2); font-weight: 600; }
 .rest.idle .dot { background: var(--text-3); animation: none; }
 /* Le fil du repos : 24 cellules. Elles s'éteignent une à une. */
@@ -622,6 +624,92 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
+/* =====================================================================
+   LES BARRES DE VIE
+   Le repos, le compteur de séries, le chargement de l'ouverture et
+   l'objectif de la semaine se lisent comme la santé dans le jeu : une
+   barre en parallélogramme, la valeur dans un bloc à gauche, des crans.
+     PERTE   la barre tombe d'un coup ; la part perdue reste, blanche,
+             puis se vide avec retard (380 ms, puis 300 ms). Une grosse
+             perte (8 % et plus) secoue la barre et en détache un éclat
+             qui tombe. Une petite (la seconde de repos) ne laisse que
+             la traînée blanche.
+     CRITIQUE sous le seuil (les 10 dernières secondes de repos), la
+             barre passe au rouge et palpite ; chaque seconde y frappe.
+     ZÉRO    flatline : trois éclairs rouges, puis la barre vide.
+     GAIN    la barre remonte par crans, un reflet blanc la parcourt.
+   ===================================================================== */
+.hp { --hp-col: var(--accent-ink); position: relative; display: flex; align-items: center; gap: 8px; }
+.hp.crit, .hp.flat { --hp-col: #ff3c46; }
+.hp-num {
+  flex: none; min-width: 3.2em; padding: 2px 6px 1px 5px; text-align: right;
+  border-left: 3px solid var(--hp-col); background: color-mix(in srgb, var(--hp-col) 14%, transparent);
+  color: var(--hp-col); font: 700 15px/1.15 var(--display); font-kerning: none; letter-spacing: 0.04em;
+}
+.hp-bar {
+  position: relative; flex: 1; height: 11px;
+  clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--text-2) 18%, transparent) 0 2px, transparent 2px 5px),
+    color-mix(in srgb, var(--surface-0) 75%, transparent);
+}
+.hp-bar > i { position: absolute; left: 0; top: 0; bottom: 0; }
+.hp-ghost { background: #fff; opacity: 0.85; }
+.hp-fill { background: var(--hp-col); box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35); }
+/* Les crans : un trait sombre tous les --notch. */
+.hp-bar::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(var(--notch, 25%) - 2px), rgb(0 0 0 / 0.6) calc(var(--notch, 25%) - 2px) var(--notch, 25%)); }
+.hp.hit .hp-bar { animation: hp-shake calc(150ms * var(--k)) steps(1, end); }
+.hp.hit .hp-fill, .hp.tick .hp-fill { animation: hp-flash calc(120ms * var(--k)) steps(2, end); }
+.hp.hit .hp-num { animation: hp-num calc(220ms * var(--k)) steps(1, end); }
+.hp.crit .hp-fill { animation: hp-crit 0.9s steps(1, end) infinite; }
+.hp.flat .hp-bar { animation: hp-flat calc(600ms * var(--k)) steps(1, end) both; }
+.hp.flat .hp-num { animation: hp-flat calc(600ms * var(--k)) steps(1, end) both; }
+@keyframes hp-shake { 0% { transform: translate(3px, 0); } 30% { transform: translate(-3px, 1px); } 60% { transform: translate(1px, 0); } 100% { transform: none; } }
+@keyframes hp-flash { from { filter: brightness(2.6); } to { filter: none; } }
+@keyframes hp-num { 0% { color: #fff; transform: translateX(-3px); text-shadow: -2px 0 var(--ab-red), 2px 0 var(--ab-cyan); } 45% { transform: translateX(2px); } 100% { transform: none; } }
+@keyframes hp-crit { 50% { opacity: 0.45; } }
+@keyframes hp-flat { 0%, 34%, 68% { background-color: #ff3c46; opacity: 1; } 17%, 51%, 85% { opacity: 0.2; } 100% { opacity: 1; } }
+.hp-chunk { position: absolute; z-index: 2; background: #fff; pointer-events: none;
+  clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+  animation: chunk-fall calc(460ms * var(--k)) steps(8, end) both; }
+@keyframes chunk-fall { 0% { opacity: 1; transform: none; } 30% { opacity: 1; background: var(--hp-col, #fcee0a); } 100% { opacity: 0; transform: translate(8px, 18px) rotate(9deg); } }
+/* Le gain : un reflet blanc parcourt la barre pendant qu'elle remonte par crans. */
+.hp.heal .hp-bar::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 28%; z-index: 1;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75) 50%, transparent);
+  animation: hp-shimmer calc(440ms * var(--k)) linear both; }
+@keyframes hp-shimmer { from { transform: translateX(-100%); } to { transform: translateX(360%); } }
+
+.rest-hp { margin: 10px 18px 4px; }
+.series-hp { flex: 1; }
+.series-hp .hp-bar { height: 9px; }
+.week-hp { margin-top: 8px; }
+.week-hp .hp-bar { height: 8px; }
+.boot .load-hp { position: absolute; left: 30px; right: 30px; bottom: 108px; }
+.boot .load-hp .hp-num { min-width: 3.6em; }
+
+/* =====================================================================
+   LES GLITCHS D'AMBIANCE
+   Deux tailles, jamais déclenchées par un geste et jamais pendant un :
+     MICRO     un libellé, un onglet, une icône tressaute 160 ms, avec
+               son aberration rouge et cyan.
+     DÉCHIRURE tout l'écran se coupe en bandes horizontales décalées, les
+               canaux rouge et cyan se séparent, deux ou trois bandes de
+               couleur et un bloc inversé passent ; cinq images, 250 ms.
+               C'est un filtre SVG (turbulence en bandes → déplacement →
+               séparation des canaux) posé le temps du glitch, puis retiré.
+   ===================================================================== */
+.micro { animation: micro calc(170ms * var(--k)) steps(1, end) both; }
+@keyframes micro {
+  0% { transform: translateX(-3px); text-shadow: -3px 0 var(--ab-red), 3px 0 var(--ab-cyan); filter: drop-shadow(-2px 0 var(--ab-red)) drop-shadow(2px 0 var(--ab-cyan)); }
+  35% { transform: translateX(3px); clip-path: inset(25% 0 30% 0); }
+  65% { transform: translateX(-1px); clip-path: none; }
+  100% { transform: none; text-shadow: none; filter: none; }
+}
+.gband { position: absolute; left: 0; right: 0; z-index: 6; pointer-events: none; mix-blend-mode: screen; }
+.gblock { position: absolute; z-index: 6; pointer-events: none; backdrop-filter: invert(1) hue-rotate(160deg); }
+.app.glitching .lbl, .app.glitching h2, .app.glitching .tab { text-shadow: -3px 0 var(--ab-red), 3px 0 var(--ab-cyan); }
+
 /* ---------- Le banc d'essai de la coche ---------- */
 .bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 28px 40px; align-items: start; }
 .bench > div { min-width: 0; }
@@ -664,7 +752,22 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 }
 </style>
 
-<div class="wrap motion" id="root" data-accent="yellow" data-labels="red" data-bg="rich" data-speed="normal" data-sound="off">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="tear" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <feTurbulence id="tear-noise" type="fractalNoise" baseFrequency="0.00001 0.045" numOctaves="1" seed="3" result="n"/>
+    <feComponentTransfer in="n" result="bands">
+      <feFuncR type="discrete" tableValues="0.5 0.5 0.5 0.12 0.5 0.5 0.5 0.88 0.5 0.5 0.3 0.5"/>
+      <feFuncG type="discrete" tableValues="0.5"/>
+    </feComponentTransfer>
+    <feDisplacementMap id="tear-map" in="SourceGraphic" in2="bands" scale="40" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feColorMatrix in="d" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/>
+    <feOffset id="tear-r" in="r" dx="-5" result="r2"/>
+    <feColorMatrix in="d" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="gb"/>
+    <feOffset id="tear-gb" in="gb" dx="4" result="gb2"/>
+    <feBlend in="r2" in2="gb2" mode="screen"/>
+  </filter>
+</svg>
+<div class="wrap motion" id="root" data-accent="yellow" data-labels="red" data-bg="rich" data-speed="normal" data-sound="off" data-glitch="often">
   <header class="mast">
     <p class="meta">FitTrack 2.16.1 · maquette v3 · 1er novembre 2026</p>
     <h1>Cyber<small>Formes, mouvement, fonds</small></h1>
@@ -695,6 +798,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
         <button type="button" class="pick" data-set="motion" data-val="on" aria-pressed="true">Oui</button>
         <button type="button" class="pick" data-set="motion" data-val="off" aria-pressed="false">Non</button>
       </div>
+      <div class="ctl-g" role="group" aria-label="Glitchs d’ambiance">
+        <span>Glitchs</span>
+        <button type="button" class="pick" data-set="glitch" data-val="often" aria-pressed="true">Fréquents</button>
+        <button type="button" class="pick" data-set="glitch" data-val="rare" aria-pressed="false">Rares</button>
+        <button type="button" class="pick" data-set="glitch" data-val="off" aria-pressed="false">Jamais</button>
+      </div>
+      <button type="button" class="replay all" id="glitch-now">Déclencher un glitch</button>
       <button type="button" class="replay all" id="replay-all">Tout rejouer</button>
     </div>
   </header>
@@ -711,7 +821,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
               <span class="rest num"><i class="dot"></i><span class="rest-txt">Repos 3:00</span></span>
             </div>
           </div>
-          <div class="rail"><i></i></div>
+          <div class="hp rest-hp" aria-hidden="true"></div>
           <div class="cols"><span>Série</span><span>Précédent</span><span class="kg">kg</span><span>Reps</span><span></span></div>
           <div class="sets" data-sets="bench"></div>
         </div>
@@ -728,6 +838,12 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
           <button type="button" class="pick" data-set="sound" data-val="on" aria-pressed="false">Actif</button>
         </div>
         <button type="button" class="replay all" id="bench-reset">Tout décocher</button>
+        <div class="ctl-g" role="group" aria-label="Le repos du banc">
+          <span>Repos</span>
+          <button type="button" class="pick" id="rest-minus">−15 s</button>
+          <button type="button" class="pick" id="rest-plus">+15 s</button>
+          <button type="button" class="pick" id="rest-end">Aller à 0:12</button>
+        </div>
       </div>
     </div>
     <div>
@@ -757,6 +873,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
           <div class="bar"></div>
           <div class="principle">Progressive Overload</div>
           <div class="tagline">Production was the gym</div>
+          <div class="hp load-hp" id="boot-hp" aria-hidden="true"></div>
           <div class="status">
             <span data-scramble data-delay="1850">Base locale · <b>OK</b></span>
             <span data-scramble data-delay="1990">Hors-ligne · <b>prêt</b></span>
@@ -794,7 +911,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
               <svg class="chev" viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
             </div>
             <div class="card island">
-              <div><span class="big num" data-count>3</span><p class="lbl">cette semaine</p></div>
+              <div><span class="big num" data-count>3</span><p class="lbl">cette semaine</p><div class="hp week-hp" id="week-hp" aria-hidden="true"></div></div>
               <div><span class="big num"><span data-count>78,4</span><small>kg</small></span><p class="lbl">poids du jour</p></div>
             </div>
             <div class="sect"><p class="lbl">Dernières séances</p><a href="#" onclick="return false">Tout voir</a></div>
@@ -829,7 +946,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
             <span class="clock num" id="clock">24:12</span>
             <button class="ib" type="button" aria-label="Aide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.5 2.5 0 0 1 4.8 1c0 1.9-2.5 2.1-2.5 4"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/></svg></button>
           </div>
-          <div class="wbar"><p class="lbl num" id="progress">3 / 15 séries</p><span class="seg-meter" aria-hidden="true"><i id="meter" style="--n:3"></i></span></div>
+          <div class="wbar"><p class="lbl num" id="progress">3 / 15 séries</p><span class="hp series-hp" id="series-hp" aria-hidden="true"></span></div>
           <div class="scroll" style="padding-top:6px">
             <div class="card ex live" id="ex-phone">
               <div class="ex-hd">
@@ -840,7 +957,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
                 <button class="ib mute" type="button" aria-label="Replier"><svg viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M6 9.5 12 15.5 18 9.5"/></svg></button>
                 <button class="ib mute" type="button" aria-label="Chrono"><svg viewBox="0 0 24 24" style="width:22px;height:22px"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5"/><path d="M9.5 2.5h5"/><path d="M12 2.5v3.5"/></svg></button>
               </div>
-              <div class="rail"><i></i></div>
+              <div class="hp rest-hp" aria-hidden="true"></div>
               <div class="cols"><span>Série</span><span>Précédent</span><span class="kg">kg</span><span>Reps</span><span></span></div>
               <div class="sets" data-sets="phone"></div>
               <button class="add" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Ajouter une série</button>
@@ -946,19 +1063,29 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
             <tr><td>Onglet, thème choisis</td><td>Trapèze qui s’ouvre, icône ou bouton qui tressaute</td><td class="num">0,2 s</td></tr>
             <tr><td>Record affiché</td><td>Chiffres qui défilent avant de se poser, puis un sursaut toutes les 5 s</td><td class="num">0,5 s</td></tr>
             <tr><td>Graphique</td><td>Barres qui montent par paliers, l’une après l’autre</td><td class="num">0,8 s</td></tr>
+            <tr><td>Barre de vie, perte</td><td>Chute nette, traînée blanche qui se vide avec retard, secousse et éclat si la perte est grosse</td><td class="num">0,7 s</td></tr>
+            <tr><td>Barre de vie, gain</td><td>Remontée par crans, reflet blanc</td><td class="num">0,44 s</td></tr>
+            <tr><td>Repos, 10 dernières s</td><td>Barre rouge qui palpite, chaque seconde frappe ; à zéro, flatline</td><td class="num">10 s</td></tr>
+            <tr><td>Micro-glitch</td><td>Un libellé, un onglet ou une icône tressaute, en rouge et cyan</td><td class="num">0,17 s</td></tr>
+            <tr><td>Déchirure</td><td>L’écran se coupe en bandes décalées, canaux séparés, bandes de couleur, bloc inversé</td><td class="num">0,25 s</td></tr>
           </tbody>
         </table>
       </div>
       <p style="margin-top:12px">Tout avance par paliers (<code>steps()</code>), comme un affichage qui se redessine, et jamais en glissé. « Réduire les animations » coupe tout ce qui précède : l’état final est là d’emblée.</p>
     </section>
     <section>
-      <h2>Ce qu’il reste à trancher</h2>
+      <h2>Décidé</h2>
       <ol>
-        <li><strong>L’entrée d’écran à chaque navigation.</strong> Elle remplace le glissé de 18 px d’aujourd’hui. Elle dure moins d’une seconde et ne bloque aucun toucher, mais on la verra cinquante fois par séance. Une option : la jouer seulement au premier passage sur chaque écran.</li>
-        <li><strong>Les fonds.</strong> La grille, la trame, les halos et le filigrane restent sous 2 % de luminance ; le texte secondaire garde 5,4:1 au point le plus clair. « Unis » les retire, s’ils fatiguent en salle.</li>
-        <li><strong>Le sursaut du record</strong> toutes les 5 s est le seul mouvement qu’on ne déclenche pas soi-même. À garder ou à couper.</li>
-        <li><strong>Le coût dans le code.</strong> Un filet sur une diagonale demande deux calques au même polygone : les cartes, les champs et les coches prennent un pseudo-élément de plus, et le bouton principal une enveloppe pour sa lueur. C’est plus intrusif que TTY1, qui ne touchait qu’au CSS.</li>
-        <li><strong>Les libellés rouges, le nom « Cyber », le déblocage</strong> : toujours ouverts (voir la v2).</li>
+        <li><strong>Gardés :</strong> l’entrée d’écran à chaque navigation, les fonds texturés, le sursaut du record, les libellés rouges, le son de la coche (sous le réglage des Annonces), l’étiquette du tonnage, le nom « Cyber », disponible d’office.</li>
+        <li><strong>Les barres de vie</strong> pour le repos, le compteur de séries, le chargement et l’objectif de la semaine.</li>
+        <li><strong>Les glitchs d’ambiance</strong>, en deux tailles.</li>
+      </ol>
+      <h2 style="margin-top:22px">Encore ouvert</h2>
+      <ol>
+        <li><strong>La fréquence des glitchs dans l’app.</strong> La maquette est en « Fréquents » pour qu’on les voie. Je propose « Rares » : une déchirure toutes les 30 à 60 s au plus, un micro-glitch toutes les 10 à 20 s. Jamais pendant un toucher ou une saisie, jamais pendant une entrée d’écran, jamais en « Réduire les animations ».</li>
+        <li><strong>Le sens de la barre de repos.</strong> Dans l’app, elle se remplit avec le temps écoulé ; une barre de vie se vide avec le temps qui reste. Le skin peut l’inverser en CSS seul (la piste devient la vie, la barre devient la perte, ancrée à droite), mais la traînée blanche et l’éclat demandent un peu de code dans <code>RestRail</code>.</li>
+        <li><strong>−15 s et +15 s pendant le repos.</strong> Ce sont les vrais « dégâts » et « soins » de la barre (Hevy les a). L’app ne les a pas aujourd’hui : le banc les montre, à toi de dire si on les ajoute.</li>
+        <li><strong>Le coût dans le code</strong> : les plaques demandent un calque de plus, les barres de vie un composant, la déchirure un filtre SVG dans <code>index.html</code>.</li>
       </ol>
     </section>
   </div>
@@ -971,7 +1098,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   const motionOn = () => !reduced && root.classList.contains('motion');
 
   // ---- Les réglages de la maquette ----
-  document.querySelectorAll('.pick').forEach((btn) => {
+  document.querySelectorAll('.pick[data-set]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.set;
       if (key === 'motion') root.classList.toggle('motion', btn.dataset.val === 'on');
@@ -1030,10 +1157,12 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     phone.querySelectorAll('.status [data-scramble]').forEach((s) => scramble(s, Number(s.dataset.delay), 360));
     phone.querySelectorAll('[data-count]').forEach((c, i) => count(c, 300 + i * 120));
     if (phone.querySelector('#chart')) drawChart();
+    if (app.classList.contains('boot')) bootLoad();
+    else phone.querySelectorAll('.series-hp, .week-hp').forEach((h, i) => h._hp?.replay(320 + i * 80));
   }
   const phones = [...document.querySelectorAll('.phone')];
-  document.querySelectorAll('[data-replay]').forEach((b) => b.addEventListener('click', () => enter(b.closest('figure').querySelector('.phone'))));
-  document.getElementById('replay-all').addEventListener('click', () => phones.forEach((p) => enter(p)));
+  document.querySelectorAll('[data-replay]').forEach((b) => b.addEventListener('click', () => { const p = b.closest('figure').querySelector('.phone'); lockDuring(p); enter(p); }));
+  document.getElementById('replay-all').addEventListener('click', () => phones.forEach((p) => { lockDuring(p); enter(p); }));
 
   // ---- La barre du bas : l'onglet touché s'allume ----
   document.querySelectorAll('.nav').forEach((nav) => nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', (e) => {
@@ -1041,6 +1170,77 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     nav.querySelectorAll('a').forEach((o) => o.removeAttribute('aria-current'));
     a.setAttribute('aria-current', 'page');
   })));
+
+  // ---- Les barres de vie ----
+  function makeHp(el, { max, value, fmtNum, notch = '25%', critAt }) {
+    el.innerHTML = `${fmtNum ? '<span class="hp-num num"></span>' : ''}<span class="hp-bar" style="--notch:${notch}"><i class="hp-ghost"></i><i class="hp-fill"></i></span>`;
+    const num = el.querySelector('.hp-num');
+    const bar = el.querySelector('.hp-bar');
+    const ghost = el.querySelector('.hp-ghost');
+    const fill = el.querySelector('.hp-fill');
+    let v = value, drain;
+    const pct = (x) => `${(Math.max(0, Math.min(max, x)) / max) * 100}%`;
+    const again = (cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+    function paint() {
+      if (num) num.textContent = fmtNum(v);
+      el.classList.toggle('crit', critAt !== undefined && v > 0 && v <= critAt);
+    }
+    function chunk(from, to) {
+      const w = bar.clientWidth;
+      const c = document.createElement('span');
+      c.className = 'hp-chunk';
+      c.style.left = `${bar.offsetLeft + (w * to) / max}px`;
+      c.style.width = `${Math.max(3, (w * (from - to)) / max)}px`;
+      c.style.top = `${bar.offsetTop}px`;
+      c.style.height = `${bar.offsetHeight}px`;
+      el.appendChild(c);
+      c.addEventListener('animationend', () => c.remove());
+    }
+    function set(next, { quiet = false } = {}) {
+      const prev = v;
+      v = Math.max(0, Math.min(max, next));
+      el.classList.remove('flat');
+      paint();
+      clearTimeout(drain);
+      if (quiet || !motionOn()) {
+        el.classList.remove('heal', 'hit', 'tick');
+        fill.style.transition = ghost.style.transition = 'none';
+        fill.style.width = ghost.style.width = pct(v);
+        return;
+      }
+      if (v < prev) {
+        el.classList.remove('heal');
+        fill.style.transition = 'none';
+        fill.style.width = pct(v);
+        // La traînée reste où elle était (elle a toujours du retard), puis se vide.
+        ghost.style.transition = 'none';
+        if (parseFloat(ghost.style.width) < (prev / max) * 100) ghost.style.width = pct(prev);
+        const big = (prev - v) / max >= 0.08 || el.classList.contains('crit');
+        again(big ? 'hit' : 'tick');
+        if (big) chunk(prev, v);
+        drain = setTimeout(() => {
+          ghost.style.transition = `width ${300 * k()}ms cubic-bezier(0.2, 0, 0, 1)`;
+          ghost.style.width = pct(v);
+        }, 380 * k());
+      } else if (v > prev) {
+        ghost.style.transition = 'none';
+        ghost.style.width = pct(v);
+        fill.style.transition = `width ${360 * k()}ms steps(9, end)`;
+        again('heal');
+        fill.style.width = pct(v);
+      }
+    }
+    function flatline() { if (motionOn()) again('flat'); }
+    fill.style.width = ghost.style.width = pct(v);
+    paint();
+    const api = { set, flatline, get: () => v, max,
+      // À l'entrée de l'écran, la barre part de zéro et se remplit.
+      replay(delay = 320) { const target = v; set(0, { quiet: true }); setTimeout(() => set(target), delay * k()); },
+    };
+    el._hp = api;
+    return api;
+  }
+  const clockText = (sec) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 
   // ---- La coche ----
   const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 19 7"/></svg>';
@@ -1080,23 +1280,32 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   }
   function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* sans vibreur */ } }
 
-  // Le repos d'une carte : un texte, 24 cellules, une horloge.
+  // Le repos d'une carte : un texte, une barre de vie, une horloge.
   function makeRest(card, total, left) {
     const restEl = card.querySelector('.rest');
     const txt = restEl.querySelector('.rest-txt');
-    const rail = card.querySelector('.rail');
-    const label = (s) => `Repos ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-    const st = { total, left };
+    const hp = makeHp(card.querySelector('.rest-hp'), { max: total, value: left, fmtNum: clockText, critAt: 10 });
+    const label = (sec) => `Repos ${clockText(sec)}`;
+    const st = { hp };
     st.paint = () => {
-      if (st.left <= 0) { restEl.classList.add('idle'); txt.textContent = label(total); rail.style.setProperty('--cells', 0); return; }
-      restEl.classList.remove('idle');
-      txt.textContent = label(st.left);
-      rail.style.setProperty('--cells', Math.ceil((st.left / st.total) * 24));
+      const v = hp.get();
+      restEl.classList.toggle('idle', v <= 0);
+      restEl.classList.toggle('crit', v > 0 && v <= 10);
+      txt.textContent = label(v <= 0 ? total : v);
+    };
+    st.tick = () => {
+      if (hp.get() <= 0) return;
+      hp.set(hp.get() - 1); st.paint();
+      if (hp.get() === 0) hp.flatline();
+    };
+    st.shift = (d) => {
+      const was = hp.get();
+      if (was <= 0 && d < 0) return;
+      hp.set(was + d); st.paint();
+      if (hp.get() === 0) hp.flatline();
     };
     st.start = () => {
-      st.left = st.total; st.paint();
-      rail.classList.remove('recharge');
-      if (motionOn()) { void rail.offsetWidth; rail.classList.add('recharge'); }
+      hp.set(total); st.paint();
       txt.firstChild && (txt.firstChild._final = undefined);
       scramble(txt, 120 * k(), 260 * k());
     };
@@ -1193,15 +1402,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   const phoneCard = document.getElementById('ex-phone');
   const phoneHost = phoneCard.querySelector('.sets');
   const phoneRest = makeRest(phoneCard, 120, 84);
-  const meter = document.getElementById('meter');
-  const meterBox = meter.parentElement;
+  const seriesHp = makeHp(document.getElementById('series-hp'), { max: 15, value: 3, notch: `${100 / 15}%` });
   PHONE_SETS.forEach((s, i) => makeSet(phoneHost, phoneCard, s, i, () => {
     const n = phoneHost.querySelectorAll('.set.done').length;
     document.getElementById('progress').textContent = `${n} / 15 séries`;
-    meter.style.setProperty('--n', n);
-    meterBox.classList.remove('flash');
-    if (motionOn()) { void meterBox.offsetWidth; meterBox.classList.add('flash'); }
+    seriesHp.set(n);
   }, phoneRest));
+  makeHp(document.getElementById('week-hp'), { max: 4, value: 3 });
 
   // Le banc d'essai.
   const BENCH_SETS = [
@@ -1213,6 +1420,9 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   const benchHost = benchCard.querySelector('.sets');
   const benchRest = makeRest(benchCard, 180, 0);
   BENCH_SETS.forEach((s, i) => makeSet(benchHost, benchCard, s, i, () => {}, benchRest));
+  document.getElementById('rest-minus').addEventListener('click', () => benchRest.shift(-15));
+  document.getElementById('rest-plus').addEventListener('click', () => benchRest.shift(15));
+  document.getElementById('rest-end').addEventListener('click', () => { benchRest.hp.set(12); benchRest.paint(); });
   document.getElementById('bench-reset').addEventListener('click', () => {
     benchHost.querySelectorAll('.set.done .chk').forEach((c) => c.click());
   });
@@ -1242,7 +1452,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   setInterval(() => {
     elapsed += 1; clock.textContent = fmt(elapsed);
-    clocks.forEach((st) => { if (st.left > 0) { st.left -= 1; st.paint(); } });
+    clocks.forEach((st) => st.tick());
   }, 1000);
 
   // ---- Le sélecteur de thème et les interrupteurs ----
@@ -1300,7 +1510,99 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     svg.innerHTML = out;
   }
   drawChart();
-  phones.forEach((p) => enter(p));
+  // Le chargement de l'ouverture : une barre de vie qui se soigne par paliers, au rythme des lignes d'état.
+  const bootHp = makeHp(document.getElementById('boot-hp'), { max: 100, value: 100, fmtNum: (v) => `${v} %`, notch: '10%' });
+  function bootLoad() {
+    bootHp.set(0, { quiet: true });
+    if (!motionOn()) { bootHp.set(100, { quiet: true }); return; }
+    [[700, 18], [1250, 41], [1850, 67], [2000, 74], [2140, 88], [2300, 100]].forEach(([t, val]) => setTimeout(() => bootHp.set(val), t * k()));
+    setTimeout(() => tear(document.getElementById('boot')), 2450 * k());
+  }
+
+  // ---- Les glitchs d'ambiance ----
+  let lastTouch = 0;
+  document.addEventListener('pointerdown', () => { lastTouch = performance.now(); }, true);
+  const busy = (phone) => performance.now() - lastTouch < 1500
+    || (document.activeElement && phone.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')
+    || phone.classList.contains('glitch-lock');
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const tearNoise = document.getElementById('tear-noise');
+  const tearMap = document.getElementById('tear-map');
+  const tearR = document.getElementById('tear-r');
+  const tearGB = document.getElementById('tear-gb');
+  const BAND_COLORS = ['rgb(94 246 255 / 0.28)', 'rgb(255 0 60 / 0.32)', 'rgb(252 238 10 / 0.22)', 'rgb(255 255 255 / 0.16)'];
+
+  // La déchirure : cinq images, chacune avec ses bandes, ses décalages et sa graine.
+  function tear(app) {
+    if (!motionOn() || !app) return;
+    const frames = 5, dt = 50 * k();
+    const h = app.clientHeight, w = app.clientWidth;
+    const extras = [];
+    for (let f = 0; f < frames; f++) {
+      setTimeout(() => {
+        extras.forEach((e) => e.remove()); extras.length = 0;
+        tearNoise.setAttribute('seed', String((Math.random() * 1000) | 0));
+        tearNoise.setAttribute('baseFrequency', `0.00001 ${rnd(0.02, 0.07).toFixed(3)}`);
+        tearMap.setAttribute('scale', String(f === frames - 1 ? 12 : Math.round(rnd(24, 64))));
+        tearR.setAttribute('dx', String(-Math.round(rnd(2, 7))));
+        tearGB.setAttribute('dx', String(Math.round(rnd(2, 6))));
+        app.style.filter = 'url(#tear)';
+        app.classList.add('glitching');
+        for (let b = 0; b < 2 + ((Math.random() * 2) | 0); b++) {
+          const band = document.createElement('span');
+          band.className = 'gband';
+          band.style.top = `${rnd(0, h - 20)}px`;
+          band.style.height = `${rnd(2, 18)}px`;
+          band.style.background = BAND_COLORS[(Math.random() * BAND_COLORS.length) | 0];
+          band.style.transform = `translateX(${rnd(-24, 24).toFixed(0)}px)`;
+          app.appendChild(band); extras.push(band);
+        }
+        if (Math.random() < 0.7) {
+          const block = document.createElement('span');
+          block.className = 'gblock';
+          block.style.top = `${rnd(0, h - 30)}px`;
+          block.style.left = `${rnd(0, w - 90)}px`;
+          block.style.width = `${rnd(30, 110)}px`;
+          block.style.height = `${rnd(6, 26)}px`;
+          app.appendChild(block); extras.push(block);
+        }
+      }, f * dt);
+    }
+    setTimeout(() => {
+      extras.forEach((e) => e.remove());
+      app.style.filter = '';
+      app.classList.remove('glitching');
+    }, frames * dt);
+  }
+
+  // Le micro-glitch : un seul élément tressaute.
+  function micro(phone) {
+    if (!motionOn()) return;
+    const pool = [...phone.querySelectorAll('.lbl, .tab, .hd h2, .nav a svg, .big, .ver, .hp-num, .sect a')].filter((e) => e.offsetParent);
+    const el = pool[(Math.random() * pool.length) | 0];
+    if (!el) return;
+    el.classList.remove('micro'); void el.offsetWidth; el.classList.add('micro');
+    setTimeout(() => el.classList.remove('micro'), 200 * k());
+  }
+
+  const GLITCH_PACE = { often: { tear: [6000, 12000], micro: [1800, 4500] }, rare: { tear: [30000, 60000], micro: [10000, 20000] } };
+  function schedule(phone, kind) {
+    const pace = GLITCH_PACE[root.dataset.glitch];
+    const [a, b] = pace ? pace[kind] : [3000, 3000];
+    setTimeout(() => {
+      if (pace && !busy(phone)) (kind === 'tear' ? tear(phone.querySelector('.app')) : micro(phone));
+      schedule(phone, kind);
+    }, rnd(a, b));
+  }
+  phones.forEach((p) => {
+    if (p.querySelector('.boot')) return; // l'ouverture a sa propre déchirure, à la fin
+    setTimeout(() => { schedule(p, 'tear'); schedule(p, 'micro'); }, rnd(1500, 4000));
+  });
+  document.getElementById('glitch-now').addEventListener('click', () => phones.forEach((p, i) => setTimeout(() => tear(p.querySelector('.app')), i * 70)));
+  // Une entrée d'écran n'est jamais glitchée : on verrouille le temps qu'elle se joue.
+  const lockDuring = (phone) => { phone.classList.add('glitch-lock'); setTimeout(() => phone.classList.remove('glitch-lock'), 1200 * k()); };
+
+  phones.forEach((p) => { lockDuring(p); enter(p); });
   document.fonts?.ready?.then(drawChart);
 })();
 </script>
