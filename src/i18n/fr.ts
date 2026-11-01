@@ -338,6 +338,11 @@ const fr = {
   workout: {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
+    /** −15 s et +15 s pendant le repos, de part et d'autre de la carte qui se repose. */
+    restMinus: '−15 s',
+    restPlus: '+15 s',
+    restShorten: 'Retirer 15 secondes au repos',
+    restLengthen: 'Ajouter 15 secondes au repos',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',

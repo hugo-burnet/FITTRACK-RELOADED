@@ -56,6 +56,36 @@ test.describe('une séance, du premier lancement à l’historique', () => {
     );
   });
 
+  test('−15 s et +15 s raccourcissent et allongent le repos en cours', async ({ page }) => {
+    await openApp(page);
+    await createRoutineFromTemplate(page, /5×5 — A/);
+    await startSuggestedWorkout(page, '5×5 — A');
+    await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('100');
+    await page.getByRole('button', { name: 'Valider la série 1' }).click();
+
+    const reading = page.getByText(/^Repos \d+:\d\d$/);
+    const seconds = async (): Promise<number> => {
+      const [, m = '0', s = '0'] = /(\d+):(\d\d)/.exec(await reading.innerText()) ?? [];
+      return Number(m) * 60 + Number(s);
+    };
+    await expect(reading).toBeVisible();
+    const plus = page.getByRole('button', { name: 'Ajouter 15 secondes au repos' });
+    const minus = page.getByRole('button', { name: 'Retirer 15 secondes au repos' });
+    for (const control of [plus, minus]) {
+      const box = await control.boundingBox();
+      expect(box!.height).toBeGreaterThanOrEqual(47.5);
+    }
+
+    const before = await seconds();
+    await plus.click();
+    // Une seconde de jeu : l'horloge du repos continue pendant le geste.
+    await expect.poll(seconds).toBeGreaterThanOrEqual(before + 13);
+    const longer = await seconds();
+    await minus.click();
+    await minus.click();
+    await expect.poll(seconds).toBeLessThanOrEqual(longer - 29);
+  });
+
   test('les commandes de la séance ont au moins 48 px (règle n° 5)', async ({ page }) => {
     await openApp(page);
     await createRoutineFromTemplate(page, /5×5 — A/);

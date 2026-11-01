@@ -30,6 +30,14 @@ interface RestTimerStore extends RestTimer {
    * and make a bonus of fifteen seconds read as a bonus of twenty-five.
    */
   extend: (setId: string, seconds: number) => void;
+  /**
+   * Moves the deadline of the rest in progress: −15 s or +15 s from the card.
+   *
+   * Unlike `extend`, it can shorten. It never puts the deadline before now: a rest cut past zero
+   * ends now, and the bar's own deadline timer finishes it exactly as an elapsed rest — same sound,
+   * same hand-over to the cadence. A rest already over is not revived.
+   */
+  shift: (setId: string, seconds: number) => void;
   /** Ends the rest. Idempotent, and safe to call for a set that is not resting. */
   stop: (setId?: string) => void;
 }
@@ -63,6 +71,14 @@ export const useRestTimer = create<RestTimerStore>((set) => ({
           }
         : state,
     ),
+
+  shift: (setId, seconds) =>
+    set((state) => {
+      const now = Date.now();
+      if (state.setId !== setId || state.endsAt <= now || seconds === 0) return state;
+      const endsAt = Math.max(now, state.endsAt + seconds * 1000);
+      return { endsAt, seconds: state.seconds + (endsAt - state.endsAt) / 1000 };
+    }),
 
   stop: (setId) => set((state) => (setId === undefined || state.setId === setId ? IDLE : state)),
 }));

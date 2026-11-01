@@ -315,6 +315,7 @@ export function WorkoutScreen() {
                             startedAt: rest.startedAt,
                             endsAt: rest.endsAt,
                             audioSuppressed: effortSetId === activeRestSetId,
+                            onShift: (seconds) => rest.shift(activeRestSetId, seconds),
                             onDone: (audioAllowed) => {
                               tutorial?.report({
                                 type: 'rest-finished',
