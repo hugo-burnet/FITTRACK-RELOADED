@@ -5,26 +5,25 @@ Quatre sons de validation (et un pour décocher), mixés à partir d'enregistrem
 ils peuvent être publiés avec l'app, sans attribution obligatoire. Les sons de Cyberpunk 2077,
 eux, appartiennent à leur studio et n'entrent pas dans le dépôt.
 
-Ils sont faits pour taper **au téléphone**. Un haut-parleur de téléphone ne rend presque rien sous
-200 Hz : un coup sourd à 60 Hz y disparaît, et il ne reste que le cliquetis (c'était le défaut de la
-première version, « ça fait pas impact »). Chaque recette empile donc :
+Ils doivent être **percutants, au téléphone**. Deux leçons des versions précédentes :
 
-- une pointe d'attaque (souffle filtré, 6 ms) et des impacts enregistrés à l'attaque de moins de 2 ms ;
-- un **corps synthétisé entre 150 et 400 Hz**, là où le téléphone joue ;
-- une **saturation** (les harmoniques font entendre le grave), un **compresseur** (−20 dB, 6:1) et un
-  limiteur doux, pour que tout arrive dans les 30 premières millisecondes, vers −6 dBFS efficaces ;
-- un passe-haut à 160 Hz, qui retire le sous-grave inutile au téléphone et qui mange la marge.
+1. Un haut-parleur de téléphone ne rend presque rien sous 200 Hz. Un coup sourd à 60 Hz y disparaît
+   (v1, « ça fait pas impact ») : le corps est synthétisé entre 150 et 400 Hz.
+2. Un son propre et compressé reste poli (v2, « ça doit être percutant »). Ce qui percute, c'est un son
+   **court** (moins de 0,22 s), une **pointe d'attaque très forte** (une craque de bruit de 4 à 6 ms) et
+   un **écrêtage franc**, adouci au-dessus de 9 kHz : les 30 premières ms passent vers −3 à −5 dBFS
+   efficaces, presque le double de la v2.
 
 | Son | Recette |
 |---|---|
-| `frappe` | un coup de poing sur une plaque de métal : sec, plein, sans traîne |
-| `culasse` | un petit cran, puis le verrou (`metalLatch`) sur un vrai coup : « tchk… TCHAK » |
-| `surcharge` | un impact numérique, un éclat de crunch écrasé en 6 bits, une miette de glitch |
-| `enclume` | une cloche de métal courte sur une pierre : un coup lourd qui sonne un instant |
+| `detonation` | le « PAF » d'une arme : craque de 4 ms, souffle médium qui meurt en 50 ms, coup qui plonge, culasse derrière |
+| `marteau` | métal lourd sur métal, un seul coup, rien qui traîne |
+| `frappe` | un coup de poing sur une plaque de métal, resserré |
+| `surcharge` | un impact numérique, un éclat de crunch écrasé en 5 bits, deux miettes de glitch |
 | `decocher` | le verrou joué à l'envers, sec, commun aux quatre |
 
-Le script affiche, pour chaque son, l'attaque, le niveau efficace des 30 premières ms, la part entre
-200 et 800 Hz et ce qu'un haut-parleur de téléphone en garde (deux passe-haut à 250 Hz, grossièrement).
+Le script affiche, pour chaque son, le niveau efficace des 30 premières ms, le rapport crête/efficace
+et ce qu'un haut-parleur de téléphone en garde (deux passe-haut à 250 Hz, grossièrement).
 
 Pour les refaire (Python 3, `numpy`, `soundfile`, `ffmpeg` avec `libmp3lame`) :
 

@@ -1,4 +1,4 @@
-# Les sons de la coche Cyber, v2 : de l'impact AU TÉLÉPHONE.
+# Les sons de la coche Cyber, v3 : percutants. Courts, attaque très forte, écrêtés.
 # Un haut-parleur de téléphone ne rend presque rien sous ~200 Hz : le corps du coup est donc placé
 # entre 150 et 400 Hz, saturé (les harmoniques font entendre le grave), puis compressé et limité
 # pour que le son tape fort sans écrêter. Presque pas de pièce : la réverbération amortit l'impact.
@@ -77,44 +77,70 @@ def save(x, name):
     w = io.BytesIO(); sf.write(w, x, SR, format='WAV'); w.seek(0)
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'wav', '-i', '-', '-c:a', 'libmp3lame', '-b:a', '128k', path], input=w.read(), check=True)
 
-scifi = load('impactMetal_004.ogg'); scifi3 = load('impactMetal_003.ogg'); scifi0 = load('impactMetal_000.ogg')
-generic = load('impactGeneric_light_000.ogg'); punch = load('impactPunch_heavy_002.ogg')
+
+def lowpass1(x, fc):
+    a = np.exp(-2 * np.pi * fc / SR); y = np.zeros_like(x); p = 0.0
+    for i, v in enumerate(x): p = (1 - a) * v + a * p; y[i] = p
+    return y
+
+def noise(dur, tau):
+    n = int(SR * dur); return rng.standard_normal(n) * np.exp(-np.arange(n) / (SR * tau))
+
+def band(x, lo, hi):
+    return lowpass1(biquad_hp(x, lo), hi)
+
+def punch(x, drive, hp=150, decay=0.07, total=None):
+    """Le mastering « percutant » : passe-haut, une enveloppe qui meurt vite, puis un écrêtage franc
+    (c'est lui qui donne la densité sur un petit haut-parleur), adouci au-dessus de 9 kHz."""
+    x = biquad_hp(x, hp)
+    t = np.arange(len(x)) / SR
+    x = x * np.where(t < 0.012, 1.0, np.exp(-(t - 0.012) / decay))
+    x = x / np.abs(x).max()
+    x = np.clip(x * drive, -1, 1)
+    x = lowpass1(x, 9000)
+    x = x / np.abs(x).max() * 0.98
+    f = int(SR * 0.02); x[-f:] *= np.linspace(1, 0, f)
+    return x
+
+scifi = load('impactMetal_004.ogg'); scifi0 = load('impactMetal_000.ogg')
+generic = load('impactGeneric_light_000.ogg'); pun = load('impactPunch_heavy_002.ogg')
 heavy = load('impactMetal_heavy_000.ogg'); latch = load('metalLatch.ogg'); tick = load('impactMetal_light_002.ogg')
 crunch = load('explosionCrunch_000.ogg'); glitch = load('glitch_004.ogg')
-bell = load('impactBell_heavy_004.ogg'); stone = load('stoneHit4.ogg')
-latchRev = latch[::-1]
 
 sounds = {
-  # 1. Frappe : un coup de poing sur une plaque de métal. Tout dans les 10 premières ms.
-  'frappe': master(mix([
-      (click(0.5), 0.0, 1.0), (trim(scifi, 0.3), 0.0, 1.0), (generic, 0.0, 0.8),
-      (trim(rate(punch, 1.25), 0.25), 0.0, 0.55), (body(300, 165, 0.11, 1.2), 0.0, 1.0),
-  ], 0.34), drive=4.0),
-  # 2. Culasse : « tchk… TCHAK », le verrou cette fois posé sur un vrai coup.
-  'culasse': master(mix([
-      (rate(tick, 1.3), 0.0, 0.5),
-      (click(0.5), 0.06, 1.0), (latch, 0.06, 0.9), (heavy, 0.06, 0.9), (trim(scifi3, 0.28), 0.06, 0.75),
-      (body(320, 170, 0.1, 1.3), 0.06, 1.0),
-  ], 0.42), drive=3.5),
-  # 3. Surcharge : l'impact numérique, avec un éclat de crunch écrasé en 6 bits et une miette de glitch.
-  'surcharge': master(mix([
-      (click(0.5), 0.0, 1.0), (trim(scifi0, 0.25), 0.0, 1.0), (body(280, 150, 0.12, 1.2), 0.0, 1.0),
-      (crush(trim(crunch, 0.3, 0.12), 6), 0.005, 0.55), (glitch, 0.02, 0.5), (glitch, 0.055, 0.3),
-  ], 0.38), drive=4.5),
-  # 4. Enclume : un coup lourd qui sonne, une cloche de métal courte sur une pierre.
-  'enclume': master(mix([
-      (click(0.45), 0.0, 1.0), (bell, 0.0, 0.9), (stone, 0.0, 0.7), (body(340, 190, 0.1, 1.1), 0.0, 1.0),
-  ], 0.36), drive=3.0),
-  # Décocher : le verrou à l'envers, plus sec qu'avant, sans corps.
-  'decocher': master(mix([(latchRev[-int(SR * 0.12):], 0.0, 0.6), (click(0.5, 0.004), 0.12, 1.0)], 0.2), drive=1.6, hp=300) * 0.6,
+  # Détonation : le « PAF » d'une arme. Une craque de 4 ms très forte, un souffle médium qui meurt en
+  # 50 ms, un coup qui plonge, le métal de la culasse juste derrière.
+  'detonation': punch(mix([
+      (band(noise(0.006, 0.0015), 2500, 12000), 0.0, 3.0),
+      (band(noise(0.12, 0.03), 350, 2500), 0.0, 1.6),
+      (body(260, 110, 0.07, 1.4), 0.0, 1.0),
+      (trim(heavy, 0.12), 0.002, 0.7),
+      (trim(latch, 0.1), 0.045, 0.35),
+  ], 0.2), drive=4.5, decay=0.045),
+  # Marteau : métal lourd sur métal, un seul coup, rien qui traîne.
+  'marteau': punch(mix([
+      (band(noise(0.005, 0.0012), 2000, 11000), 0.0, 2.2),
+      (trim(heavy, 0.15), 0.0, 1.0), (trim(scifi, 0.15), 0.0, 0.9), (generic, 0.0, 0.8),
+      (body(300, 150, 0.08, 1.3), 0.0, 1.0),
+  ], 0.18), drive=4.0, decay=0.05),
+  # Frappe : le coup de poing sur une plaque, resserré et écrêté.
+  'frappe': punch(mix([
+      (band(noise(0.005, 0.0012), 2000, 10000), 0.0, 1.8),
+      (trim(scifi, 0.18), 0.0, 1.0), (generic, 0.0, 0.8), (trim(rate(pun, 1.3), 0.15), 0.0, 0.7),
+      (body(300, 165, 0.09, 1.3), 0.0, 1.0),
+  ], 0.2), drive=3.5, decay=0.06),
+  # Surcharge : l'impact numérique, son éclat de crunch en 5 bits, deux miettes de glitch.
+  'surcharge': punch(mix([
+      (band(noise(0.005, 0.0012), 2000, 10000), 0.0, 1.8),
+      (trim(scifi0, 0.18), 0.0, 1.0), (body(280, 150, 0.09, 1.3), 0.0, 1.0),
+      (crush(trim(crunch, 0.2, 0.08), 5), 0.004, 0.7), (glitch, 0.015, 0.6), (glitch, 0.045, 0.35),
+  ], 0.22), drive=4.0, decay=0.07),
+  # Décocher : le verrou à l'envers, sec.
+  'decocher': punch(mix([(latch[::-1][-int(SR * 0.1):], 0.0, 0.6), (band(noise(0.004, 0.001), 2000, 9000), 0.1, 0.8)], 0.13), drive=2.0, hp=300, decay=0.08) * 0.55,
 }
 for name, x in sounds.items():
     save(x, name)
-    head = x[: int(SR * 0.03)]
-    X = np.abs(np.fft.rfft(x)); fr = np.fft.rfftfreq(len(x), 1 / SR)
-    phone = biquad_hp(biquad_hp(x, 250), 250)  # un haut-parleur de téléphone, grossièrement
+    h = x[: int(SR * 0.03)]
+    phone = biquad_hp(biquad_hp(x, 250), 250)
     keep = np.sqrt((phone ** 2).mean() / (x ** 2).mean()) * 100
-    rms = 20 * np.log10(np.sqrt((head ** 2).mean()))
-    crest = np.abs(head).max() / np.sqrt((head ** 2).mean())
-    pk = np.argmax(np.abs(x) > 0.5 * np.abs(x).max()) / SR * 1000
-    print(f'{name:10} {len(x)/SR:.2f} s  attaque {pk:4.1f} ms  RMS 30 ms {rms:5.1f} dBFS  crête/RMS {crest:4.1f}  200-800 Hz {X[(fr>200)&(fr<800)].sum()/X.sum()*100:4.1f} %  gardé au téléphone {keep:4.0f} %')
+    print(f'{name:10} {len(x)/SR:.2f} s  RMS 30 ms {20*np.log10(np.sqrt((h**2).mean())):5.1f} dBFS  crête/RMS {np.abs(h).max()/np.sqrt((h**2).mean()):4.1f}  gardé au téléphone {keep:4.0f} %')
