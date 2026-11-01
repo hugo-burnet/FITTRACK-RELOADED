@@ -34,12 +34,20 @@ import { OneRepMaxSettings } from './OneRepMaxSettings';
 
 const THEME_OPTIONS: {
   value: Theme;
-  labelKey: 'settings.themeDark' | 'settings.themeLight' | 'settings.themeTty1';
+  labelKey: 'settings.themeDark' | 'settings.themeLight' | 'settings.themeTty1' | 'settings.themeCyber';
 }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
   { value: 'light', labelKey: 'settings.themeLight' },
   { value: 'tty1', labelKey: 'settings.themeTty1' },
+  { value: 'cyber', labelKey: 'settings.themeCyber' },
 ];
+
+const THEME_HINT = {
+  dark: 'settings.themeHint',
+  light: 'settings.themeHint',
+  tty1: 'settings.themeTty1Hint',
+  cyber: 'settings.themeCyberHint',
+} as const satisfies Record<Theme, TranslationKey>;
 
 /** La phrase sous le sélecteur : ce qui décrit l'option TTY1 tant qu'elle est verrouillée. */
 const TTY1_LOCKED_ID = 'theme-tty1-locked';
@@ -201,7 +209,8 @@ export function SettingsScreen() {
               role="radiogroup"
               aria-label={t('settings.theme')}
               data-part="segmented"
-              className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
+              // Deux lignes de deux : quatre boutons sur une ligne débordent à 200 % de taille de police.
+              className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
             >
               {THEME_OPTIONS.map(({ value, labelKey }) => {
                 const locked = value === 'tty1' && !tty1Unlocked;
@@ -219,7 +228,7 @@ export function SettingsScreen() {
                     onClick={() => {
                       if (!locked) chooseTheme(value);
                     }}
-                    className={`min-h-12 flex-1 rounded-lg text-base font-semibold
+                    className={`min-h-12 min-w-0 rounded-lg text-base font-semibold [overflow-wrap:anywhere]
                       transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
                       ${
                         theme === value
@@ -235,7 +244,7 @@ export function SettingsScreen() {
               })}
             </div>
             <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
-              {t(theme === 'tty1' ? 'settings.themeTty1Hint' : 'settings.themeHint')}
+              {t(THEME_HINT[theme])}
             </p>
             {!tty1Unlocked && (
               <p id={TTY1_LOCKED_ID} className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">

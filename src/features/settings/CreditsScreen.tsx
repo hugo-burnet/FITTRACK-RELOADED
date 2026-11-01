@@ -100,6 +100,34 @@ export function CreditsScreen() {
         </section>
 
         <section>
+          <SectionTitle>{t('credits.cyberFontTitle')}</SectionTitle>
+          <Card padded>
+            <div className="flex flex-col gap-2">
+              <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="font-semibold text-[var(--text-1)]">
+                  {t('credits.cyberFontWork')}
+                </span>
+                <span className="text-sm text-[var(--text-2)]">{t('credits.cyberFontLicence')}</span>
+              </p>
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('credits.cyberFontAuthors')}
+              </p>
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('credits.cyberFontNotice')}
+              </p>
+              <a
+                href="https://openfontlicense.org"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm break-all text-[var(--text-2)] underline underline-offset-4"
+              >
+                {t('credits.fontLink')}
+              </a>
+            </div>
+          </Card>
+        </section>
+
+        <section>
           <SectionTitle>{t('credits.appTitle')}</SectionTitle>
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('credits.appNotice')}</p>

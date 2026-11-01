@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
-export type ThemeName = 'dark' | 'light' | 'tty1';
+export type ThemeName = 'dark' | 'light' | 'tty1' | 'cyber';
 
 /**
  * Le premier lancement, tel que la personne le passe : « Passer », sans son.

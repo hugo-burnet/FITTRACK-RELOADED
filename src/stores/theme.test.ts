@@ -81,7 +81,22 @@ describe('theme', () => {
     expect(syncSystemBars).toHaveBeenCalledWith('tty1');
   });
 
+  it('reconnaît le thème Cyber mémorisé et peint sa barre système', () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    meta.content = '#12110f';
+    document.head.append(meta);
+
+    applyTheme('cyber');
+
+    expect(loadTheme()).toBe('cyber');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('cyber');
+    expect(meta.content).toBe('#0b0c12');
+    expect(syncSystemBars).toHaveBeenCalledWith('cyber');
+    meta.remove();
+  });
+
   it('liste les thèmes dans l’ordre de Réglages', () => {
-    expect(THEMES).toEqual(['dark', 'light', 'tty1']);
+    expect(THEMES).toEqual(['dark', 'light', 'tty1', 'cyber']);
   });
 });

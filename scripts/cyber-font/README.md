@@ -15,5 +15,6 @@ for w in 400 500 600 700; do
 done
 ```
 
-Pour l'instant, ces fichiers ne servent qu'à la maquette (`docs/design/mockups/2026-11-01-skin-cyber.html`),
-qui les embarque en base64.
+Les fichiers produits vivent dans `src/assets/fonts/cyber/` ; la maquette
+(`docs/design/mockups/2026-11-01-skin-cyber.html`) les embarque en base64. Licence et attribution :
+`licenses/rajdhani/`.

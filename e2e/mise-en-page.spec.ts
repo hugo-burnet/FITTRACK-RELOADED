@@ -11,7 +11,7 @@ import {
 } from './support';
 
 /**
- * Rien ne déborde de l'écran, dans les trois thèmes, à la taille de police du système.
+ * Rien ne déborde de l'écran, dans les quatre thèmes, à la taille de police du système.
  *
  * La taille de police d'Android s'applique à `rem` : une cible en `size-12` (3 rem) passe de 48 à
  * 96 px à 200 %, et trois d'entre elles repoussaient le bouton d'aide hors de l'en-tête de la
@@ -49,6 +49,11 @@ const CASES: { theme: ThemeName; scale: number }[] = [
   { theme: 'light', scale: 200 },
   { theme: 'tty1', scale: 100 },
   { theme: 'tty1', scale: 130 },
+  // Cyber monte d'un cran toutes les tailles (Rajdhani est étroite) et met les titres en capitales :
+  // les deux poussent vers le débordement, d'où les trois échelles.
+  { theme: 'cyber', scale: 100 },
+  { theme: 'cyber', scale: 130 },
+  { theme: 'cyber', scale: 200 },
 ];
 
 for (const { theme, scale } of CASES) {

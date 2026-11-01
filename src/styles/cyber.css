@@ -1,0 +1,365 @@
+/*
+ * Le thème Cyber : la grammaire visuelle de Cyberpunk 2077, sans ses marques.
+ *
+ * Trois couleurs, trois métiers. Le ROUGE encadre (filets, libellés, équerres), le JAUNE agit (le
+ * bouton qui lance, la série validée, l'onglet courant, le repos, un record), le CYAN compte (les
+ * barres ordinaires d'un graphique, le champ qu'on saisit). La maquette fait foi pour l'apparence :
+ * docs/design/mockups/2026-11-01-skin-cyber.html ; la spec pour le comportement :
+ * docs/design/specs/2026-11-01-skin-cyber-design.md.
+ *
+ * Comme tty1.css : importé par index.css, hors de toute couche (une règle sans couche l'emporte sur
+ * les utilitaires de Tailwind quelle que soit sa spécificité), et il ne renomme aucune classe. Il lit
+ * les classes existantes comme des rôles (`rounded-2xl` est une plaque) et les `data-part`.
+ *
+ * Les coins coupés reposent sur `corner-shape: bevel` (Chrome 139) : le filet suit la diagonale et
+ * rien n'est rogné, contrairement à un `clip-path`. Une WebView plus ancienne jette ces règles et
+ * garde les arrondis du thème sombre — un repli laid de rien, pas une panne.
+ */
+
+/* Cyber Sans : Rajdhani (Indian Type Foundry, SIL OFL 1.1) dont les chiffres ont tous la même
+   chasse (scripts/cyber-font). Sans cela, le temps de repos et le chrono tremblent à chaque seconde.
+   `swap` et non `block` comme TTY1 : une police proportionnelle de repli a les mêmes proportions à
+   peu de chose près, et rien ne doit attendre au premier démarrage hors-ligne. */
+@font-face {
+  font-family: 'Cyber Sans';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/cyber/cyber-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cyber Sans';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/cyber/cyber-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cyber Sans';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/cyber/cyber-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cyber Sans';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/cyber/cyber-700.woff2') format('woff2');
+}
+
+:root[data-theme='cyber'] {
+  color-scheme: dark;
+
+  /* Les noms sont ceux de index.css. `cyber.test.ts` compare ce bloc à celui du thème clair : un
+     jeton oublié retomberait sur l'orange du thème sombre. */
+  --surface-0: #0b0c12;
+  --surface-1: #12131c;
+  --surface-2: #1c1d29;
+  --border: #5a2328; /* filet rouge sombre, décoratif */
+  --text-1: #e8f3f3; /* un blanc froid, 17,2:1 */
+  --text-2: #ff6b63; /* le rouge saumon des libellés, 6,6:1 sur une plaque */
+  --text-3: #7d3b3b; /* réservé : jamais une valeur qu'on lit */
+
+  --accent-fill: #fcee0a; /* le jaune */
+  --accent-fill-pressed: #fff56b;
+  --accent-on-fill: #0b0c12; /* 16,2:1 */
+  --accent-ink: #fcee0a;
+  --accent-soft: #2b2a0c;
+  --accent-data: #2fc6d6; /* le cyan des données */
+  --axis: #a5524f;
+  /* Quand la structure est rouge, l'erreur ne se distingue plus par sa couleur seule : elle est plus
+     vive, et garde toujours son mot. */
+  --danger-ink: #ff2e63;
+
+  --scrim: rgb(5 5 9 / 0.75);
+
+  /* Les jetons propres au skin. */
+  --cyber-focus: #5ef6ff;
+  --cyber-crit: #ff3c46;
+  --cyber-line: rgb(255 107 99 / 0.07);
+  --cyber-hatch: rgb(255 107 99 / 0.22);
+  --cyber-red: rgb(255 0 60 / 0.75);
+  --cyber-cyan: rgb(94 246 255 / 0.7);
+  --cyber-aberration: -2px 0 var(--cyber-red), 2px 0 var(--cyber-cyan);
+  --cyber-glow: 0 0 14px -3px rgb(252 238 10 / 0.6);
+
+  /* Les gestes avancent par paliers, comme un affichage qui se redessine. */
+  --ease-mech: steps(4, end);
+
+  --font-sans: 'Cyber Sans', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+
+  /* Rajdhani est étroite et son œil est petit : un cran de plus que le thème sombre partout, pour la
+     même lisibilité. Les interlignes de Tailwind sont des rapports : ils suivent. */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+}
+
+:root[data-theme='cyber'] :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: var(--cyber-focus);
+}
+
+/*
+ * Les fonds.
+ *
+ * Une grille de 28 px, une trame de balayage d'un pixel sur trois, un halo rouge en haut à droite, un
+ * halo cyan en bas à gauche. Le tout reste sous 2 % de luminance : le texte secondaire garde 5,4:1 au
+ * point le plus clair, et ce qu'on lit est sur une plaque opaque.
+ */
+:root[data-theme='cyber'] body {
+  background:
+    radial-gradient(130% 55% at 100% 0%, rgb(255 60 70 / 0.16), transparent 62%),
+    radial-gradient(90% 45% at 0% 100%, rgb(47 198 214 / 0.09), transparent 65%),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.022) 0 1px, transparent 1px 3px),
+    linear-gradient(var(--cyber-line) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, var(--cyber-line) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--surface-0);
+  background-attachment: fixed;
+}
+
+/* Le titre d'un écran, en capitales ; les libellés gravés, interlettrés. */
+:root[data-theme='cyber'] h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+:root[data-theme='cyber'] .label-xs {
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+}
+
+/* `SectionTitle` : un bloc plein, le mot, un filet, trois hachures au bout. */
+:root[data-theme='cyber'] h2.label-xs {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+:root[data-theme='cyber'] h2.label-xs::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  background: var(--text-2);
+}
+:root[data-theme='cyber'] h2.label-xs::after {
+  content: '';
+  flex: 1;
+  height: 8px;
+  background:
+    linear-gradient(var(--border), var(--border)) left center / calc(100% - 24px) 1px no-repeat,
+    repeating-linear-gradient(-45deg, var(--text-2) 0 1.5px, transparent 1.5px 4.5px) right
+      center / 18px 8px no-repeat;
+}
+
+/*
+ * Les plaques.
+ *
+ * `rounded-2xl` est, dans l'app, le rayon des blocs. Un filet rouge, deux équerres dans les coins qui
+ * restent, une zone hachurée sous la grande coupe et une trame de points dans le coin opposé : tout en
+ * `background-image`, par-dessus la couleur que le composant pose, sans pseudo-élément à disputer.
+ */
+:root[data-theme='cyber'] .rounded-2xl:not(.ring-2) {
+  border: 1px solid var(--border);
+  background-image:
+    linear-gradient(var(--text-2), var(--text-2)), linear-gradient(var(--text-2), var(--text-2)),
+    linear-gradient(var(--text-2), var(--text-2)), linear-gradient(var(--text-2), var(--text-2)),
+    repeating-linear-gradient(-45deg, var(--cyber-hatch) 0 2px, transparent 2px 7px),
+    linear-gradient(32deg, transparent 0 30%, var(--surface-1) 52%),
+    radial-gradient(var(--cyber-hatch) 0.9px, transparent 1.3px);
+  background-size:
+    12px 2px,
+    2px 12px,
+    12px 2px,
+    2px 12px,
+    88px 26px,
+    100% 100%,
+    6px 6px;
+  background-position:
+    5px 5px,
+    5px 5px,
+    right 5px bottom 5px,
+    right 5px bottom 5px,
+    right top,
+    0 0,
+    0 0;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+}
+@supports (corner-shape: bevel) {
+  :root[data-theme='cyber'] .rounded-2xl {
+    border-radius: 0 20px 0 10px;
+    corner-shape: bevel;
+  }
+  :root[data-theme='cyber'] .rounded-xl {
+    border-radius: 0 0 11px 0;
+    corner-shape: bevel;
+  }
+}
+
+/* Les feuilles : un trait jaune en tête, une bande hachurée dessous. */
+:root[data-theme='cyber'] .sheet-panel {
+  border-top: 2px solid var(--accent-ink);
+  border-radius: 0;
+}
+
+/*
+ * Les commandes.
+ */
+:root[data-theme='cyber'] [data-part='button'],
+:root[data-theme='cyber'] [data-part='action-band'] {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+}
+/* Le bouton principal : un bloc jaune au coin coupé, une zone hachurée à droite, un plot à gauche,
+   une lueur. */
+:root[data-theme='cyber'] [data-part='button'][data-variant='primary'] {
+  background-image:
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.3) 0 3px, transparent 3px 7px),
+    linear-gradient(var(--accent-on-fill), var(--accent-on-fill));
+  background-size:
+    34px 55%,
+    7px 7px;
+  background-position:
+    right 16px center,
+    left 14px center;
+  background-repeat: no-repeat;
+  box-shadow: var(--cyber-glow);
+}
+:root[data-theme='cyber'] :is([data-part='button'], [data-part='action-band']):active:not(:disabled) {
+  animation: cyber-press 180ms steps(1, end);
+}
+:root[data-theme='cyber']
+  :is(.active\:scale-\[0\.92\], .active\:scale-\[0\.94\], .active\:scale-\[0\.97\]):active {
+  scale: none;
+}
+@keyframes cyber-press {
+  0% {
+    transform: translateX(2px);
+    filter: drop-shadow(-2px 0 var(--cyber-red)) drop-shadow(2px 0 var(--cyber-cyan));
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Les sélecteurs segmentés : des parallélogrammes, l'option choisie en jaune. */
+:root[data-theme='cyber'] [data-part='segmented'] {
+  background: transparent;
+  gap: 6px 4px;
+  padding: 0;
+}
+:root[data-theme='cyber'] [data-part='segmented'] > *,
+:root[data-theme='cyber'] [data-part='segmented'] > li > a {
+  background: var(--surface-2);
+  border-radius: 0;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+:root[data-theme='cyber']
+  [data-part='segmented']
+  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+}
+
+/* La barre du bas : l'onglet actif prend un trapèze jaune au-dessus et un voile qui monte. */
+:root[data-theme='cyber'] .bottom-nav a[aria-current='page'] {
+  background: linear-gradient(to top, rgb(252 238 10 / 0.12), transparent 80%);
+}
+:root[data-theme='cyber'] .bottom-nav a > span[aria-hidden='true'] {
+  width: 46px;
+  height: 4px;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 5px) 100%, 5px 100%);
+}
+:root[data-theme='cyber'] .bottom-nav a > span:last-child {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Les champs : un fond, un trait épais dessous, une équerre en haut à gauche. Pris : le cyan de la
+   donnée. */
+:root[data-theme='cyber'] :is([data-part='cell'], [data-part='field'] input, [data-part='input']) {
+  border-radius: 0;
+  background-image:
+    linear-gradient(var(--text-3), var(--text-3)), linear-gradient(var(--text-3), var(--text-3)),
+    linear-gradient(var(--text-3), var(--text-3));
+  background-size:
+    8px 2px,
+    2px 8px,
+    100% 2px;
+  background-position:
+    left top,
+    left top,
+    left bottom;
+  background-repeat: no-repeat;
+}
+:root[data-theme='cyber'] [data-part='cell'] input {
+  background: none;
+}
+:root[data-theme='cyber']
+  :is([data-part='cell']:focus-within, [data-part='field'] input:focus, [data-part='input']:focus) {
+  background-image:
+    linear-gradient(var(--cyber-focus), var(--cyber-focus)),
+    linear-gradient(var(--cyber-focus), var(--cyber-focus)),
+    linear-gradient(var(--cyber-focus), var(--cyber-focus));
+  background-color: color-mix(in srgb, var(--cyber-focus) 10%, var(--surface-2));
+}
+:root[data-theme='cyber'] :is([data-part='cell'], [data-part='field']) input {
+  caret-color: var(--cyber-focus);
+}
+
+/* L'interrupteur : une piste carrée, un plot carré. */
+:root[data-theme='cyber'] [role='switch'] > span[aria-hidden='true'] {
+  border-radius: 0;
+}
+:root[data-theme='cyber'] [role='switch'] > span[aria-hidden='true'] > span {
+  border-radius: 0;
+}
+
+/* La jauge de l'objectif de la semaine : une barre de vie, en parallélogramme, crantée. */
+:root[data-theme='cyber'] [data-part='meter'] {
+  height: 10px;
+  border-radius: 0;
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  background:
+    repeating-linear-gradient(-45deg, var(--cyber-hatch) 0 2px, transparent 2px 5px),
+    var(--surface-0);
+}
+:root[data-theme='cyber'] [data-part='meter'] > span {
+  border-radius: 0;
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
+}
+
+/* Les deux grands chiffres de l'app — le nom à l'ouverture, un record — portent l'aberration
+   chromatique du jeu : rouge à gauche, cyan à droite. */
+:root[data-theme='cyber'] .boot-mark {
+  color: var(--accent-ink);
+  text-transform: uppercase;
+  text-shadow: var(--cyber-aberration);
+}
+:root[data-theme='cyber'] .record-figure {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+}
+:root[data-theme='cyber'] .record-figure.text-\[2\.5rem\] {
+  color: var(--accent-ink);
+  text-shadow: var(--cyber-aberration);
+}
+
+/* Les pictogrammes : extrémités carrées, angles vifs. Sur le `svg` et ce qu'il contient : un attribut
+   de présentation l'emporte sur une valeur héritée. */
+:root[data-theme='cyber'] svg,
+:root[data-theme='cyber'] svg * {
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
