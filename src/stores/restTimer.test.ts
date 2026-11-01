@@ -17,20 +17,34 @@ describe('restTimer.shift', () => {
     vi.useRealTimers();
   });
 
-  it('adds fifteen seconds to the rest in progress', () => {
+  it('adds fifteen seconds to the rest in progress, on the scale of the whole rest', () => {
     useRestTimer.getState().shift('set-1', 15);
 
+    // Start and end move together: the bar steps back by fifteen seconds of a two-minute rest,
+    // instead of being redrawn against a new length.
     const { endsAt, startedAt, seconds } = useRestTimer.getState();
     expect(endsAt).toBe(NOW + 135_000);
-    expect(startedAt).toBe(NOW);
-    expect(seconds).toBe(135);
+    expect(startedAt).toBe(NOW + 15_000);
+    expect(seconds).toBe(120);
   });
 
   it('takes fifteen seconds off the rest in progress', () => {
     useRestTimer.getState().shift('set-1', -15);
 
     expect(useRestTimer.getState().endsAt).toBe(NOW + 105_000);
-    expect(useRestTimer.getState().seconds).toBe(105);
+    expect(useRestTimer.getState().startedAt).toBe(NOW - 15_000);
+    expect(useRestTimer.getState().seconds).toBe(120);
+  });
+
+  it('never moves the start past now: what cannot be rewound lengthens the rest', () => {
+    vi.setSystemTime(NOW + 5_000); // 5 s elapsed, fifteen to add
+
+    useRestTimer.getState().shift('set-1', 15);
+
+    // A start in the future would make the saved rest unreadable after a reload (restSnapshot).
+    expect(useRestTimer.getState().startedAt).toBe(NOW + 5_000);
+    expect(useRestTimer.getState().endsAt).toBe(NOW + 135_000);
+    expect(useRestTimer.getState().seconds).toBe(130);
   });
 
   it('ends the rest now when there is less left than it takes, never before now', () => {

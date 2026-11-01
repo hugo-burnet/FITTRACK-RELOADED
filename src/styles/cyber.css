@@ -363,3 +363,77 @@
   stroke-linecap: square;
   stroke-linejoin: miter;
 }
+
+/*
+ * Le repos : une barre de vie.
+ *
+ * Dans les autres thèmes, la barre se remplit avec le temps écoulé. Ici, la piste jaune est la vie qui
+ * reste, et la barre du composant (le temps écoulé) devient la perte : `direction: rtl` l'ancre à
+ * droite, elle mange la piste vers la gauche, et son bord d'attaque porte une traînée blanche — la
+ * part perdue qui s'éteint, comme dans le jeu. Rien dans le composant ne change de sens.
+ */
+:root[data-theme='cyber'] [data-part='meter-rail'] {
+  --hp: var(--accent-ink);
+  direction: rtl;
+  height: 7px;
+  bottom: 3px;
+  border-radius: 0;
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(25% - 2px), rgb(0 0 0 / 0.6) calc(25% - 2px) 25%),
+    var(--hp);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
+}
+:root[data-theme='cyber'] [data-part='meter-rail'] > span {
+  border-radius: 0;
+  background: linear-gradient(
+    to right,
+    #fff 0 3px,
+    rgb(255 255 255 / 0.4) 3px 9px,
+    color-mix(in srgb, var(--surface-0) 85%, transparent) 9px
+  );
+}
+/* Les dix dernières secondes : rouge, et la barre palpite. */
+:root[data-theme='cyber'] [data-part='meter-rail'][data-crit] {
+  --hp: var(--cyber-crit);
+  animation: cyber-crit 0.9s steps(1, end) infinite;
+}
+@keyframes cyber-crit {
+  50% {
+    opacity: 0.5;
+  }
+}
+/* Un −15 s : la barre encaisse — secousse, éclair, la perte en blanc un instant. */
+:root[data-theme='cyber'] [data-part='meter-rail'][data-hit] {
+  animation: cyber-hit 160ms steps(1, end);
+}
+:root[data-theme='cyber'] [data-part='meter-rail'][data-hit] > span {
+  background: #fff;
+}
+@keyframes cyber-hit {
+  0% {
+    transform: translate(3px, 0);
+    filter: brightness(2.4);
+  }
+  33% {
+    transform: translate(-3px, 1px);
+  }
+  66% {
+    transform: translate(1px, 0);
+    filter: none;
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* −15 retire (rouge), +15 rend (jaune) : deux parallélogrammes. */
+:root[data-theme='cyber'] [data-part='rest-shift'] > button {
+  border-radius: 0;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+:root[data-theme='cyber'] [data-part='rest-shift'] > button:active {
+  animation: cyber-press 160ms steps(1, end);
+}

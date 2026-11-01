@@ -92,3 +92,46 @@ describe('RestRail — audio du repos', () => {
     expect(signalRestFinishedOnCurrentPlatform).toHaveBeenCalledOnce();
   });
 });
+
+describe('RestRail — la barre de vie', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const rail = (container: HTMLElement) =>
+    container.querySelector<HTMLElement>('[data-part="meter-rail"]');
+
+  it('marque les dix dernières secondes', () => {
+    const { container } = render(
+      <RestRail startedAt={0} endsAt={60_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    expect(rail(container)).not.toHaveAttribute('data-crit');
+
+    act(() => vi.advanceTimersByTime(50_000));
+
+    expect(rail(container)).toHaveAttribute('data-crit', 'true');
+  });
+
+  it('marque un coup quand le repos est raccourci, et seulement alors', () => {
+    const view = render(
+      <RestRail startedAt={0} endsAt={60_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    view.rerender(
+      <RestRail startedAt={0} endsAt={75_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    expect(rail(view.container)).not.toHaveAttribute('data-hit');
+
+    view.rerender(
+      <RestRail startedAt={0} endsAt={60_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    expect(rail(view.container)).toHaveAttribute('data-hit', 'true');
+
+    act(() => vi.advanceTimersByTime(500));
+    expect(rail(view.container)).not.toHaveAttribute('data-hit');
+  });
+});
