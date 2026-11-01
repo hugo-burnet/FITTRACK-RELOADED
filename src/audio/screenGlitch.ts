@@ -2,6 +2,7 @@ import { loadAnnouncerMode } from '@/stores/announcer';
 import type { AnnouncerMode } from './announcer';
 import { audioBus } from './context';
 import { createImpactPack, impactPack } from './impactPack';
+import { playTone } from './tones';
 
 export function screenGlitchUrl(): string {
   return `${import.meta.env.BASE_URL}audio/screen-glitch.mp3`;
@@ -34,4 +35,18 @@ export function playScreenGlitch(mode: AnnouncerMode = loadAnnouncerMode()): boo
   const bus = audioBus();
   if (bus === null) return false;
   return glitch.play(bus);
+}
+
+/**
+ * L'impact d'une série validée, dans le thème Cyber : le son de la cadence, à chaque validation. Le
+ * silence le tait ; la « voix seule » ne le tait pas, parce qu'elle ne retire que le battement des
+ * répétitions, et que ce coup-ci est la réponse à un geste. Tant que l'enregistrement n'est pas
+ * décodé, le ton synthétique de la cadence le remplace : jamais une validation muette.
+ */
+export function playSetImpact(mode: AnnouncerMode = loadAnnouncerMode()): boolean {
+  if (mode === 'silence') return false;
+  const bus = audioBus();
+  if (bus === null) return false;
+  if (!impactPack.play(bus)) playTone(bus, 'repTap');
+  return true;
 }

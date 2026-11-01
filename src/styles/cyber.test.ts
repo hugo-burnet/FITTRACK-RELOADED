@@ -87,3 +87,25 @@ describe('Cyber font', () => {
     expect(base).toContain("@import './styles/cyber.css';");
   });
 });
+
+describe('Cyber translucent plates', () => {
+  type Rgb = [number, number, number];
+  const over = (top: Rgb, alpha: number, under: Rgb): Rgb =>
+    top.map((channel, index) => channel * alpha + (under[index] ?? 0) * (1 - alpha)) as Rgb;
+  const hex = ([r, g, b]: Rgb) =>
+    `#${[r, g, b].map((channel) => Math.round(channel).toString(16).padStart(2, '0')).join('')}`;
+
+  it('keep the secondary text above 4.5:1 over the brightest thing that can sit under them', () => {
+    const plate = /--cyber-plate:\s*rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/.exec(skin);
+    if (plate === null) throw new Error('--cyber-plate introuvable');
+    const [, r, g, b, a] = plate.map(Number) as [number, number, number, number, number];
+    // Pire cas : le halo rouge du fond (16 %), puis un trait du filigrane (42 %), puis la plaque.
+    const page: Rgb = [11, 12, 18];
+    const halo = over([255, 60, 70], 0.16, page);
+    const stroke = over([255, 107, 99], 0.42, halo);
+    const under = over([r, g, b], a, stroke);
+
+    expect(contrast(color('--text-2'), hex(under))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(color('--text-1'), hex(under))).toBeGreaterThanOrEqual(7);
+  });
+});

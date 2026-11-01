@@ -23,18 +23,18 @@ test.describe('la protection de l’historique', () => {
     // La prochaine action reste en tête de l'écran : ce rappel n'est pas elle.
     expect(card!.y).toBeGreaterThan(launch!.y + launch!.height);
 
-    for (const name of ['Sauvegarder', 'Plus tard']) {
+    for (const name of ['Exporter', 'Plus tard']) {
       const button = await nudge.getByRole('button', { name, exact: true }).boundingBox();
       expect(button!.height).toBeGreaterThanOrEqual(47.5);
     }
   });
 
-  test('« Sauvegarder » sort un fichier complet et éteint le rappel', async ({ page }) => {
+  test('« Exporter » sort un fichier complet et éteint le rappel', async ({ page }) => {
     const nudge = page.getByRole('region', { name: 'Sauvegarde ton historique' });
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      nudge.getByRole('button', { name: 'Sauvegarder', exact: true }).click(),
+      nudge.getByRole('button', { name: 'Exporter', exact: true }).click(),
     ]);
 
     expect(download.suggestedFilename()).toMatch(/^fittrack-sauvegarde-\d{4}-\d{2}-\d{2}\.json$/);

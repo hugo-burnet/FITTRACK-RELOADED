@@ -144,6 +144,7 @@ export function WorkoutScreen() {
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
       onBack={() => void navigate('/')}
+      watermark={false}
       action={
         <div className="flex items-center gap-2">
           <ElapsedTime
@@ -187,7 +188,10 @@ export function WorkoutScreen() {
           */}
           {exercises.length > 0 ? (
             <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
-              <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
+              <p
+                data-part="progress-line"
+                className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]"
+              >
                 {workoutProgressLine(completedSets, totalSets)}
               </p>
               <SeriesMeter done={completedSets} total={totalSets} />

@@ -92,7 +92,7 @@ describe('HomeBackupNudge', () => {
     }
   });
 
-  describe('« Sauvegarder »', () => {
+  describe('« Exporter »', () => {
     it('sort le fichier, retient l’instant et éteint le rappel', async () => {
       saveTextFileMock.mockResolvedValue('shared' satisfies SaveOutcome);
       await seedWorkouts(3);

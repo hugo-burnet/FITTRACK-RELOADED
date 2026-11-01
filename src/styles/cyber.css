@@ -84,6 +84,10 @@
   --cyber-cyan: rgb(94 246 255 / 0.7);
   --cyber-aberration: -2px 0 var(--cyber-red), 2px 0 var(--cyber-cyan);
   --cyber-glow: 0 0 14px -3px rgb(252 238 10 / 0.6);
+  /* La plaque translucide : le filigrane et la grille du fond se devinent à travers (« le filigrane doit
+     être incorporé, en arrière-plan »). 74 % : le texte secondaire y garde plus de 6:1, mesuré sur la
+     couleur la plus claire qu'il puisse y avoir dessous. */
+  --cyber-plate: rgb(18 19 28 / 0.74);
 
   /* Les gestes avancent par paliers, comme un affichage qui se redessine. */
   --ease-mech: steps(4, end);
@@ -110,14 +114,29 @@
  * point le plus clair, et ce qu'on lit est sur une plaque opaque.
  */
 :root[data-theme='cyber'] body {
+  background: var(--surface-0);
+}
+/* Le fond vit sur son propre calque, fixe, peint une fois : sans cela, chaque image qui repeint la page
+   (un repos qui défile, une liste qu'on fait glisser) repeignait aussi la grille, la trame et les
+   halos — 39 % de peinture en plus que Sombre, mesuré. */
+:root[data-theme='cyber'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  will-change: transform;
   background:
     radial-gradient(130% 55% at 100% 0%, rgb(255 60 70 / 0.16), transparent 62%),
     radial-gradient(90% 45% at 0% 100%, rgb(47 198 214 / 0.09), transparent 65%),
     repeating-linear-gradient(0deg, rgb(255 255 255 / 0.022) 0 1px, transparent 1px 3px),
     linear-gradient(var(--cyber-line) 1px, transparent 1px) 0 0 / 28px 28px,
-    linear-gradient(90deg, var(--cyber-line) 1px, transparent 1px) 0 0 / 28px 28px,
-    var(--surface-0);
-  background-attachment: fixed;
+    linear-gradient(90deg, var(--cyber-line) 1px, transparent 1px) 0 0 / 28px 28px;
+}
+/* La zone qui défile : sur son propre calque, comme le fait déjà le téléphone dans la plupart des cas —
+   les plaques texturées s'y peignent une fois et glissent, au lieu d'être repeintes à chaque image. */
+:root[data-theme='cyber'] [data-part='screen'] .overflow-y-auto {
+  will-change: scroll-position;
 }
 
 /* Le titre d'un écran, en capitales ; les libellés gravés, interlettrés. */
@@ -168,25 +187,29 @@
     linear-gradient(var(--text-2), var(--text-2)), linear-gradient(var(--text-2), var(--text-2)),
     linear-gradient(var(--text-2), var(--text-2)), linear-gradient(var(--text-2), var(--text-2)),
     repeating-linear-gradient(-45deg, var(--cyber-hatch) 0 2px, transparent 2px 7px),
-    linear-gradient(32deg, transparent 0 30%, var(--surface-1) 52%),
-    radial-gradient(var(--cyber-hatch) 0.9px, transparent 1.3px);
+    repeating-linear-gradient(90deg, var(--cyber-hatch) 0 1px, transparent 1px 5px);
   background-size:
     12px 2px,
     2px 12px,
     12px 2px,
     2px 12px,
     88px 26px,
-    100% 100%,
-    6px 6px;
+    34% 30%;
   background-position:
     5px 5px,
     5px 5px,
     right 5px bottom 5px,
     right 5px bottom 5px,
     right top,
-    0 0,
-    0 0;
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+    left bottom;
+  background-repeat: no-repeat;
+  background-color: var(--cyber-plate);
+}
+/* Les lignes d'une plaque (ListRow, la ligne de SwipeToDelete) peignaient leur propre fond opaque : elles
+   le perdent, la plaque suffit. La zone de suppression de SwipeToDelete reste invisible tant qu'on ne
+   glisse pas (elle est rognée à zéro) : rien ne transparaît au repos. */
+:root[data-theme='cyber'] .rounded-2xl .bg-\[var\(--surface-1\)\] {
+  background-color: transparent;
 }
 @supports (corner-shape: bevel) {
   :root[data-theme='cyber'] .rounded-2xl {
@@ -214,9 +237,13 @@
   letter-spacing: 0.12em;
   font-weight: 700;
 }
-/* Le bouton principal : un bloc jaune au coin coupé, une zone hachurée à droite, un plot à gauche,
-   une lueur. */
+/* Le bouton principal : un bloc jaune au coin coupé, une lueur, et — en pleine largeur seulement — une
+   zone hachurée à droite et un plot à gauche. En demi-largeur, ils n'ont pas la place et recouvraient
+   le mot (« Sauvegarder » sur la carte du rappel, vu sur téléphone). */
 :root[data-theme='cyber'] [data-part='button'][data-variant='primary'] {
+  box-shadow: var(--cyber-glow);
+}
+:root[data-theme='cyber'] [data-part='button'][data-variant='primary'].w-full {
   background-image:
     repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.3) 0 3px, transparent 3px 7px),
     linear-gradient(var(--accent-on-fill), var(--accent-on-fill));
@@ -227,7 +254,6 @@
     right 16px center,
     left 14px center;
   background-repeat: no-repeat;
-  box-shadow: var(--cyber-glow);
 }
 :root[data-theme='cyber'] :is([data-part='button'], [data-part='action-band']):active:not(:disabled) {
   animation: cyber-press 180ms steps(1, end);
@@ -385,6 +411,8 @@
   box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
 }
 :root[data-theme='cyber'] [data-part='meter-rail'] > span {
+  /* La perte part de la droite : la barre du temps écoulé grandit depuis ce bord. */
+  transform-origin: right;
   border-radius: 0;
   background: linear-gradient(
     to right,
@@ -403,27 +431,201 @@
     opacity: 0.5;
   }
 }
-/* Un −15 s : la barre encaisse — secousse, éclair, la perte en blanc un instant. */
+/* Un −15 s : la barre encaisse — une secousse, sans plus. La partie écoulée ne s'éclaire plus en
+   entier (« la perte de PV illumine entièrement ») : seul le morceau perdu s'en va, plus bas. */
 :root[data-theme='cyber'] [data-part='meter-rail'][data-hit] {
   animation: cyber-hit 160ms steps(1, end);
-}
-:root[data-theme='cyber'] [data-part='meter-rail'][data-hit] > span {
-  background: #fff;
 }
 @keyframes cyber-hit {
   0% {
     transform: translate(3px, 0);
-    filter: brightness(2.4);
   }
   33% {
     transform: translate(-3px, 1px);
   }
   66% {
     transform: translate(1px, 0);
-    filter: none;
   }
   100% {
     transform: none;
+  }
+}
+
+/*
+ * La perte qui s'évapore : « après chaque perte, les traînées de perte partent vers le ciel en
+ * s'évaporant ». Le morceau perdu (RestRail, SeriesMeter le mesurent et le posent à sa place, hors de
+ * la barre qui rogne) part blanc, se teinte de la couleur de la barre, monte, s'étire, se floute et
+ * s'efface ; deux volutes s'en échappent de côté, l'une rouge, l'une cyan. 800 ms, par paliers fins.
+ */
+[data-part='rest-loss'] {
+  display: none;
+}
+:root[data-theme='cyber'] [data-part='rest-loss'] {
+  display: block;
+  height: 7px;
+  bottom: 3px;
+}
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss']) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+/*
+ * Les lambeaux (LossShreds) : sept bandes au bord déchiré, qui se séparent et montent chacune à sa façon —
+ * dérive, rotation, hauteur, retard et teinte donnés par le rang. Blanches au départ, elles prennent la
+ * couleur de la barre, se floutent et s'effacent ; deux d'entre elles virent au rouge et au cyan du glitch.
+ */
+:root[data-theme='cyber'] [data-shred] {
+  --dx: 0px;
+  --dy: -30px;
+  --rot: 0deg;
+  --late: 0ms;
+  --tint: var(--accent-ink);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 7 + 1px);
+  background: #fff;
+  clip-path: polygon(0 12%, 38% 0, 70% 18%, 100% 4%, 92% 52%, 100% 96%, 58% 84%, 24% 100%, 6% 70%);
+  animation: cyber-shred 820ms steps(18, end) var(--late) both;
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(1) {
+  --dx: -9px;
+  --dy: -26px;
+  --rot: -38deg;
+  --late: 0ms;
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(2) {
+  --dx: 5px;
+  --dy: -40px;
+  --rot: 24deg;
+  --late: 40ms;
+  --tint: var(--cyber-red);
+  clip-path: polygon(10% 0, 64% 10%, 100% 0, 84% 46%, 100% 100%, 40% 88%, 0 100%, 14% 50%);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(3) {
+  --dx: -4px;
+  --dy: -48px;
+  --rot: -12deg;
+  --late: 15ms;
+  clip-path: polygon(0 0, 46% 14%, 100% 2%, 96% 60%, 72% 100%, 30% 82%, 0 96%, 8% 40%);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(4) {
+  --dx: 8px;
+  --dy: -34px;
+  --rot: 46deg;
+  --late: 60ms;
+  --tint: var(--cyber-cyan);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(5) {
+  --dx: -6px;
+  --dy: -44px;
+  --rot: 18deg;
+  --late: 25ms;
+  clip-path: polygon(6% 6%, 52% 0, 100% 14%, 88% 54%, 100% 90%, 56% 100%, 12% 86%, 0 44%);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(6) {
+  --dx: 10px;
+  --dy: -28px;
+  --rot: -30deg;
+  --late: 75ms;
+  --tint: var(--cyber-red);
+}
+:root[data-theme='cyber'] [data-shred]:nth-child(7) {
+  --dx: 3px;
+  --dy: -52px;
+  --rot: 34deg;
+  --late: 35ms;
+  clip-path: polygon(0 20%, 30% 0, 100% 8%, 82% 50%, 96% 100%, 50% 80%, 4% 100%, 16% 56%);
+}
+@keyframes cyber-shred {
+  0% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  14% {
+    opacity: 1;
+    transform: translate(calc(var(--dx) * 0.2), -3px) rotate(calc(var(--rot) * 0.2));
+  }
+  50% {
+    opacity: 0.75;
+    background: var(--tint);
+    transform: translate(calc(var(--dx) * 0.7), calc(var(--dy) * 0.5)) rotate(calc(var(--rot) * 0.6))
+      scale(0.9, 1.15);
+    filter: blur(0.6px);
+  }
+  100% {
+    opacity: 0;
+    background: var(--tint);
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.5, 0.3);
+    filter: blur(3px);
+  }
+}
+
+/*
+ * Les barres du temps perdu (LossBars) : la perte d'une barre de repos reste une barre — cinq tranches
+ * horizontales qui montent chacune à sa vitesse, s'étirent, s'amincissent et s'évaporent, de la couleur
+ * de la barre au blanc, puis à rien. Une seule direction, le ciel ; de légers écarts de côté.
+ */
+:root[data-theme='cyber'] [data-bar] {
+  --rise: -30px;
+  --drift: 0px;
+  --late: 0ms;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: var(--accent-ink);
+  animation: cyber-bar-evaporate 900ms steps(20, end) var(--late) both;
+}
+:root[data-theme='cyber'] [data-bar]:nth-child(1) {
+  --rise: -22px;
+  --drift: -3px;
+  --late: 0ms;
+}
+:root[data-theme='cyber'] [data-bar]:nth-child(2) {
+  --rise: -38px;
+  --drift: 4px;
+  --late: 50ms;
+}
+:root[data-theme='cyber'] [data-bar]:nth-child(3) {
+  --rise: -30px;
+  --drift: -1px;
+  --late: 20ms;
+}
+:root[data-theme='cyber'] [data-bar]:nth-child(4) {
+  --rise: -46px;
+  --drift: 2px;
+  --late: 80ms;
+}
+:root[data-theme='cyber'] [data-bar]:nth-child(5) {
+  --rise: -26px;
+  --drift: -4px;
+  --late: 35ms;
+}
+@keyframes cyber-bar-evaporate {
+  0% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  20% {
+    background: #fff;
+    transform: translate(calc(var(--drift) * 0.3), calc(var(--rise) * 0.15)) scaleX(1.05);
+  }
+  60% {
+    opacity: 0.7;
+    background: #fff;
+    transform: translate(calc(var(--drift) * 0.7), calc(var(--rise) * 0.6)) scale(1.35, 0.6);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 0;
+    background: var(--accent-ink);
+    transform: translate(var(--drift), var(--rise)) scale(1.7, 0.2);
+    filter: blur(2.5px);
   }
 }
 
@@ -479,7 +681,7 @@
 }
 
 /* La ligne d'une série validée : un voile jaune qui s'efface vers la droite, un trait à gauche. */
-:root[data-theme='cyber'] div:has(> [data-part='set-check'][aria-pressed='true']) {
+:root[data-theme='cyber'] [data-part='set-row'][data-done] {
   background-image: linear-gradient(90deg, rgb(252 238 10 / 0.16), rgb(252 238 10 / 0.04) 70%, transparent);
   box-shadow: inset 3px 0 0 var(--accent-ink);
 }
@@ -719,7 +921,7 @@
     text-shadow: 0 0 10px var(--accent-ink);
   }
 }
-:root[data-theme='cyber'] .rounded-2xl:has([data-fired]) {
+:root[data-theme='cyber'] .rounded-2xl[data-jolt] {
   animation: cyber-jolt 200ms steps(1, end);
 }
 @keyframes cyber-jolt {
@@ -742,7 +944,7 @@
     transform: none;
   }
 }
-:root[data-theme='cyber'] body:has([data-fired])::after {
+:root[data-theme='cyber'][data-impact] body::after {
   content: '';
   position: fixed;
   inset: 0;
@@ -828,7 +1030,7 @@
 }
 
 /* Le compteur de séries : un cran par série ; une série validée le soigne (reflet), une série
-   annulée le frappe (la perte reste blanche, puis s'éteint avec retard). */
+   annulée le frappe, et le cran perdu s'évapore (plus haut). Le cadre ne rogne pas ; la barre, si. */
 :root[data-theme='cyber'] [data-part='series-meter'] {
   position: relative;
   display: block;
@@ -836,12 +1038,16 @@
   min-width: 2rem;
   height: 9px;
   margin-right: 12px;
+}
+:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='bar'] {
+  position: absolute;
+  inset: 0;
   clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
   background:
     repeating-linear-gradient(-45deg, var(--cyber-hatch) 0 2px, transparent 2px 5px),
     color-mix(in srgb, var(--surface-0) 75%, transparent);
 }
-:root[data-theme='cyber'] [data-part='series-meter']::after {
+:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='bar']::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -851,33 +1057,23 @@
     rgb(0 0 0 / 0.6) calc(var(--notch) - 2px) var(--notch)
   );
 }
-:root[data-theme='cyber'] [data-part='series-meter'] > i {
+:root[data-theme='cyber'] [data-hp='fill'] {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: var(--v);
-}
-:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='fill'] {
   background: var(--accent-ink);
   box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
   transition: width 360ms steps(9, end);
 }
-:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='ghost'] {
-  background: #fff;
-  opacity: 0.85;
-  transition: width 300ms cubic-bezier(0.2, 0, 0, 1) 380ms;
-}
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] > [data-hp='fill'] {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] [data-hp='fill'] {
   transition: none;
 }
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up'] > [data-hp='ghost'] {
-  transition: none;
-}
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] > [data-hp='bar'] {
   animation: cyber-hit 160ms steps(1, end);
 }
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up']::before {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up'] > [data-hp='bar']::before {
   content: '';
   position: absolute;
   top: 0;
@@ -898,36 +1094,95 @@
 }
 /* La ligne « 3 séries sur 15 » prend sa largeur, la barre le reste ; à 200 % de police, la ligne se
    tronque plutôt que de pousser les commandes de droite hors de l'écran (l'E2E l'a vu). */
-:root[data-theme='cyber'] p:has(+ [data-part='series-meter']) {
+:root[data-theme='cyber'] [data-part='progress-line'] {
   flex: 0 1 auto;
   margin-right: 12px;
 }
 
-/* Le filigrane : le nom de l'écran, en lettres creuses, couché le long du bord droit, derrière le
-   contenu (la section s'isole pour qu'il reste au-dessus des fonds de `body`). */
+/*
+ * Le filigrane cinétique : le nom de l'écran, en lettres creuses, le long du bord droit.
+ *
+ * « Les noms des pages en watermark ne se voient pas bien », puis « il doit être incorporé, en arrière-plan,
+ * quitte à adapter le design » : il est derrière le contenu, et ce sont les plaques qui sont devenues
+ * translucides pour le laisser voir. Il bouge —
+ * il défile en boucle (deux passages du titre, 26 s), ses lettres entrent une à une à l'arrivée d'un
+ * écran, et l'une d'elles grésille de temps en temps (le micro-glitch d'ambiance la choisit). Rien que `transform` et `opacity` : le
+ * compositeur le joue seul. Le mouvement réduit le fige (règle globale d'index.css).
+ */
 :root[data-theme='cyber'] [data-part='screen'] {
+  /* Le filigrane passe derrière le contenu sans passer derrière les fonds de `body`. */
   isolation: isolate;
 }
 :root[data-theme='cyber'] [data-part='ghost'] {
   position: absolute;
-  top: 5.5rem;
-  /* Au bord, pas au-delà : un filigrane qui déborde fait défiler la page de côté (l'E2E l'a vu). */
+  top: 4.75rem;
+  bottom: 0;
   right: 0;
+  /* Derrière le contenu : les plaques translucides glissent par-dessus quand on fait défiler. */
   z-index: -1;
   display: block;
-  max-height: calc(100% - 7rem);
+  width: 5.5rem;
   overflow: hidden;
-  writing-mode: vertical-rl;
-  white-space: nowrap;
   pointer-events: none;
   user-select: none;
+  /* Les bords du bandeau s'estompent : le texte apparaît et disparaît au lieu d'être tranché. */
+  mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+}
+:root[data-theme='cyber'] [data-part='ghost'] > [data-track] {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  /* Un `transform` : le compositeur le joue. Mesuré, environ 0,5 ms de style par image — le même ordre
+     que la barre de repos en Sombre ; 60 images par seconde dans les deux thèmes. */
+  animation: cyber-ghost-scroll 26s linear infinite;
+}
+:root[data-theme='cyber'] [data-part='ghost'] [data-run] {
+  display: block;
+  padding-bottom: 2.5rem;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 1px rgb(255 107 99 / 0.13);
-  font-size: 8rem;
+  /* Franc entre les plaques ; à travers elles (74 %), il n'en reste qu'un dixième : il ne gêne rien. */
+  -webkit-text-stroke: 1.5px rgb(255 107 99 / 0.42);
+  font-size: 5.5rem;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+:root[data-theme='cyber'] [data-part='ghost'] [data-letter] {
+  display: inline-block;
+  /* Le retard est plafonné à douze lettres : un titre long ne met pas trois secondes à s'écrire. */
+  animation: cyber-ghost-in 260ms steps(4, end) calc(min(var(--i), 12) * 45ms + 120ms) both;
+}
+/* Une lettre sur sept, jaune. Le grésillement passe par les glitchs d'ambiance (CyberGlitch) : une
+   animation infinie par lettre recalculait le style à chaque image — 58 ms sur 3 s, mesuré. */
+:root[data-theme='cyber'] [data-part='ghost'] [data-letter]:nth-child(7n) {
+  -webkit-text-stroke-color: rgb(252 238 10 / 0.42);
+}
+@keyframes cyber-ghost-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+/* Les lettres tombent dans le sens de la lecture verticale. Jamais de côté : décalées vers la droite,
+   elles sortaient de l'écran à 200 % de police (l'E2E l'a vu). */
+@keyframes cyber-ghost-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Le chargement de l'ouverture : une barre de vie qui se soigne par paliers, son pourcentage compté
@@ -1003,4 +1258,20 @@
   100% {
     --boot-pct: 100;
   }
+}
+
+/*
+ * La fluidité : aussi fluide que Sombre (« j'aimerais un frame rate équivalent au skin sombre »).
+ *
+ * Mesuré pendant un repos, processeur ralenti six fois : Cyber peignait deux fois plus que Sombre
+ * (201 ms contre 102 sur 3 s). La barre de repos bouge à chaque image, et chaque image repeignait la
+ * carte entière autour d'elle — hachures, trame de points, équerres. Ce qui bouge en continu a donc
+ * son propre calque : le navigateur ne repeint plus que lui.
+ */
+:root[data-theme='cyber'] :is([data-part='meter-rail'], [data-part='rest-loss'], [data-part='series-meter']) {
+  will-change: transform;
+}
+/* La barre seule se contient : ses voisins (le morceau perdu, le cran perdu) doivent pouvoir monter. */
+:root[data-theme='cyber'] [data-part='meter-rail'] {
+  contain: layout paint;
 }

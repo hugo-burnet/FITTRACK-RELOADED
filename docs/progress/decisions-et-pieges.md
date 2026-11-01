@@ -7,6 +7,49 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-01 (après la v2.17.0) — Le son à chaque validation, la perte qui s'évapore, « Exporter », la fluidité
+
+**Demandes, au téléphone.** « Je voudrais entendre le bruit à chaque validation de la série » ; « la perte de PV […]
+illumine entièrement lors d'une perte de 15 s ; je voudrais qu'après chaque perte, les traînées partent vers le ciel en
+s'évaporant » ; « Sauvegarder est un mot trop long, il rentre dans les cosmétiques des boutons » ; « un frame rate
+équivalent au skin sombre ou clair ».
+
+- **Le son.** L'impact n'était branché que sur « série validée » ; « dernière série » et « exercice terminé » gardaient
+  le petit ton, et leur délai de 20 s rendait le plan muet quand on valide vite. Il est joué à part, à chaque validation
+  (`announceSetValidation`), muet seulement en silence. *Si l'utilisateur n'entend toujours rien* : Annonces › Silence,
+  le mode que « Passer » choisit au premier lancement.
+- **La perte.** Plus d'éclair sur toute la partie écoulée : le morceau perdu (mesuré par `RestRail` / `SeriesMeter`) se
+  détache dans un calque hors de la barre et monte en s'évaporant.
+- **« Exporter »** remplace « Sauvegarder » sur le rappel de sauvegarde, et la cause est corrigée : la hachure et le plot
+  du bouton principal ne vont qu'aux boutons pleine largeur.
+- **La fluidité, mesurée** (Playwright + trace Chrome, processeur ralenti six fois, 3 s de repos qui tourne) : Cyber
+  peignait 189 ms contre 99 pour Sombre. La vraie cause n'était pas le thème : **la barre de repos animait sa largeur**,
+  soit une mise en page et une peinture de toute la page à chaque image, dans tous les thèmes — plus chère en Cyber, plus
+  décoré. Elle anime désormais un `scaleX` (compositeur seul) : **11 ms de peinture pour les deux thèmes**, la mise en page
+  de 113–150 ms à 9–14 ms. En plus, en Cyber : le fond sur un calque fixe peint une fois, la zone qui défile signalée
+  comme composée, les barres sur leur propre calque, et plus aucun `:has()` (des attributs posés par les composants).
+  Le script de mesure n'est pas commité ; il est décrit ici pour être refait.
+- **Les lambeaux** (« bien découpés, comme des lambeaux ») : le morceau perdu se déchire en sept bandes au bord
+  irrégulier (`LossShreds`), chacune avec sa dérive, sa rotation, son retard et sa teinte, données par le rang.
+- **Le filigrane cinétique** (« les noms en watermark ne se voient pas bien — on ne se ferait pas un peu de kinetic
+  typography ? ») : il passe **devant** le contenu, en simple contour pâle sans capter de toucher, défile en boucle,
+  ses lettres tombent une à une à l'arrivée, l'une grésille parfois (par le micro-glitch d'ambiance : une animation
+  infinie par lettre coûtait 58 ms de style sur 3 s, mesuré). **Pas sur la séance en direct** (`Screen watermark={false}`) :
+  rien ne se pose sur la colonne des coches. Deux débordements vus par l'E2E à 200 % et corrigés : les lettres entraient
+  de côté (hors de l'écran), elles tombent désormais d'en haut.
+- **Puis, à la relecture de l'utilisateur** : « des barres qui s'évaporent pour les temps » — la perte d'une barre de
+  repos se défait en cinq traits horizontaux qui montent, s'étirent et s'effacent (`LossBars`) ; le compteur de séries
+  garde ses lambeaux. Et « le filigrane doit être incorporé, en arrière-plan, quitte à adapter le design » : il repasse
+  derrière le contenu, et ce sont **les plaques qui deviennent translucides** (`--cyber-plate`, 74 %), leurs lignes
+  internes perdant leur fond ; la trame de points, qui exigeait un calque opaque pour s'effacer, devient une
+  micro-hachure confinée au coin bas-gauche. Contraste garanti par test au pire cas (halo rouge + trait du filigrane
+  sous la plaque) : texte secondaire ≥ 4,5:1. Fluidité remesurée : 60 img/s, ni peinture ni rastérisation en plus.
+  Une partie du message (« sans changé da pas des routine ») n'a pas été comprise : rien n'a été touché à ce titre.
+- **Piège, rattrapé avant commit** : un remplacement de bloc dans `cyber.css`, borné par un repère que je croyais voisin,
+  a emporté 476 lignes (la coche, les glitchs, la règle qui cache le filigrane hors de Cyber). L'E2E l'a révélé par le
+  filigrane apparu en Sombre ; la feuille a été reconstruite depuis le dernier commit plus les deux seuls blocs voulus,
+  et le diff relu ligne à ligne. Leçon : borner un remplacement par le bloc **suivant immédiat**, et relire le `--stat`.
+
 ### 2026-11-01 — Le skin Cyber, et −15 s / +15 s pendant le repos
 
 **Demande.** « Je verrai bien un nouveau skin cyberpunk sur fittrack », puis « une inspiration de
