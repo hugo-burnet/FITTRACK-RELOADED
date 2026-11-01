@@ -13,7 +13,20 @@ describe('CreditsScreen', () => {
     );
 
     expect(screen.getByText(t('credits.fontWork'))).toBeInTheDocument();
-    expect(screen.getByText(t('credits.fontLicence'))).toBeInTheDocument();
+    // Les deux polices, TTY1 et Cyber, sont sous la même licence : la mention paraît deux fois.
+    expect(screen.getAllByText(t('credits.fontLicence'))).toHaveLength(2);
     expect(screen.getByText(t('credits.fontAuthors'))).toBeInTheDocument();
+  });
+
+  it('credits the Cyber font, derived from Rajdhani', () => {
+    render(
+      <MemoryRouter>
+        <CreditsScreen />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(t('credits.cyberFontWork'))).toBeInTheDocument();
+    expect(screen.getByText(t('credits.cyberFontAuthors'))).toBeInTheDocument();
+    expect(screen.getByText(t('credits.cyberFontNotice'))).toBeInTheDocument();
   });
 });

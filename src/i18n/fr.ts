@@ -338,6 +338,14 @@ const fr = {
   workout: {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
+    /** −15 s et +15 s pendant le repos, de part et d'autre de la carte qui se repose. */
+    restMinus: '−15 s',
+    restPlus: '+15 s',
+    restShorten: 'Retirer 15 secondes au repos',
+    /** L'étiquette d'une coche validée, dans le thème Cyber : ce que la série vient d'ajouter. */
+    setTonnage: '+{value} kg',
+    setPlusOne: '+1 série',
+    restLengthen: 'Ajouter 15 secondes au repos',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',
@@ -1959,6 +1967,8 @@ const fr = {
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
     themeTty1Hint: 'TTY1 : la console. Noir, gris, une seule couleur vive.',
+    themeCyber: 'Cyber',
+    themeCyberHint: 'Cyber : le rouge encadre, le jaune agit, le cyan compte.',
     /** Ne dit pas *comment* : la console rare reste une surprise, on sait seulement qu'il y a à trouver. */
     themeTty1Locked: 'TTY1 est verrouillé. Garde un œil sur l’écran de chargement.',
 
@@ -2246,6 +2256,13 @@ const fr = {
     fontNotice:
       'La police du thème TTY1 est dérivée de Terminus : ses bitmaps ont été converties en contours et réduites aux caractères de l’app. Le nom d’origine est réservé, elle en porte un autre.',
     fontLink: 'openfontlicense.org',
+
+    cyberFontTitle: 'Police Cyber',
+    cyberFontWork: 'Rajdhani',
+    cyberFontLicence: 'SIL OFL 1.1',
+    cyberFontAuthors: 'Indian Type Foundry',
+    cyberFontNotice:
+      'La police du thème Cyber est dérivée de Rajdhani : ses chiffres ont été mis à la même largeur, pour que le temps de repos ne tremble pas. Elle porte un autre nom, Cyber Sans.',
 
     appTitle: 'Application',
     appNotice:

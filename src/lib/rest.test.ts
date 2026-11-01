@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CRITICAL_REST_MS,
+  msUntilCritical,
   DEFAULT_REST_SECONDS,
   formatRest,
   isRestTriggering,
@@ -198,5 +200,17 @@ describe('formatRest', () => {
 
   it('floors a negative duration to zero rather than printing a minus', () => {
     expect(formatRest(-10)).toBe('0:00');
+  });
+});
+
+describe('msUntilCritical', () => {
+  it('counts down to the last ten seconds of the rest', () => {
+    expect(CRITICAL_REST_MS).toBe(10_000);
+    expect(msUntilCritical(100_000, 30_000)).toBe(60_000);
+  });
+
+  it('is zero once inside them, and after the end', () => {
+    expect(msUntilCritical(100_000, 95_000)).toBe(0);
+    expect(msUntilCritical(100_000, 120_000)).toBe(0);
   });
 });

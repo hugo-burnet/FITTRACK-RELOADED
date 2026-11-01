@@ -44,6 +44,7 @@ import { useActiveWorkout } from './useActiveWorkout';
 import { workoutExerciseLoads } from './workoutLookups';
 import { WorkoutExerciseCard, workoutRecordNotices } from './WorkoutExerciseCard';
 import { INITIAL_WORKOUT_FOLD_COMMAND, nextWorkoutFoldCommand } from './workoutFold';
+import { SeriesMeter } from './SeriesMeter';
 import { workoutProgressLine } from './summary';
 import { WorkoutSheets } from './WorkoutSheets';
 import type { PlatesView, SheetState } from './WorkoutSheets';
@@ -189,6 +190,7 @@ export function WorkoutScreen() {
               <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
                 {workoutProgressLine(completedSets, totalSets)}
               </p>
+              <SeriesMeter done={completedSets} total={totalSets} />
               {deloadActive && (
                 <Toggle
                   label={t('workout.deloadActive')}
@@ -315,6 +317,7 @@ export function WorkoutScreen() {
                             startedAt: rest.startedAt,
                             endsAt: rest.endsAt,
                             audioSuppressed: effortSetId === activeRestSetId,
+                            onShift: (seconds) => rest.shift(activeRestSetId, seconds),
                             onDone: (audioAllowed) => {
                               tutorial?.report({
                                 type: 'rest-finished',

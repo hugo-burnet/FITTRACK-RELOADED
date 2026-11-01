@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { DecodedTitle } from './DecodedTitle';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { HeaderAction } from '@/ui/HeaderAction';
@@ -81,7 +82,15 @@ export function Screen({
   const hasTutorialHelp = showTutorialHelp && tutorial !== null;
 
   return (
-    <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
+    <section
+      data-part="screen"
+      className="relative mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col"
+    >
+      {/* Le nom de l'écran en filigrane, couché le long du bord droit : le thème Cyber seul le
+          montre, derrière le contenu. Décoratif, donc caché aux lecteurs d'écran. */}
+      <span data-part="ghost" aria-hidden="true">
+        {title}
+      </span>
       {/* Ni l'en-tête ni le contenu n'ont plus d'animation de montage à eux.
           C'est la transition de vue qui porte l'arrivée d'un écran, et surtout
           son départ — que ces `animate-*` ne savaient pas faire : ils jouaient
@@ -119,7 +128,7 @@ export function Screen({
         {/* Truncates rather than wraps: a title is the one line you scan, and a
             routine's name belongs to the user — it can be anything. */}
         <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight text-[var(--text-1)]">
-          {title}
+          <DecodedTitle text={title} />
           {cursor && <span aria-hidden="true" className="tty-cursor hidden" />}
         </h1>
         {(action !== undefined || hasTutorialHelp) && (

@@ -33,6 +33,7 @@ import { HoldRail } from './HoldRail';
 import type { SideStage } from './sideProgress';
 import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
+import { RestShift } from './RestShift';
 import { WarmupOfferRow } from './WarmupOfferRow';
 import { warmupOfferFor, type WarmupOffer } from './warmupOffer';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -83,6 +84,8 @@ export type CardRest = {
   audioSuppressed: boolean;
   /** True when the rest flows directly into the next set's cadence. */
   onDone: (audioAllowed: boolean) => boolean;
+  /** −15 s or +15 s on the rest in progress. Absent, the card shows no buttons. */
+  onShift?: (seconds: number) => void;
 };
 
 export type CardPace = RepPacer & { setId: string; onFinished: () => void };
@@ -436,6 +439,8 @@ export function WorkoutExerciseCard({
             />
           )}
         </div>
+
+        {rest?.onShift !== undefined && <RestShift onShift={rest.onShift} />}
 
         {expanded && (
           <>

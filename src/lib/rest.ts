@@ -118,6 +118,18 @@ export function restProgress(startedAt: number, endsAt: number, now: number): nu
   return clamp01((now - startedAt) / span);
 }
 
+/**
+ * Les dix dernières secondes d'un repos : la barre de vie du thème Cyber y passe au rouge et palpite.
+ * Une durée et non une fraction : on se prépare dix secondes avant, que le repos dure une minute ou
+ * trois.
+ */
+export const CRITICAL_REST_MS = 10_000;
+
+/** Combien de temps avant d'entrer dans les dix dernières secondes ; zéro si on y est déjà. */
+export function msUntilCritical(endsAt: number, now: number): number {
+  return Math.max(0, endsAt - CRITICAL_REST_MS - now);
+}
+
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 1;
   return Math.min(1, Math.max(0, value));

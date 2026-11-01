@@ -3,6 +3,7 @@ import { NativeRuntimeBridge } from '@/platform/NativeRuntimeBridge';
 import { TutorialProvider } from '@/features/tutorial/TutorialProvider';
 import { ActiveWorkoutBar } from './ActiveWorkoutBar';
 import { BottomNav } from './BottomNav';
+import { CyberGlitch } from './CyberGlitch';
 
 /**
  * The navigation is a flex sibling of the scroll area rather than a fixed
@@ -15,8 +16,9 @@ import { BottomNav } from './BottomNav';
 export function AppShell() {
   return (
     <TutorialProvider>
-      <div className="flex h-full flex-col bg-[var(--surface-0)]">
+      <div data-part="shell" className="flex h-full flex-col bg-[var(--surface-0)]">
         <NativeRuntimeBridge />
+        <CyberGlitch />
         {/* Le défilement est descendu dans `Screen`, entre son en-tête et sa barre
             d'action : c'est ce qui permet à cette barre d'être un frère flex comme
             la navigation, au lieu d'une superposition qui tranche le contenu. */}

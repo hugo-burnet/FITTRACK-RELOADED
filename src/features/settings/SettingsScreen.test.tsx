@@ -285,14 +285,19 @@ describe('SettingsScreen — thème', () => {
   describe('quand TTY1 est débloqué', () => {
     beforeEach(() => localStorage.setItem(TTY1_UNLOCK_KEY, '1'));
 
-    it('offers the three themes and applies TTY1 at once', async () => {
+    it('offers the four themes and applies TTY1 at once', async () => {
       renderSettings();
 
       expect(
         within(themeGroup())
           .getAllByRole('radio')
           .map((option) => option.textContent),
-      ).toEqual([t('settings.themeDark'), t('settings.themeLight'), t('settings.themeTty1')]);
+      ).toEqual([
+        t('settings.themeDark'),
+        t('settings.themeLight'),
+        t('settings.themeTty1'),
+        t('settings.themeCyber'),
+      ]);
 
       await userEvent.click(tty1Option());
 
@@ -317,6 +322,27 @@ describe('SettingsScreen — thème', () => {
     });
   });
 
+  describe('Cyber', () => {
+    const cyberOption = () =>
+      within(themeGroup()).getByRole('radio', { name: t('settings.themeCyber') });
+
+    it('is open from the start, with nothing to unlock', () => {
+      renderSettings();
+
+      expect(cyberOption()).not.toHaveAttribute('aria-disabled');
+    });
+
+    it('applies at once and says what it is', async () => {
+      renderSettings();
+
+      await userEvent.click(cyberOption());
+
+      expect(document.documentElement.getAttribute('data-theme')).toBe('cyber');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('cyber');
+      expect(screen.getByText(t('settings.themeCyberHint'))).toBeInTheDocument();
+    });
+  });
+
   describe('tant que TTY1 est verrouillé', () => {
     it('keeps the option in the list, dimmed and marked as unavailable', () => {
       renderSettings();
@@ -325,7 +351,12 @@ describe('SettingsScreen — thème', () => {
         within(themeGroup())
           .getAllByRole('radio')
           .map((option) => option.textContent),
-      ).toEqual([t('settings.themeDark'), t('settings.themeLight'), t('settings.themeTty1')]);
+      ).toEqual([
+        t('settings.themeDark'),
+        t('settings.themeLight'),
+        t('settings.themeTty1'),
+        t('settings.themeCyber'),
+      ]);
       expect(tty1Option()).toHaveAttribute('aria-disabled', 'true');
       expect(tty1Option()).toHaveAttribute('aria-checked', 'false');
       expect(tty1Option().querySelector('svg')).not.toBeNull();

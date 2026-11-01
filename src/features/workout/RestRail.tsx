@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { t } from '@/i18n/fr';
-import { formatRest, restProgress } from '@/lib/rest';
+import { formatRest, msUntilCritical, restProgress } from '@/lib/rest';
 import { signalRestFinishedOnCurrentPlatform } from './restAlert';
 import { armRestCountdown } from './restCountdown';
 
@@ -69,6 +69,34 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
     bar.style.width = '100%';
   }, [startedAt, endsAt, reduced]);
 
+  /*
+   * Deux états que seul le thème Cyber dessine (sa barre de vie) et qui ne coûtent rien ailleurs :
+   * les dix dernières secondes, et le coup d'un repos raccourci (−15 s). Un attribut chacun, posé ici
+   * parce que c'est ici que vit l'échéance ; la feuille du thème fait le reste.
+   */
+  const [critical, setCritical] = useState(() => msUntilCritical(endsAt, Date.now()) === 0);
+  useEffect(() => {
+    // Hors du rendu, par minuteur : un +15 s dans la zone rouge doit pouvoir en faire sortir.
+    const wait = msUntilCritical(endsAt, Date.now());
+    const settle = setTimeout(() => setCritical(wait === 0), 0);
+    const enter = wait > 0 ? setTimeout(() => setCritical(true), wait) : undefined;
+    return () => {
+      clearTimeout(settle);
+      clearTimeout(enter);
+    };
+  }, [endsAt]);
+
+  const [hit, setHit] = useState(false);
+  const previousEnd = useRef(endsAt);
+  useEffect(() => {
+    const shortened = endsAt < previousEnd.current;
+    previousEnd.current = endsAt;
+    if (!shortened) return;
+    setHit(true);
+    const id = setTimeout(() => setHit(false), 450);
+    return () => clearTimeout(id);
+  }, [endsAt]);
+
   // Reduced motion uses discrete one-second updates.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -93,6 +121,8 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
     <span
       aria-hidden="true"
       data-part="meter-rail"
+      data-crit={critical || undefined}
+      data-hit={hit || undefined}
       className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
         rounded-full bg-[var(--border)]"
     >

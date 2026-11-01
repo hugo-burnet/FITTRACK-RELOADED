@@ -1,4 +1,5 @@
 import { loadAnnouncerEcho, loadAnnouncerMode } from '@/stores/announcer';
+import { skinTone } from './skinTone';
 import { EMPTY_MEMORY, pickAtRandom, planCue, type AnnouncerMemory } from './announcer';
 import { audioBus, setAudioEcho, setAudioVolume, unlockAudio } from './context';
 import { CUES, allClips, clipsFor, type CueId } from './cues';
@@ -80,7 +81,9 @@ export function announce(cue: CueId, when = 0): boolean {
   memory = result.memory;
 
   const { tone, clip } = result.plan;
-  if (tone !== null) playTone(bus, tone, when);
+  // Le thème peut changer le timbre d'un cue (Cyber : la coche frappe), jamais décider s'il sonne.
+  const timbre = skinTone(cue, tone);
+  if (timbre !== null) playTone(bus, timbre, when);
   const spoke = clip !== null && voicePack.play(bus, clip, when);
   if (spoke && CUES[cue].duckMusic) {
     void requestMusicDucking().then((granted) => {
