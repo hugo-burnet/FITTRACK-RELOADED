@@ -18,9 +18,11 @@ Dernière version publiée : v2.16.1 (2026-10-25).
   `docs/design/mockups/2026-11-01-skin-cyber.html`, décisions et refus (les sons du jeu) dans
   `docs/progress/decisions-et-pieges.md` (entrée du 2026-11-01).
 - **−15 s / +15 s pendant le repos, pour tous les thèmes** (`restTimer.shift`, `RestShift`).
+- **Les quatre éléments de la maquette d'abord laissés** ajoutés à la demande : compteur de séries en barre de vie,
+  titre qui se décode, nom de l'écran en filigrane, chargement de l'ouverture en barre de vie.
 - **Dû** : la recette téléphone § 6 (`docs/recette-telephone.md`) — le son, la vibration et le ressenti de la coche
   ne se jugent qu'au doigt. La fusion dans `master` et la release se font sur demande.
-- **Portes** (2026-11-01, sur la branche) : `typecheck`, `lint`, `test:run` (**3 847 tests**, 315 fichiers, 1 ignoré), `build` et
+- **Portes** (2026-11-01, sur la branche) : `typecheck`, `lint`, `test:run` (**3 855 tests**, 318 fichiers, 1 ignoré), `build` et
   `test:e2e` (**43 parcours**, dont Cyber à 100, 130 et 200 % et −15 / +15 sur un vrai repos) — verts.
 
 ## Où on en est

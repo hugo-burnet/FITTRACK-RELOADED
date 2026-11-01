@@ -45,10 +45,12 @@ remplacé par l'impact de la cadence. Leçon, pour un prochain son : mesurer ce 
 - *La coquille (`AppShell`) peignait `--surface-0` sur tout l'écran* : les fonds posés sur `body` étaient
   invisibles. Transparente en Cyber seulement.
 
-**Ce que la maquette montre et que l'app ne fait pas** (dette assumée, à redemander si elle manque) : le
-compteur de séries en barre de vie (l'app n'a pas cette jauge), le titre qui se décode lettre à lettre
-(réécrire un nœud texte que React possède serait fragile), le filigrane du nom de l'écran, le chargement
-de l'ouverture en barre de vie.
+**Ce que la maquette montrait et que la première passe avait laissé** a été ajouté à la demande (« Ajoute
+les ») : compteur de séries en barre de vie (`SeriesMeter`), titre qui se décode (`DecodedTitle` — un état du
+composant, jamais un nœud texte de React réécrit à la main), filigrane du nom de l'écran, chargement de
+l'ouverture en barre de vie (`@property --boot-pct` compté par `counter()`). Deux débordements vus par l'E2E
+et corrigés : le filigrane (collé au bord), la ligne « 1 série sur 15 » figée qui poussait « Tout replier »
+hors de l'écran à 200 %.
 
 ### 2026-10-16 (suite de la v2.15.0) — « Oui et oui » : un pas pour toute l'appli, et le coach par en dessous
 

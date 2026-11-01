@@ -259,6 +259,10 @@ Une séance de deux exercices au moins, dont un en barre.
       dernières secondes ; un −15 la fait trembler.
 - [ ] **Changer d'onglet** : l'écran se déchire un quart de seconde, le son glitch tombe avec. En
       Annonces › Silence : la déchirure reste, le son se tait.
+- [ ] **Les quatre ajouts** : à l'ouverture, une barre de chargement jaune se remplit par paliers avec
+      son pourcentage ; à chaque écran, le titre se décode lettre à lettre ; le nom de l'écran se devine
+      en filigrane le long du bord droit ; en séance, la barre à côté de « 3 séries sur 15 » gagne un
+      cran par série validée et en perd un, avec sa traînée blanche, quand on décoche.
 - [ ] **L'ambiance** : rester une minute sur l'accueil sans toucher — un libellé tressaute de temps en
       temps, une déchirure au plus par demi-minute. Jamais pendant une saisie de charge.
 - [ ] Réglages Android › Accessibilité › Supprimer les animations : plus de déchirure, plus d'éclats ;

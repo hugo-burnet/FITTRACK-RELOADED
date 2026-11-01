@@ -137,9 +137,26 @@ réécrit pas) sur un titre, un libellé ou un pictogramme.
 - **La déchirure sur un écran chargé à la demande** : au premier passage, le contenu peut n'être pas
   encore là pendant le quart de seconde ; la déchirure passe sur un écran vide.
 - **Le filtre SVG sur `#root`** pendant 250 ms : sur une WebView lente, une image peut sauter.
-- Ce que la maquette montre et que l'app ne fait pas encore : le compteur de séries en barre de vie
-  (l'app n'a pas cette jauge), le titre qui se « décode » (réécrire un nœud texte que React possède
-  serait fragile), le filigrane du nom de l'écran, le chargement de l'ouverture en barre de vie.
+- **Le filigrane** ne peut pas déborder à droite comme dans la maquette (la page défilerait de côté,
+  l'E2E l'a vu) : il est collé au bord, et en grande partie derrière les plaques.
+
+### Ajoutés à la demande (« Ajoute les »)
+
+Les quatre éléments de la maquette d'abord laissés de côté :
+
+- **Le compteur de séries en barre de vie** : `SeriesMeter`, à côté de « 3 séries sur 15 » sur la
+  séance ; un cran par série, `data-dir="up"` (reflet) ou `"down"` (traînée blanche, secousse), testé.
+  Caché hors de Cyber. À 200 % de police, la ligne de texte se tronque plutôt que de pousser les
+  commandes hors de l'écran.
+- **Le titre qui se décode** : `DecodedTitle` dans le `h1` de `Screen` ; le texte affiché est un état du
+  composant (jamais un nœud que React possède réécrit à la main), le vrai titre reste donné aux
+  lecteurs d'écran ; 360 ms, en Cyber seulement, pas en mouvement réduit. `decodeFrame` est pure et
+  testée.
+- **Le nom de l'écran en filigrane** : `data-part="ghost"` dans `Screen`, lettres creuses couchées le
+  long du bord droit, derrière le contenu.
+- **Le chargement de l'ouverture en barre de vie** : `data-part="boot-load"` dans `BootScreen` ; il se
+  remplit par paliers en 1,6 s, son pourcentage compté par un entier animé (`@property --boot-pct`).
+  Décoratif : l'ouverture ne charge rien qu'on attende.
 
 ## Vérification
 

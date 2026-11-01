@@ -149,6 +149,15 @@ export function BootScreen(props: BootProps & { exiting?: boolean }) {
         <div className="mt-8 flex flex-col items-center gap-3 px-6 text-center">
           <p className="boot-principle">{t('app.principle')}</p>
           <p className="boot-tagline">{t('app.tagline')}</p>
+          {/* Le chargement en barre de vie, que seul le thème Cyber montre : il se remplit par
+              paliers au rythme de l'ouverture, son pourcentage compté par la feuille. Décoratif :
+              l'ouverture ne charge rien qu'on attende. */}
+          <div data-part="boot-load" aria-hidden="true">
+            <span className="boot-load-num" />
+            <span className="boot-load-bar">
+              <i />
+            </span>
+          </div>
         </div>
       )}
     </div>
