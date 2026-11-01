@@ -760,3 +760,57 @@
     opacity: 0;
   }
 }
+
+/* La coquille de l'app peint `--surface-0` sur tout l'écran : transparente ici, pour laisser voir les
+   fonds posés sur `body`. */
+:root[data-theme='cyber'] [data-part='shell'] {
+  background: transparent;
+}
+
+/*
+ * Les glitchs (CyberGlitch.tsx, cyberGlitch.ts).
+ *
+ * L'arrivée sur un écran est une déchirure, avec son son : elle remplace le glissé de 18 px des
+ * autres thèmes, qui se couperait avec elle. Le micro-glitch d'ambiance tressaute 170 ms.
+ */
+:root[data-theme='cyber'][data-nav]::view-transition-old(root),
+:root[data-theme='cyber'][data-nav]::view-transition-new(root) {
+  animation: none;
+}
+.cyber-gband,
+.cyber-gblock {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+}
+.cyber-gband {
+  left: 0;
+  right: 0;
+  mix-blend-mode: screen;
+}
+.cyber-gblock {
+  backdrop-filter: invert(1) hue-rotate(160deg);
+}
+:root[data-theme='cyber'] [data-glitch] {
+  animation: cyber-micro 170ms steps(1, end) both;
+}
+@keyframes cyber-micro {
+  0% {
+    transform: translateX(-3px);
+    text-shadow: var(--cyber-aberration);
+    filter: drop-shadow(-2px 0 var(--cyber-red)) drop-shadow(2px 0 var(--cyber-cyan));
+  }
+  35% {
+    transform: translateX(3px);
+    clip-path: inset(25% 0 30% 0);
+  }
+  65% {
+    transform: translateX(-1px);
+    clip-path: none;
+  }
+  100% {
+    transform: none;
+    text-shadow: none;
+    filter: none;
+  }
+}
