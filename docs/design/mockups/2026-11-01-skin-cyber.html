@@ -87,7 +87,9 @@
   --cut-b: 10px;
   --cut-ctl: 13px;
   --ease-mech: cubic-bezier(0.2, 0, 0, 1);
+  --k: 1; /* le ralenti de la maquette : 4 au quart de vitesse */
 }
+[data-speed='slow'] { --k: 4; }
 
 [data-accent='cyan'] {
   --accent-fill: #5ef6ff; --accent-fill-pressed: #a6faff; --accent-ink: #5ef6ff;
@@ -336,7 +338,9 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 .wbar { display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px; }
 .wbar .lbl { flex: none; }
 .wbar .seg-meter { flex: 1; height: 6px; background: repeating-linear-gradient(90deg, var(--border) 0 calc(100% / 15 - 2px), transparent calc(100% / 15 - 2px) calc(100% / 15)); position: relative; }
-.wbar .seg-meter > i { position: absolute; inset: 0 auto 0 0; width: calc(var(--n) * 100% / 15); background: repeating-linear-gradient(90deg, var(--accent-ink) 0 calc(100% / var(--n) - 2px), transparent calc(100% / var(--n) - 2px) calc(100% / var(--n))); }
+.wbar .seg-meter > i { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--accent-ink) 0 calc(100% / 15 - 2px), transparent calc(100% / 15 - 2px) calc(100% / 15)); clip-path: inset(0 calc(100% - var(--n) * 100% / 15) 0 0); }
+.wbar .seg-meter.flash > i { animation: meter-flash calc(300ms * var(--k)) steps(3, end) both; }
+@keyframes meter-flash { from { filter: brightness(2.4) drop-shadow(0 0 6px var(--accent-ink)); } to { filter: none; } }
 .ex-hd { display: flex; align-items: flex-start; gap: 2px; padding: 14px 6px 0 18px; }
 .ex-hd .t { flex: 1; min-width: 0; display: grid; gap: 3px; padding-top: 2px; }
 .ex-hd .t b { font-size: 20px; font-weight: 700; letter-spacing: 0.01em; }
@@ -348,12 +352,16 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 /* Le fil du repos : 24 cellules. Elles s'éteignent une à une. */
 .rail { margin: 10px 18px 4px; height: 7px; position: relative;
   background: repeating-linear-gradient(90deg, var(--border) 0 calc(100% / 24 - 2px), transparent calc(100% / 24 - 2px) calc(100% / 24)); }
-.rail > i { position: absolute; inset: 0 auto 0 0; width: calc(var(--cells, 0) * 100% / 24); overflow: hidden;
-  background: repeating-linear-gradient(90deg, var(--accent-ink) 0 calc(100% / var(--cells, 1) - 2px), transparent calc(100% / var(--cells, 1) - 2px) calc(100% / var(--cells, 1))); }
+.rail > i { position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, var(--accent-ink) 0 calc(100% / 24 - 2px), transparent calc(100% / 24 - 2px) calc(100% / 24));
+  clip-path: inset(0 calc(100% - var(--cells, 0) * 100% / 24) 0 0); }
+/* La recharge : quand une série est validée, les 24 cellules se rallument de gauche à droite. */
+.rail.recharge > i { animation: recharge calc(320ms * var(--k)) steps(24, end) calc(120ms * var(--k)) both; }
+@keyframes recharge { from { clip-path: inset(0 100% 0 0); } }
 .cols, .set { display: grid; grid-template-columns: 34px 1fr 72px 64px 52px; align-items: center; column-gap: 8px; padding: 0 10px 0 12px; }
 .cols { padding-top: 10px; padding-bottom: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); text-align: center; }
 .cols .kg { text-transform: none; letter-spacing: 0.02em; }
-.set { min-height: 60px; position: relative; overflow: hidden; }
+.set { min-height: 60px; position: relative; }
 .set .n { text-align: center; color: var(--text-2); font-size: 17px; font-weight: 700; }
 .set .prev { text-align: center; color: var(--text-1); opacity: 0.7; font-size: 15px; }
 /* Un champ : un fond, un trait épais dessous, une équerre en haut à
@@ -379,28 +387,114 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 .set.done { background: linear-gradient(90deg, color-mix(in srgb, var(--accent-ink) 16%, transparent), color-mix(in srgb, var(--accent-ink) 4%, transparent) 70%, transparent); }
 .set.done::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent-ink); }
 .set.done .field { background: transparent; }
-/* Le balayage d'une série qu'on vient de valider : une bande jaune passe. */
-.set.just::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-ink) 45%, transparent) 45%, transparent 60%);
-  animation: sweep 380ms var(--ease-mech) both;
+/* =====================================================================
+   LA COCHE : le geste le plus répété de l'app, traité comme une
+   confirmation de menu du jeu. Trois temps.
+     APPUI     la case s'enfonce sous le doigt (88 %), avant même le
+               relâché : la réponse commence au contact.
+     IMPACT    au relâché, une image blanche, puis la case jaune frappe
+               (118 % → 94 % → 104 % → 100 %, par sauts), les équerres
+               se verrouillent autour, deux ondes partent, des éclats
+               volent, la case se déchire en rouge et cyan, la coche
+               se trace. Tout tient dans les 300 premières ms.
+     RETOMBÉE  une bande jaune balaie la ligne, les chiffres de la série
+               s'éclairent, la carte encaisse (2 px), l'étiquette du
+               tonnage monte, le compteur gagne sa cellule, le repos se
+               recharge. Le son et la vibration tombent sur l'impact.
+   Décocher n'a pas de fête : la case se vide en grésillant.
+   ===================================================================== */
+.set .sweep { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.set.fire .sweep::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-ink) 55%, transparent) 42%, rgb(255 255 255 / 0.4) 50%, transparent 60%);
+  animation: sweep calc(380ms * var(--k)) var(--ease-mech) both;
 }
 @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-.chk { width: 48px; height: 48px; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; }
-.chk > span {
-  width: 38px; height: 38px; display: grid; place-items: center; color: var(--text-2);
+.set.fire .field { animation: vals calc(260ms * var(--k)) steps(3, end) calc(60ms * var(--k)) both; }
+@keyframes vals { from { color: #fff; text-shadow: 0 0 10px var(--accent-ink); } to { text-shadow: none; } }
+
+.chk { position: relative; z-index: 2; width: 48px; height: 48px; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.chk > * { grid-area: 1 / 1; }
+.chk .box-wrap { display: grid; }
+.chk .box {
+  position: relative; width: 38px; height: 38px; display: grid; place-items: center; color: var(--text-2);
   background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border);
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+  transition: transform calc(50ms * var(--k)) steps(1, end);
 }
-.chk > span svg { width: 20px; height: 20px; stroke-width: 2.6; }
-.set.done .chk > span { background: var(--accent-fill); box-shadow: none; color: var(--accent-on-fill); }
-.set.just .chk > span { animation: glitch 260ms steps(1, end) both; }
-@keyframes glitch {
-  0% { transform: translate(-3px, 0); filter: drop-shadow(3px 0 var(--ab-cyan)) drop-shadow(-3px 0 var(--ab-red)); }
-  25% { transform: translate(3px, -1px); clip-path: polygon(0 20%, 100% 20%, 100% 62%, 0 62%); }
-  50% { transform: translate(-1px, 1px); clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); }
-  75% { transform: none; filter: drop-shadow(-1px 0 var(--ab-red)) drop-shadow(1px 0 var(--ab-cyan)); }
-  100% { transform: none; filter: none; }
+.chk.pressing .box { transform: scale(0.88); }
+.chk .box svg { width: 20px; height: 20px; stroke-width: 2.8; position: relative; }
+/* Le tracé mesure 20,2 unités : 21 couvre tout. */
+.chk .box svg path { stroke-dasharray: 21; stroke-dashoffset: 0; }
+.chk .box::after { content: ''; position: absolute; inset: 0; background: #fff; opacity: 0; }
+.set.done .chk .box { background: var(--accent-fill); box-shadow: none; color: var(--accent-on-fill); }
+
+.set.fire .chk .box { animation: slam calc(280ms * var(--k)) steps(1, end) both; }
+.set.fire .chk .box::after { animation: flash calc(110ms * var(--k)) steps(2, end) both; }
+.set.fire .chk .box svg path { animation: draw-check calc(150ms * var(--k)) steps(4, end) calc(60ms * var(--k)) both; }
+.set.fire .chk .box-wrap { animation: slices calc(200ms * var(--k)) steps(1, end) calc(40ms * var(--k)) both; }
+@keyframes slam { 0% { transform: scale(0.8); } 14% { transform: scale(1.18); } 34% { transform: scale(0.94); } 56% { transform: scale(1.04); } 76%, 100% { transform: none; } }
+@keyframes flash { from { opacity: 1; } to { opacity: 0; } }
+@keyframes draw-check { from { stroke-dashoffset: 21; } to { stroke-dashoffset: 0; } }
+@keyframes slices {
+  0% { transform: translateX(-4px); filter: drop-shadow(4px 0 var(--ab-cyan)) drop-shadow(-4px 0 var(--ab-red)); clip-path: polygon(0 0, 100% 0, 100% 42%, 0 42%); }
+  25% { transform: translateX(5px); clip-path: polygon(0 28%, 100% 28%, 100% 76%, 0 76%); }
+  50% { transform: translateX(-2px); clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%); filter: drop-shadow(-2px 0 var(--ab-red)) drop-shadow(2px 0 var(--ab-cyan)); }
+  75% { transform: none; clip-path: none; filter: drop-shadow(-1px 0 var(--ab-red)) drop-shadow(1px 0 var(--ab-cyan)); }
+  100% { transform: none; clip-path: none; filter: none; }
+}
+
+/* Les ondes : un carré jaune, puis un carré cyan plus fin, qui s'élargissent par paliers. */
+.chk .ring { width: 38px; height: 38px; box-shadow: inset 0 0 0 2px var(--accent-ink); opacity: 0; pointer-events: none; }
+.chk .ring.r2 { box-shadow: inset 0 0 0 1px var(--focus); }
+.set.fire .chk .ring { animation: ring calc(300ms * var(--k)) steps(6, end) both; }
+.set.fire .chk .ring.r2 { animation-duration: calc(340ms * var(--k)); animation-delay: calc(70ms * var(--k)); }
+@keyframes ring { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(2.3); } }
+
+/* Les équerres : elles tombent de loin sur la case et se verrouillent, clignent une fois, partent. */
+.chk .brk {
+  --b: var(--accent-ink); width: 38px; height: 38px; opacity: 0; pointer-events: none;
+  background:
+    linear-gradient(var(--b), var(--b)) left top / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) left top / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) right top / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) right top / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) left bottom / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) left bottom / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) right bottom / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) right bottom / 2px 9px no-repeat;
+}
+.set.fire .chk .brk { animation: lock calc(420ms * var(--k)) steps(1, end) both; }
+@keyframes lock {
+  0% { opacity: 1; transform: scale(1.75); } 12% { transform: scale(1.36); } 24% { transform: scale(1.22); }
+  68% { opacity: 1; transform: scale(1.22); } 78% { opacity: 0; } 86% { opacity: 1; } 100% { opacity: 0; transform: scale(1.22); }
+}
+
+/* Les éclats : huit fragments carrés, tirés vers la gauche et la verticale (la carte rogne à droite). */
+.chk .shards { position: relative; width: 0; height: 0; pointer-events: none; }
+.chk .shards i { position: absolute; left: calc(var(--s) / -2); top: calc(var(--s) / -2); width: var(--s); height: var(--s); background: var(--c); opacity: 0; }
+.set.fire .chk .shards i { animation: shard calc(var(--t) * var(--k)) steps(7, end) both; }
+@keyframes shard { 0% { opacity: 1; transform: none; } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--r)); } }
+
+/* L'étiquette : ce que la série vient d'ajouter, posé au-dessus de la ligne, qui monte et s'éteint. */
+.chk .tag {
+  position: absolute; right: 46px; top: -6px; white-space: nowrap; pointer-events: none;
+  padding: 3px 12px 3px 7px; background: var(--accent-fill); color: var(--accent-on-fill);
+  font: 700 13px/1 var(--display); letter-spacing: 0.06em; text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 100%, 0 100%); opacity: 0;
+}
+.set.fire .chk .tag { animation: tag calc(900ms * var(--k)) steps(1, end) both; }
+@keyframes tag {
+  0% { opacity: 0; transform: translate(8px, 6px); } 6% { opacity: 1; transform: translate(0, 0); } 12% { opacity: 0.25; } 18% { opacity: 1; }
+  40% { transform: translate(0, -4px); } 60% { transform: translate(0, -8px); } 78% { opacity: 1; transform: translate(0, -11px); }
+  86% { opacity: 0.3; } 92% { opacity: 0.8; } 100% { opacity: 0; transform: translate(0, -14px); }
+}
+
+/* La carte encaisse le coup : deux pixels, trois images. */
+.card.jolt { animation: jolt calc(140ms * var(--k)) steps(1, end); }
+@keyframes jolt { 0% { transform: translate(2px, 0); } 33% { transform: translate(-2px, 1px); } 66% { transform: translate(1px, 0); } 100% { transform: none; } }
+
+/* Décocher : la case se vide en grésillant, sans fête. */
+.set.unfire .chk .box { animation: drain calc(220ms * var(--k)) steps(1, end) both; }
+@keyframes drain {
+  0% { background: var(--accent-fill); color: var(--accent-on-fill); } 25% { background: var(--text-2); } 45% { background: var(--accent-fill); opacity: 0.5; }
+  70% { background: var(--text-2); opacity: 0.6; } 100% { opacity: 1; }
 }
 @keyframes glitch-x {
   0% { transform: translateX(-3px); }
@@ -528,6 +622,28 @@ figcaption span { margin-left: auto; font: 400 12px/1.3 var(--body); letter-spac
 }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
+/* ---------- Le banc d'essai de la coche ---------- */
+.bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 28px 40px; align-items: start; }
+.bench > div { min-width: 0; }
+.bench h2 { margin: 0 0 6px; font: 700 26px/1.1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; color: #fcee0a; text-shadow: var(--aberration); }
+.bench p { margin: 0 0 12px; max-width: 62ch; }
+.bench .stage { padding: 22px 16px 26px; border-radius: 20px; border: 1px solid var(--page-line); }
+.bench .stage .card { max-width: 420px; margin: 0 auto; }
+@media (min-width: 900px) { .bench .stage .card { zoom: 1.18; } }
+.bench .tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.tl { display: grid; gap: 5px; margin-top: 8px; font: 600 13px/1.2 var(--display); letter-spacing: 0.04em; }
+.tl-row { display: grid; grid-template-columns: 9.5rem 1fr; align-items: center; gap: 10px; }
+.tl-row > span:first-child { color: var(--page-mute); text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; }
+.tl-track { position: relative; height: 12px; background: repeating-linear-gradient(90deg, #1b1520 0 calc(100% / 9 - 1px), #120e16 calc(100% / 9 - 1px) calc(100% / 9)); }
+.tl-track > i { position: absolute; top: 2px; bottom: 2px; left: calc(var(--a) / 900 * 100%); width: calc((var(--b) - var(--a)) / 900 * 100%); background: var(--col, #fcee0a); }
+.tl-scale { display: grid; grid-template-columns: 9.5rem 1fr; gap: 10px; color: var(--page-mute); font-size: 12px; }
+.tl-scale > div { display: flex; justify-content: space-between; }
+.tl-wrap { position: relative; }
+.tl-head { position: absolute; top: 0; bottom: 18px; left: calc(9.5rem + 10px); right: 0; pointer-events: none; }
+.tl-head > i { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: #5ef6ff; box-shadow: 0 0 8px #5ef6ff; opacity: 0; }
+.tl-head.run > i { animation: playhead calc(900ms * var(--k)) linear both; }
+@keyframes playhead { 0% { opacity: 1; left: 0; } 99% { opacity: 1; } 100% { opacity: 0; left: 100%; } }
+
 /* ---------- Notes ---------- */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 28px 40px; }
 .notes section { min-width: 0; }
@@ -548,7 +664,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 }
 </style>
 
-<div class="wrap motion" id="root" data-accent="yellow" data-labels="red" data-bg="rich">
+<div class="wrap motion" id="root" data-accent="yellow" data-labels="red" data-bg="rich" data-speed="normal" data-sound="off">
   <header class="mast">
     <p class="meta">FitTrack 2.16.1 · maquette v3 · 1er novembre 2026</p>
     <h1>Cyber<small>Formes, mouvement, fonds</small></h1>
@@ -582,6 +698,49 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
       <button type="button" class="replay all" id="replay-all">Tout rejouer</button>
     </div>
   </header>
+
+  <section class="bench" aria-labelledby="bench-title">
+    <div>
+      <h2 id="bench-title">La coche</h2>
+      <p>Le geste qu’on fait le plus : une quinzaine de fois par séance. Il doit claquer comme une confirmation dans un menu du jeu. Trois temps : <strong>l’appui</strong> (la case s’enfonce dès le contact), <strong>l’impact</strong> au relâché (tout tient dans les 300 premières millisecondes), puis <strong>la retombée</strong>, qui dit ce que la série vient d’ajouter et relance le repos. Touche les coches, décoche, recommence ; passe au ralenti pour voir chaque image.</p>
+      <div class="stage app screen">
+        <div class="card ex live" id="ex-bench">
+          <div class="ex-hd">
+            <div class="t">
+              <b>Soulevé de terre (barre)</b>
+              <span class="rest num"><i class="dot"></i><span class="rest-txt">Repos 3:00</span></span>
+            </div>
+          </div>
+          <div class="rail"><i></i></div>
+          <div class="cols"><span>Série</span><span>Précédent</span><span class="kg">kg</span><span>Reps</span><span></span></div>
+          <div class="sets" data-sets="bench"></div>
+        </div>
+      </div>
+      <div class="tools">
+        <div class="ctl-g" role="group" aria-label="Vitesse">
+          <span>Vitesse</span>
+          <button type="button" class="pick" data-set="speed" data-val="normal" aria-pressed="true">1×</button>
+          <button type="button" class="pick" data-set="speed" data-val="slow" aria-pressed="false">¼×</button>
+        </div>
+        <div class="ctl-g" role="group" aria-label="Son">
+          <span>Son</span>
+          <button type="button" class="pick" data-set="sound" data-val="off" aria-pressed="true">Coupé</button>
+          <button type="button" class="pick" data-set="sound" data-val="on" aria-pressed="false">Actif</button>
+        </div>
+        <button type="button" class="replay all" id="bench-reset">Tout décocher</button>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-size:20px;text-shadow:none;color:var(--page-ink)">Image par image</h2>
+      <p>Chaque ligne est un effet, placé sur les 900 ms qui suivent le relâché. La tête de lecture passe à chaque coche validée.</p>
+      <div class="tl-wrap">
+        <div class="tl" id="timeline"></div>
+        <div class="tl-head" id="playhead"><i></i></div>
+        <div class="tl-scale"><span></span><div><span>0</span><span>300 ms</span><span>600 ms</span><span>900 ms</span></div></div>
+      </div>
+      <p style="margin-top:14px">La vibration suit le même tempo : un coup franc de 14 ms sur l’impact, un écho de 8 ms quarante millisecondes plus tard. L’app vibre déjà à la fin du repos (<code>audio/haptics.ts</code>) ; la coche reprendrait le réglage « Vibration » des Annonces. Le son, s’il est retenu, serait un clic sec, un coup sourd et deux bips montants, sous le réglage des Annonces lui aussi.</p>
+    </div>
+  </section>
 
   <div class="devices">
     <!-- 1. Ouverture -->
@@ -672,18 +831,18 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
           </div>
           <div class="wbar"><p class="lbl num" id="progress">3 / 15 séries</p><span class="seg-meter" aria-hidden="true"><i id="meter" style="--n:3"></i></span></div>
           <div class="scroll" style="padding-top:6px">
-            <div class="card ex live">
+            <div class="card ex live" id="ex-phone">
               <div class="ex-hd">
                 <div class="t">
                   <b>Squat (barre, nuque)</b>
-                  <span class="rest num" id="rest"><i class="dot"></i><span id="rest-txt">Repos 1:24</span></span>
+                  <span class="rest num"><i class="dot"></i><span class="rest-txt">Repos 1:24</span></span>
                 </div>
                 <button class="ib mute" type="button" aria-label="Replier"><svg viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M6 9.5 12 15.5 18 9.5"/></svg></button>
                 <button class="ib mute" type="button" aria-label="Chrono"><svg viewBox="0 0 24 24" style="width:22px;height:22px"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5"/><path d="M9.5 2.5h5"/><path d="M12 2.5v3.5"/></svg></button>
               </div>
-              <div class="rail"><i id="rail"></i></div>
+              <div class="rail"><i></i></div>
               <div class="cols"><span>Série</span><span>Précédent</span><span class="kg">kg</span><span>Reps</span><span></span></div>
-              <div id="sets"></div>
+              <div class="sets" data-sets="phone"></div>
               <button class="add" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Ajouter une série</button>
             </div>
             <div class="card ex folded">
@@ -781,7 +940,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
           <tbody>
             <tr><td>Ouverture</td><td>Équerres qui se referment, barre qui grésille, nom en morceaux, trois lignes d’état qui se décodent</td><td class="num">2,4 s</td></tr>
             <tr><td>Arrivée sur un écran</td><td>Balayage cyan, plaques dévoilées par paliers, filets tracés, titre décodé</td><td class="num">0,6 – 0,8 s</td></tr>
-            <tr><td>Série validée</td><td>Bande jaune qui balaie la ligne, coche qui glitche, compteur de séries qui gagne une cellule</td><td class="num">0,38 s</td></tr>
+            <tr><td>Série validée</td><td>Voir « La coche » plus haut : appui, impact en 300 ms, retombée jusqu’à l’étiquette du tonnage</td><td class="num">0,9 s</td></tr>
             <tr><td>Repos</td><td>24 cellules qui s’éteignent, point qui clignote</td><td class="num">continu</td></tr>
             <tr><td>Bouton pressé</td><td>Décalage rouge et cyan de deux images</td><td class="num">0,18 s</td></tr>
             <tr><td>Onglet, thème choisis</td><td>Trapèze qui s’ouvre, icône ou bouton qui tressaute</td><td class="num">0,2 s</td></tr>
@@ -851,10 +1010,11 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     const final = (el._final ??= el.textContent);
     if (!motionOn()) { el.textContent = final; return; }
     const steps = 9;
+    const kk = root.dataset.speed === 'slow' ? 4 : 1;
     for (let s = 0; s <= steps; s++) {
       setTimeout(() => {
         el.textContent = s === steps ? final : final.replace(/\d/g, () => String((Math.random() * 10) | 0));
-      }, delay + s * 50);
+      }, delay + s * 50 * kk);
     }
   }
 
@@ -882,63 +1042,207 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     a.setAttribute('aria-current', 'page');
   })));
 
-  // ---- Les séries ----
+  // ---- La coche ----
   const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 19 7"/></svg>';
-  const sets = [
+  const SHARD_COLORS = ['var(--accent-ink)', 'var(--accent-ink)', '#ffffff', 'var(--focus)', 'var(--ab-red)'];
+  const fmtKg = (n) => String(n).replace('.', ',');
+  const clocks = [];
+
+  // Le son : un clic sec, un coup sourd, deux bips montants. À l'envers pour décocher.
+  let audio;
+  function sfx(up) {
+    if (root.dataset.sound !== 'on') return;
+    try {
+      audio ??= new AudioContext();
+      const t = audio.currentTime;
+      const out = audio.createGain(); out.gain.value = 0.7; out.connect(audio.destination);
+      const len = Math.floor(audio.sampleRate * 0.03);
+      const buf = audio.createBuffer(1, len, audio.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 3;
+      const noise = audio.createBufferSource(); noise.buffer = buf;
+      const hp = audio.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2400;
+      const ng = audio.createGain(); ng.gain.value = up ? 0.55 : 0.25;
+      noise.connect(hp).connect(ng).connect(out); noise.start(t);
+      if (up) {
+        const o = audio.createOscillator(); o.type = 'sine';
+        o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.1);
+        const g = audio.createGain(); g.gain.setValueAtTime(0.7, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+        o.connect(g).connect(out); o.start(t); o.stop(t + 0.14);
+      }
+      (up ? [[1320, 0.02], [1980, 0.075]] : [[880, 0.01], [520, 0.06]]).forEach(([f, dt]) => {
+        const s = audio.createOscillator(); s.type = 'square'; s.frequency.value = f;
+        const sg = audio.createGain();
+        sg.gain.setValueAtTime(0.0001, t + dt); sg.gain.exponentialRampToValueAtTime(0.09, t + dt + 0.004); sg.gain.exponentialRampToValueAtTime(0.0001, t + dt + 0.05);
+        s.connect(sg).connect(out); s.start(t + dt); s.stop(t + dt + 0.06);
+      });
+    } catch { /* pas de son, pas de drame */ }
+  }
+  function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* sans vibreur */ } }
+
+  // Le repos d'une carte : un texte, 24 cellules, une horloge.
+  function makeRest(card, total, left) {
+    const restEl = card.querySelector('.rest');
+    const txt = restEl.querySelector('.rest-txt');
+    const rail = card.querySelector('.rail');
+    const label = (s) => `Repos ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    const st = { total, left };
+    st.paint = () => {
+      if (st.left <= 0) { restEl.classList.add('idle'); txt.textContent = label(total); rail.style.setProperty('--cells', 0); return; }
+      restEl.classList.remove('idle');
+      txt.textContent = label(st.left);
+      rail.style.setProperty('--cells', Math.ceil((st.left / st.total) * 24));
+    };
+    st.start = () => {
+      st.left = st.total; st.paint();
+      rail.classList.remove('recharge');
+      if (motionOn()) { void rail.offsetWidth; rail.classList.add('recharge'); }
+      txt.firstChild && (txt.firstChild._final = undefined);
+      scramble(txt, 120 * k(), 260 * k());
+    };
+    st.paint();
+    clocks.push(st);
+    return st;
+  }
+  const k = () => (root.dataset.speed === 'slow' ? 4 : 1);
+
+  function playTimeline() {
+    const head = document.getElementById('playhead');
+    head.classList.remove('run'); void head.offsetWidth; head.classList.add('run');
+  }
+
+  // Une ligne de série et sa coche.
+  function makeSet(host, card, s, i, onChange, rest) {
+    const row = document.createElement('div');
+    row.className = 'set' + (s.done ? ' done' : '');
+    row.innerHTML = `
+      <span class="sweep" aria-hidden="true"></span>
+      <span class="n num">${i + 1}</span>
+      <span class="prev num">${s.prev}</span>
+      <input class="field" inputmode="decimal" aria-label="Série ${i + 1}, kg" value="${s.kg}" placeholder="${s.hintKg}">
+      <input class="field" inputmode="numeric" aria-label="Série ${i + 1}, répétitions" value="${s.reps}" placeholder="${s.hintReps}">
+      <button class="chk" type="button" aria-pressed="${s.done}" aria-label="${s.done ? 'Annuler' : 'Valider'} la série ${i + 1}">
+        <span class="ring" aria-hidden="true"></span><span class="ring r2" aria-hidden="true"></span>
+        <span class="box-wrap"><span class="box">${CHECK}</span></span>
+        <span class="brk" aria-hidden="true"></span>
+        <span class="shards" aria-hidden="true">${'<i></i>'.repeat(8)}</span>
+        <span class="tag" aria-hidden="true"></span>
+      </button>`;
+    host.appendChild(row);
+    const [kgIn, repsIn] = row.querySelectorAll('.field');
+    const chk = row.querySelector('.chk');
+    const tag = row.querySelector('.tag');
+    const shards = [...row.querySelectorAll('.shards i')];
+    const press = (on) => chk.classList.toggle('pressing', on && motionOn());
+    chk.addEventListener('pointerdown', () => press(true));
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((e) => chk.addEventListener(e, () => press(false)));
+
+    chk.addEventListener('click', () => {
+      const done = !row.classList.contains('done');
+      if (done) {
+        if (!kgIn.value) kgIn.value = s.hintKg;
+        if (!repsIn.value) repsIn.value = s.hintReps;
+      }
+      row.classList.toggle('done', done);
+      row.classList.remove('fire', 'unfire');
+      card.classList.remove('jolt');
+      chk.setAttribute('aria-pressed', String(done));
+      chk.setAttribute('aria-label', `${done ? 'Annuler' : 'Valider'} la série ${i + 1}`);
+      if (done) {
+        const kg = parseFloat(kgIn.value.replace(',', '.')) || 0;
+        const reps = parseInt(repsIn.value, 10) || 0;
+        tag.textContent = kg && reps ? `+${fmtKg(Math.round(kg * reps * 10) / 10)} kg` : '+1 série';
+        shards.forEach((sh) => {
+          // Vers la gauche et la verticale : la carte rogne à droite.
+          const a = (100 + Math.random() * 160) * (Math.PI / 180);
+          const dist = 26 + Math.random() * 26;
+          sh.style.setProperty('--dx', `${(Math.cos(a) * dist).toFixed(1)}px`);
+          sh.style.setProperty('--dy', `${(-Math.sin(a) * dist).toFixed(1)}px`);
+          sh.style.setProperty('--s', `${(3 + Math.random() * 3).toFixed(1)}px`);
+          sh.style.setProperty('--r', `${Math.round(Math.random() * 180)}deg`);
+          sh.style.setProperty('--t', `${Math.round(300 + Math.random() * 120)}ms`);
+          sh.style.setProperty('--c', SHARD_COLORS[(Math.random() * SHARD_COLORS.length) | 0]);
+        });
+        sfx(true);
+        buzz([14, 40, 8]);
+        if (motionOn()) {
+          void row.offsetWidth;
+          row.classList.add('fire');
+          card.classList.add('jolt');
+          const n = row.querySelector('.n'); n.firstChild._final = undefined; scramble(n, 0, 200 * k());
+          if (host.dataset.sets === 'bench') playTimeline();
+        }
+        rest?.start();
+      } else {
+        sfx(false);
+        buzz(6);
+        if (motionOn()) { void row.offsetWidth; row.classList.add('unfire'); }
+      }
+      onChange();
+    });
+  }
+
+  // La carte de la séance (téléphone 3).
+  const PHONE_SETS = [
     { prev: '97,5 × 5', kg: '100', reps: '5', done: true },
     { prev: '97,5 × 5', kg: '100', reps: '5', done: true },
     { prev: '97,5 × 5', kg: '100', reps: '5', done: true },
     { prev: '97,5 × 5', kg: '100', reps: '', done: false },
     { prev: '97,5 × 4', kg: '', reps: '', done: false },
-  ];
-  const host = document.getElementById('sets');
+  ].map((s) => ({ hintKg: '100', hintReps: '5', ...s }));
+  const phoneCard = document.getElementById('ex-phone');
+  const phoneHost = phoneCard.querySelector('.sets');
+  const phoneRest = makeRest(phoneCard, 120, 84);
   const meter = document.getElementById('meter');
-  sets.forEach((s, i) => {
-    const row = document.createElement('div');
-    row.className = 'set' + (s.done ? ' done' : '');
-    row.innerHTML = `
-      <span class="n num">${i + 1}</span>
-      <span class="prev num">${s.prev}</span>
-      <input class="field" id="kg-${i}" inputmode="decimal" aria-label="Série ${i + 1}, kg" value="${s.kg}" placeholder="100">
-      <input class="field" id="reps-${i}" inputmode="numeric" aria-label="Série ${i + 1}, répétitions" value="${s.reps}" placeholder="5">
-      <button class="chk" type="button" aria-pressed="${s.done}" aria-label="Valider la série ${i + 1}"><span>${CHECK}</span></button>`;
-    host.appendChild(row);
-    const chk = row.querySelector('.chk');
-    chk.addEventListener('click', () => {
-      const done = !row.classList.contains('done');
-      row.classList.toggle('done', done);
-      row.classList.remove('just');
-      if (done && motionOn()) { void row.offsetWidth; row.classList.add('just'); }
-      chk.setAttribute('aria-pressed', String(done));
-      chk.setAttribute('aria-label', `${done ? 'Annuler' : 'Valider'} la série ${i + 1}`);
-      const n = host.querySelectorAll('.set.done').length;
-      document.getElementById('progress').textContent = `${n} / 15 séries`;
-      meter.style.setProperty('--n', n);
-      if (done) startRest(120);
-    });
+  const meterBox = meter.parentElement;
+  PHONE_SETS.forEach((s, i) => makeSet(phoneHost, phoneCard, s, i, () => {
+    const n = phoneHost.querySelectorAll('.set.done').length;
+    document.getElementById('progress').textContent = `${n} / 15 séries`;
+    meter.style.setProperty('--n', n);
+    meterBox.classList.remove('flash');
+    if (motionOn()) { void meterBox.offsetWidth; meterBox.classList.add('flash'); }
+  }, phoneRest));
+
+  // Le banc d'essai.
+  const BENCH_SETS = [
+    { prev: '140 × 5', kg: '142,5', reps: '5', done: true },
+    { prev: '140 × 5', kg: '142,5', reps: '5', done: false },
+    { prev: '140 × 4', kg: '', reps: '', done: false },
+  ].map((s) => ({ hintKg: '142,5', hintReps: '5', ...s }));
+  const benchCard = document.getElementById('ex-bench');
+  const benchHost = benchCard.querySelector('.sets');
+  const benchRest = makeRest(benchCard, 180, 0);
+  BENCH_SETS.forEach((s, i) => makeSet(benchHost, benchCard, s, i, () => {}, benchRest));
+  document.getElementById('bench-reset').addEventListener('click', () => {
+    benchHost.querySelectorAll('.set.done .chk').forEach((c) => c.click());
   });
 
-  // ---- Le repos : 24 cellules ----
-  const restEl = document.getElementById('rest');
-  const restTxt = document.getElementById('rest-txt');
-  const rail = document.getElementById('rail');
-  let restLeft = 84, restTotal = 120;
-  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-  function paintRest() {
-    if (restLeft <= 0) {
-      restEl.classList.add('idle'); restTxt.textContent = 'Repos 2:00'; rail.style.setProperty('--cells', 0); return;
-    }
-    restEl.classList.remove('idle');
-    restTxt.textContent = `Repos ${fmt(restLeft)}`;
-    rail.style.setProperty('--cells', Math.ceil((restLeft / restTotal) * 24));
-  }
-  function startRest(total) { restTotal = total; restLeft = total; paintRest(); }
-  paintRest();
+  // La chronologie : chaque effet, sur les 900 ms qui suivent le relâché.
+  const PHASES = [
+    ['Appui', -60, 0, '#ff6b63'],
+    ['Flash blanc', 0, 110, '#ffffff'],
+    ['Frappe de la case', 0, 280, '#fcee0a'],
+    ['Équerres', 0, 420, '#fcee0a'],
+    ['Ondes', 0, 410, '#5ef6ff'],
+    ['Glitch', 40, 240, '#ff003c'],
+    ['Coche tracée', 60, 210, '#fcee0a'],
+    ['Éclats', 0, 420, '#ffffff'],
+    ['Son, vibration', 0, 125, '#a8b4b8'],
+    ['Secousse', 0, 140, '#ff6b63'],
+    ['Balayage', 0, 380, '#fcee0a'],
+    ['Chiffres éclairés', 60, 320, '#ffffff'],
+    ['Étiquette', 0, 900, '#fcee0a'],
+    ['Recharge du repos', 120, 440, '#fcee0a'],
+  ];
+  document.getElementById('timeline').innerHTML = PHASES.map(([name, a, b, col]) =>
+    `<div class="tl-row"><span>${name}</span><span class="tl-track"><i style="--a:${Math.max(a, 0)};--b:${Math.max(b, 6)};--col:${col}${a < 0 ? ';left:0;width:6px;opacity:.7' : ''}"></i></span></div>`).join('');
+
   let elapsed = 24 * 60 + 12;
   const clock = document.getElementById('clock');
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   setInterval(() => {
     elapsed += 1; clock.textContent = fmt(elapsed);
-    if (restLeft > 0) { restLeft -= 1; paintRest(); }
+    clocks.forEach((st) => { if (st.left > 0) { st.left -= 1; st.paint(); } });
   }, 1000);
 
   // ---- Le sélecteur de thème et les interrupteurs ----
