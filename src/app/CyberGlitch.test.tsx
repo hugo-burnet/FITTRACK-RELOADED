@@ -7,7 +7,7 @@ import { CyberGlitch } from './CyberGlitch';
 const playScreenGlitch = vi.hoisted(() => vi.fn(() => true));
 vi.mock('@/audio/screenGlitch', () => ({ playScreenGlitch, warmUpCyberSounds: vi.fn() }));
 
-const router = { go: (_path: string) => {} };
+const router: { go: (path: string) => void } = { go: () => {} };
 function Navigator() {
   const navigate = useNavigate();
   useEffect(() => {
