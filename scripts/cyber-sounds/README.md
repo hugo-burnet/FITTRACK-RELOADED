@@ -1,6 +1,9 @@
-# Sons de la coche du skin Cyber
+# Sons du skin Cyber
 
-Quatre sons de validation (et un pour décocher), mixés à partir d'enregistrements des packs de
+**Retenus** (2026-11-01) : `surcharge` pour la coche, `decocher` pour l'annuler, `glitch` pour
+l'arrivée sur un écran. Les trois autres recettes restent pour mémoire.
+
+Quatre sons de validation, un pour décocher et un glitch, mixés à partir d'enregistrements des packs de
 **Kenney** (kenney.nl), versés au domaine public (CC0, voir `sources/LICENSE-Kenney-CC0.txt`) :
 ils peuvent être publiés avec l'app, sans attribution obligatoire. Les sons de Cyberpunk 2077,
 eux, appartiennent à leur studio et n'entrent pas dans le dépôt.
@@ -21,6 +24,7 @@ Ils doivent être **percutants, au téléphone**. Deux leçons des versions pré
 | `frappe` | un coup de poing sur une plaque de métal, resserré |
 | `surcharge` | un impact numérique, un éclat de crunch écrasé en 5 bits, deux miettes de glitch |
 | `decocher` | le verrou joué à l'envers, sec, commun aux quatre |
+| `glitch` | l'arrivée sur un écran : une rafale par image de la déchirure (cinq, toutes les 50 ms), fragments de glitch à vitesse tirée au sort, bruit d'ordinateur écrasé en 4 bits, piaillements carrés ; 0,32 s, environ 3 dB sous la coche |
 
 Le script affiche, pour chaque son, le niveau efficace des 30 premières ms, le rapport crête/efficace
 et ce qu'un haut-parleur de téléphone en garde (deux passe-haut à 250 Hz, grossièrement).

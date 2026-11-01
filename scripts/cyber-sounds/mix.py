@@ -144,3 +144,42 @@ for name, x in sounds.items():
     phone = biquad_hp(biquad_hp(x, 250), 250)
     keep = np.sqrt((phone ** 2).mean() / (x ** 2).mean()) * 100
     print(f'{name:10} {len(x)/SR:.2f} s  RMS 30 ms {20*np.log10(np.sqrt((h**2).mean())):5.1f} dBFS  crête/RMS {np.abs(h).max()/np.sqrt((h**2).mean()):4.1f}  gardé au téléphone {keep:4.0f} %')
+
+# ---------------------------------------------------------------------------------------------
+# Le glitch de l'entrée d'écran : une rafale calée sur les cinq images de la déchirure (une toutes
+# les 50 ms). Chaque image : un fragment de glitch à une vitesse tirée au sort, une tranche de bruit
+# d'ordinateur écrasée en 4 bits, parfois un piaillement carré. Plus doux que la coche : la
+# navigation ne doit pas couvrir la série validée.
+gl = [load(f'glitch_00{i}.ogg') for i in range(1, 5)]
+comp = load('computerNoise_002.ogg')
+grng = np.random.default_rng(2077)
+
+def chirp(f0, f1, dur, gain):
+    t = np.arange(int(SR * dur)) / SR
+    f = f0 * (f1 / f0) ** (t / dur)
+    return gain * np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * np.exp(-t / (dur / 2))
+
+layers = []
+for frame in range(5):
+    at = frame * 0.05 + grng.uniform(0, 0.008)
+    g = gl[grng.integers(0, 4)]
+    layers.append((rate(np.tile(g, 3), grng.uniform(0.7, 1.4)), at, 1.0))
+    start = grng.integers(0, len(comp) - int(SR * 0.05))
+    sl = comp[start: start + int(SR * grng.uniform(0.018, 0.034))]
+    sl = crush(sl / (np.abs(sl).max() + 1e-9), 4)
+    layers.append((sl * np.hanning(len(sl)) ** 0.3, at + 0.004, 0.55))
+    if grng.random() < 0.6:
+        f0 = grng.uniform(1200, 3200)
+        layers.append((chirp(f0, f0 * grng.uniform(0.4, 1.8), 0.016, 0.35), at + 0.01, 1.0))
+# Une dernière image plus franche : la déchirure se recolle.
+layers.append((rate(np.tile(gl[3], 2), 0.6), 0.25, 0.9))
+g = mix(layers, 0.32)
+g = biquad_hp(g, 300)                       # rien d'utile au téléphone sous 300 Hz
+g = g / np.abs(g).max()
+g = np.tanh(g * 2.2) / np.tanh(2.2)
+g = lowpass1(g, 10000)
+g = g / np.abs(g).max() * 0.6               # environ 4 dB sous la coche
+f = int(SR * 0.02); g[-f:] *= np.linspace(1, 0, f)
+save(g, 'glitch')
+rms = lambda a: 20 * np.log10(np.sqrt((a ** 2).mean()))
+print(f"glitch     {len(g)/SR:.2f} s  RMS global {rms(g):5.1f} dBFS  (coche surcharge : {rms(sounds['surcharge'][:int(SR*0.22)]):5.1f} dBFS)")
