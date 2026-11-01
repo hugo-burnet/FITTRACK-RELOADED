@@ -5,29 +5,17 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-01 — **skin Cyber et −15 s / +15 s, sur la branche `ccr-8abf77c4-43lck3`, non publiés.**
-Dernière version publiée : v2.16.1 (2026-10-25).
-
-## En cours (non publié)
-
-- **Le thème Cyber**, d'après la grammaire visuelle de Cyberpunk 2077 et sans ses marques : rouge qui encadre,
-  jaune qui agit, cyan qui compte ; police Cyber Sans (Rajdhani aux chiffres tabulaires) ; plaques à coins coupés,
-  fonds de grille et de halos ; coche percutante (l'impact de la cadence, vibration, frappe, déchirure, étiquette
-  du tonnage) ; repos en barre de vie ; déchirure glitch et son à chaque arrivée sur un écran ; glitchs d'ambiance
-  rares. Spec `docs/design/specs/2026-11-01-skin-cyber-design.md`, maquette
-  `docs/design/mockups/2026-11-01-skin-cyber.html`, décisions et refus (les sons du jeu) dans
-  `docs/progress/decisions-et-pieges.md` (entrée du 2026-11-01).
-- **−15 s / +15 s pendant le repos, pour tous les thèmes** (`restTimer.shift`, `RestShift`).
-- **Les quatre éléments de la maquette d'abord laissés** ajoutés à la demande : compteur de séries en barre de vie,
-  titre qui se décode, nom de l'écran en filigrane, chargement de l'ouverture en barre de vie.
-- **Dû** : la recette téléphone § 6 (`docs/recette-telephone.md`) — le son, la vibration et le ressenti de la coche
-  ne se jugent qu'au doigt. La fusion dans `master` et la release se font sur demande.
-- **Portes** (2026-11-01, sur la branche) : `typecheck`, `lint`, `test:run` (**3 855 tests**, 318 fichiers, 1 ignoré), `build` et
-  `test:e2e` (**43 parcours**, dont Cyber à 100, 130 et 200 % et −15 / +15 sur un vrai repos) — verts.
+**Dernière mise à jour :** 2026-11-01 — **v2.17.0 publiée** (PWA et APK) : le thème Cyber, et −15 s / +15 s pendant le repos.
 
 ## Où on en est
 
-- **Publié : v2.16.1**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
+- **Publié : v2.17.0**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.0), APK `FitTrack-v2.17.0.apk`
+  ([journal](docs/journal/2026-11-01-versions-v2-17.md)). **Le thème Cyber** (Réglages › Apparence) : la grammaire visuelle de Cyberpunk 2077
+  sans ses marques — coche percutante, barres de vie, glitchs, police Cyber Sans, fonds de grille et de halos. **−15 s / +15 s** pendant le repos,
+  pour tous les thèmes. Publiée par le `workflow_dispatch` d'`android.yml` (`release_tag`), après les trois workflows verts sur la fusion `c3db3e5`.
+  **Dû** : la recette téléphone § 6 — le son, la vibration et le ressenti de la coche ne se jugent qu'au doigt.
+- **Avant : v2.16.1**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.16.1), APK `FitTrack-v2.16.1.apk`
   ([journal](docs/journal/2026-10-25-versions-v2-16-1.md)). **Le cran trop gros** : au-delà de 30 répétitions exigées pour l'absorber, le coach
   propose le cran et dit qu'il est gros (amendement R3 du 2026-10-25). **La carte périmée** : chaque exercice travaillé retire ses cartes en
@@ -63,9 +51,9 @@ Dernière version publiée : v2.16.1 (2026-10-25).
   l'éditeur de la routine, puis le remplacement de l'objectif de charge du coach), les mensurations, « Remplacer l'exercice », le rappel de
   sauvegarde, l'E2E commité. Le détail des trois versions, la voie de la publication et ses vérifications :
   [`docs/journal/2026-10-15-versions-v2-12.md`](docs/journal/2026-10-15-versions-v2-12.md).
-- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 794 tests**, 307 fichiers, 1 ignoré), `build` et `test:e2e`
-  (**39 parcours**, 9 fichiers, à 390 px) — verts à la v2.16.1 ; la v2.16.0 : 3 787 tests.
-- **Branches distantes.** `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 à v2.16.0), fusionnées, sont à supprimer à la main
+- **Portes** : `typecheck` (`src` et `e2e`), `lint`, `test:run` (**3 855 tests**, 318 fichiers, 1 ignoré), `build` et `test:e2e`
+  (**43 parcours**, 9 fichiers, à 390 px) — verts à la v2.17.0 ; la v2.16.1 : 3 794 tests, 39 parcours.
+- **Branches distantes.** `ccr-8abf77c4-43lck3` (v2.17.0), `ccr-57f17af8-maxzqv` et `ccr-a1ec0e4b-s9kwdx` (v2.14.0 à v2.16.0), fusionnées, sont à supprimer à la main
   (`ccr-449df1c1-etmya3` l'a été) : le refus de supprimer une branche distante vaut toujours pour une session d'agent. **Garder les trois `archive/*`** : `make-fragments.mjs` lit
   `archive/fittrack-kb-corpus`.
 - **Pour publier la suivante** : `chore: prepare release vX.Y.Z` (`package.json` et son lock), `master` poussé sans force, puis le
