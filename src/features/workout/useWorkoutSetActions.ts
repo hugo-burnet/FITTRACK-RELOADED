@@ -1,4 +1,5 @@
 import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { announceSetValidation } from '@/audio/setValidationSound';
 import {
   completeFirstSide,
   completeSet,
@@ -165,7 +166,7 @@ export function useWorkoutSetActions({
         tutorial?.report({ type: 'workout-set-completed', workoutId, setId });
         pace.stop(setId);
         startRest(line, setId, set.setType);
-        announce(setValidationCue(line.sets, setId));
+        announceSetValidation(setValidationCue(line.sets, setId));
         setEffortSetId(set.setType !== 'warmup' && loadEffortPrompt() ? setId : null);
       })
       .catch(() => setWriteFailed(true))
