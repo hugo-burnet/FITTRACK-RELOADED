@@ -258,10 +258,11 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Le son à chaque validation** (v2.17.1) : valider toutes les séries d'un exercice, vite — l'impact sonne à
       chacune, y compris les deux dernières. (Rien du tout ? Annonces : pas en Silence.)
 - [ ] **La fluidité** (v2.17.1) : pendant un repos, faire défiler la séance — aussi fluide qu'en Sombre.
-- [ ] **La perte en lambeaux** (v2.17.1) : un −15 s pendant le repos, puis décocher une série — le morceau perdu se
-      déchire en lambeaux qui montent et s'évaporent ; la barre ne s'éclaire plus en entier.
-- [ ] **Le filigrane cinétique** (v2.17.1) : sur l'accueil, l'historique, la progression — le nom de l'écran défile le
-      long du bord droit, ses lettres tombent à l'arrivée ; il ne gêne la lecture de rien. Absent de la séance en direct.
+- [ ] **La perte qui s'évapore** (v2.17.1) : un −15 s pendant le repos — le temps perdu se défait en fins traits qui
+      montent et s'effacent ; décocher une série — le cran perdu se déchire en lambeaux. Rien ne s'éclaire en entier.
+- [ ] **Le filigrane intégré** (v2.17.1) : sur l'accueil, l'historique, la progression — le nom de l'écran défile en
+      arrière-plan, visible entre les plaques et à travers elles (translucides) ; faire défiler une liste : elle glisse
+      par-dessus. Tout reste lisible, au soleil comme en salle. Absent de la séance en direct.
 - [ ] **La barre de vie du repos** : elle se vide vers la gauche, rouge et palpitante dans les dix
       dernières secondes ; un −15 la fait trembler.
 - [ ] **Changer d'onglet** : l'écran se déchire un quart de seconde, le son glitch tombe avec. En

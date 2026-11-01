@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LossShreds } from './LossShreds';
+import { LossBars } from './LossBars';
 import { t } from '@/i18n/fr';
 import { formatRest, msUntilCritical, restProgress } from '@/lib/rest';
 import { signalRestFinishedOnCurrentPlatform } from './restAlert';
@@ -168,7 +168,7 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
       >
         {loss !== null && (
           <i key={loss.key} style={{ left: `${loss.left}%`, width: `${loss.width}%` }}>
-            <LossShreds />
+            <LossBars />
           </i>
         )}
       </span>

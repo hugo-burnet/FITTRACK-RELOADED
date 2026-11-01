@@ -37,6 +37,14 @@ s'évaporant » ; « Sauvegarder est un mot trop long, il rentre dans les cosmé
   infinie par lettre coûtait 58 ms de style sur 3 s, mesuré). **Pas sur la séance en direct** (`Screen watermark={false}`) :
   rien ne se pose sur la colonne des coches. Deux débordements vus par l'E2E à 200 % et corrigés : les lettres entraient
   de côté (hors de l'écran), elles tombent désormais d'en haut.
+- **Puis, à la relecture de l'utilisateur** : « des barres qui s'évaporent pour les temps » — la perte d'une barre de
+  repos se défait en cinq traits horizontaux qui montent, s'étirent et s'effacent (`LossBars`) ; le compteur de séries
+  garde ses lambeaux. Et « le filigrane doit être incorporé, en arrière-plan, quitte à adapter le design » : il repasse
+  derrière le contenu, et ce sont **les plaques qui deviennent translucides** (`--cyber-plate`, 74 %), leurs lignes
+  internes perdant leur fond ; la trame de points, qui exigeait un calque opaque pour s'effacer, devient une
+  micro-hachure confinée au coin bas-gauche. Contraste garanti par test au pire cas (halo rouge + trait du filigrane
+  sous la plaque) : texte secondaire ≥ 4,5:1. Fluidité remesurée : 60 img/s, ni peinture ni rastérisation en plus.
+  Une partie du message (« sans changé da pas des routine ») n'a pas été comprise : rien n'a été touché à ce titre.
 - **Piège, rattrapé avant commit** : un remplacement de bloc dans `cyber.css`, borné par un repère que je croyais voisin,
   a emporté 476 lignes (la coche, les glitchs, la règle qui cache le filigrane hors de Cyber). L'E2E l'a révélé par le
   filigrane apparu en Sombre ; la feuille a été reconstruite depuis le dernier commit plus les deux seuls blocs voulus,
