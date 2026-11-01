@@ -8,6 +8,9 @@ import { isRepRange, isSetRecordable, repsReading } from '@/lib/measurement';
 import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
 import { BoltIcon, CheckIcon, DropsetIcon, FlameIcon } from '@/ui/icons';
+import { buzzSetImpact } from '@/audio/haptics';
+import { SetCheckFx } from './SetCheckFx';
+import { setImpactTag } from './setImpact';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
 
@@ -184,6 +187,29 @@ export function WorkoutSetRow({
 
   const previousReading = previous === undefined ? '' : setReading(previous, columns);
 
+  /*
+   * L'impact d'une validation, que seul le thème Cyber dessine et fait vibrer. Un compteur et non un
+   * booléen : sa valeur est la clé des effets, qui se remontent — donc rejouent — à chaque coche. Le
+   * drapeau `firing` tient le temps des animations de la ligne (balayage, secousse de la carte),
+   * puis retombe pour que la prochaine validation les rejoue aussi.
+   */
+  const [impact, setImpact] = useState<{ key: number; tag: string } | null>(null);
+  const [firing, setFiring] = useState(false);
+  useEffect(() => {
+    if (!firing) return;
+    const id = setTimeout(() => setFiring(false), 900);
+    return () => clearTimeout(id);
+  }, [firing, impact]);
+
+  const complete = () => {
+    if (document.documentElement.getAttribute('data-theme') === 'cyber') {
+      setImpact((last) => ({ key: (last?.key ?? 0) + 1, tag: setImpactTag(resolved, set.setType) }));
+      setFiring(true);
+      buzzSetImpact();
+    }
+    onComplete(collect(ghostNumberOf));
+  };
+
   const write = (values: Partial<SetValues>) => {
     const next: ResolvedValues = { ...resolved };
     const apply = (field: keyof ResolvedValues, key: keyof SetValues) => {
@@ -202,6 +228,7 @@ export function WorkoutSetRow({
   return (
     <div
       data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
+      data-fired={firing || undefined}
       className={`relative flex min-h-[3.75rem] flex-wrap items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
@@ -280,9 +307,7 @@ export function WorkoutSetRow({
               ? t('workout.sideTransition', { seconds: remainingSides })
               : completeLabel
         }
-        onClick={() =>
-          done ? onUncomplete() : onComplete(collect(ghostNumberOf))
-        }
+        onClick={() => (done ? onUncomplete() : complete())}
         className="flex size-12 shrink-0 items-center justify-center
           transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)]
           active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40"
@@ -303,6 +328,7 @@ export function WorkoutSetRow({
         >
           <CheckIcon width={14} height={14} />
         </span>
+        {impact !== null && done && <SetCheckFx key={impact.key} tag={impact.tag} />}
       </button>
       {sideStage !== null && !done && (
         <p

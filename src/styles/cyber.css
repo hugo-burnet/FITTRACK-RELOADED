@@ -437,3 +437,326 @@
 :root[data-theme='cyber'] [data-part='rest-shift'] > button:active {
   animation: cyber-press 160ms steps(1, end);
 }
+
+/*
+ * La coche : le geste le plus répété de l'app, traité comme une confirmation de menu du jeu.
+ *
+ * IMPACT — dans les 300 premières millisecondes : la case jaune frappe et se fige un instant (le
+ * « hit-stop » des jeux d'action, que le cerveau lit comme un poids), s'éclaire, se déchire en rouge et
+ * cyan ; quatre équerres tombent et se verrouillent ; deux ondes partent ; huit éclats volent ; la
+ * coche se trace. RETOMBÉE — une bande jaune balaie la ligne, les chiffres s'éclairent, la carte
+ * encaisse quatre pixels, l'écran prend un éclair, l'étiquette du tonnage monte. Le son (l'impact de
+ * la cadence) et la vibration tombent sur l'impact (`skinTone`, `buzzSetImpact`).
+ *
+ * Tout repose sur `data-fired`, posé 900 ms par la ligne à chaque validation, et sur `SetCheckFx`,
+ * remonté à chaque validation. Le mouvement réduit coupe les durées (règle globale d'index.css).
+ */
+[data-part='set-fx'] {
+  display: none;
+}
+:root[data-theme='cyber'] [data-part='set-fx'] {
+  display: contents;
+}
+:root[data-theme='cyber'] [data-part='set-check'] {
+  position: relative;
+  z-index: 1;
+}
+/* Le temps de l'impact, la coche passe au-dessus de ses voisines de ligne. */
+:root[data-theme='cyber'] [data-fired] [data-part='set-check'] {
+  z-index: 40;
+}
+:root[data-theme='cyber'] [data-part='set-check'] > span:first-child {
+  width: 2.375rem;
+  height: 2.375rem;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+}
+:root[data-theme='cyber'] [data-part='set-check'][aria-pressed='false'] > span:first-child {
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+:root[data-theme='cyber'] [data-part='set-check'] svg {
+  stroke-width: 2.8;
+}
+
+/* La ligne d'une série validée : un voile jaune qui s'efface vers la droite, un trait à gauche. */
+:root[data-theme='cyber'] div:has(> [data-part='set-check'][aria-pressed='true']) {
+  background-image: linear-gradient(90deg, rgb(252 238 10 / 0.16), rgb(252 238 10 / 0.04) 70%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent-ink);
+}
+
+/* La frappe : 80 % → 118 %, figée (le hit-stop), puis 94, 104, 100. Déchirée en même temps. */
+:root[data-theme='cyber'] [data-fired] [data-part='set-check'] > span:first-child {
+  animation: cyber-slam 340ms steps(1, end) both;
+}
+@keyframes cyber-slam {
+  0% {
+    transform: scale(0.8);
+    filter: brightness(3);
+  }
+  10% {
+    transform: scale(1.18) translateX(-4px);
+    filter: brightness(2) drop-shadow(4px 0 var(--cyber-cyan)) drop-shadow(-4px 0 var(--cyber-red));
+    clip-path: polygon(0 0, 100% 0, 100% 42%, 0 42%);
+  }
+  /* 10 → 26 % : le gel. */
+  26% {
+    transform: scale(1.18) translateX(5px);
+    filter: drop-shadow(-2px 0 var(--cyber-red)) drop-shadow(2px 0 var(--cyber-cyan));
+    clip-path: polygon(0 28%, 100% 28%, 100% 100%, 0 100%);
+  }
+  40% {
+    transform: scale(0.94);
+    filter: none;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  80%,
+  100% {
+    transform: none;
+  }
+}
+:root[data-theme='cyber'] [data-fired] [data-part='set-check'] svg path {
+  stroke-dasharray: 21;
+  animation: cyber-draw 150ms steps(4, end) 60ms both;
+}
+@keyframes cyber-draw {
+  from {
+    stroke-dashoffset: 21;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Les ondes, les équerres, les éclats, l'étiquette : centrés sur la coche. */
+:root[data-theme='cyber'] [data-fx] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+:root[data-theme='cyber'] [data-fx='ring'] {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  box-shadow: inset 0 0 0 2px var(--accent-ink);
+  opacity: 0;
+  animation: cyber-ring 300ms steps(6, end) both;
+}
+:root[data-theme='cyber'] [data-fx='ring'][data-late] {
+  box-shadow: inset 0 0 0 1px var(--cyber-focus);
+  animation-duration: 340ms;
+  animation-delay: 70ms;
+}
+@keyframes cyber-ring {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.3);
+  }
+}
+:root[data-theme='cyber'] [data-fx='lock'] {
+  --b: var(--accent-ink);
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  opacity: 0;
+  background:
+    linear-gradient(var(--b), var(--b)) left top / 9px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) left top / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) right top / 9px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) right top / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) left bottom / 9px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) left bottom / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) right bottom / 9px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) right bottom / 2px 9px no-repeat;
+  animation: cyber-lock 420ms steps(1, end) both;
+}
+@keyframes cyber-lock {
+  0% {
+    opacity: 1;
+    transform: scale(1.75);
+  }
+  12% {
+    transform: scale(1.36);
+  }
+  24% {
+    transform: scale(1.22);
+  }
+  68% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+  78% {
+    opacity: 0;
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.22);
+  }
+}
+:root[data-theme='cyber'] [data-fx='shards'] > i {
+  position: absolute;
+  left: calc(var(--s) / -2);
+  top: calc(var(--s) / -2);
+  width: var(--s);
+  height: var(--s);
+  background: var(--accent-ink);
+  opacity: 0;
+  animation: cyber-shard 380ms steps(7, end) var(--d) both;
+}
+:root[data-theme='cyber'] [data-fx='shards'] > i:nth-child(3n) {
+  background: #fff;
+}
+:root[data-theme='cyber'] [data-fx='shards'] > i:nth-child(4n) {
+  background: var(--cyber-focus);
+}
+@keyframes cyber-shard {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(90deg);
+  }
+}
+/* L'étiquette reste dans la hauteur de la ligne : `SwipeToDelete` enveloppe chaque série d'un cadre
+   qui rogne ce qui dépasse. Elle part du haut de la coche et monte de dix pixels au plus. */
+:root[data-theme='cyber'] [data-fx='tag'] {
+  top: 0.625rem;
+  left: auto;
+  right: 2.875rem;
+  padding: 3px 12px 3px 7px;
+  white-space: nowrap;
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  opacity: 0;
+  animation: cyber-tag 900ms steps(1, end) both;
+}
+@keyframes cyber-tag {
+  0% {
+    opacity: 0;
+    transform: translate(8px, 6px);
+  }
+  6% {
+    opacity: 1;
+    transform: none;
+  }
+  12% {
+    opacity: 0.25;
+  }
+  18% {
+    opacity: 1;
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-6px);
+  }
+  78% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
+  86% {
+    opacity: 0.3;
+  }
+  92% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* La retombée : la bande qui balaie la ligne, les chiffres qui s'éclairent, la carte qui encaisse,
+   l'éclair d'écran. Le balayage est un fond qui glisse, pas un calque : rien ne déborde de la ligne. */
+:root[data-theme='cyber'] [data-fired] {
+  background-image: linear-gradient(
+    90deg,
+    transparent 40%,
+    rgb(252 238 10 / 0.5) 47%,
+    rgb(255 255 255 / 0.4) 50%,
+    transparent 58%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  animation: cyber-sweep 380ms linear both;
+}
+@keyframes cyber-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+:root[data-theme='cyber'] [data-fired] [data-part='cell'] input {
+  animation: cyber-values 260ms steps(3, end) 60ms both;
+}
+@keyframes cyber-values {
+  from {
+    color: #fff;
+    text-shadow: 0 0 10px var(--accent-ink);
+  }
+}
+:root[data-theme='cyber'] .rounded-2xl:has([data-fired]) {
+  animation: cyber-jolt 200ms steps(1, end);
+}
+@keyframes cyber-jolt {
+  0% {
+    transform: translate(4px, 1px);
+  }
+  20% {
+    transform: translate(-4px, -1px);
+  }
+  40% {
+    transform: translate(3px, 1px);
+  }
+  60% {
+    transform: translate(-2px, 0);
+  }
+  80% {
+    transform: translate(1px, 0);
+  }
+  100% {
+    transform: none;
+  }
+}
+:root[data-theme='cyber'] body:has([data-fired])::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background: #fff;
+  mix-blend-mode: soft-light;
+  animation: cyber-flash 110ms steps(2, end) both;
+}
+@keyframes cyber-flash {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 0;
+  }
+}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -118,5 +119,55 @@ describe('WorkoutSetRow — à l’échec : les répétitions sont le résultat,
     await userEvent.click(screen.getByRole('button', { name: 'Précédent' }));
 
     expect(onWrite).toHaveBeenCalledWith({ weight: 70, reps: 12 }, true);
+  });
+});
+
+describe('WorkoutSetRow — l’impact du thème Cyber', () => {
+  const plain: WorkoutSet = { ...set, unilateralSecondSideStartsAt: undefined };
+
+  afterEach(() => {
+    document.documentElement.removeAttribute('data-theme');
+    vi.restoreAllMocks();
+  });
+
+  function Harness() {
+    const [current, setCurrent] = useState(plain);
+    return (
+      <WorkoutSetRow
+        set={current}
+        number={1}
+        columns={entryColumns('weight_reps')}
+        previous={undefined}
+        onWrite={vi.fn()}
+        onComplete={() => setCurrent({ ...current, isCompleted: 1 })}
+        onUncomplete={() => setCurrent({ ...current, isCompleted: 0 })}
+        onMenu={vi.fn()}
+      />
+    );
+  }
+
+  it('fait vibrer la coche et monte le tonnage de la série', async () => {
+    document.documentElement.setAttribute('data-theme', 'cyber');
+    const vibrate = vi.fn();
+    Object.defineProperty(navigator, 'vibrate', { value: vibrate, configurable: true });
+    const { container } = render(<Harness />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    expect(vibrate).toHaveBeenCalledWith([40, 20, 12]);
+    expect(container.querySelector('[data-part="set-fx"]')).toHaveTextContent('+96 kg');
+    expect(container.querySelector('[data-fired]')).not.toBeNull();
+  });
+
+  it('ne change rien dans les autres thèmes', async () => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const vibrate = vi.fn();
+    Object.defineProperty(navigator, 'vibrate', { value: vibrate, configurable: true });
+    const { container } = render(<Harness />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    expect(vibrate).not.toHaveBeenCalled();
+    expect(container.querySelector('[data-part="set-fx"]')).toBeNull();
   });
 });

@@ -342,6 +342,9 @@ const fr = {
     restMinus: '−15 s',
     restPlus: '+15 s',
     restShorten: 'Retirer 15 secondes au repos',
+    /** L'étiquette d'une coche validée, dans le thème Cyber : ce que la série vient d'ajouter. */
+    setTonnage: '+{value} kg',
+    setPlusOne: '+1 série',
     restLengthen: 'Ajouter 15 secondes au repos',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
