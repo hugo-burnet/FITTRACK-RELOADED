@@ -403,27 +403,121 @@
     opacity: 0.5;
   }
 }
-/* Un −15 s : la barre encaisse — secousse, éclair, la perte en blanc un instant. */
+/* Un −15 s : la barre encaisse — une secousse, sans plus. La partie écoulée ne s'éclaire plus en
+   entier (« la perte de PV illumine entièrement ») : seul le morceau perdu s'en va, plus bas. */
 :root[data-theme='cyber'] [data-part='meter-rail'][data-hit] {
   animation: cyber-hit 160ms steps(1, end);
-}
-:root[data-theme='cyber'] [data-part='meter-rail'][data-hit] > span {
-  background: #fff;
 }
 @keyframes cyber-hit {
   0% {
     transform: translate(3px, 0);
-    filter: brightness(2.4);
   }
   33% {
     transform: translate(-3px, 1px);
   }
   66% {
     transform: translate(1px, 0);
-    filter: none;
   }
   100% {
     transform: none;
+  }
+}
+
+/*
+ * La perte qui s'évapore : « après chaque perte, les traînées de perte partent vers le ciel en
+ * s'évaporant ». Le morceau perdu (RestRail, SeriesMeter le mesurent et le posent à sa place, hors de
+ * la barre qui rogne) part blanc, se teinte de la couleur de la barre, monte, s'étire, se floute et
+ * s'efface ; deux volutes s'en échappent de côté, l'une rouge, l'une cyan. 800 ms, par paliers fins.
+ */
+[data-part='rest-loss'] {
+  display: none;
+}
+:root[data-theme='cyber'] [data-part='rest-loss'] {
+  display: block;
+  height: 7px;
+  bottom: 3px;
+}
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss']) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  pointer-events: none;
+  animation: cyber-evaporate 800ms steps(16, end) both;
+}
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::before,
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::before {
+  right: 50%;
+  background: var(--cyber-red);
+  animation: cyber-wisp-left 700ms steps(14, end) 60ms both;
+}
+:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss'])::after {
+  left: 50%;
+  background: var(--cyber-cyan);
+  animation: cyber-wisp-right 760ms steps(14, end) 100ms both;
+}
+@keyframes cyber-evaporate {
+  0% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.04, 1.3);
+    background: color-mix(in srgb, var(--accent-ink) 50%, #fff);
+  }
+  55% {
+    opacity: 0.6;
+    transform: translateY(-16px) scale(1.15, 0.8);
+    filter: blur(1.5px);
+    background: var(--accent-ink);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(1.3, 0.25);
+    filter: blur(4px);
+    background: var(--accent-ink);
+  }
+}
+@keyframes cyber-wisp-left {
+  /* Le morceau blanc se voit d'abord seul ; les volutes s'en échappent ensuite. */
+  0%,
+  15% {
+    opacity: 0;
+    transform: none;
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-10px, -24px) scale(0.6, 0.4);
+    filter: blur(3px);
+  }
+}
+@keyframes cyber-wisp-right {
+  /* Le morceau blanc se voit d'abord seul ; les volutes s'en échappent ensuite. */
+  0%,
+  15% {
+    opacity: 0;
+    transform: none;
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(10px, -28px) scale(0.6, 0.4);
+    filter: blur(3px);
   }
 }
 
@@ -828,7 +922,7 @@
 }
 
 /* Le compteur de séries : un cran par série ; une série validée le soigne (reflet), une série
-   annulée le frappe (la perte reste blanche, puis s'éteint avec retard). */
+   annulée le frappe, et le cran perdu s'évapore (plus haut). Le cadre ne rogne pas ; la barre, si. */
 :root[data-theme='cyber'] [data-part='series-meter'] {
   position: relative;
   display: block;
@@ -836,12 +930,16 @@
   min-width: 2rem;
   height: 9px;
   margin-right: 12px;
+}
+:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='bar'] {
+  position: absolute;
+  inset: 0;
   clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
   background:
     repeating-linear-gradient(-45deg, var(--cyber-hatch) 0 2px, transparent 2px 5px),
     color-mix(in srgb, var(--surface-0) 75%, transparent);
 }
-:root[data-theme='cyber'] [data-part='series-meter']::after {
+:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='bar']::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -851,33 +949,23 @@
     rgb(0 0 0 / 0.6) calc(var(--notch) - 2px) var(--notch)
   );
 }
-:root[data-theme='cyber'] [data-part='series-meter'] > i {
+:root[data-theme='cyber'] [data-hp='fill'] {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: var(--v);
-}
-:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='fill'] {
   background: var(--accent-ink);
   box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
   transition: width 360ms steps(9, end);
 }
-:root[data-theme='cyber'] [data-part='series-meter'] > [data-hp='ghost'] {
-  background: #fff;
-  opacity: 0.85;
-  transition: width 300ms cubic-bezier(0.2, 0, 0, 1) 380ms;
-}
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] > [data-hp='fill'] {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] [data-hp='fill'] {
   transition: none;
 }
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up'] > [data-hp='ghost'] {
-  transition: none;
-}
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='down'] > [data-hp='bar'] {
   animation: cyber-hit 160ms steps(1, end);
 }
-:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up']::before {
+:root[data-theme='cyber'] [data-part='series-meter'][data-dir='up'] > [data-hp='bar']::before {
   content: '';
   position: absolute;
   top: 0;

@@ -32,6 +32,21 @@ describe('SeriesMeter', () => {
     expect(meter(view.container)).not.toHaveAttribute('data-dir');
   });
 
+  it('detaches the lost notch when a set is undone, then lets it evaporate', () => {
+    vi.useFakeTimers();
+    const view = render(<SeriesMeter done={4} total={10} />);
+
+    view.rerender(<SeriesMeter done={3} total={10} />);
+    act(() => vi.advanceTimersByTime(0));
+
+    const piece = view.container.querySelector<HTMLElement>('[data-hp="loss"]');
+    expect(piece?.style.left).toBe('30%');
+    expect(piece?.style.width).toBe('10%');
+
+    act(() => vi.advanceTimersByTime(1_000));
+    expect(view.container.querySelector('[data-hp="loss"]')).toBeNull();
+  });
+
   it('stays empty rather than dividing by zero', () => {
     const { container } = render(<SeriesMeter done={0} total={0} />);
 

@@ -87,15 +87,39 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
   }, [endsAt]);
 
   const [hit, setHit] = useState(false);
-  const previousEnd = useRef(endsAt);
+  /*
+   * Le morceau de vie perdu par un −15 s, que Cyber détache de la barre et fait monter en s'évaporant
+   * (« les traînées de perte partent vers le ciel »). Mesuré là où la vie restante se lit dans Cyber,
+   * à gauche : de la vie d'après à la vie d'avant. Une clé par perte, pour que deux −15 rapprochés
+   * fassent deux morceaux.
+   */
+  const [loss, setLoss] = useState<{ key: number; left: number; width: number } | null>(null);
+  const previous = useRef({ startedAt, endsAt });
   useEffect(() => {
-    const shortened = endsAt < previousEnd.current;
-    previousEnd.current = endsAt;
-    if (!shortened) return;
-    setHit(true);
-    const id = setTimeout(() => setHit(false), 450);
-    return () => clearTimeout(id);
-  }, [endsAt]);
+    const before = previous.current;
+    previous.current = { startedAt, endsAt };
+    if (endsAt >= before.endsAt) return;
+    const now = Date.now();
+    const lifeBefore = 1 - restProgress(before.startedAt, before.endsAt, now);
+    const lifeAfter = 1 - restProgress(startedAt, endsAt, now);
+    const show = setTimeout(() => {
+      setHit(true);
+      if (lifeBefore > lifeAfter) {
+        setLoss((last) => ({
+          key: (last?.key ?? 0) + 1,
+          left: Math.round(lifeAfter * 100_000) / 1000,
+          width: Math.round((lifeBefore - lifeAfter) * 100_000) / 1000,
+        }));
+      }
+    }, 0);
+    const hide = setTimeout(() => setHit(false), 450);
+    const gone = setTimeout(() => setLoss(null), 900);
+    return () => {
+      clearTimeout(show);
+      clearTimeout(hide);
+      clearTimeout(gone);
+    };
+  }, [startedAt, endsAt]);
 
   // Reduced motion uses discrete one-second updates.
   const [now, setNow] = useState(() => Date.now());
@@ -118,20 +142,32 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
    * bar too would say the same thing twice.
    */
   return (
-    <span
-      aria-hidden="true"
-      data-part="meter-rail"
-      data-crit={critical || undefined}
-      data-hit={hit || undefined}
-      className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
-        rounded-full bg-[var(--border)]"
-    >
+    <>
       <span
-        ref={barRef}
-        className="block h-full rounded-full bg-[var(--accent-ink)]"
-        style={reduced ? { width: `${progress * 100}%` } : undefined}
-      />
-    </span>
+        aria-hidden="true"
+        data-part="meter-rail"
+        data-crit={critical || undefined}
+        data-hit={hit || undefined}
+        className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
+        rounded-full bg-[var(--border)]"
+      >
+        <span
+          ref={barRef}
+          className="block h-full rounded-full bg-[var(--accent-ink)]"
+          style={reduced ? { width: `${progress * 100}%` } : undefined}
+        />
+      </span>
+      {/* Hors de la barre, qui rogne : le morceau perdu doit pouvoir monter. Caché hors de Cyber. */}
+      <span
+        aria-hidden="true"
+        data-part="rest-loss"
+        className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px]"
+      >
+        {loss !== null && (
+          <i key={loss.key} style={{ left: `${loss.left}%`, width: `${loss.width}%` }} />
+        )}
+      </span>
+    </>
   );
 }
 

@@ -129,9 +129,51 @@ describe('RestRail — la barre de vie', () => {
     view.rerender(
       <RestRail startedAt={0} endsAt={60_000} audioSuppressed={false} onDone={() => false} />,
     );
+    act(() => vi.advanceTimersByTime(0));
     expect(rail(view.container)).toHaveAttribute('data-hit', 'true');
 
     act(() => vi.advanceTimersByTime(500));
     expect(rail(view.container)).not.toHaveAttribute('data-hit');
+  });
+});
+
+describe('RestRail — la perte qui s’évapore', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(30_000);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('détache le morceau perdu, à sa place dans la barre de vie, puis le laisse partir', () => {
+    // 30 s écoulées d'un repos de 2 min ; −15 s déplace début et fin ensemble (restTimer.shift).
+    const view = render(
+      <RestRail startedAt={0} endsAt={120_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    view.rerender(
+      <RestRail startedAt={-15_000} endsAt={105_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    act(() => vi.advanceTimersByTime(0));
+
+    const piece = view.container.querySelector<HTMLElement>('[data-part="rest-loss"] > i');
+    // La vie restante est à gauche : elle passe de 75 % à 62,5 % ; le morceau perdu est entre les deux.
+    expect(piece?.style.left).toBe('62.5%');
+    expect(piece?.style.width).toBe('12.5%');
+
+    act(() => vi.advanceTimersByTime(1_000));
+    expect(view.container.querySelector('[data-part="rest-loss"] > i')).toBeNull();
+  });
+
+  it('ne détache rien quand le repos s’allonge', () => {
+    const view = render(
+      <RestRail startedAt={0} endsAt={120_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    view.rerender(
+      <RestRail startedAt={15_000} endsAt={135_000} audioSuppressed={false} onDone={() => false} />,
+    );
+
+    expect(view.container.querySelector('[data-part="rest-loss"] > i')).toBeNull();
   });
 });
