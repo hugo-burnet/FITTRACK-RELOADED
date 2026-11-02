@@ -44,7 +44,14 @@ s'évaporant » ; « Sauvegarder est un mot trop long, il rentre dans les cosmé
   internes perdant leur fond ; la trame de points, qui exigeait un calque opaque pour s'effacer, devient une
   micro-hachure confinée au coin bas-gauche. Contraste garanti par test au pire cas (halo rouge + trait du filigrane
   sous la plaque) : texte secondaire ≥ 4,5:1. Fluidité remesurée : 60 img/s, ni peinture ni rastérisation en plus.
-  Une partie du message (« sans changé da pas des routine ») n'a pas été comprise : rien n'a été touché à ce titre.
+- **Puis, troisième essai du filigrane** : « je voulais dire sans cacher les cases ; c'était vraiment pour incorporer
+  l'écriture à l'écran et non la poser ». Ni devant, ni derrière : le nom de l'écran a désormais **sa colonne**, 34 px
+  le long du bord droit, séparée par un filet gradué ; le contenu (en-tête compris) s'arrête avant elle et rien ne se
+  superpose. Elle défile, ses lettres tombent, l'une grésille. En pixels : la colonne ne grandit pas avec la police du
+  système. Les plaques restent translucides (le fond y gagne).
+- **Le bouton principal à 200 %** : la hachure et le plot chevauchaient le mot. Une marge ne suffisait pas (le mot
+  remplit le bouton) : la zone qui défile est un conteneur, et sous 19 em les décors partent — présents à 100 %,
+  retirés dès 130 %.
 - **Piège, rattrapé avant commit** : un remplacement de bloc dans `cyber.css`, borné par un repère que je croyais voisin,
   a emporté 476 lignes (la coche, les glitchs, la règle qui cache le filigrane hors de Cyber). L'E2E l'a révélé par le
   filigrane apparu en Sombre ; la feuille a été reconstruite depuis le dernier commit plus les deux seuls blocs voulus,

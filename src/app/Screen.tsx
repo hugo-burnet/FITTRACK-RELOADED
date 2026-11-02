@@ -91,6 +91,7 @@ export function Screen({
   return (
     <section
       data-part="screen"
+      data-watermark={watermark || undefined}
       className="relative mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col"
     >
       {/* Le nom de l'écran en filigrane cinétique, le long du bord droit : Cyber seul le montre. */}
