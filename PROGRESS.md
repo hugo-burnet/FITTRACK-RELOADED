@@ -5,17 +5,20 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-01 — **v2.17.1 publiée** (PWA et APK) : Cyber au doigt — le son à chaque validation, la perte qui
-s'évapore, le filigrane intégré, la fluidité (tous thèmes).
+**Dernière mise à jour :** 2026-11-02 — **v2.17.2 publiée** (PWA et APK) : dans le thème Cyber, le nom de l'écran a sa colonne,
+incorporée à l'écran.
 
 ## Où on en est
 
-- **Publié : v2.17.1**, à la demande de l'utilisateur (« Merge, push, versionne ») :
+- **Publié : v2.17.2**, à la demande de l'utilisateur (« Merge, push et versionne ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.2), APK `FitTrack-v2.17.2.apk`
+  ([journal](docs/journal/2026-11-02-versions-v2-17-2.md)). Le nom de l'écran dans une colonne de 34 px au bord droit (ni devant ni
+  derrière le contenu) ; le bouton principal sans hachure dès 130 % de police. **Dû** : la recette § 6.
+- **Avant : v2.17.1**, à la demande de l'utilisateur (« Merge, push, versionne ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.1), APK `FitTrack-v2.17.1.apk`
   ([journal](docs/journal/2026-11-01-versions-v2-17-1.md)). Ses retours sur la v2.17.0 : l'impact à **chaque** validation ; la perte en
   barres qui s'évaporent (repos) et en lambeaux (compteur) ; le filigrane cinétique en arrière-plan derrière des plaques translucides ;
   « Exporter » ; et la fluidité — la barre de repos anime un `scaleX`, tous thèmes, Cyber au niveau de Sombre. **Dû** : la recette § 6.
-  **Question ouverte** : « sans changé da pas des routine », non compris — à reposer.
 - **Avant : v2.17.0**, à la demande de l'utilisateur (« Fusionne dans master et publie une nouvelle version ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.0), APK `FitTrack-v2.17.0.apk`
   ([journal](docs/journal/2026-11-01-versions-v2-17.md)). **Le thème Cyber** (Réglages › Apparence) : la grammaire visuelle de Cyberpunk 2077
