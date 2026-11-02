@@ -75,6 +75,8 @@ describe('Screen cursor', () => {
       </Screen>,
     );
     expect(container.querySelector('[data-part="ghost"]')).not.toBeNull();
+    // La colonne que la feuille de Cyber réserve au filigrane se règle sur cet attribut.
+    expect(container.querySelector('[data-part="screen"]')).toHaveAttribute('data-watermark');
 
     rerender(
       <Screen title="Séance" watermark={false}>
@@ -82,5 +84,6 @@ describe('Screen cursor', () => {
       </Screen>,
     );
     expect(container.querySelector('[data-part="ghost"]')).toBeNull();
+    expect(container.querySelector('[data-part="screen"]')).not.toHaveAttribute('data-watermark');
   });
 });

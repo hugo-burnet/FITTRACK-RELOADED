@@ -260,9 +260,10 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **La fluidité** (v2.17.1) : pendant un repos, faire défiler la séance — aussi fluide qu'en Sombre.
 - [ ] **La perte qui s'évapore** (v2.17.1) : un −15 s pendant le repos — le temps perdu se défait en fins traits qui
       montent et s'effacent ; décocher une série — le cran perdu se déchire en lambeaux. Rien ne s'éclaire en entier.
-- [ ] **Le filigrane intégré** (v2.17.1) : sur l'accueil, l'historique, la progression — le nom de l'écran défile en
-      arrière-plan, visible entre les plaques et à travers elles (translucides) ; faire défiler une liste : elle glisse
-      par-dessus. Tout reste lisible, au soleil comme en salle. Absent de la séance en direct.
+- [ ] **Le nom de l'écran dans sa colonne** (v2.17.2) : sur l'accueil, l'historique, la progression — une colonne étroite
+      le long du bord droit, séparée par un filet, où le nom défile ; le contenu s'arrête avant elle, rien n'est caché.
+      Absente de la séance en direct. Avec une grande taille de police : le bouton « Démarrer » perd sa hachure, rien ne
+      recouvre le mot.
 - [ ] **La barre de vie du repos** : elle se vide vers la gauche, rouge et palpitante dans les dix
       dernières secondes ; un −15 la fait trembler.
 - [ ] **Changer d'onglet** : l'écran se déchire un quart de seconde, le son glitch tombe avec. En
