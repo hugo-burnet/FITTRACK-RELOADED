@@ -144,7 +144,6 @@ export function WorkoutScreen() {
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
       onBack={() => void navigate('/')}
-      watermark={false}
       action={
         <div className="flex items-center gap-2">
           <ElapsedTime

@@ -85,7 +85,7 @@
   --cyber-aberration: -2px 0 var(--cyber-red), 2px 0 var(--cyber-cyan);
   --cyber-glow: 0 0 14px -3px rgb(252 238 10 / 0.6);
   /* La plaque translucide : la grille et les halos du fond se devinent à travers. Elle est née pour
-     laisser voir le filigrane, qui a depuis sa propre colonne ; gardée parce que le fond y gagne. 74 % :
+     laisser voir un filigrane, retiré depuis (v2.17.3) ; gardée parce que le fond y gagne. 74 % :
      le texte secondaire y garde plus de 4,5:1 sur la couleur la plus claire qu'il puisse y avoir dessous
      (cyber.test.ts). */
   --cyber-plate: rgb(18 19 28 / 0.74);
@@ -1033,12 +1033,11 @@
 
 /*
  * Ce que la maquette montrait et que l'app fait désormais : le compteur de séries en barre de vie,
- * le nom de l'écran en filigrane, le chargement de l'ouverture en barre de vie. (Le titre qui se
- * décode est un composant, `DecodedTitle`.) Chacun est rendu dans tous les thèmes et caché hors de
- * celui-ci : un élément décoratif, sans texte qu'on lise.
+ * le chargement de l'ouverture en barre de vie. (Le titre qui se décode est un composant,
+ * `DecodedTitle`.) Chacun est rendu dans tous les thèmes et caché hors de celui-ci : un élément
+ * décoratif, sans texte qu'on lise.
  */
 [data-part='series-meter'],
-[data-part='ghost'],
 [data-part='boot-load'] {
   display: none;
 }
@@ -1111,92 +1110,6 @@
 :root[data-theme='cyber'] [data-part='progress-line'] {
   flex: 0 1 auto;
   margin-right: 12px;
-}
-
-/*
- * Le nom de l'écran, dans sa colonne : une typographie cinétique incorporée à l'écran.
- *
- * Trois essais. Devant le contenu, il se posait sur les cases ; derrière, il fallait des plaques
- * translucides pour le deviner. « C'était vraiment pour incorporer l'écriture à l'écran, et non la poser,
- * sans cacher les cases » : il a désormais sa place à lui, une colonne de 34 px le long du bord droit,
- * séparée par un filet, que le contenu ne recouvre pas et qui ne recouvre rien. Il y défile en boucle
- * (deux passages du titre), ses lettres tombent une à une à l'arrivée d'un écran, l'une grésille parfois
- * (le micro-glitch d'ambiance). Des pixels et non des rem : un décor ne grandit pas avec la taille de
- * police du système, et la colonne ne mange pas la largeur du contenu à 200 %. Absente de la séance en
- * direct (`Screen watermark={false}`). Rien que `transform` et `opacity` : le compositeur le joue seul.
- */
-:root[data-theme='cyber'] [data-part='screen'][data-watermark] {
-  padding-right: 34px;
-}
-:root[data-theme='cyber'] [data-part='ghost'] {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  display: block;
-  width: 34px;
-  overflow: hidden;
-  pointer-events: none;
-  user-select: none;
-  border-left: 1px solid var(--border);
-  /* Un panneau de HUD : une fine hachure, des graduations tous les 24 px sur le filet. */
-  background:
-    repeating-linear-gradient(0deg, var(--text-2) 0 1px, transparent 1px 24px) left top / 5px 100% no-repeat,
-    repeating-linear-gradient(-45deg, rgb(255 107 99 / 0.06) 0 2px, transparent 2px 6px);
-  /* Les bords de la colonne s'estompent : le texte apparaît et disparaît au lieu d'être tranché. */
-  mask-image: linear-gradient(transparent, #000 6%, #000 94%, transparent);
-}
-:root[data-theme='cyber'] [data-part='ghost'] > [data-track] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  will-change: transform;
-  /* Mesuré : environ 0,5 ms de style par image, le même ordre que la barre de repos en Sombre. */
-  animation: cyber-ghost-scroll 22s linear infinite;
-}
-:root[data-theme='cyber'] [data-part='ghost'] [data-run] {
-  display: block;
-  padding-bottom: 28px;
-  writing-mode: vertical-rl;
-  white-space: nowrap;
-  color: rgb(255 107 99 / 0.55);
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 34px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-:root[data-theme='cyber'] [data-part='ghost'] [data-letter] {
-  display: inline-block;
-  /* Le retard est plafonné à douze lettres : un titre long ne met pas trois secondes à s'écrire. */
-  animation: cyber-ghost-in 260ms steps(4, end) calc(min(var(--i), 12) * 45ms + 120ms) both;
-}
-/* Une lettre sur sept, jaune. */
-:root[data-theme='cyber'] [data-part='ghost'] [data-letter]:nth-child(7n) {
-  color: rgb(252 238 10 / 0.7);
-}
-@keyframes cyber-ghost-scroll {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
-}
-/* Les lettres tombent dans le sens de la lecture verticale ; jamais de côté, hors de la colonne. */
-@keyframes cyber-ghost-in {
-  from {
-    opacity: 0;
-    transform: translateY(-18px);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /* Le chargement de l'ouverture : une barre de vie qui se soigne par paliers, son pourcentage compté

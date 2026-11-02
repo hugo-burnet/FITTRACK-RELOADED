@@ -260,17 +260,15 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **La fluidité** (v2.17.1) : pendant un repos, faire défiler la séance — aussi fluide qu'en Sombre.
 - [ ] **La perte qui s'évapore** (v2.17.1) : un −15 s pendant le repos — le temps perdu se défait en fins traits qui
       montent et s'effacent ; décocher une série — le cran perdu se déchire en lambeaux. Rien ne s'éclaire en entier.
-- [ ] **Le nom de l'écran dans sa colonne** (v2.17.2) : sur l'accueil, l'historique, la progression — une colonne étroite
-      le long du bord droit, séparée par un filet, où le nom défile ; le contenu s'arrête avant elle, rien n'est caché.
-      Absente de la séance en direct. Avec une grande taille de police : le bouton « Démarrer » perd sa hachure, rien ne
-      recouvre le mot.
+- [ ] **Plus de nom d'écran au bord droit** (filigrane retiré) : sur l'accueil, l'historique, la progression — le
+      contenu reprend toute la largeur, plus de colonne ni de lettres qui défilent. Avec une grande taille de police :
+      le bouton « Démarrer » perd sa hachure, rien ne recouvre le mot.
 - [ ] **La barre de vie du repos** : elle se vide vers la gauche, rouge et palpitante dans les dix
       dernières secondes ; un −15 la fait trembler.
 - [ ] **Changer d'onglet** : l'écran se déchire un quart de seconde, le son glitch tombe avec. En
       Annonces › Silence : la déchirure reste, le son se tait.
 - [ ] **Les quatre ajouts** : à l'ouverture, une barre de chargement jaune se remplit par paliers avec
-      son pourcentage ; à chaque écran, le titre se décode lettre à lettre ; le nom de l'écran se devine
-      en filigrane le long du bord droit ; en séance, la barre à côté de « 3 séries sur 15 » gagne un
+      son pourcentage ; à chaque écran, le titre se décode lettre à lettre ; en séance, la barre à côté de « 3 séries sur 15 » gagne un
       cran par série validée et en perd un, avec sa traînée blanche, quand on décoche.
 - [ ] **L'ambiance** : rester une minute sur l'accueil sans toucher — un libellé tressaute de temps en
       temps, une déchirure au plus par demi-minute. Jamais pendant une saisie de charge.

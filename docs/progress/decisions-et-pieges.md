@@ -7,6 +7,14 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-02 (après la v2.17.2) — Le filigrane retiré
+
+- « L'écriture n'apporte rien, autant la supprimer. » Après trois essais (devant le contenu, derrière, dans sa colonne),
+  le nom de l'écran en typographie cinétique est retiré : `KineticGhost`, la propriété `watermark` de `Screen`, sa
+  colonne de 34 px et ses animations dans `cyber.css`, sa place dans le micro-glitch d'ambiance. Le titre qui se décode,
+  le compteur de séries et le chargement de l'ouverture restent. **Les plaques restent translucides** : nées pour lui,
+  gardées parce que le fond y gagne ; le test de contraste ne compte plus son trait au pire cas.
+
 ### 2026-11-01 (après la v2.17.0) — Le son à chaque validation, la perte qui s'évapore, « Exporter », la fluidité
 
 **Demandes, au téléphone.** « Je voudrais entendre le bruit à chaque validation de la série » ; « la perte de PV […]
