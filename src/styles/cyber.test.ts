@@ -99,11 +99,10 @@ describe('Cyber translucent plates', () => {
     const plate = /--cyber-plate:\s*rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/.exec(skin);
     if (plate === null) throw new Error('--cyber-plate introuvable');
     const [, r, g, b, a] = plate.map(Number) as [number, number, number, number, number];
-    // Pire cas : le halo rouge du fond (16 %), puis un trait du filigrane (42 %), puis la plaque.
+    // Pire cas : le halo rouge du fond (16 %), puis la plaque.
     const page: Rgb = [11, 12, 18];
     const halo = over([255, 60, 70], 0.16, page);
-    const stroke = over([255, 107, 99], 0.42, halo);
-    const under = over([r, g, b], a, stroke);
+    const under = over([r, g, b], a, halo);
 
     expect(contrast(color('--text-2'), hex(under))).toBeGreaterThanOrEqual(4.5);
     expect(contrast(color('--text-1'), hex(under))).toBeGreaterThanOrEqual(7);

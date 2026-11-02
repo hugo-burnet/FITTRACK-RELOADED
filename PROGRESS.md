@@ -5,8 +5,13 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-02 — **v2.17.2 publiée** (PWA et APK) : dans le thème Cyber, le nom de l'écran a sa colonne,
-incorporée à l'écran.
+**Dernière mise à jour :** 2026-11-02 — sur la branche, non publié : le filigrane du thème Cyber (le nom de l'écran en
+typographie cinétique) est **retiré**, « l'écriture n'apporte rien ».
+
+## Sur la branche, non publié
+
+- **Filigrane retiré** (`ccr-8abf77c4-43lck3`) : plus de colonne au bord droit, le contenu reprend toute la largeur.
+  Fusion et version sur demande. **Dû** : la recette § 6 (la ligne « Plus de nom d'écran au bord droit »).
 
 ## Où on en est
 
