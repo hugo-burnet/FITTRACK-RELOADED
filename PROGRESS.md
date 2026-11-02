@@ -5,17 +5,15 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-02 — sur la branche, non publié : le filigrane du thème Cyber (le nom de l'écran en
-typographie cinétique) est **retiré**, « l'écriture n'apporte rien ».
-
-## Sur la branche, non publié
-
-- **Filigrane retiré** (`ccr-8abf77c4-43lck3`) : plus de colonne au bord droit, le contenu reprend toute la largeur.
-  Fusion et version sur demande. **Dû** : la recette § 6 (la ligne « Plus de nom d'écran au bord droit »).
+**Dernière mise à jour :** 2026-11-02 — **v2.17.3 publiée** (PWA et APK) : le filigrane du thème Cyber est retiré.
 
 ## Où on en est
 
-- **Publié : v2.17.2**, à la demande de l'utilisateur (« Merge, push et versionne ») :
+- **Publié : v2.17.3**, à la demande de l'utilisateur (« Publie ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.3), APK `FitTrack-v2.17.3.apk`
+  ([journal](docs/journal/2026-11-02-versions-v2-17-3.md)). Le nom de l'écran en typographie cinétique est retiré (« l'écriture
+  n'apporte rien ») ; le contenu reprend toute la largeur. **Dû** : la recette § 6.
+- **Avant : v2.17.2**, à la demande de l'utilisateur (« Merge, push et versionne ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.2), APK `FitTrack-v2.17.2.apk`
   ([journal](docs/journal/2026-11-02-versions-v2-17-2.md)). Le nom de l'écran dans une colonne de 34 px au bord droit (ni devant ni
   derrière le contenu) ; le bouton principal sans hachure dès 130 % de police. **Dû** : la recette § 6.
