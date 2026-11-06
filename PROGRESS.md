@@ -5,16 +5,17 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-06 — **v2.17.4 publiée**, maintenance Windows et fondations du backend homelab. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.4).
+**Dernière mise à jour :** 2026-11-06 — **v2.17.5 publiée**, la barre de repos Cyber prend de vrais dégâts. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
 
-- **Sur `ccr-3e691961-5jpod3`, non publié — Cyber : la barre de repos prend de vrais dégâts.** Retour : « au −15 s,
-  des traits horizontaux, je voulais une vraie barre de vie qui prend des dégâts ». La vie chute d'un coup, le morceau
-  perdu flashe blanc puis rouge à sa place et se vide jusqu'à la nouvelle valeur ; deux −15 rapprochés s'additionnent.
-  `LossBars` retiré. **Dû** : recette § 6, « La barre de vie prend des dégâts ». Fusion et release sur demande.
+- **Publié : v2.17.5**, à la demande de l'utilisateur (« Merge push et versionne ») :
+  [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5), APK `FitTrack-v2.17.5.apk`
+  ([journal](docs/journal/2026-11-06-versions-v2-17-5.md)). Thème Cyber : au −15 s, la barre de repos encaisse comme une barre de vie
+  — la vie chute, le morceau perdu flashe blanc puis rouge et se vide ; deux −15 rapprochés s'additionnent. Fusion `4f4fd17`, quatre
+  workflows verts. **Dû** : recette § 6, « La barre de vie prend des dégâts ».
 
-- **Publié : v2.17.4 — à la demande du propriétaire.** Correction de compilation Windows,
+- **Avant : v2.17.4 — à la demande du propriétaire.** Correction de compilation Windows,
   fondations backend et export SQLite, documentation et CI backend. Aucun
   parcours de synchronisation livré dans l'APK. Voir
   [le journal](docs/journal/2026-11-06-versions-v2-17-4.md). La recette téléphone
