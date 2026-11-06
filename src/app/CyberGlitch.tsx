@@ -1,7 +1,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router-dom';
 import { playScreenGlitch, warmUpCyberSounds } from '@/audio/screenGlitch';
-import { mayGlitch, nextAmbientDelay, type GlitchKind } from './cyberGlitch';
+import { mayGlitch, nextAmbientDelay, type GlitchKind } from './cyberGlitchRules';
 
 /** Le thème posé sur <html>, suivi en direct : Réglages le change sans recharger l'app. */
 function subscribeTheme(onChange: () => void): () => void {
@@ -96,7 +96,7 @@ function glitchOne(): void {
 
 /**
  * Les glitchs du thème Cyber : la déchirure à l'arrivée sur un écran (avec son son), et des glitchs
- * d'ambiance rares (`cyberGlitch.ts`). Hors de Cyber, ne rend rien et n'arme rien.
+ * d'ambiance rares (`cyberGlitchRules.ts`). Hors de Cyber, ne rend rien et n'arme rien.
  *
  * La DÉCHIRURE est un filtre SVG — une turbulence en bandes horizontales qui déplace l'écran, puis les
  * canaux rouge et cyan séparés — posé sur #root le temps de cinq images, avec deux ou trois bandes de

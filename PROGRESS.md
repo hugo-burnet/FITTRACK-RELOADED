@@ -5,11 +5,32 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-02 — **v2.17.3 publiée** (PWA et APK) : le filigrane du thème Cyber est retiré.
+**Dernière mise à jour :** 2026-11-06 — version **v2.17.4**, maintenance Windows et fondations du backend homelab. Publication demandée par le propriétaire ; résultat à vérifier dans [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.4).
 
 ## Où on en est
 
-- **Publié : v2.17.3**, à la demande de l'utilisateur (« Publie ») :
+- **v2.17.4 — publication demandée.** Correction de compilation Windows,
+  fondations backend et export SQLite, documentation et CI backend. Aucun
+  parcours de synchronisation livré dans l'APK. Voir
+  [le journal](docs/journal/2026-11-06-versions-v2-17-4.md). La recette téléphone
+  « Mise à jour v2.17.4 » reste due ; installer par-dessus, sans désinstaller.
+  Les 43 parcours Chromium passent sur le build v2.17.4, ainsi que typecheck,
+  lint et build ; suite frontend complète déjà vérifiée (3 862 réussites, un ignoré).
+
+- **Export backend cohérent ajouté, local seulement.** `backup_sync` exporte par
+  l'API SQLite les écritures validées (WAL compris), vérifie l'intégrité et écrit
+  un manifeste avec empreinte, sans secret ni configuration de génération
+  restaurable. Destination neuve obligatoire, permissions privées POSIX,
+  synchronisation des fichiers et dossiers avant succès. **34 tests backend
+  exécutés sous Windows : 32 réussis, deux contrôles POSIX ignorés** ; les sept
+  tests d'export sous Linux donnent six réussites, seule l'intégration Django
+  étant ignorée dans cet environnement sans Django. Relecture indépendante :
+  correction de la synchronisation du dossier parent. Ni planification serveur
+  ni restauration opérable livrées. Voir `backend/README.md`.
+
+- **En préparation, non déployé — backend homelab multi-utilisateur.** Demande : héberger les sites et leurs backends sur le homelab, avec synchronisation APK/PC et comptes distincts accessibles depuis Internet sans VPN. Priorité à l’isolation de la connexion domestique. Première tranche locale `backend/` : persistance par compte, révisions atomiques SQLite, idempotence, génération des sessions et configuration fermée par défaut ; **27 tests Django passent**, dépendances verrouillées avec empreintes. La relecture indépendante a fait corriger un dossier de données implicite. Voir `backend/README.md` et `docs/design/plans/2026-11-06-sync-backend.md`. **Pas déployable publiquement** : connexion/inscriptions/invitations/MFA/récupération, limites d’abus/stockage, restauration opérable, client web et pont Android restent à livrer. La v2.17.4 ne livre pas encore de synchronisation dans l’APK.
+- **Compatibilité Windows corrigée.** `cyberGlitch.ts` devient `cyberGlitchRules.ts` : sous Windows l’import du composant `CyberGlitch.tsx` se résolvait sur le module `.ts` dont le nom ne différait que par la casse. Typecheck, build, lint et sept tests ciblés passent. Le lint exclut les seuls environnements Python installés `backend/.venv*/**` pour ne pas analyser le JavaScript tiers de Django. Suite complète vérifiée avec `npm run test:run -- --pool=threads --maxWorkers=1` : **3 862 tests passent, un ignoré ; 319 fichiers passent, un ignoré** (651,74 s). Le premier passage concurrent avec le build avait échoué sur deux tests de cadence, ensuite verts seuls, dans leur fichier complet et dans cette suite complète ; aucune assertion ni logique de séance n’a été modifiée.
+- **Avant : v2.17.3**, à la demande de l'utilisateur (« Publie ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.3), APK `FitTrack-v2.17.3.apk`
   ([journal](docs/journal/2026-11-02-versions-v2-17-3.md)). Le nom de l'écran en typographie cinétique est retiré (« l'écriture
   n'apporte rien ») ; le contenu reprend toute la largeur. **Dû** : la recette § 6.

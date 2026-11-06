@@ -7,6 +7,28 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-06 — Homelab et synchronisation multi-utilisateur
+
+Le propriétaire souhaite désormais héberger ses sites et leurs backends sur son
+serveur personnel, avec une synchronisation APK/PC et des utilisateurs distincts
+qui ne doivent pas installer de VPN. Le Lot 14 Supabase de la roadmap devient
+une référence historique pour cette demande : une proposition auto-hébergée
+avec VM isolée et backend Django est préparée dans le projet homelab.
+L’application reste entièrement utilisable localement, sans compte ni réseau.
+
+La première tranche `backend/` reste locale et non publiable. Elle stocke des
+instantanés par compte, avec révision atomique et idempotence, sans fusion
+automatique de modifications concurrentes. Une génération externe à SQLite
+permet de refuser d’anciennes sessions après une restauration. Les parcours
+de connexion/récupération, l’isolation de l’état local entre comptes et le pont
+Android restent à implémenter avant une quelconque bascule.
+
+Le build Windows de référence révélait aussi une collision de résolution entre
+`CyberGlitch.tsx` et `cyberGlitch.ts` : TypeScript choisissait le module `.ts`
+pour l’import du composant, car le système de fichiers ignore la casse.
+Le module pur et son test deviennent `cyberGlitchRules.ts` et
+`cyberGlitchRules.test.ts` ; aucune règle de cadence ou d’affichage n’est changée.
+
 ### 2026-11-02 (après la v2.17.2) — Le filigrane retiré
 
 - « L'écriture n'apporte rien, autant la supprimer. » Après trois essais (devant le contenu, derrière, dans sa colonne),

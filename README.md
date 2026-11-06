@@ -38,6 +38,19 @@ Pas de compte, pas de cloud obligatoire, pas de likes. Une clé d’API n’a ri
 
 Les données vivent dans IndexedDB (Dexie). Désinstaller l’app les efface. Mettre à jour : installer par-dessus, **sans** désinstaller.
 
+## Backend homelab en préparation
+
+La v2.17.4 corrige la compilation sous Windows et ajoute dans le dépôt les
+fondations d'un backend de synchronisation auto-hébergé, avec séparation des
+comptes et export SQLite cohérent. **La synchronisation APK/PC n'est pas encore
+disponible** : l'application reste utilisable hors ligne sans compte, et aucun
+backend n'est exposé publiquement. Connexion, invitations, protections contre
+les abus, restauration complète et intégration des clients restent à terminer.
+
+Voir [le backend et ses limites](backend/README.md),
+[le plan de synchronisation](docs/design/plans/2026-11-06-sync-backend.md) et
+[la recette téléphone](docs/recette-telephone.md#mise-a-jour-v2174).
+
 ---
 
 ## Installer

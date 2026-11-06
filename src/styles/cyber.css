@@ -984,7 +984,7 @@
 }
 
 /*
- * Les glitchs (CyberGlitch.tsx, cyberGlitch.ts).
+ * Les glitchs (CyberGlitch.tsx, cyberGlitchRules.ts).
  *
  * L'arrivée sur un écran est une déchirure, avec son son : elle remplace le glissé de 18 px des
  * autres thèmes, qui se couperait avec elle. Le micro-glitch d'ambiance tressaute 170 ms.

@@ -1,5 +1,18 @@
 # Recette téléphone — une seule passe
 
+<a id="mise-a-jour-v2174"></a>
+
+## Mise à jour v2.17.4
+
+- [ ] Exporter une sauvegarde locale, puis installer l'APK v2.17.4 **par-dessus**
+  l'application existante, sans désinstaller. Vérifier routines, historique et
+  séance en cours après ouverture, puis après fermeture et relance.
+- [ ] Vérifier dans les quatre thèmes qu'une séance reste utilisable hors ligne
+  et que l'effet Cyber fonctionne. Aucun compte ni synchronisation distante
+  ne doit être nécessaire ou présenté comme disponible dans cette version.
+
+Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le valident pas.
+
 > **Pourquoi ce fichier.** `PROGRESS.md` listait dix checkpoints téléphone « encore dus », les plus
 > anciens depuis fin août, plus ceux de chaque version livrée depuis. La feuille de route dit qu'on
 > ne passe pas au lot suivant tant qu'un checkpoint n'est pas validé ; la pratique les a laissés
