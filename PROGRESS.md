@@ -5,17 +5,23 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-06 — version **v2.17.4**, maintenance Windows et fondations du backend homelab. Publication demandée par le propriétaire ; résultat à vérifier dans [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.4).
+**Dernière mise à jour :** 2026-11-06 — **v2.17.4 publiée**, maintenance Windows et fondations du backend homelab. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.4).
 
 ## Où on en est
 
-- **v2.17.4 — publication demandée.** Correction de compilation Windows,
+- **Publié : v2.17.4 — à la demande du propriétaire.** Correction de compilation Windows,
   fondations backend et export SQLite, documentation et CI backend. Aucun
   parcours de synchronisation livré dans l'APK. Voir
   [le journal](docs/journal/2026-11-06-versions-v2-17-4.md). La recette téléphone
   « Mise à jour v2.17.4 » reste due ; installer par-dessus, sans désinstaller.
   Les 43 parcours Chromium passent sur le build v2.17.4, ainsi que typecheck,
   lint et build ; suite frontend complète déjà vérifiée (3 862 réussites, un ignoré).
+  Fusion `c81a07e` sur `master`, tag `v2.17.4` sur ce même commit. Les quatre
+  workflows du push sont verts ; les **34 tests backend passent sous Linux sans
+  exclusion**. Le [workflow du tag](https://github.com/hugo-burnet/FITTRACK-RELOADED/actions/runs/42277283282)
+  a publié `FitTrack-v2.17.4.apk` (11 193 980 octets) et Pages est déployé.
+  SHA-256 de l'APK fourni par GitHub :
+  `648c08c377e23761c07453fb96be22b51b30d040037b39af610497a7b9312795`.
 
 - **Export backend cohérent ajouté, local seulement.** `backup_sync` exporte par
   l'API SQLite les écritures validées (WAL compris), vérifie l'intégrité et écrit
