@@ -137,7 +137,7 @@ describe('RestRail — la barre de vie', () => {
   });
 });
 
-describe('RestRail — la perte qui s’évapore', () => {
+describe('RestRail — la barre de vie qui prend des dégâts', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(30_000);
@@ -147,7 +147,7 @@ describe('RestRail — la perte qui s’évapore', () => {
     vi.useRealTimers();
   });
 
-  it('détache le morceau perdu, à sa place dans la barre de vie, puis le laisse partir', () => {
+  it('garde la vie perdue à sa place dans la barre de vie, puis la laisse se vider', () => {
     // 30 s écoulées d'un repos de 2 min ; −15 s déplace début et fin ensemble (restTimer.shift).
     const view = render(
       <RestRail startedAt={0} endsAt={120_000} audioSuppressed={false} onDone={() => false} />,
@@ -161,11 +161,48 @@ describe('RestRail — la perte qui s’évapore', () => {
     // La vie restante est à gauche : elle passe de 75 % à 62,5 % ; le morceau perdu est entre les deux.
     expect(piece?.style.left).toBe('62.5%');
     expect(piece?.style.width).toBe('12.5%');
-    // Défait en fines barres, qui montent et s'évaporent.
-    expect(piece?.querySelectorAll('[data-bar]')).toHaveLength(5);
+    // Un seul morceau plein, à la découpe de la barre : plus de traits qui montent.
+    expect(piece?.childElementCount).toBe(0);
 
     act(() => vi.advanceTimersByTime(1_000));
     expect(view.container.querySelector('[data-part="rest-loss"] > i')).toBeNull();
+  });
+
+  it('additionne deux −15 s rapprochés, comme un combo', () => {
+    const view = render(
+      <RestRail startedAt={0} endsAt={120_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    view.rerender(
+      <RestRail startedAt={-15_000} endsAt={105_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    act(() => vi.advanceTimersByTime(0));
+    // Le second coup tombe avant que le premier morceau ne commence à se vider.
+    view.rerender(
+      <RestRail startedAt={-30_000} endsAt={90_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    act(() => vi.advanceTimersByTime(0));
+
+    const piece = view.container.querySelector<HTMLElement>('[data-part="rest-loss"] > i');
+    // De 75 % à 50 % d'un seul tenant, et non le seul dernier quart de tranche.
+    expect(piece?.style.left).toBe('50%');
+    expect(piece?.style.width).toBe('25%');
+  });
+
+  it('repart de la vie réelle quand le premier morceau a commencé à se vider', () => {
+    const view = render(
+      <RestRail startedAt={0} endsAt={120_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    view.rerender(
+      <RestRail startedAt={-15_000} endsAt={105_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    act(() => vi.advanceTimersByTime(400));
+    view.rerender(
+      <RestRail startedAt={-30_000} endsAt={90_000} audioSuppressed={false} onDone={() => false} />,
+    );
+    act(() => vi.advanceTimersByTime(0));
+
+    const piece = view.container.querySelector<HTMLElement>('[data-part="rest-loss"] > i');
+    expect(Number.parseFloat(piece?.style.width ?? '')).toBeCloseTo(12.5, 0);
   });
 
   it('ne détache rien quand le repos s’allonge', () => {

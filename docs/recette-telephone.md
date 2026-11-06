@@ -271,8 +271,10 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Le son à chaque validation** (v2.17.1) : valider toutes les séries d'un exercice, vite — l'impact sonne à
       chacune, y compris les deux dernières. (Rien du tout ? Annonces : pas en Silence.)
 - [ ] **La fluidité** (v2.17.1) : pendant un repos, faire défiler la séance — aussi fluide qu'en Sombre.
-- [ ] **La perte qui s'évapore** (v2.17.1) : un −15 s pendant le repos — le temps perdu se défait en fins traits qui
-      montent et s'effacent ; décocher une série — le cran perdu se déchire en lambeaux. Rien ne s'éclaire en entier.
+- [ ] **La barre de vie prend des dégâts** (2026-11-06) : un −15 s pendant le repos — la vie chute d'un coup, le
+      morceau perdu reste en place (flash blanc, puis rouge), puis se vide vers la gauche jusqu'à la nouvelle valeur ;
+      plus aucun trait qui monte. Deux −15 très vite : un seul morceau, deux fois plus long. Dans les dix dernières
+      secondes, le morceau est blanc. Décocher une série — le cran perdu se déchire toujours en lambeaux.
 - [ ] **Plus de nom d'écran au bord droit** (filigrane retiré) : sur l'accueil, l'historique, la progression — le
       contenu reprend toute la largeur, plus de colonne ni de lettres qui défilent. Avec une grande taille de police :
       le bouton « Démarrer » perd sa hachure, rien ne recouvre le mot.

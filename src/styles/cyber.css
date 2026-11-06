@@ -467,24 +467,72 @@
 
 /*
  * La perte qui s'évapore : « après chaque perte, les traînées de perte partent vers le ciel en
- * s'évaporant ». Le morceau perdu (RestRail, SeriesMeter le mesurent et le posent à sa place, hors de
- * la barre qui rogne) part blanc, se teinte de la couleur de la barre, monte, s'étire, se floute et
- * s'efface ; deux volutes s'en échappent de côté, l'une rouge, l'une cyan. 800 ms, par paliers fins.
+ * s'évaporant ». Le cran perdu du compteur de séries (SeriesMeter le mesure et le pose à sa place, hors
+ * de la barre qui rogne) se déchire en lambeaux, plus bas.
  */
-[data-part='rest-loss'] {
-  display: none;
-}
-:root[data-theme='cyber'] [data-part='rest-loss'] {
-  display: block;
-  height: 7px;
-  bottom: 3px;
-}
-:root[data-theme='cyber'] :is([data-part='rest-loss'] > i, [data-hp='loss']) {
+:root[data-theme='cyber'] [data-hp='loss'] {
   position: absolute;
   top: 0;
   bottom: 0;
   pointer-events: none;
 }
+
+/*
+ * Les dégâts du repos (« une vraie animation de barre de vie qui prend des dégâts ») : sur un −15 s, la
+ * vie chute d'un coup et la vie perdue reste un instant à sa place, par-dessus la barre — un flash blanc,
+ * puis le rouge des dégâts — avant de se vider vers la gauche jusqu'à la nouvelle valeur. Le morceau
+ * (RestRail le mesure) a la découpe de la barre et encaisse la même secousse qu'elle.
+ */
+[data-part='rest-loss'] {
+  display: none;
+}
+:root[data-theme='cyber'] [data-part='rest-loss'] {
+  --ghost: var(--cyber-crit);
+  display: block;
+  height: 7px;
+  bottom: 3px;
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+/* Dans le rouge des dix dernières secondes, les dégâts se détachent en blanc. */
+:root[data-theme='cyber'] [data-part='meter-rail'][data-crit] + [data-part='rest-loss'] {
+  --ghost: #fff;
+}
+:root[data-theme='cyber'] [data-part='meter-rail'][data-hit] + [data-part='rest-loss'] {
+  animation: cyber-hit 160ms steps(1, end);
+}
+:root[data-theme='cyber'] [data-part='rest-loss'] > i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform-origin: left;
+  background: var(--ghost);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.45);
+  animation: cyber-damage 800ms both;
+}
+@keyframes cyber-damage {
+  /* L'impact : blanc, plein. */
+  0% {
+    background: #fff;
+    transform: none;
+    animation-timing-function: steps(1, end);
+  }
+  /* Le rouge des dégâts, qui tient sa place le temps qu'on le voie. */
+  11% {
+    background: var(--ghost);
+    transform: none;
+  }
+  /* 300 ms : la vidange commence (DAMAGE_HOLD_MS dans RestRail), vite puis plus doucement. */
+  37.5% {
+    background: var(--ghost);
+    transform: none;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  100% {
+    background: var(--ghost);
+    transform: scaleX(0);
+  }
+}
+
 /*
  * Les lambeaux (LossShreds) : sept bandes au bord déchiré, qui se séparent et montent chacune à sa façon —
  * dérive, rotation, hauteur, retard et teinte donnés par le rang. Blanches au départ, elles prennent la
@@ -575,71 +623,6 @@
     background: var(--tint);
     transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.5, 0.3);
     filter: blur(3px);
-  }
-}
-
-/*
- * Les barres du temps perdu (LossBars) : la perte d'une barre de repos reste une barre — cinq tranches
- * horizontales qui montent chacune à sa vitesse, s'étirent, s'amincissent et s'évaporent, de la couleur
- * de la barre au blanc, puis à rien. Une seule direction, le ciel ; de légers écarts de côté.
- */
-:root[data-theme='cyber'] [data-bar] {
-  --rise: -30px;
-  --drift: 0px;
-  --late: 0ms;
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 20%;
-  background: var(--accent-ink);
-  animation: cyber-bar-evaporate 900ms steps(20, end) var(--late) both;
-}
-:root[data-theme='cyber'] [data-bar]:nth-child(1) {
-  --rise: -22px;
-  --drift: -3px;
-  --late: 0ms;
-}
-:root[data-theme='cyber'] [data-bar]:nth-child(2) {
-  --rise: -38px;
-  --drift: 4px;
-  --late: 50ms;
-}
-:root[data-theme='cyber'] [data-bar]:nth-child(3) {
-  --rise: -30px;
-  --drift: -1px;
-  --late: 20ms;
-}
-:root[data-theme='cyber'] [data-bar]:nth-child(4) {
-  --rise: -46px;
-  --drift: 2px;
-  --late: 80ms;
-}
-:root[data-theme='cyber'] [data-bar]:nth-child(5) {
-  --rise: -26px;
-  --drift: -4px;
-  --late: 35ms;
-}
-@keyframes cyber-bar-evaporate {
-  0% {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-  20% {
-    background: #fff;
-    transform: translate(calc(var(--drift) * 0.3), calc(var(--rise) * 0.15)) scaleX(1.05);
-  }
-  60% {
-    opacity: 0.7;
-    background: #fff;
-    transform: translate(calc(var(--drift) * 0.7), calc(var(--rise) * 0.6)) scale(1.35, 0.6);
-    filter: blur(0.5px);
-  }
-  100% {
-    opacity: 0;
-    background: var(--accent-ink);
-    transform: translate(var(--drift), var(--rise)) scale(1.7, 0.2);
-    filter: blur(2.5px);
   }
 }
 
@@ -1198,7 +1181,7 @@
 :root[data-theme='cyber'] :is([data-part='meter-rail'], [data-part='rest-loss'], [data-part='series-meter']) {
   will-change: transform;
 }
-/* La barre seule se contient : ses voisins (le morceau perdu, le cran perdu) doivent pouvoir monter. */
+/* La barre seule se contient : le morceau de dégâts se pose par-dessus, et le cran perdu des séries doit pouvoir monter. */
 :root[data-theme='cyber'] [data-part='meter-rail'] {
   contain: layout paint;
 }

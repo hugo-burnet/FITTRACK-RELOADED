@@ -9,6 +9,11 @@
 
 ## Où on en est
 
+- **Sur `ccr-3e691961-5jpod3`, non publié — Cyber : la barre de repos prend de vrais dégâts.** Retour : « au −15 s,
+  des traits horizontaux, je voulais une vraie barre de vie qui prend des dégâts ». La vie chute d'un coup, le morceau
+  perdu flashe blanc puis rouge à sa place et se vide jusqu'à la nouvelle valeur ; deux −15 rapprochés s'additionnent.
+  `LossBars` retiré. **Dû** : recette § 6, « La barre de vie prend des dégâts ». Fusion et release sur demande.
+
 - **Publié : v2.17.4 — à la demande du propriétaire.** Correction de compilation Windows,
   fondations backend et export SQLite, documentation et CI backend. Aucun
   parcours de synchronisation livré dans l'APK. Voir
