@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AMBIENT_PACE, mayGlitch, nextAmbientDelay, TOUCH_QUIET_MS } from './cyberGlitch';
+import { AMBIENT_PACE, mayGlitch, nextAmbientDelay, TOUCH_QUIET_MS } from './cyberGlitchRules';
 
 describe('nextAmbientDelay', () => {
   it('keeps the screen tears rare: thirty to sixty seconds apart', () => {

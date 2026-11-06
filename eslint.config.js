@@ -10,7 +10,9 @@ export default tseslint.config(
   // de configuration TypeScript et cesse alors de parser **tout** le dépôt. Les deux sont
   // déjà dans `.gitignore` ; les ignorer ici aussi est ce qui garde `npm run lint`
   // utilisable pendant qu'une session d'agent travaille à côté.
-  { ignores: ['dist', 'coverage', 'node_modules', '.claude', '.worktrees', 'android/**/build/**'] },
+  // Python environments contain third-party JavaScript distributed with Django.
+  // Keep linting project sources without traversing those installed dependencies.
+  { ignores: ['dist', 'coverage', 'node_modules', '.claude', '.worktrees', 'android/**/build/**', 'backend/.venv*/**'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
