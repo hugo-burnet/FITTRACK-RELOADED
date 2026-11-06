@@ -1,7 +1,7 @@
 {
   "name": "fittrack",
   "private": true,
-  "version": "2.17.4",
+  "version": "2.17.5",
   "type": "module",
   "engines": {
     "node": ">=20"
