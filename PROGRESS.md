@@ -14,6 +14,8 @@
   parcours de synchronisation livré dans l'APK. Voir
   [le journal](docs/journal/2026-11-06-versions-v2-17-4.md). La recette téléphone
   « Mise à jour v2.17.4 » reste due ; installer par-dessus, sans désinstaller.
+  Les 43 parcours Chromium passent sur le build v2.17.4, ainsi que typecheck,
+  lint et build ; suite frontend complète déjà vérifiée (3 862 réussites, un ignoré).
 
 - **Export backend cohérent ajouté, local seulement.** `backup_sync` exporte par
   l'API SQLite les écritures validées (WAL compris), vérifie l'intégrité et écrit
