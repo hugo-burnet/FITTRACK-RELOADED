@@ -7,6 +7,19 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-06 — Cyber : la barre de repos prend de vrais dégâts
+
+- **Retour de l'utilisateur** : « quand on fait −15 s ça fait des traits horizontaux, mais moi je voulais une vraie
+  animation de barre de vie qui prend des dégâts ». Les cinq traits qui montaient (`LossBars`, v2.17.1) sont retirés.
+- **Le geste des jeux de combat** : la vie chute d'un coup (la barre saute déjà sans transition), et la vie perdue
+  reste à sa place, par-dessus la barre — flash blanc, puis rouge (blanc dans la zone critique, déjà rouge) — avant de
+  se vider vers la gauche jusqu'à la nouvelle valeur. 300 ms d'arrêt, 500 ms de vidange (`cyber-damage`). Le morceau a
+  la découpe en parallélogramme de la barre et encaisse la même secousse (`data-hit` + sélecteur de frère).
+- **Deux −15 rapprochés s'additionnent** : tant que le premier morceau ne se vide pas encore (`DAMAGE_HOLD_MS`,
+  à garder égal au palier de 37,5 % de `cyber-damage`), le second repart de son bord droit. Au-delà, il repart de la
+  vie réelle. Testé dans `RestRail.test.tsx`.
+- **Le compteur de séries garde ses lambeaux** (`LossShreds`) : la demande ne visait que la barre de temps.
+
 ### 2026-11-06 — Homelab et synchronisation multi-utilisateur
 
 Le propriétaire souhaite désormais héberger ses sites et leurs backends sur son

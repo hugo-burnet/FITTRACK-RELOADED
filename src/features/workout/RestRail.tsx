@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LossBars } from './LossBars';
 import { t } from '@/i18n/fr';
 import { formatRest, msUntilCritical, restProgress } from '@/lib/rest';
 import { signalRestFinishedOnCurrentPlatform } from './restAlert';
@@ -13,6 +12,13 @@ type Props = {
   /** Returns true when the next set takes over with its repetition cadence. */
   onDone: (audioAllowed: boolean) => boolean;
 };
+
+/**
+ * La vie perdue tient sa place ce temps-là avant de se vider, puis disparaît : les deux paliers de
+ * `cyber-damage` dans la feuille du thème (300 ms de flash et d'arrêt, 500 ms de vidange).
+ */
+const DAMAGE_HOLD_MS = 300;
+const DAMAGE_TOTAL_MS = 850;
 
 /** Compositor-driven progress bar anchored to the resting exercise. */
 export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) {
@@ -91,12 +97,18 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
 
   const [hit, setHit] = useState(false);
   /*
-   * Le morceau de vie perdu par un −15 s, que Cyber détache de la barre et fait monter en s'évaporant
-   * (« les traînées de perte partent vers le ciel »). Mesuré là où la vie restante se lit dans Cyber,
-   * à gauche : de la vie d'après à la vie d'avant. Une clé par perte, pour que deux −15 rapprochés
-   * fassent deux morceaux.
+   * Le morceau de vie perdu par un −15 s, comme dans un jeu : la vie chute d'un coup (la barre, plus
+   * haut, saute sans transition), et la vie perdue reste un instant à sa place — un flash blanc, puis
+   * rouge — avant de se vider jusqu'à la nouvelle valeur. Mesuré là où la vie restante se lit dans
+   * Cyber, à gauche : de la vie d'après à la vie d'avant.
+   *
+   * Deux −15 rapprochés s'additionnent, comme un combo : tant que le premier morceau n'a pas commencé
+   * à se vider, le second repart de son bord droit au lieu de le remplacer par un morceau plus court.
+   * Une clé par coup, pour que l'animation reparte de zéro.
    */
-  const [loss, setLoss] = useState<{ key: number; left: number; width: number } | null>(null);
+  const [loss, setLoss] = useState<{ key: number; at: number; left: number; width: number } | null>(
+    null,
+  );
   const previous = useRef({ startedAt, endsAt });
   useEffect(() => {
     const before = previous.current;
@@ -108,15 +120,24 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
     const show = setTimeout(() => {
       setHit(true);
       if (lifeBefore > lifeAfter) {
-        setLoss((last) => ({
-          key: (last?.key ?? 0) + 1,
-          left: Math.round(lifeAfter * 100_000) / 1000,
-          width: Math.round((lifeBefore - lifeAfter) * 100_000) / 1000,
-        }));
+        setLoss((last) => {
+          const left = Math.round(lifeAfter * 100_000) / 1000;
+          const holding = last !== null && now - last.at < DAMAGE_HOLD_MS;
+          const top = Math.max(
+            Math.round(lifeBefore * 100_000) / 1000,
+            holding ? last.left + last.width : 0,
+          );
+          return {
+            key: (last?.key ?? 0) + 1,
+            at: now,
+            left,
+            width: Math.round((top - left) * 1000) / 1000,
+          };
+        });
       }
     }, 0);
     const hide = setTimeout(() => setHit(false), 450);
-    const gone = setTimeout(() => setLoss(null), 900);
+    const gone = setTimeout(() => setLoss(null), DAMAGE_TOTAL_MS);
     return () => {
       clearTimeout(show);
       clearTimeout(hide);
@@ -160,16 +181,14 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
           style={reduced ? { transform: `scaleX(${progress})` } : undefined}
         />
       </span>
-      {/* Hors de la barre, qui rogne : le morceau perdu doit pouvoir monter. Caché hors de Cyber. */}
+      {/* Par-dessus la barre, qui garde son calque à elle. Caché hors de Cyber. */}
       <span
         aria-hidden="true"
         data-part="rest-loss"
         className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px]"
       >
         {loss !== null && (
-          <i key={loss.key} style={{ left: `${loss.left}%`, width: `${loss.width}%` }}>
-            <LossBars />
-          </i>
+          <i key={loss.key} style={{ left: `${loss.left}%`, width: `${loss.width}%` }} />
         )}
       </span>
     </>
