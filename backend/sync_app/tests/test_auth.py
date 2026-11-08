@@ -8,7 +8,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.db import close_old_connections
 from django.test import Client, TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
@@ -248,6 +248,26 @@ class AuthTests(TestCase):
         self.assertEqual(attempt('203.0.113.6', PASSWORD).status_code, 200)
         # A forged list or non-address never selects a fresh budget.
         self.assertEqual(attempt('not-an-ip', 'incorrect').status_code, 401)
+
+    def test_expired_budgets_are_purged(self):
+        from sync_app.models import AuthRateBucket
+        AuthRateBucket.objects.create(key='stale', window_started=timezone.now() - timedelta(hours=1), attempts=3)
+        self.assertEqual(self.login(password='incorrect').status_code, 401)
+        self.assertFalse(AuthRateBucket.objects.filter(key='stale').exists())
+
+    def test_admin_password_reset_revokes_sessions_and_prints_once(self):
+        self.assertEqual(self.login().status_code, 200)
+        self.assertEqual(Session.objects.count(), 1)
+        output = io.StringIO()
+        call_command('reset_sync_password', 'alice', stdout=output)
+        temporary = output.getvalue().strip().splitlines()[-1]
+        self.assertGreaterEqual(len(temporary), 20)
+        self.assertEqual(Session.objects.count(), 0)
+        self.alice.refresh_from_db()
+        self.assertTrue(self.alice.check_password(temporary))
+        self.assertFalse(self.alice.check_password(PASSWORD))
+        with self.assertRaises(CommandError):
+            call_command('reset_sync_password', 'nobody', stdout=io.StringIO())
 
     @override_settings(AUTH_GLOBAL_ATTEMPTS=1)
     def test_global_limit_cannot_be_bypassed_by_different_usernames(self):

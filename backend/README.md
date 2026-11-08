@@ -88,6 +88,18 @@ aux reprises idempotentes, **plus aucune copie d'instantané**. La migration
 déploiement exporte la base avant de migrer, cet export privé reste la seule
 trace de l'historique supprimé.
 
+## Récupération assistée d'un compte
+
+```sh
+python manage.py reset_sync_password <identifiant>
+```
+
+Remplace le mot de passe par un mot de passe aléatoire affiché **une seule
+fois**, et révoque toutes les sessions du compte. Le transmettre à la
+personne par un canal privé. Il n'existe pas encore de récupération en
+libre-service : elle est requise avant toute inscription ouverte. Les
+compteurs d'authentification expirés sont purgés à chaque tentative.
+
 ## Effacer un compte
 
 ```sh

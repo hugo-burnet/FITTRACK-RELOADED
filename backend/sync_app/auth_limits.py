@@ -55,6 +55,9 @@ def consume_auth_attempt(action, username, client):
     now = timezone.now()
     window = timedelta(seconds=settings.AUTH_ATTEMPT_WINDOW_SECONDS)
     with transaction.atomic():
+        # Expired windows carry no information: without a purge, every client
+        # address ever seen would leave rows behind forever.
+        AuthRateBucket.objects.filter(window_started__lt=now - window).delete()
         attempts = _bucket(_key(f'{action}:client:{client}'), now, window)
         if attempts.attempts >= settings.AUTH_GLOBAL_ATTEMPTS:
             return _retry(attempts, now, window)
