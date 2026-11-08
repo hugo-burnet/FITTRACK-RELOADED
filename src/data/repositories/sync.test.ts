@@ -7,10 +7,15 @@ import { syncGeneration as generation, syncSnapshot } from '@/test/syncSnapshot'
 import { buildBackup, restoreBackup } from './backup';
 import {
   acknowledgePublication,
+  deleteSyncRecovery,
   disableSync,
   enableSync,
   getSyncControl,
+  getSyncRecovery,
+  listSyncRecoveries,
   prepareSync,
+  rejectPublication,
+  rememberSyncAccount,
   resolveSyncReview,
 } from './sync';
 
@@ -153,9 +158,11 @@ describe('device sync repository', () => {
     expect(await resolveSyncReview(plan.review, 'pull', remote)).toBe('applied');
     expect((await db.routines.get('r-1'))?.name).toBe('Server');
     expect(localStorage.getItem('fittrack:theme')).toBe('dark');
-    const control = await getSyncControl();
-    expect(control.recovery?.tables.routines[0]!.name).toBe('Poussée');
-    expect(control.recovery?.preferences['fittrack:theme']).toBe('dark');
+    const [copy] = await listSyncRecoveries();
+    const recovery = await getSyncRecovery(copy!.id);
+    expect(copy!.source).toBe('device');
+    expect(recovery?.tables.routines[0]!.name).toBe('Poussée');
+    expect(recovery?.preferences['fittrack:theme']).toBe('dark');
     expect((await prepareSync(owner, remote)).kind).toBe('same');
   });
   it('keeps the remote copy before an explicit server replacement and never copies device consent', async () => {
@@ -165,8 +172,77 @@ describe('device sync repository', () => {
     const plan = await prepareSync(owner, remote);
     if (plan.kind !== 'conflict') throw new Error('Expected conflict');
     expect(await resolveSyncReview(plan.review, 'push', remote)).toBe('queued');
-    expect((await getSyncControl()).recovery?.tables.routines[0]!.name).toBe('Server');
+    const [copy] = await listSyncRecoveries();
+    expect(copy!.source).toBe('server');
+    expect((await getSyncRecovery(copy!.id))?.tables.routines[0]!.name).toBe('Server');
     expect((await getSyncControl()).pending?.body.base.revision).toBe(1);
+  });
+  it('drops a publication the server refused, so the next check compares instead of resending', async () => {
+    await enableSync(owner);
+    const prepared = await prepareSync(owner, empty);
+    if (prepared.kind !== 'publish') throw new Error('Expected publication');
+    expect(await rejectPublication(owner, prepared.epoch, prepared.pending.body.operationId)).toBe(
+      true,
+    );
+    expect((await getSyncControl()).pending).toBeNull();
+    const remote = { generation, revision: 1, snapshot: syncSnapshot() };
+    remote.snapshot.tables.routines[0]!.name = 'Other device';
+    expect((await prepareSync(owner, remote)).kind).toBe('conflict');
+    expect((await db.routines.get('r-1'))?.name).toBe('Poussée');
+  });
+  it('ignores a refusal for an operation that is no longer the pending one', async () => {
+    await enableSync(owner);
+    const prepared = await prepareSync(owner, empty);
+    if (prepared.kind !== 'publish') throw new Error('Expected publication');
+    await disableSync();
+    expect(await rejectPublication(owner, prepared.epoch, prepared.pending.body.operationId)).toBe(
+      false,
+    );
+    expect((await getSyncControl()).pending).toEqual(prepared.pending);
+  });
+  it('keeps every recovery copy across successive replacements, outside exports', async () => {
+    await enableSync(owner);
+    const first = { generation, revision: 1, snapshot: syncSnapshot() };
+    first.snapshot.tables.routines[0]!.name = 'Server v1';
+    const conflict = await prepareSync(owner, first);
+    if (conflict.kind !== 'conflict') throw new Error('Expected conflict');
+    await resolveSyncReview(conflict.review, 'pull', first);
+    const second = { generation, revision: 2, snapshot: syncSnapshot() };
+    second.snapshot.tables.routines[0]!.name = 'Server v2';
+    const pull = await prepareSync(owner, second);
+    if (pull.kind !== 'pull') throw new Error('Expected pull');
+    await resolveSyncReview(pull.review, 'pull', second);
+    const copies = await listSyncRecoveries();
+    expect(copies.map((copy) => copy.source)).toEqual(['device', 'device']);
+    const names = await Promise.all(
+      copies.map(async (copy) => (await getSyncRecovery(copy.id))?.tables.routines[0]!.name),
+    );
+    expect(names.sort()).toEqual(['Poussée', 'Server v1']);
+    const exported = await buildBackup();
+    expect(
+      exported.tables.settings.some((row) => String(row.key).startsWith('__device_sync')),
+    ).toBe(false);
+    await restoreBackup(syncSnapshot());
+    expect(await listSyncRecoveries()).toHaveLength(2);
+    await deleteSyncRecovery(copies[0]!.id);
+    expect((await listSyncRecoveries()).map((copy) => copy.id)).toEqual([copies[1]!.id]);
+  });
+  it('refuses a remote snapshot that carries any device-only row', async () => {
+    await enableSync(owner);
+    const remote = { generation, revision: 1, snapshot: syncSnapshot() };
+    remote.snapshot.tables.settings.push({
+      key: '__device_sync_recovery_v1:x',
+      value: {},
+      updatedAt: 1,
+    });
+    await expect(prepareSync(owner, remote)).rejects.toMatchObject({ code: 'invalid_snapshot' });
+  });
+  it('remembers the signed-in account only as a non-secret hint', async () => {
+    await rememberSyncAccount({ id: '1', username: 'alice' });
+    expect((await getSyncControl()).account).toEqual({ id: '1', username: 'alice' });
+    expect(JSON.stringify(await buildBackup())).not.toContain('alice');
+    await rememberSyncAccount(null);
+    expect((await getSyncControl()).account).toBeNull();
   });
   it('manual restore disables sync, rejects imported consent, and invalidates old responses', async () => {
     await enableSync(owner);

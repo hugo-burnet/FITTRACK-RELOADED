@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
-import { getSyncControl } from '@/data/repositories/sync';
+import { deleteSyncRecovery, getSyncRecovery, listSyncRecoveries } from '@/data/repositories/sync';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { backupFileName, serializeBackup } from '@/lib/backup';
-import { SyncError, type SyncReview } from '@/lib/sync/types';
+import { SyncError, type SyncRecoveryInfo, type SyncReview } from '@/lib/sync/types';
 import { saveTextFile } from '@/platform/saveFile';
 import { syncCoordinator as sync } from '@/stores/sync';
 import { Button, ConfirmSheet, Input, SectionTitle, Toggle } from '@/ui';
@@ -48,17 +48,18 @@ export function SyncSettings() {
     choice: 'enable' | 'push' | 'pull';
     review: SyncReview | null;
   } | null>(null);
-  const [recovery, setRecovery] = useState(false);
+  const [recoveries, setRecoveries] = useState<SyncRecoveryInfo[]>([]);
+  const [deleting, setDeleting] = useState<SyncRecoveryInfo | null>(null);
   useEffect(() => {
     let alive = true;
+    // open() stays offline unless this device already used an account or enabled sync.
     void sync
-      .hydrate()
-      .then(() => sync.checkSession())
+      .open()
       .catch(() => {})
       .finally(() => {
-        void getSyncControl()
-          .then((control) => {
-            if (alive) setRecovery(control.recovery !== null);
+        void listSyncRecoveries()
+          .then((copies) => {
+            if (alive) setRecoveries(copies);
           })
           .catch(() => {});
       });
@@ -74,7 +75,7 @@ export function SyncSettings() {
     setNotice(null);
     try {
       await action();
-      setRecovery((await getSyncControl()).recovery !== null);
+      setRecoveries(await listSyncRecoveries());
     } catch (failure) {
       setError(failure instanceof SyncError ? failure.code : 'generic');
     } finally {
@@ -106,9 +107,9 @@ export function SyncSettings() {
         window.location.reload();
     });
   };
-  const exportRecovery = () =>
+  const exportRecovery = (id: string) =>
     run(async () => {
-      const backup = (await getSyncControl()).recovery;
+      const backup = await getSyncRecovery(id);
       if (!backup) throw new SyncError('stale_review');
       const outcome = await saveTextFile({
         name: backupFileName(backup.exportedAt),
@@ -119,6 +120,11 @@ export function SyncSettings() {
       if (outcome === 'failed') throw new SyncError('generic');
       if (outcome === 'shared' || outcome === 'downloaded') setNotice(t('sync.recoverySaved'));
     });
+  const removeRecovery = () => {
+    const copy = deleting;
+    setDeleting(null);
+    if (copy) void run(() => deleteSyncRecovery(copy.id));
+  };
   const shownError = error ?? view.error;
   const remote = view.review?.remote.snapshot;
   return (
@@ -314,10 +320,41 @@ export function SyncSettings() {
             )}
           </section>
         )}
-        {recovery && (
-          <Button disabled={busy} onClick={() => void exportRecovery()}>
-            {t('sync.recovery')}
-          </Button>
+        {recoveries.length > 0 && (
+          <section className="flex flex-col gap-3">
+            <SectionTitle>{t('sync.recoveriesTitle')}</SectionTitle>
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">
+              {t('sync.recoveriesHint')}
+            </p>
+            {recoveries.map((copy) => (
+              <div
+                key={copy.id}
+                className="flex flex-col gap-2 rounded-2xl bg-[var(--surface-1)] p-4"
+              >
+                <p className="text-sm leading-relaxed">
+                  {t(
+                    copy.source === 'server'
+                      ? 'sync.recoveryServer'
+                      : copy.source === 'device'
+                        ? 'sync.recoveryDevice'
+                        : 'sync.recoveryLegacy',
+                    {
+                      date: new Date(copy.createdAt).toLocaleString('fr-FR', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      }),
+                    },
+                  )}
+                </p>
+                <Button disabled={busy} onClick={() => void exportRecovery(copy.id)}>
+                  {t('sync.recovery')}
+                </Button>
+                <Button variant="ghost" disabled={busy} onClick={() => setDeleting(copy)}>
+                  {t('sync.recoveryDelete')}
+                </Button>
+              </div>
+            ))}
+          </section>
         )}
         {notice && (
           <p role="status" className="text-sm text-[var(--text-2)]">
@@ -363,6 +400,15 @@ export function SyncSettings() {
         )}
         danger={confirmation?.choice !== 'enable'}
         onConfirm={confirm}
+      />
+      <ConfirmSheet
+        open={deleting !== null}
+        onClose={() => setDeleting(null)}
+        title={t('sync.recoveryDeleteTitle')}
+        body={t('sync.recoveryDeleteBody')}
+        confirmLabel={t('sync.recoveryDeleteConfirm')}
+        danger
+        onConfirm={removeRecovery}
       />
     </Screen>
   );

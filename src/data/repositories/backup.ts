@@ -1,6 +1,6 @@
 import { db } from '@/data/db';
 import { suspendSyncControl } from '@/data/syncControl';
-import { SYNC_CONTROL_KEY } from '@/lib/sync/types';
+import { DEVICE_SYNC_PREFIX, SYNC_CONTROL_KEY, isDeviceSyncKey } from '@/lib/sync/types';
 import {
   BACKUP_FORMAT,
   BACKUP_TABLES,
@@ -76,9 +76,27 @@ function tableOf(name: (typeof BACKUP_TABLES)[number]) {
   return db.table<BackupRow>(name);
 }
 
+/** First key after every `__device_sync_*` key: the prefix with its last character incremented. */
+const DEVICE_SYNC_END =
+  DEVICE_SYNC_PREFIX.slice(0, -1) +
+  String.fromCharCode(DEVICE_SYNC_PREFIX.charCodeAt(DEVICE_SYNC_PREFIX.length - 1) + 1);
+
 export async function buildBackup(now = Date.now()): Promise<BackupFile> {
   const rows = await db.transaction('r', BACKUP_TABLES.map(tableOf), async () =>
-    Promise.all(BACKUP_TABLES.map(async (name) => tableOf(name).toArray())),
+    Promise.all(
+      BACKUP_TABLES.map(async (name) =>
+        // Recovery copies can each weigh as much as the whole database: skip
+        // the device-only key range instead of loading it to filter it out.
+        name === 'settings'
+          ? (
+              await Promise.all([
+                tableOf(name).where('key').below(DEVICE_SYNC_PREFIX).toArray(),
+                tableOf(name).where('key').aboveOrEqual(DEVICE_SYNC_END).toArray(),
+              ])
+            ).flat()
+          : tableOf(name).toArray(),
+      ),
+    ),
   );
 
   return {
@@ -90,7 +108,7 @@ export async function buildBackup(now = Date.now()): Promise<BackupFile> {
     tables: Object.fromEntries(
       BACKUP_TABLES.map((name, index) => [
         name,
-        (rows[index] ?? []).filter((row) => name !== 'settings' || row.key !== SYNC_CONTROL_KEY),
+        (rows[index] ?? []).filter((row) => name !== 'settings' || !isDeviceSyncKey(row.key)),
       ]),
     ) as BackupFile['tables'],
   };
@@ -128,22 +146,23 @@ export async function restoreBackup(backup: BackupFile): Promise<BackupCounts> {
   let preferencesWritten = false;
   try {
     await db.transaction('rw', BACKUP_TABLES.map(tableOf), async () => {
-      // Consent and account binding belong to this device, never to an imported file.
-      const device = await db.settings.get(SYNC_CONTROL_KEY);
+      // Consent, account binding and recovery copies belong to this device,
+      // never to an imported file — and an import must not erase them.
+      const device = await db.settings.where('key').startsWith(DEVICE_SYNC_PREFIX).toArray();
       for (const name of BACKUP_TABLES) {
         const table = tableOf(name);
         await table.clear();
         const rows = (tables[name] ?? []).filter(
-          (row) => name !== 'settings' || row.key !== SYNC_CONTROL_KEY,
+          (row) => name !== 'settings' || !isDeviceSyncKey(row.key),
         );
         if (rows.length > 0) await table.bulkPut(rows);
       }
-      if (device)
-        await db.settings.put({
-          ...device,
-          value: suspendSyncControl(device.value, true),
-          updatedAt: Date.now(),
-        });
+      for (const row of device)
+        await db.settings.put(
+          row.key === SYNC_CONTROL_KEY
+            ? { ...row, value: suspendSyncControl(row.value, true), updatedAt: Date.now() }
+            : row,
+        );
       // Synchronous: a failure here rejects the still-open IndexedDB transaction.
       writePreferences(backup.preferences);
       preferencesWritten = true;

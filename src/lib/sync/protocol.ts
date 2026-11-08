@@ -1,11 +1,5 @@
 import { BACKUP_TABLES, parseBackup, type BackupFile } from '@/lib/backup';
-import {
-  SYNC_CONTROL_KEY,
-  SyncError,
-  type AuthSession,
-  type Cursor,
-  type SyncState,
-} from './types';
+import { isDeviceSyncKey, SyncError, type AuthSession, type Cursor, type SyncState } from './types';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 // Historical context may legitimately disappear; ownership parents must exist.
@@ -53,7 +47,7 @@ export function validateSyncSnapshot(value: unknown): BackupFile {
   )
     throw new SyncError('invalid_snapshot');
   const backup = parsed.backup;
-  if (backup.tables.settings.some((row) => row.key === SYNC_CONTROL_KEY))
+  if (backup.tables.settings.some((row) => isDeviceSyncKey(row.key)))
     throw new SyncError('invalid_snapshot');
   if (backup.tables.workouts.some((row) => row.status === 'active' && row.deletedAt === 0))
     throw new SyncError('active_remote');
@@ -107,7 +101,7 @@ export async function snapshotHash(backup: BackupFile): Promise<string> {
     BACKUP_TABLES.map((name) => [
       name,
       [...backup.tables[name]]
-        .filter((row) => name !== 'settings' || row.key !== SYNC_CONTROL_KEY)
+        .filter((row) => name !== 'settings' || !isDeviceSyncKey(row.key))
         .sort((a, b) => {
           const left = String(a.id ?? a.key),
             right = String(b.id ?? b.key);

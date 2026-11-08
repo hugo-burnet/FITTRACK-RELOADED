@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { BACKUP_TABLES } from '@/lib/backup';
-import { getSyncControl } from '@/data/repositories/sync';
+import { enableSync, getSyncControl } from '@/data/repositories/sync';
 import { resetDb } from '@/test/resetDb';
 import { syncGeneration as generation, syncSnapshot } from '@/test/syncSnapshot';
 import { SyncError, type Publication } from '@/lib/sync/types';
@@ -178,6 +178,135 @@ describe('optional sync coordinator', () => {
     await sync.cycle();
     await expect(sync.resolve('pull', pinned)).rejects.toMatchObject({ code: 'stale_review' });
     expect((await db.routines.get('r-1'))?.name).toBe('Edited while confirmation open');
+  });
+  it('sends nothing once the off switch lands during the last check before publishing', async () => {
+    const api = server();
+    const sync = new SyncCoordinator(api.factory);
+    await sync.checkSession();
+    await enableSync({ id: '1', username: 'alice', origin: api.transport.origin });
+    const log: string[] = [];
+    const original = api.request.getMockImplementation()!;
+    api.request.mockImplementation((path, body) => {
+      log.push(path);
+      return original(path, body);
+    });
+    // hasActiveSyncWorkout() is the last await before the upload; the third read
+    // after the state response is the pre-send check.
+    const where = db.workouts.where.bind(db.workouts);
+    let reads = 0;
+    vi.spyOn(db.workouts, 'where').mockImplementation(((index: string) => {
+      if (log.includes('/api/sync/state') && ++reads === 3) {
+        log.push('off');
+        void sync.deactivate();
+      }
+      return where(index);
+    }) as typeof db.workouts.where);
+    await sync.cycle();
+    expect(log).toContain('off');
+    expect(log).not.toContain('/api/sync/publish');
+    expect(sync.getSnapshot().phase).toBe('local');
+  });
+  it('an off switch in another tab cancels this tab and stops its next request', async () => {
+    const api = server();
+    const tab = server();
+    const here = new SyncCoordinator(tab.factory);
+    const other = new SyncCoordinator(api.factory);
+    const stop = here.listen();
+    try {
+      await other.checkSession();
+      await other.activate();
+      let finish: (value: unknown) => void = () => {};
+      tab.request.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finish = resolve;
+          }),
+      );
+      const running = here.cycle();
+      await vi.waitFor(() =>
+        expect(tab.request).toHaveBeenLastCalledWith('/api/auth/session', undefined),
+      );
+      const count = tab.request.mock.calls.length;
+      await other.deactivate();
+      await vi.waitFor(() => expect(tab.transport.cancel).toHaveBeenCalled());
+      finish(session);
+      await running;
+      expect(tab.request).toHaveBeenCalledTimes(count);
+      expect(here.getSnapshot().enabled).toBe(false);
+    } finally {
+      stop();
+    }
+  });
+  it('a listening tab is not cancelled by its own off announcement', async () => {
+    const api = server();
+    const original = api.request.getMockImplementation()!;
+    // Slow replies leave time for the broadcast to be delivered mid-request.
+    api.request.mockImplementation(async (path, body) => {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      return original(path, body);
+    });
+    const sync = new SyncCoordinator(api.factory);
+    const stop = sync.listen();
+    try {
+      await sync.authenticate('login', { username: 'alice', password: 'not-stored' });
+      expect(sync.getSnapshot().user?.username).toBe('alice');
+      expect(api.transport.cancel).not.toHaveBeenCalled();
+    } finally {
+      stop();
+    }
+  });
+  it('uploads a refused publication once, then shows the conflict without resending it', async () => {
+    const api = server();
+    const remote = syncSnapshot();
+    remote.tables.routines[0]!.name = 'Other device';
+    let revision = 0;
+    api.request.mockImplementation(async (path: string) => {
+      if (path === '/api/auth/session') return session;
+      if (path === '/api/sync/state')
+        return revision === 0
+          ? { generation, revision: 0, snapshot: null }
+          : { generation, revision, snapshot: remote };
+      if (path === '/api/sync/publish') {
+        revision = 1;
+        throw new SyncError('revision_conflict');
+      }
+      throw new Error('Unexpected route');
+    });
+    const sync = new SyncCoordinator(api.factory);
+    await sync.checkSession();
+    await sync.activate();
+    expect(sync.getSnapshot().phase).toBe('conflict');
+    await sync.cycle();
+    await sync.cycle();
+    expect(api.request.mock.calls.filter((call) => call[0] === '/api/sync/publish')).toHaveLength(
+      1,
+    );
+    expect(sync.getSnapshot().phase).toBe('conflict');
+    expect((await db.routines.get('r-1'))?.name).toBe('Poussée');
+  });
+  it('opening the screen contacts nobody until an account was used on this device', async () => {
+    const api = server();
+    const sync = new SyncCoordinator(api.factory);
+    await sync.open();
+    expect(api.factory).not.toHaveBeenCalled();
+    await sync.authenticate('login', { username: 'alice', password: 'not-stored' });
+    api.request.mockClear();
+    const reopened = new SyncCoordinator(api.factory);
+    await reopened.open();
+    expect(api.request.mock.calls.map((call) => call[0])).toEqual(['/api/auth/session']);
+    expect(reopened.getSnapshot().user?.username).toBe('alice');
+    await reopened.signOut();
+    api.request.mockClear();
+    await new SyncCoordinator(api.factory).open();
+    expect(api.request).not.toHaveBeenCalled();
+  });
+  it('activation confirms the session again instead of trusting a remembered account', async () => {
+    const api = server();
+    const sync = new SyncCoordinator(api.factory);
+    await sync.authenticate('login', { username: 'alice', password: 'not-stored' });
+    api.request.mockImplementation(async () => ({ ...session, authenticated: false, user: null }));
+    await expect(sync.activate()).rejects.toMatchObject({ code: 'authentication_required' });
+    expect((await getSyncControl()).enabled).toBe(false);
   });
   it('does not send any HTTP after OS restoration onto another Android installation', async () => {
     const api = server();

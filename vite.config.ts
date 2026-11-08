@@ -1,13 +1,37 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import type { Plugin } from 'vite';
 import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { contentSecurityPolicy } from './src/lib/contentSecurityPolicy';
 
 const { version } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 ) as { version: string };
+
+/**
+ * Writes dist/csp.txt from the final index.html. The homelab proxy sends it,
+ * and `vite preview` sends it too, so every E2E run exercises the same policy.
+ */
+function emitContentSecurityPolicy(): Plugin {
+  return {
+    name: 'fittrack-content-security-policy',
+    enforce: 'post',
+    generateBundle(_, bundle) {
+      const page = bundle['index.html'];
+      if (page?.type !== 'asset') return;
+      this.emitFile({
+        type: 'asset',
+        fileName: 'csp.txt',
+        source: `${contentSecurityPolicy(String(page.source))}
+`,
+      });
+    },
+  };
+}
+const builtPolicy = new URL('./dist/csp.txt', import.meta.url);
 
 export default defineConfig(({ mode }) => {
   // GitHub Pages needs its repository prefix; Capacitor loads local files.
@@ -60,7 +84,15 @@ export default defineConfig(({ mode }) => {
           cleanupOutdatedCaches: true,
         },
       }),
+      emitContentSecurityPolicy(),
     ],
+    // Only the homelab build is served with headers; Pages cannot send any.
+    preview: {
+      headers:
+        mode === 'homelab' && existsSync(builtPolicy)
+          ? { 'Content-Security-Policy': readFileSync(builtPolicy, 'utf8').trim() }
+          : {},
+    },
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },

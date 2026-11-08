@@ -82,6 +82,9 @@ test('app sans compte puis inscription ultérieure : historique conservé et auc
   await expect(
     page.getByRole('heading', { level: 1, name: 'Compte et synchronisation' }),
   ).toBeVisible();
+  // Opening the screen is not an account action: still no request at all.
+  await expect(page.getByRole('button', { name: 'Créer un compte', exact: true })).toBeVisible();
+  expect(api.calls).toEqual([]);
   await createAccount(page);
   await expect(page.getByRole('switch', { name: 'Synchroniser cet appareil' })).toHaveAttribute(
     'aria-checked',
@@ -157,35 +160,75 @@ test('données divergentes : aucun remplacement sans choix et confirmation', asy
   await expect(
     page.getByRole('heading', { name: 'Compte et synchronisation', exact: true }),
   ).toBeVisible();
+  await expect(page.getByText(/^Données de cet appareil, remplacées le /)).toBeVisible();
   await page.goto('/#/history');
   await expect(page.getByText('Séance du serveur', { exact: true })).toBeVisible();
 });
-for (const theme of ['dark', 'light', 'tty1', 'cyber']) {
-  test(`formulaire à 200 % sans débordement : ${theme}`, async ({ page }) => {
-    await mockAPI(page);
-    await page.addInitScript((value) => localStorage.setItem('fittrack:theme', value), theme);
-    await openApp(page);
-    await page.goto('/#/settings/sync');
-    await page.getByRole('button', { name: /Créer un compte/ }).click();
-    await page.screenshot({ path: `test-results/sync/form-${theme}.png`, fullPage: true });
-    await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > innerWidth + 1,
-    );
-    expect(overflow).toBe(false);
-    for (const input of await page.getByRole('textbox').all()) {
-      const box = await input.boundingBox();
-      expect(box?.height).toBeGreaterThanOrEqual(48);
-    }
-  });
-}
+test.describe('mise en page agrandie', () => {
+  // addStyleTag injects an inline <style>, which the client's policy rightly refuses.
+  test.use({ bypassCSP: true });
+  for (const theme of ['dark', 'light', 'tty1', 'cyber']) {
+    test(`formulaire à 200 % sans débordement : ${theme}`, async ({ page }) => {
+      await mockAPI(page);
+      await page.addInitScript((value) => localStorage.setItem('fittrack:theme', value), theme);
+      await openApp(page);
+      await page.goto('/#/settings/sync');
+      await page.getByRole('button', { name: /Créer un compte/ }).click();
+      await page.screenshot({ path: `test-results/sync/form-${theme}.png`, fullPage: true });
+      await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > innerWidth + 1,
+      );
+      expect(overflow).toBe(false);
+      for (const input of await page.getByRole('textbox').all()) {
+        const box = await input.boundingBox();
+        expect(box?.height).toBeGreaterThanOrEqual(48);
+      }
+    });
+  }
+});
 test('une erreur serveur malformée ne casse pas les réglages', async ({ page }) => {
   await page.route('**/api/**', (route) =>
     route.fulfill({ status: 503, json: { error: 'toString' } }),
   );
   await openApp(page);
   await page.goto('/#/settings/sync');
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
+  await page.getByLabel('Identifiant', { exact: true }).fill('alice');
+  await page.getByLabel('Mot de passe', { exact: true }).fill('a-long-example-password-123');
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('L’opération n’a pas abouti');
-  await page.getByRole('button', { name: /Créer un compte/ }).click();
   await expect(page.getByLabel('Identifiant', { exact: true })).toBeVisible();
+});
+test('le client homelab applique sa politique de sécurité sans rien casser', async ({ page }) => {
+  await mockAPI(page);
+  await page.addInitScript(() => {
+    const seen: string[] = [];
+    (window as unknown as { cspViolations: string[] }).cspViolations = seen;
+    document.addEventListener('securitypolicyviolation', (event) =>
+      seen.push(`${event.violatedDirective} ${event.blockedURI}`),
+    );
+  });
+  const response = await page.goto('/');
+  const policy = response?.headers()['content-security-policy'] ?? '';
+  expect(policy).toContain("frame-ancestors 'none'");
+  expect(policy).toContain("connect-src 'self'");
+  expect(policy).not.toMatch(/script-src[^;]*unsafe/);
+  await openApp(page);
+  await seedCompletedWorkouts(page, 1);
+  for (const route of [
+    '/#/',
+    '/#/routines',
+    '/#/history',
+    '/#/analytics',
+    '/#/exercises',
+    '/#/settings',
+    '/#/settings/sync',
+  ]) {
+    await page.goto(route);
+    await page.waitForLoadState('networkidle');
+  }
+  expect(
+    await page.evaluate(() => (window as unknown as { cspViolations: string[] }).cspViolations),
+  ).toEqual([]);
 });

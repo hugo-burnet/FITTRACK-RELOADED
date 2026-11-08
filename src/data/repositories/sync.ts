@@ -10,15 +10,20 @@ import {
   validateSyncSnapshot,
 } from '@/lib/sync/protocol';
 import {
+  DEVICE_SYNC_PREFIX,
   SYNC_CONTROL_KEY,
+  SYNC_RECOVERY_PREFIX,
   SyncError,
   samePrincipal,
   type Cursor,
   type PendingPublication,
   type Principal,
   type SyncControl,
+  type SyncRecovery,
+  type SyncRecoveryInfo,
   type SyncReview,
   type SyncState,
+  type SyncUser,
 } from '@/lib/sync/types';
 import { buildBackup } from './backup';
 
@@ -44,6 +49,46 @@ export async function disableSync(): Promise<void> {
   await db.transaction('rw', db.settings, async () =>
     save(suspendSyncControl((await db.settings.get(SYNC_CONTROL_KEY))?.value)),
   );
+}
+/** A hint, never a credential: it only decides whether opening Settings may ask the server. */
+export async function rememberSyncAccount(account: SyncUser | null): Promise<void> {
+  await db.transaction('rw', db.settings, async () => {
+    const control = await getSyncControl();
+    const next = account && { id: account.id, username: account.username };
+    if (JSON.stringify(control.account) !== JSON.stringify(next))
+      await save({ ...control, account: next });
+  });
+}
+const LEGACY_RECOVERY = 'legacy';
+async function addRecovery(source: 'device' | 'server', backup: BackupFile): Promise<void> {
+  const id = crypto.randomUUID();
+  const value: SyncRecovery = { id, createdAt: Date.now(), source, backup };
+  await db.settings.put({ key: `${SYNC_RECOVERY_PREFIX}${id}`, value, updatedAt: value.createdAt });
+}
+function recoveryRows() {
+  return db.settings.where('key').startsWith(SYNC_RECOVERY_PREFIX).toArray();
+}
+/** Newest first. Copies are only removed by the person, never by a later replacement. */
+export async function listSyncRecoveries(): Promise<SyncRecoveryInfo[]> {
+  const control = await getSyncControl();
+  const copies: SyncRecoveryInfo[] = (await recoveryRows()).map((row) => {
+    const { id, createdAt, source } = row.value as SyncRecovery;
+    return { id, createdAt, source };
+  });
+  if (control.recovery)
+    copies.push({ id: LEGACY_RECOVERY, createdAt: control.recovery.exportedAt, source: null });
+  return copies.sort((a, b) => b.createdAt - a.createdAt || (a.id < b.id ? -1 : 1));
+}
+export async function getSyncRecovery(id: string): Promise<BackupFile | null> {
+  if (id === LEGACY_RECOVERY) return (await getSyncControl()).recovery;
+  const row = await db.settings.get(`${SYNC_RECOVERY_PREFIX}${id}`);
+  return row ? (row.value as SyncRecovery).backup : null;
+}
+export async function deleteSyncRecovery(id: string): Promise<void> {
+  await db.transaction('rw', db.settings, async () => {
+    if (id === LEGACY_RECOVERY) await save({ ...(await getSyncControl()), recovery: null });
+    else await db.settings.delete(`${SYNC_RECOVERY_PREFIX}${id}`);
+  });
 }
 export async function hasActiveSyncWorkout(): Promise<boolean> {
   return (await db.workouts.where('status').equals('active').toArray()).some(
@@ -152,6 +197,31 @@ export async function acknowledgePublication(
   });
 }
 
+/**
+ * The server definitively refused this operation (another revision won, or the
+ * generation changed). Resending the same body can never succeed and would
+ * upload the whole snapshot on every poll; local data stays untouched and the
+ * next check compares the copies instead.
+ */
+export async function rejectPublication(
+  owner: Principal,
+  epoch: string,
+  operationId: string,
+): Promise<boolean> {
+  return db.transaction('rw', db.settings, async () => {
+    const control = await getSyncControl();
+    if (
+      !control.enabled ||
+      !samePrincipal(control.owner, owner) ||
+      control.epoch !== epoch ||
+      control.pending?.body.operationId !== operationId
+    )
+      return false;
+    await save({ ...control, pending: null });
+    return true;
+  });
+}
+
 export async function resolveSyncReview(
   review: SyncReview,
   choice: 'push' | 'pull',
@@ -181,26 +251,24 @@ export async function resolveSyncReview(
     if (hash !== review.localHash) throw new SyncError('stale_review');
     const epoch = crypto.randomUUID();
     if (choice === 'push') {
-      await save({
-        ...control,
-        epoch,
-        recovery: remote.snapshot ?? control.recovery,
-        pending: publication(local, hash, remote),
-      });
+      if (remote.snapshot) await addRecovery('server', remote.snapshot);
+      await save({ ...control, epoch, pending: publication(local, hash, remote) });
       return 'queued';
     }
     if (remote.snapshot === null) throw new SyncError('invalid_snapshot');
-    const recovery = await buildBackup();
+    await addRecovery('device', await buildBackup());
     const remoteHash = await hashInTransaction(remote.snapshot);
+    // Clearing settings would also erase this device's consent and every recovery copy.
+    const device = await db.settings.where('key').startsWith(DEVICE_SYNC_PREFIX).toArray();
     for (const name of BACKUP_TABLES) {
       await db.table(name).clear();
       if (remote.snapshot.tables[name].length > 0)
         await db.table(name).bulkPut(remote.snapshot.tables[name]);
     }
+    if (device.length > 0) await db.settings.bulkPut(device);
     await save({
       ...control,
       epoch,
-      recovery,
       pending: null,
       lastSyncAt: Date.now(),
       anchor: { generation: remote.generation, revision: remote.revision, hash: remoteHash },

@@ -12,6 +12,7 @@ export function freshSyncControl(): SyncControl {
     pending: null,
     recovery: null,
     lastSyncAt: null,
+    account: null,
   };
 }
 /** Corrupt device metadata must never silently discard an ownership binding. */
@@ -66,7 +67,19 @@ export function readSyncControl(value: unknown): SyncControl {
       typeof value.installationId !== 'string'
     )
       throw new Error();
-    return { ...value, installationId: value.installationId ?? null } as unknown as SyncControl;
+    if (
+      value.account !== undefined &&
+      value.account !== null &&
+      (!record(value.account) ||
+        typeof value.account.id !== 'string' ||
+        typeof value.account.username !== 'string')
+    )
+      throw new Error();
+    return {
+      ...value,
+      installationId: value.installationId ?? null,
+      account: value.account ?? null,
+    } as unknown as SyncControl;
   } catch {
     throw new SyncError('device_state_invalid');
   }
