@@ -76,10 +76,11 @@ La v2.17.4 corrige la compilation sous Windows et ajoute dans le dépôt les
 fondations d'un backend de synchronisation auto-hébergé, avec séparation des
 comptes et export SQLite cohérent. **La synchronisation APK/PC n'est pas encore
 disponible** : l'application reste utilisable hors ligne sans compte, et aucun
-backend n'est exposé publiquement. Une restauration vers une nouvelle instance
-hors ligne est maintenant préparée et testée. Connexion, invitations,
+backend n'est exposé publiquement. Les fondations sont installées dans la VM
+privée du homelab : 47 tests natifs réussis, HTTPS et restauration dans une
+copie hors ligne vérifiés. Connexion, invitations,
 activation/désactivation de la sync, protections contre les abus et intégration
-des clients restent à terminer, ainsi que la recette dans la VM.
+des clients restent à terminer.
 
 Voir [le backend et ses limites](backend/README.md),
 [le plan de synchronisation](docs/design/plans/2026-11-06-sync-backend.md) et

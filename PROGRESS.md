@@ -5,9 +5,20 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-08 — préparation homelab sur `ccr-homelab-sync-20261108`, sans installation serveur. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-08 — backend de test installé dans la VM privée, sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
+
+- **Fondations installées dans la VM privée (8 novembre, autorisation ultérieure).**
+  Image backend de `d60e30d`, 47 tests natifs réussis sans exclusion, HTTPS/401
+  avec certificat vérifié, aucun port publié, réseau interne et UID 10001
+  contrôlés. Sauvegarde de la base active et restauration dans une copie hors
+  ligne vérifiées avec secret/génération neufs. Reprise par la clé de gestion
+  après correction APT, sans deuxième mot de passe et sans modifier les droits
+  sudo/groupes de l'hôte. Sondes TCP de quarantaine et services hôte vérifiés ;
+  empreinte du jeu nftables actif non relue après cette reprise. Détails dans
+  le dépôt homelab, `docs/13-fittrack-sync.md`. **Aucune exposition publique,
+  aucun client de synchronisation ni parcours de connexion encore livré.**
 
 - **Synchronisation facultative précisée (8 novembre).** README actualisé :
   usage local sans compte ni envoi au backend par défaut ; compte requis

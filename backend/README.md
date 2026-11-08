@@ -1,8 +1,12 @@
-# Backend de synchronisation — tranche locale, non déployable publiquement
+# Backend de synchronisation — test privé dans le homelab
 
 Cette première tranche implémente la persistance d’instantanés par compte,
 le contrôle atomique de révision et l’idempotence. Elle n’est pas encore
-connectée à l’application web ou à l’APK et n’est déployée sur aucun serveur.
+connectée à l’application web ou à l’APK. Ses fondations sont maintenant
+installées dans la VM isolée du homelab, sans port publié ni accès Internet.
+La recette native du 8 novembre 2026 donne **47 tests réussis**, HTTPS avec
+certificat vérifié et réponse 401 attendue sans session. Le réseau Docker
+interne et les processus non root sont contrôlés sur les conteneurs actifs.
 
 Les parcours de connexion, invitations, récupération et MFA, le stockage
 Android et les limites d’abus/stockage sont
@@ -92,8 +96,8 @@ il faut un nouveau nom pour réessayer, sans écraser la sauvegarde précédente
 **Ne pas remettre cette base en ligne par simple copie.** Une restauration
 exige le contrôle de la provenance et la procédure ci-dessous.
 La génération d'origine du manifeste ne doit jamais redevenir la génération
-active d'une restauration. Cette commande n'est pas encore déployée ni
-planifiée sur le homelab.
+active d'une restauration. La commande est disponible et testée dans la VM ;
+elle n'est pas encore planifiée automatiquement.
 
 ## Restauration hors ligne vers une nouvelle instance
 
@@ -125,6 +129,8 @@ volume sans refaire cette procédure : il ferait revivre son ancienne générati
 Un retour arrière passe lui aussi par une nouvelle restauration et une nouvelle
 génération. Aucune substitution automatique des données d'un appareil n'est permise.
 
-Ces tests valident la récupération locale, pas une restauration déjà réalisée
-sur le homelab. Les parcours de connexion et la synchronisation web/APK restent
-à livrer ; le paquet de préparation ne change pas cette limite.
+La recette du 8 novembre valide aussi sur la VM un export de la base active
+et sa restauration dans une copie hors ligne : secret et génération neufs,
+instance d'origine maintenue active, copie non activée. Ce test ne constitue
+pas une restauration complète du serveur. Les parcours de connexion et la
+synchronisation web/APK restent à livrer.
