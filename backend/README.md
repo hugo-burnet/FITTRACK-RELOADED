@@ -56,14 +56,47 @@ usage unique, consommation atomique avec la création du compte. Les codes
 d'une ancienne génération/restauration sont invalides. Aucun vrai compte ou
 code destiné à un utilisateur n'est créé pendant la recette automatique.
 
-Les budgets initiaux comptent toutes les tentatives (réussies comprises) :
-cinq par action/identifiant et trente au total par fenêtre de 15 minutes.
-HTTP 429 indique `Retry-After`. Les clés de compteurs sont des HMAC, sans
-nom brut. Il ne s'agit pas d'une limite par IP cliente : les en-têtes reçus
-ne sont pas crus aveuglément. Réglage des limites, attribution de la source
-derrière le proxy, purge des compteurs expirés, récupération et MFA restent
-à traiter avant publication. Ces mécanismes ne remplacent pas le consentement
-et les garde-fous du futur client de synchronisation.
+Les budgets sont **par adresse cliente**, par fenêtre de 15 minutes : trente
+tentatives par client et par action (connexion et inscription séparées), et
+cinq **échecs** de connexion par client et identifiant. Une connexion réussie
+ne consomme pas le budget d'échecs ; des échecs venus d'un autre client ne
+verrouillent pas le compte ; des inscriptions avec des invitations inventées
+ne bloquent jamais les connexions. HTTP 429 indique `Retry-After`. Les clés de
+compteurs sont des HMAC, sans nom ni adresse en clair.
+
+L'adresse cliente vient de `REMOTE_ADDR`, sauf si le déploiement nomme
+`AUTH_CLIENT_ADDRESS_HEADER`. La configuration de production lit
+`X-Forwarded-For`, que l'unique proxy Caddy efface puis réécrit avec l'adresse
+réelle ; le backend n'a aucun port publié. Une valeur qui n'est pas une seule
+adresse IP partage un budget commun et strict. Derrière un relais qui masque
+les adresses (tunnel), tous les clients partagent un budget : à revoir avant
+toute ouverture. Purge des compteurs expirés, récupération et MFA restent à
+traiter avant publication.
+
+## Limites des publications
+
+`POST /api/sync/publish` refuse avant tout décodage un corps de plus de
+16 Mio (413) ou de plus d'un million de conteneurs JSON (400) : 16 Mio de `[]`
+coûteraient environ 350 Mo une fois décodés. Un seul décodage ou encodage
+volumineux (publication ou lecture d'état) s'exécute à la fois par conteneur,
+sous verrou `flock` (`SYNC_HEAVY_LOCK_FILE`). Chaque compte dispose de
+120 publications par 15 minutes (429 `too_many_requests`).
+
+Le journal des opérations ne garde que l'empreinte et la révision nécessaires
+aux reprises idempotentes, **plus aucune copie d'instantané**. La migration
+`0003` supprime les copies historiques et `0004` exécute `VACUUM` : le
+déploiement exporte la base avant de migrer, cet export privé reste la seule
+trace de l'historique supprimé.
+
+## Effacer un compte
+
+```sh
+python manage.py delete_sync_account <identifiant>
+```
+
+Supprime le compte, son instantané, ses opérations et ses sessions, puis
+exécute `VACUUM`. Les administrateurs sont refusés. Les exports privés déjà
+réalisés contiennent encore le compte : les supprimer séparément.
 
 ## Dépendances et tests
 
@@ -137,8 +170,11 @@ SHA-256 et génération d'origine informative. Un contrôle d'intégrité SQLite
 est exécuté avant le succès. Sous POSIX, dossier 0700 et fichiers 0600 ;
 sous Windows, les ACL du dossier parent restent à la charge de l'opérateur.
 
-La commande ne copie ni le secret Django ni le fichier de génération et
-ne remplace pas une sauvegarde chiffrée hors machine. L'empreinte détecte
+La commande ne copie ni le secret Django ni le fichier de génération, ni
+aucune session : la table `django_session` est vidée dans la copie puis
+`VACUUM` retire ses anciennes pages. Une fuite d'export ne donne donc pas de
+session valide ; elle contient toujours les données d'entraînement et les
+empreintes Argon2. Elle ne remplace pas une sauvegarde chiffrée hors machine. L'empreinte détecte
 une corruption ; elle n'authentifie pas un export fourni par un tiers.
 Archiver uniquement après le succès de la commande. Un export sans manifeste
 valide n'est pas complet. Un arrêt brutal peut laisser un dossier incomplet :

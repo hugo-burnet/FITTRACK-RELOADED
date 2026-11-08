@@ -44,6 +44,20 @@ class BackupTests(unittest.TestCase):
         self.assertEqual({file.name for file in self.destination.iterdir()}, {'database.sqlite3', 'manifest.json'})
         self.assertEqual(self.connection.execute('SELECT value FROM records').fetchall(), [('committed',), ('pending',)])
 
+    def test_export_never_contains_live_session_keys(self):
+        self.connection.execute('CREATE TABLE django_session (session_key TEXT, session_data TEXT, expire_date TEXT)')
+        self.connection.execute("INSERT INTO django_session VALUES ('livesessionkey0123456789abcdefgh', 'data', '2099')")
+        self.connection.commit()
+        self.backup()
+        exported = self.destination / 'database.sqlite3'
+        with closing(sqlite3.connect(exported)) as restored:
+            self.assertEqual(restored.execute('SELECT COUNT(*) FROM django_session').fetchone(), (0,))
+            self.assertEqual(restored.execute('SELECT value FROM records').fetchall(), [('committed',)])
+        # VACUUM: a deleted row must not survive in free pages either.
+        self.assertNotIn(b'livesessionkey0123456789abcdefgh', exported.read_bytes())
+        manifest = json.loads((self.destination / 'manifest.json').read_text())
+        self.assertEqual(manifest['sha256'], hashlib.sha256(exported.read_bytes()).hexdigest())
+
     def test_existing_destination_is_preserved(self):
         self.destination.mkdir()
         sentinel = self.destination / 'keep'

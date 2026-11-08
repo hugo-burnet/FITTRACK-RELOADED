@@ -32,6 +32,15 @@ SESSION_COOKIE_AGE = 7 * 24 * 60 * 60
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'same-origin'
 MAX_SYNC_BYTES = 16 * 1024 * 1024
+# An empty JSON array costs ~56 bytes once decoded for 3 bytes on the wire:
+# bound containers before json.loads so 16 MiB cannot become ~350 MB.
+MAX_SYNC_CONTAINERS = 1_000_000
+# A client publishes at most once per 30 s poll per device.
+SYNC_PUBLISH_ATTEMPTS = 120
+# Only one large JSON decode/encode at a time per container (see views.py).
+SYNC_HEAVY_LOCK_FILE = None
+# None: REMOTE_ADDR. Deployment names the header its sole proxy rewrites.
+AUTH_CLIENT_ADDRESS_HEADER = None
 MAX_AUTH_BYTES = 8192
 AUTH_ATTEMPT_WINDOW_SECONDS = 15 * 60
 AUTH_ACCOUNT_ATTEMPTS = 5

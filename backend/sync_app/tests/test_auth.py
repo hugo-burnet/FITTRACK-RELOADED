@@ -215,6 +215,40 @@ class AuthTests(TestCase):
         AuthRateBucket.objects.update(window_started=timezone.now() - timedelta(minutes=16))
         self.assertEqual(self.login().status_code, 200)
 
+    def test_failures_from_another_client_do_not_lock_the_account(self):
+        attacker = Client(enforce_csrf_checks=True, REMOTE_ADDR='198.51.100.7')
+        token = attacker.get('/api/auth/session', secure=True).json()['csrfToken']
+        for _ in range(6):
+            post(attacker, 'login', token, {'username': 'alice', 'password': 'incorrect'})
+        self.assertEqual(post(attacker, 'login', token, {'username': 'alice', 'password': PASSWORD}).status_code, 429)
+        self.assertEqual(self.login().status_code, 200)
+
+    def test_successful_logins_do_not_consume_the_failure_budget(self):
+        for _ in range(7):
+            client, token = csrf_client()
+            response = post(client, 'login', token, {'username': 'alice', 'password': PASSWORD})
+            self.assertEqual(response.status_code, 200)
+
+    @override_settings(AUTH_GLOBAL_ATTEMPTS=2)
+    def test_registration_attempts_never_block_logins(self):
+        for code in ('ft_inv_a', 'ft_inv_b', 'ft_inv_c'):
+            self.register(username='mallory', code=code)
+        self.assertEqual(self.register(username='mallory', code='ft_inv_d').status_code, 429)
+        self.assertEqual(self.login().status_code, 200)
+
+    @override_settings(AUTH_CLIENT_ADDRESS_HEADER='HTTP_X_FORWARDED_FOR')
+    def test_proxy_supplied_client_address_separates_budgets(self):
+        def attempt(address, password):
+            client = Client(enforce_csrf_checks=True, HTTP_X_FORWARDED_FOR=address)
+            token = client.get('/api/auth/session', secure=True).json()['csrfToken']
+            return post(client, 'login', token, {'username': 'alice', 'password': password})
+        for _ in range(5):
+            self.assertEqual(attempt('203.0.113.5', 'incorrect').status_code, 401)
+        self.assertEqual(attempt('203.0.113.5', PASSWORD).status_code, 429)
+        self.assertEqual(attempt('203.0.113.6', PASSWORD).status_code, 200)
+        # A forged list or non-address never selects a fresh budget.
+        self.assertEqual(attempt('not-an-ip', 'incorrect').status_code, 401)
+
     @override_settings(AUTH_GLOBAL_ATTEMPTS=1)
     def test_global_limit_cannot_be_bypassed_by_different_usernames(self):
         self.assertEqual(self.login('missing-one').status_code, 401)

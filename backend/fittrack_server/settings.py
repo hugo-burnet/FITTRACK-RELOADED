@@ -54,6 +54,10 @@ SECURE_SSL_REDIRECT = True
 # Deployment must strip untrusted forwarding headers at its sole proxy and
 # keep this service off published host ports; this is not an authentication check.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Caddy strips the client's X-Forwarded-For and writes the peer address; the
+# backend has no published port, so no other client can set this header.
+AUTH_CLIENT_ADDRESS_HEADER = 'HTTP_X_FORWARDED_FOR'
+SYNC_HEAVY_LOCK_FILE = '/tmp/fittrack-sync-json.lock'
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False

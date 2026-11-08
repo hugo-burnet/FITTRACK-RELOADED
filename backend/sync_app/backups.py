@@ -39,6 +39,14 @@ def create_backup(source, destination, generation, timeout=30):
         with closing(sqlite3.connect(source.as_uri() + '?mode=ro', uri=True)) as live:
             with closing(sqlite3.connect(database)) as copy:
                 live.backup(copy, pages=256, progress=progress, sleep=0.05)
+                # Session keys are bearer credentials: an export must never
+                # carry them, and VACUUM drops the freed pages that held them.
+                if copy.execute(
+                    "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'django_session'"
+                ).fetchone():
+                    copy.execute('DELETE FROM django_session')
+                    copy.commit()
+                copy.execute('VACUUM')
                 # A portable export must not require WAL/SHM companion files.
                 if copy.execute('PRAGMA journal_mode=DELETE').fetchone() != ('delete',):
                     raise sqlite3.DatabaseError('Export could not leave WAL mode.')

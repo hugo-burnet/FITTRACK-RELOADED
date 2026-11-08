@@ -13,7 +13,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST
 
 from .accounts import RegistrationRefused, normalize_username, register_account
-from .auth_limits import consume_auth_attempt
+from .auth_limits import client_address, consume_auth_attempt, record_auth_failure
 
 
 class InvalidBody(Exception):
@@ -84,8 +84,8 @@ def _safe(view):
     return wrapped
 
 
-def _budget(action, username):
-    retry = consume_auth_attempt(action, username)
+def _budget(action, username, request):
+    retry = consume_auth_attempt(action, username, client_address(request))
     if retry:
         response = JsonResponse({'error': 'too_many_attempts'}, status=429)
         response['Retry-After'] = str(retry)
@@ -112,7 +112,8 @@ def register(request):
     if request.user.is_authenticated:
         return JsonResponse({'error': 'logout_required'}, status=409)
     data = _body(request, {'username', 'password', 'invitation'})
-    limited = _budget('register', data['username'])
+    # Registration has its own budget: invented invitations never block logins.
+    limited = _budget('register', None, request)
     if limited is not None:
         return limited
     try:
@@ -132,11 +133,13 @@ def login(request):
     if request.user.is_authenticated:
         return JsonResponse({'error': 'logout_required'}, status=409)
     data = _body(request, {'username', 'password'})
-    limited = _budget('login', data['username'])
+    limited = _budget('login', data['username'], request)
     if limited is not None:
         return limited
     user = authenticate(request, username=data['username'], password=data['password'])
     if user is None or user.is_staff or user.is_superuser:
+        # Only failures count against an account, and only for this client.
+        record_auth_failure('login', data['username'], client_address(request))
         return JsonResponse({'error': 'invalid_credentials'}, status=401)
     _sign_in(request, user)
     return _response(request)

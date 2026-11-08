@@ -27,7 +27,8 @@ class SyncOperation(models.Model):
     operation_id = models.UUIDField()
     request_digest = models.CharField(max_length=64)
     revision = models.PositiveBigIntegerField()
-    snapshot = models.JSONField()
+    # No snapshot copy: idempotent replies need only the digest and revision,
+    # and a copy per publication filled the disk and kept deleted data forever.
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

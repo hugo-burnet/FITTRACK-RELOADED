@@ -1,9 +1,17 @@
 import copy
+import io
+import os
+import unittest
 import uuid
+from unittest import mock
+
+from django.core.management import CommandError, call_command
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
+
+from sync_app.models import SyncHead, SyncOperation
 
 
 TABLES = [
@@ -177,6 +185,58 @@ class ProtocolTests(TestCase):
     @override_settings(MAX_SYNC_BYTES=32)
     def test_size_limit_is_enforced_before_deserializing(self):
         self.assertEqual(self.post(message()).status_code, 413)
+
+    @override_settings(MAX_SYNC_CONTAINERS=60)
+    def test_container_budget_is_enforced_before_deserializing(self):
+        # 16 MiB of "[]," costs ~350 MB once decoded: refuse before json.loads.
+        payload = message()
+        payload['snapshot']['tables']['settings'].append({'key': 'bomb', 'value': [[]] * 100})
+        with mock.patch('sync_app.views.parse_publication', side_effect=AssertionError('decoded')):
+            response = self.post(payload)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['error'], 'invalid_publication')
+        self.assertEqual(self.state()['revision'], 0)
+
+    @unittest.skipUnless(os.name == 'posix', 'flock exists only on the Linux deployment target')
+    def test_large_json_work_is_serialized_across_workers(self):
+        import fcntl
+        import tempfile
+        from sync_app.views import heavy_json
+        with tempfile.NamedTemporaryFile() as lock, override_settings(SYNC_HEAVY_LOCK_FILE=lock.name):
+            with heavy_json(), open(lock.name, 'a+b') as other:
+                with self.assertRaises(BlockingIOError):
+                    fcntl.flock(other, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            with open(lock.name, 'a+b') as other:
+                fcntl.flock(other, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def test_operation_log_keeps_no_snapshot_copy(self):
+        self.assertEqual(self.post(message('first')).status_code, 200)
+        self.assertEqual(self.post(message('second', revision=1)).status_code, 200)
+        fields = {field.name for field in SyncOperation._meta.get_fields()}
+        self.assertNotIn('snapshot', fields)
+        self.assertEqual(SyncOperation.objects.filter(owner=self.alice).count(), 2)
+        self.assertEqual(self.state()['snapshot']['tables']['settings'][0]['value'], 'second')
+
+    @override_settings(SYNC_PUBLISH_ATTEMPTS=2)
+    def test_publications_are_rate_limited_per_account(self):
+        self.assertEqual(self.post(message('one')).status_code, 200)
+        self.assertEqual(self.post(message('two', revision=1)).status_code, 200)
+        limited = self.post(message('three', revision=2))
+        self.assertEqual(limited.status_code, 429)
+        self.assertEqual(limited.json()['error'], 'too_many_requests')
+        self.assertIn('Retry-After', limited.headers)
+        self.assertEqual(self.post(message('bob'), client=authenticated_client(self.bob)).status_code, 200)
+
+    def test_account_deletion_command_erases_only_that_account(self):
+        self.assertEqual(self.post(message('alice')).status_code, 200)
+        self.assertEqual(self.post(message('bob'), client=authenticated_client(self.bob)).status_code, 200)
+        call_command('delete_sync_account', 'alice', stdout=io.StringIO())
+        self.assertFalse(get_user_model().objects.filter(username='alice').exists())
+        self.assertFalse(SyncHead.objects.filter(owner__username='alice').exists())
+        self.assertFalse(SyncOperation.objects.filter(owner__username='alice').exists())
+        self.assertEqual(self.state(authenticated_client(self.bob))['revision'], 1)
+        with self.assertRaises(CommandError):
+            call_command('delete_sync_account', 'nobody', stdout=io.StringIO())
 
     def test_read_route_cannot_be_used_to_write(self):
         self.assertEqual(self.client.post('/api/sync/state').status_code, 405)

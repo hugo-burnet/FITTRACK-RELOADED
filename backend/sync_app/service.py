@@ -49,6 +49,6 @@ def publish_for(owner, operation, generation, base_revision, backup, digest):
             head.save(update_fields=['revision', 'snapshot'])
         SyncOperation.objects.create(
             owner=owner, generation=generation, operation_id=operation,
-            request_digest=digest, revision=next_revision, snapshot=backup,
+            request_digest=digest, revision=next_revision,
         )
         return {'generation': generation, 'revision': next_revision, 'operationId': operation}
