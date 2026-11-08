@@ -9,6 +9,14 @@
 
 ## Où on en est
 
+- **Synchronisation facultative précisée (8 novembre).** README actualisé :
+  usage local sans compte ni envoi au backend par défaut ; compte requis
+  uniquement pour la sync explicitement activée vers le homelab. Activation
+  par appareil, même compte sur téléphone/PC ; création de compte distincte
+  du consentement à l’envoi de l’historique. Désactivation : arrêt des échanges,
+  conservation des données locales ; effacement serveur séparé. Ce sont les
+  comportements à implémenter, pas une option déjà livrée dans l’APK/PWA.
+
 - **Préparation homelab, non déployée (8 novembre).** Copie actualisée sur
   `ce9b139` / v2.17.5. `restore_sync` restaure un export de confiance dans une
   instance neuve, contrôle empreinte/intégrité/tables/colonnes/migrations,

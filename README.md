@@ -9,9 +9,9 @@
 [![Android](https://img.shields.io/badge/Android-APK-3DDC84)](docs/ANDROID.md)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-43853d)](package.json)
 
-Suivi de musculation personnel. Local-first, hors-ligne, sans compte, sans fil social.
+Suivi de musculation personnel. Local-first, hors-ligne, utilisable sans compte, sans fil social.
 
-Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol sans 4G, pas un réseau social.
+Un suivi individuel inspiré de Hevy : la salle est un sous-sol sans 4G.
 
 **En ligne :** [hugo-burnet.github.io/FITTRACK-RELOADED](https://hugo-burnet.github.io/FITTRACK-RELOADED/)  
 **Téléchargements :** [Releases](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases) — le badge `tag` ci-dessus donne la dernière version publiée.
@@ -34,9 +34,41 @@ Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol
 
 ## Ce que ce n’est pas
 
-Pas de compte, pas de cloud obligatoire, pas de likes. Une clé d’API n’a rien à faire dans le bundle (`VITE_*` public = public).
+L’utilisation locale ne demande ni compte ni serveur. Aucun cloud obligatoire,
+aucune fonctionnalité sociale. Une clé d’API n’a rien à faire dans le bundle
+(`VITE_*` public = public).
 
 Les données vivent dans IndexedDB (Dexie). Désinstaller l’app les efface. Mettre à jour : installer par-dessus, **sans** désinstaller.
+
+## Synchronisation facultative : fonctionnement prévu
+
+**Cette option est en préparation ; elle n’est pas encore disponible dans la
+PWA ou l’APK.** Son fonctionnement prévu est le suivant :
+
+| Choix | Compte | Où restent les données ? |
+| --- | --- | --- |
+| Utilisation locale, choix par défaut | Aucun compte nécessaire | Sur l’appareil ; aucune donnée d’entraînement envoyée au serveur de synchronisation |
+| Synchronisation activée explicitement | Compte FitTrack nécessaire | Sur l’appareil et dans l’espace privé de ce compte sur le homelab de l’éditeur |
+
+Le compte sert à identifier le propriétaire des données et à retrouver le même
+espace sur plusieurs appareils. Chaque personne aura son propre compte ; elle
+se connectera au **même compte sur le téléphone et le PC** pour les synchroniser.
+Les autres utilisateurs n’auront pas accès à ses données. Créer un compte ou
+se connecter ne vaudra pas, à lui seul, activation de la synchronisation ni
+autorisation d’envoyer l’historique local.
+
+L’option pourra être **activée ou désactivée sur chaque appareil**. Une fois
+activée, les données seront envoyées au serveur auto-hébergé de l’éditeur et
+les changements récupérés sur les autres appareils ayant activé la sync.
+La saisie locale et les séances continueront de fonctionner hors ligne ; les
+échanges reprendront au retour du réseau si l’option est toujours active.
+
+Désactiver l’option arrêtera les envois et les réceptions sur l’appareil, qui
+conservera ses données et restera utilisable hors ligne. **Cela n’effacera pas
+automatiquement les données déjà synchronisées sur le serveur ou les autres
+appareils.** La suppression des données serveur devra être une action séparée
+et explicite. Avant une réactivation, les changements faits séparément sur
+plusieurs appareils devront être vérifiés, sans écrasement silencieux.
 
 ## Backend homelab en préparation
 
@@ -44,8 +76,10 @@ La v2.17.4 corrige la compilation sous Windows et ajoute dans le dépôt les
 fondations d'un backend de synchronisation auto-hébergé, avec séparation des
 comptes et export SQLite cohérent. **La synchronisation APK/PC n'est pas encore
 disponible** : l'application reste utilisable hors ligne sans compte, et aucun
-backend n'est exposé publiquement. Connexion, invitations, protections contre
-les abus, restauration complète et intégration des clients restent à terminer.
+backend n'est exposé publiquement. Une restauration vers une nouvelle instance
+hors ligne est maintenant préparée et testée. Connexion, invitations,
+activation/désactivation de la sync, protections contre les abus et intégration
+des clients restent à terminer, ainsi que la recette dans la VM.
 
 Voir [le backend et ses limites](backend/README.md),
 [le plan de synchronisation](docs/design/plans/2026-11-06-sync-backend.md) et
