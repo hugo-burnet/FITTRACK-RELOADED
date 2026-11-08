@@ -5,9 +5,26 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-08 — backend, API de comptes et frontend installés dans la VM privée, client Android préparé sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-08 — corrections de la seconde relecture (sync et sécurité) sur `ccr-homelab-sync-20261108`, non déployées ; backend, API de comptes et frontend précédents installés dans la VM privée. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
+
+- **Seconde relecture indépendante corrigée (8 novembre, non déployée).**
+  Plus aucun envoi après « Désactiver », y compris depuis un autre onglet ;
+  une publication refusée n'est plus renvoyée à chaque cycle ; chaque
+  remplacement garde sa propre sauvegarde de secours, supprimée seulement sur
+  confirmation ; ouvrir Réglages sans compte ne contacte plus le serveur.
+  Serveur : budget de conteneurs JSON et un seul gros décodage à la fois,
+  plus de copie d'instantané par opération (migrations 0003/0004), budgets
+  d'authentification par client et sur les échecs seuls, exports sans
+  sessions, commande `delete_sync_account`. Client homelab servi avec une CSP
+  générée au build et en-têtes durcis ; paquet homelab unique backend + client
+  (commit homelab `987f41f`). Suite unitaire : 3 963 réussites puis le seul
+  échec (police TTY1) corrigé et revérifié ; backend 79 réussites sous Windows
+  (6 POSIX ignorés), 79 sous Linux hors Argon2 absent de l'environnement ;
+  43 parcours E2E globaux réussis, E2E sync 8/9 dont la CSP sans violation,
+  l'échec restant (TTY1 à 200 %) est instable sur le code d'origine (3/5). MFA et récupération de compte restent à faire. Recette
+  téléphone complétée de trois contrôles.
 
 - **Client de synchronisation facultative vérifié et web installé en privé
   (8 novembre).** L'app reste sans compte par défaut ; création et connexion

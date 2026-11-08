@@ -83,3 +83,16 @@ transport web/Android et composant Réglages utilisant les composants existants.
   Sondes TCP LAN/Internet bloquées, services hôte actifs et garde stocké conforme.
   Empreinte nftables active non relue (reçu `hostVerified: false` conservé).
   Aucun compte réel créé, aucune publication d'APK/PWA ni ouverture publique.
+- Seconde relecture indépendante (fonctionnelle et sécurité), corrigée en TDD :
+  envoi possible après désactivation (garde synchrone juste avant chaque
+  requête, annulation des autres onglets par BroadcastChannel, l'onglet émetteur
+  s'ignore) ; copie de secours unique écrasée au remplacement suivant (une ligne
+  par copie, suppression seulement confirmée) ; publication refusée renvoyée à
+  chaque cycle (abandonnée sur 409, puis comparaison) ; écran Réglages qui
+  interrogeait le serveur sans compte (indice de compte non secret, session
+  revérifiée à l'activation). Côté serveur : budget de conteneurs JSON avant
+  décodage et un seul gros décodage à la fois, plus de copie d'instantané par
+  opération (migrations 0003/0004), budgets d'authentification par client et
+  échecs seuls, exports sans sessions, effacement de compte. Client homelab
+  servi avec une CSP générée au build (empreinte du script inline) et vérifiée
+  par un parcours E2E sans violation. Non traité : MFA et récupération de compte.

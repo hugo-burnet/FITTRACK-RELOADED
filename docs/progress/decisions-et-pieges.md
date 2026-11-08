@@ -1320,9 +1320,31 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   intrinsèque ; vérifié en navigateur mobile avec 9 846 px de course et un `scrollTop` passé de 0
   à 600. Le `h-full` de la coquille transmettait seulement la contrainte, il n'était pas la cause.
 
+- **Une empreinte CSP se calcule sur le texte que voit le navigateur, pas sur le fichier.** Le
+  parseur HTML convertit CRLF en LF avant de hacher un script inline. Sous Windows, `index.html`
+  est extrait en CRLF : l'empreinte des octets bruts ne correspondait plus et le script de thème
+  était bloqué. `contentSecurityPolicy` normalise les fins de ligne ; le parcours E2E homelab
+  échoue à la moindre violation.
+- **Un `BroadcastChannel` reçoit les messages des autres objets du même onglet.** L'annonce
+  « sync désactivée » créait un canal temporaire ; le canal d'écoute du même onglet la recevait
+  et annulait la connexion que l'onglet venait de lancer (« Serveur injoignable »). Les messages
+  portent l'identité du coordinateur émetteur, qui s'ignore.
+- **Un garde de consentement doit être synchrone avec la requête qu'il protège.** Vérifier
+  « toujours activé ? » puis attendre une lecture IndexedDB laissait passer un envoi complet
+  après un arrêt survenu pendant cette attente. Le dernier contrôle (`send`) ne contient plus
+  aucun `await` avant `api.request`.
+
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Parcours « formulaire à 200 % : tty1 » instable** (8 novembre). La barre de navigation du bas
+  déborde parfois en thème TTY1 à 200 % ; 3 échecs sur 5 sur le code d'origine, indépendants de
+  la synchronisation. À stabiliser avant de promouvoir l'E2E en porte.
+- **Budgets d'authentification derrière un relais qui masque les adresses.** Ils sont par
+  adresse cliente, fournie par Caddy. Un tunnel qui présente une seule adresse ramènerait un
+  budget commun que n'importe qui peut épuiser. À revoir avant toute ouverture publique, avec la
+  MFA et la récupération de compte, encore absentes.
 
 - **Remboursée le 2026-10-14 — `lib/coach/evaluate.ts` (1 051 lignes) n'a jamais été consigné.** Il avait
   grandi tranche après tranche du coach v2 (994 lignes au 13 octobre, la plus grosse source hors

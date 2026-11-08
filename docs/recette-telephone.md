@@ -16,6 +16,13 @@ un candidat signé qui peut mettre à jour l'application existante.
 - [ ] Restaurer les données Android sur une autre installation : aucun échange
   avant une nouvelle activation. Terminer une séance avant d'appliquer une
   copie distante ; exporter et ouvrir la sauvegarde de secours.
+- [ ] Sans jamais s'être connecté, ouvrir Réglages › Compte et synchronisation
+  en mode avion : l'écran s'affiche sans message d'erreur réseau.
+- [ ] Appliquer deux copies distantes successives : Réglages liste **deux**
+  sauvegardes de secours datées ; chacune s'exporte, et « Supprimer » demande
+  une confirmation avant d'effacer seulement celle-là.
+- [ ] Désactiver la sync pendant « Envoi vers ton compte… » : l'état repasse
+  à désactivé et aucun nouvel envoi ne part ensuite.
 
 <a id="mise-a-jour-v2174"></a>
 
