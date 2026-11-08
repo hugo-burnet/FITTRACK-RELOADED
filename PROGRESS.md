@@ -5,9 +5,23 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-06 — **v2.17.5 publiée**, la barre de repos Cyber prend de vrais dégâts. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-08 — préparation homelab sur `ccr-homelab-sync-20261108`, sans installation serveur. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
+
+- **Préparation homelab, non déployée (8 novembre).** Copie actualisée sur
+  `ce9b139` / v2.17.5. `restore_sync` restaure un export de confiance dans une
+  instance neuve, contrôle empreinte/intégrité/tables/colonnes/migrations,
+  renouvelle génération et secret hors SQLite et supprime les sessions.
+  L'export et l'instance active restent intacts. **47 tests backend passent
+  sous Linux**, 42 réussites et cinq contrôles POSIX ignorés sous Windows ;
+  migrations sans changement. Serveur WSGI Gunicorn verrouillé séparément.
+  Plan : `docs/design/plans/2026-11-08-homelab-staging.md`. Le paquet et les
+  fichiers Compose/Caddy sont préparés dans le dépôt homelab. Aucune fusion,
+  release, installation ou publication. **Les parcours de connexion et le
+  client web/APK restent à livrer : aucune synchronisation utilisable annoncée.**
+  Portes frontend de cette préparation : typecheck/lint/build réussis ; suite
+  complète **3 864 réussites et un ignoré**, 319 fichiers réussis et un ignoré.
 
 - **Publié : v2.17.5**, à la demande de l'utilisateur (« Merge push et versionne ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5), APK `FitTrack-v2.17.5.apk`
@@ -37,8 +51,8 @@
   exécutés sous Windows : 32 réussis, deux contrôles POSIX ignorés** ; les sept
   tests d'export sous Linux donnent six réussites, seule l'intégration Django
   étant ignorée dans cet environnement sans Django. Relecture indépendante :
-  correction de la synchronisation du dossier parent. Ni planification serveur
-  ni restauration opérable livrées. Voir `backend/README.md`.
+  correction de la synchronisation du dossier parent. Aucune planification
+  serveur ; restauration hors ligne ajoutée le 8 novembre. Voir `backend/README.md`.
 
 - **En préparation, non déployé — backend homelab multi-utilisateur.** Demande : héberger les sites et leurs backends sur le homelab, avec synchronisation APK/PC et comptes distincts accessibles depuis Internet sans VPN. Priorité à l’isolation de la connexion domestique. Première tranche locale `backend/` : persistance par compte, révisions atomiques SQLite, idempotence, génération des sessions et configuration fermée par défaut ; **27 tests Django passent**, dépendances verrouillées avec empreintes. La relecture indépendante a fait corriger un dossier de données implicite. Voir `backend/README.md` et `docs/design/plans/2026-11-06-sync-backend.md`. **Pas déployable publiquement** : connexion/inscriptions/invitations/MFA/récupération, limites d’abus/stockage, restauration opérable, client web et pont Android restent à livrer. La v2.17.4 ne livre pas encore de synchronisation dans l’APK.
 - **Compatibilité Windows corrigée.** `cyberGlitch.ts` devient `cyberGlitchRules.ts` : sous Windows l’import du composant `CyberGlitch.tsx` se résolvait sur le module `.ts` dont le nom ne différait que par la casse. Typecheck, build, lint et sept tests ciblés passent. Le lint exclut les seuls environnements Python installés `backend/.venv*/**` pour ne pas analyser le JavaScript tiers de Django. Suite complète vérifiée avec `npm run test:run -- --pool=threads --maxWorkers=1` : **3 862 tests passent, un ignoré ; 319 fichiers passent, un ignoré** (651,74 s). Le premier passage concurrent avec le build avait échoué sur deux tests de cadence, ensuite verts seuls, dans leur fichier complet et dans cette suite complète ; aucune assertion ni logique de séance n’a été modifiée.

@@ -5,7 +5,7 @@ le contrôle atomique de révision et l’idempotence. Elle n’est pas encore
 connectée à l’application web ou à l’APK et n’est déployée sur aucun serveur.
 
 Les parcours de connexion, invitations, récupération et MFA, le stockage
-Android, les limites d’abus/stockage et la procédure de restauration sont
+Android et les limites d’abus/stockage sont
 encore à livrer. **Ne pas exposer ce service sur Internet en l’état.**
 Les tests établissent leurs sessions avec l’authentification de test Django ;
 il n’existe pas de route publique pour obtenir une session dans cette tranche.
@@ -62,8 +62,8 @@ L’authentification ne se fonde jamais sur ces en-têtes.
 
 Une restauration doit renouveler la génération externe **avant** de réouvrir
 l’accès et invalider les autres credentials restaurés. Le middleware refuse
-déjà les sessions d’une ancienne génération ; la procédure de rotation et de
-restauration opérable reste à développer et tester avant déploiement.
+déjà les sessions d’une ancienne génération. `restore_sync` prépare maintenant
+une nouvelle instance hors ligne avec rotation et révocation des sessions.
 
 ## Export SQLite cohérent
 
@@ -89,9 +89,42 @@ Archiver uniquement après le succès de la commande. Un export sans manifeste
 valide n'est pas complet. Un arrêt brutal peut laisser un dossier incomplet :
 il faut un nouveau nom pour réessayer, sans écraser la sauvegarde précédente.
 
-**Ne pas remettre cette base en ligne par simple copie.** La restauration
-opérable, avec arrêt du service, contrôle de la provenance, rotation de la
-génération externe et tests d'invalidation des sessions, reste à livrer.
+**Ne pas remettre cette base en ligne par simple copie.** Une restauration
+exige le contrôle de la provenance et la procédure ci-dessous.
 La génération d'origine du manifeste ne doit jamais redevenir la génération
 active d'une restauration. Cette commande n'est pas encore déployée ni
 planifiée sur le homelab.
+
+## Restauration hors ligne vers une nouvelle instance
+
+Depuis un environnement backend de même version, configuré explicitement :
+
+```sh
+python manage.py restore_sync /exports/export-de-confiance /instances/nouvelle-instance
+```
+
+Le parent de destination doit exister et être privé. La commande ne remplace
+aucun chemin existant, ne touche pas à la base active et n'active aucun service.
+Elle vérifie le format, l'empreinte de la copie, l'intégrité SQLite, les clés
+étrangères et la correspondance exacte des migrations avec le code courant.
+Les liens symboliques en entrée sont refusés. Un export plus récent ou ancien
+doit être restauré avec la version correspondante avant migration.
+
+Le résultat comprend `data/fittrack.sqlite3`, `secrets/generation`,
+`secrets/django-key` et un marqueur `restore.json` écrit en dernier.
+La génération et le secret sont neufs, en dehors du dossier de données ; les
+sessions de la copie sont supprimées. Les comptes, mots de passe et instantanés
+restent présents. Deux restaurations du même export reçoivent des secrets et
+des générations différents. Permissions POSIX : dossiers 0700, fichiers 0600.
+
+Avant activation : arrêter l'ancien backend, conserver son volume, pointer
+explicitement les trois variables de fichiers/données vers la nouvelle instance,
+vérifier les permissions pour l'UID du service, contrôler migrations et état
+des deux comptes, puis ouvrir le trafic. Ne jamais remettre en ligne un ancien
+volume sans refaire cette procédure : il ferait revivre son ancienne génération.
+Un retour arrière passe lui aussi par une nouvelle restauration et une nouvelle
+génération. Aucune substitution automatique des données d'un appareil n'est permise.
+
+Ces tests valident la récupération locale, pas une restauration déjà réalisée
+sur le homelab. Les parcours de connexion et la synchronisation web/APK restent
+à livrer ; le paquet de préparation ne change pas cette limite.
