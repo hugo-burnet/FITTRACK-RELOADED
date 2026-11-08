@@ -45,7 +45,7 @@ Fichiers homelab : `scripts/prepare-fittrack.ps1`,
 - [x] Vérifier RED, puis implémenter le packaging depuis un commit backend propre.
 - [x] Télécharger les roues Linux Python 3.12 avec `--require-hashes`, sans les installer.
 - [x] Préparer les fichiers Compose et proxy sans port publié, sur réseau interne.
-- [ ] Construire réellement le paquet ; vérifier les empreintes, la syntaxe et les tests.
+- [x] Construire réellement le paquet ; vérifier les empreintes, la syntaxe et les tests.
 
 ## Review Focus
 
@@ -67,6 +67,10 @@ Fichiers homelab : `scripts/prepare-fittrack.ps1`,
   destinations imbriquées dans l'export refusées, FIFO non bloquants,
   noms/tags/glibc des roues et présence des fichiers de déploiement vérifiés.
   Les tests de régression ont échoué avant correction puis passent.
+- Paquet réel construit depuis `d60e30d` : 45 fichiers, neuf roues, 8 719 810
+  octets. Toutes les empreintes revérifiées indépendamment ; deux constructions
+  successives produisent exactement la même archive. Le présent commit de
+  compte rendu ne modifie pas le backend contenu dans ce paquet.
 - Choix : aucun port publié, car Docker ne publie pas les ports d'un
   conteneur uniquement sur réseau interne. Recette ultérieure depuis la VM
   Linux vers l'IP interne du proxy. Ce choix conserve la quarantaine actuelle.
