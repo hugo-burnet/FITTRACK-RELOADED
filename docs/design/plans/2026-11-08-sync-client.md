@@ -33,7 +33,7 @@ transport web/Android et composant Réglages utilisant les composants existants.
 - [x] 5. UI Réglages (`src/features/settings/SyncSettings.tsx`, traductions),
   confirmation, statut, conflits, export de secours. E2E mobile du vrai build :
   absence réseau par défaut, connexion sans sync, opt-in/off, erreurs et conflit.
-- [ ] 6. Portes frontend/backend et Android disponibles, recette visuelle mobile,
+- [x] 6. Portes frontend/backend et Android disponibles, recette visuelle mobile,
   relecture indépendante, corrections avec régressions, documentation/PROGRESS et
   commits locaux. Déploiement frontend privé seulement si toutes les préconditions passent.
 
@@ -61,11 +61,25 @@ transport web/Android et composant Réglages utilisant les composants existants.
   et huit nouveaux Chromium réussis. Recette visuelle des quatre thèmes,
   formulaire à 200 % sans débordement. API simulée dans les huit parcours client ;
   le backend privé conserve sa recette native réelle de 69 tests.
-- Android : cinq tests JVM réussis et lint réussi. APK de contrôle local
-  `2.17.5-sync-local`, 11 214 695 octets, SHA-256
-  `0a8961b1a93d03c5033a34f4457133b2278b5a198471c5354668f6287e550267`.
+- Android : sept tests JVM réussis et lint réussi. APK de contrôle local
+  `2.17.5-sync-local`, 15 029 176 octets, SHA-256
+  `ed3e4ffc0ed899665f1e8eacff6266b6d44547967886b0121e8a7ace7dc6091e`.
   Configuration embarquée vérifiée : logs désactivés, origine publique vide.
   APK ni installé ni publié ; il ne remplace pas un candidat signé pour mise à jour.
 - Un refus d'enregistrement de l'arrêt bloque les cycles en mémoire et propose
   de réessayer l'arrêt avant fermeture ; aucune réussite de persistance inventée.
-  Livraison du frontend privé à consigner après sa vérification HTTPS.
+- Transport natif : le plugin CapacitorCookies 8 installe un CookieHandler
+  global même si son option JS est désactivée. Le transport final utilise
+  directement OkHttp 4.12.1 et `CookieJar.NO_COOKIES`, sans redirection, cache
+  ou réessai implicite ; TLS système conservé. Deux tests avec un vrai serveur
+  local et un CookieHandler espion vérifient zéro lecture/écriture partagée et
+  l'absence de suivi de redirection. Relecture ciblée indépendante sans défaut
+  important restant. Licence HTTP incluse dans les ressources de l'APK.
+  Version vérifiée : [release officielle 4.12.1](https://github.com/square/okhttp/releases/tag/parent-4.12.1).
+- Frontend privé installé : sources web `e426ad50da48c5bf75bab694f2b4a0fb3cf347e0`,
+  paquet SHA-256 `fcc3e387fa41106562258bd39cb3f162083829f4eaefbe23604389deb2575431`.
+  Index, asset et session HTTPS 200, sync anonyme 401 et `.env` 404, certificat
+  vérifié. Backend conservé sur `1ea1703`, conteneur inchangé, aucun port publié.
+  Sondes TCP LAN/Internet bloquées, services hôte actifs et garde stocké conforme.
+  Empreinte nftables active non relue (reçu `hostVerified: false` conservé).
+  Aucun compte réel créé, aucune publication d'APK/PWA ni ouverture publique.

@@ -98,6 +98,11 @@ ni inclusion dans une sauvegarde. Une restauration sur une autre installation
 désactive le consentement avant tout HTTP automatique. Les logs Capacitor
 sont désactivés pour ne pas y écrire les arguments de connexion.
 
+Le client dédié OkHttp 4.12.1 n'utilise pas le CookieHandler global que
+Capacitor relie à la WebView. Le test HTTP local vérifie qu'aucun cookie n'y
+entre ni n'en sort. La licence Apache 2.0 du client HTTP est incluse dans les
+ressources Android ; TLS système et contrôle du nom d'hôte restent actifs.
+
 Une origine vide laisse la sync indisponible et l’usage local intact. Pour un
 service réellement prêt, passer la propriété publique, sans secret :
 

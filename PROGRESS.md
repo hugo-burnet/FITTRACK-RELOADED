@@ -5,11 +5,11 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-08 — backend et API de comptes installés dans la VM privée, sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-08 — backend, API de comptes et frontend installés dans la VM privée, client Android préparé sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
 
-- **Client de synchronisation facultative implémenté, recette finale en cours
+- **Client de synchronisation facultative vérifié et web installé en privé
   (8 novembre).** L'app reste sans compte par défaut ; création et connexion
   accessibles plus tard dans Réglages, sans perte locale ni envoi implicite.
   Confirmation d'activation par appareil, arrêt des échanges, opérations
@@ -19,9 +19,12 @@
   Pont Android HTTPS et cookies Keystore, origine vide par défaut, logs de
   credentials désactivés. **Suite globale : 3 949 réussites, un ignoré ; garde
   d'arrêt ajouté ensuite : 33 tests ciblés réussis.** 43 anciens parcours
-  Chromium et huit nouveaux réussis, types/lint/builds réussis, cinq tests JVM
-  et lint Android réussis. APK de contrôle compilé, non installé/non publié.
-  Frontend privé en cours de livraison. Aucune
+  Chromium et huit nouveaux réussis, types/lint/builds réussis, sept tests JVM
+  et lint Android réussis. Transport natif isolé du CookieHandler/WebView,
+  relecture ciblée et test HTTP réel de non-partage des cookies. APK de contrôle
+  compilé, non installé/non publié. Web `e426ad5` installé avec HTTPS vérifié,
+  index/asset/session 200, sync anonyme 401 ; backend `1ea1703` inchangé,
+  aucun port publié et sondes de quarantaine réussies. Aucune
   nouvelle release, fusion, publication ou ouverture publique. Plan
   `docs/design/plans/2026-11-08-sync-client.md` ; recette téléphone encore due.
 

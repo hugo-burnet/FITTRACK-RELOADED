@@ -9,18 +9,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.net.ssl.HttpsURLConnection;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @CapacitorPlugin(name = "FitTrackSync")
 public class FitTrackSyncPlugin extends Plugin {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final AtomicInteger generation = new AtomicInteger();
-    private volatile HttpsURLConnection active;
+    private final OkHttpClient http = SyncHttpClient.create();
+    private volatile Call active;
     private SyncCookieJar jar;
     private SyncCredentialVault vault;
     @PluginMethod public void info(PluginCall call) {
@@ -29,7 +34,7 @@ public class FitTrackSyncPlugin extends Plugin {
         catch (Exception error) { call.reject("Device identity unavailable"); }
     }
     @PluginMethod public void cancel(PluginCall call) { cancelRequests(); call.resolve(); }
-    private void cancelRequests() { generation.incrementAndGet(); HttpsURLConnection connection = active; if (connection != null) connection.disconnect(); }
+    private void cancelRequests() { generation.incrementAndGet(); Call request = active; if (request != null) request.cancel(); }
     @PluginMethod public void clear(PluginCall call) {
         cancelRequests();
         worker.execute(() -> { try {
@@ -40,7 +45,7 @@ public class FitTrackSyncPlugin extends Plugin {
     @PluginMethod public void request(PluginCall call) {
         final int ticket = generation.get();
         worker.execute(() -> {
-            HttpsURLConnection connection = null;
+            Call networkCall = null;
             try {
                 if (ticket != generation.get()) throw new IllegalStateException();
                 String configured = BuildConfig.FITTRACK_SYNC_ORIGIN;
@@ -52,35 +57,32 @@ public class FitTrackSyncPlugin extends Plugin {
                 if (jar == null) { jar = new SyncCookieJar(origin.getHost()); vault = new SyncCredentialVault(getContext(), configured); vault.load(jar); }
                 long now = System.currentTimeMillis();
                 if (body != null && jar.csrf(now) == null) throw new IllegalStateException();
-                connection = (HttpsURLConnection) origin.resolve(path).toURL().openConnection(); active = connection;
-                connection.setInstanceFollowRedirects(false); connection.setUseCaches(false);
-                connection.setConnectTimeout(10000); connection.setReadTimeout(20000); connection.setRequestMethod(method);
-                connection.setRequestProperty("Accept", "application/json"); connection.setRequestProperty("Origin", configured);
-                connection.setRequestProperty("Cookie", jar.header(now));
+                Request.Builder request = new Request.Builder().url(origin.resolve(path).toString())
+                    .header("Accept", "application/json").header("Origin", configured)
+                    .header("Cache-Control", "no-store").header("Cookie", jar.header(now));
                 if (bytes != null) {
-                    connection.setRequestProperty("Content-Type", "application/json"); connection.setRequestProperty("X-CSRFToken", jar.csrf(now));
-                    connection.setDoOutput(true); connection.setFixedLengthStreamingMode(bytes.length);
-                    try (java.io.OutputStream output = connection.getOutputStream()) { output.write(bytes); }
-                }
-                int status = connection.getResponseCode();
-                if (connection.getContentLengthLong() > SyncHttpPolicy.MAX_BYTES + 8192L) throw new IllegalArgumentException();
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                InputStream input = status >= 400 ? connection.getErrorStream() : connection.getInputStream();
-                if (input != null) try (InputStream stream = input) {
-                    byte[] buffer = new byte[8192]; int read;
-                    while ((read = stream.read(buffer)) != -1) {
-                        if (output.size() + read > SyncHttpPolicy.MAX_BYTES + 8192 || ticket != generation.get()) throw new IllegalStateException();
-                        output.write(buffer, 0, read);
-                    }
-                }
+                    request.header("X-CSRFToken", jar.csrf(now)).method(method, RequestBody.create(bytes, MediaType.get("application/json; charset=utf-8")));
+                } else request.get();
+                networkCall = http.newCall(request.build()); active = networkCall;
                 if (ticket != generation.get()) throw new IllegalStateException();
-                for (Map.Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
-                    if ("set-cookie".equalsIgnoreCase(header.getKey())) for (String value : header.getValue()) jar.accept(value, System.currentTimeMillis());
+                try (Response response = networkCall.execute()) {
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null && responseBody.contentLength() > SyncHttpPolicy.MAX_BYTES + 8192L) throw new IllegalArgumentException();
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    if (responseBody != null) try (InputStream stream = responseBody.byteStream()) {
+                        byte[] buffer = new byte[8192]; int read;
+                        while ((read = stream.read(buffer)) != -1) {
+                            if (output.size() + read > SyncHttpPolicy.MAX_BYTES + 8192 || ticket != generation.get()) throw new IllegalStateException();
+                            output.write(buffer, 0, read);
+                        }
+                    }
+                    if (ticket != generation.get()) throw new IllegalStateException();
+                    for (String header : response.headers("Set-Cookie")) jar.accept(header, System.currentTimeMillis());
+                    vault.save(jar);
+                    call.resolve(new JSObject().put("status", response.code()).put("body", output.toString(StandardCharsets.UTF_8.name())));
                 }
-                vault.save(jar);
-                call.resolve(new JSObject().put("status", status).put("body", output.toString(StandardCharsets.UTF_8.name())));
             } catch (Exception error) { call.reject("Sync request unavailable"); }
-            finally { if (connection != null) connection.disconnect(); active = null; }
+            finally { if (networkCall != null) networkCall.cancel(); active = null; }
         });
     }
     @Override protected void handleOnDestroy() { cancelRequests(); worker.shutdownNow(); super.handleOnDestroy(); }
