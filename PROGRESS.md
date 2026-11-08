@@ -9,6 +9,17 @@
 
 ## Où on en est
 
+- **API de comptes privée, livraison en cours (8 novembre).** Inscription sur
+  invitation à usage unique liée à la génération, connexion/déconnexion et
+  session/CSRF. Argon2 et validation Django, cookies Strict/HttpOnly/Secure,
+  budgets atomiques initiaux, refus des administrateurs et changement de
+  compte explicite. Aucune publication de snapshot par ces opérations.
+  **69 tests backend locaux : 64 réussites, cinq POSIX ignorés sous Windows** ;
+  suite frontend 3 864 réussites et un ignoré, typecheck/lint/build réussis.
+  Plan `docs/design/plans/2026-11-08-account-api.md` ; recette native VM à faire.
+  Les interfaces et la sync web/APK, la récupération/MFA et protections avant
+  accès public restent à livrer. Aucune nouvelle release ni publication.
+
 - **Fondations installées dans la VM privée (8 novembre, autorisation ultérieure).**
   Image backend de `d60e30d`, 47 tests natifs réussis sans exclusion, HTTPS/401
   avec certificat vérifié, aucun port publié, réseau interne et UID 10001

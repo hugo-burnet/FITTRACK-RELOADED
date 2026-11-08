@@ -2,6 +2,19 @@ from django.conf import settings
 from django.db import models
 
 
+class SyncInvitation(models.Model):
+    digest = models.CharField(max_length=64, primary_key=True)
+    generation = models.UUIDField()
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True)
+
+
+class AuthRateBucket(models.Model):
+    key = models.CharField(max_length=64, primary_key=True)
+    window_started = models.DateTimeField()
+    attempts = models.PositiveIntegerField(default=0)
+
+
 class SyncHead(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     revision = models.PositiveBigIntegerField(default=0)

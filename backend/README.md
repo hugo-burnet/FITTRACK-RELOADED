@@ -8,11 +8,59 @@ La recette native du 8 novembre 2026 donne **47 tests réussis**, HTTPS avec
 certificat vérifié et réponse 401 attendue sans session. Le réseau Docker
 interne et les processus non root sont contrôlés sur les conteneurs actifs.
 
-Les parcours de connexion, invitations, récupération et MFA, le stockage
-Android et les limites d’abus/stockage sont
-encore à livrer. **Ne pas exposer ce service sur Internet en l’état.**
-Les tests établissent leurs sessions avec l’authentification de test Django ;
-il n’existe pas de route publique pour obtenir une session dans cette tranche.
+Cette branche ajoute maintenant l'API de comptes et d'invitations décrite
+ci-dessous. Les écrans de connexion, la récupération et MFA, le stockage
+Android et les limites d'abus/stockage avant ouverture publique restent
+à livrer. **Ne pas exposer ce service sur Internet en l'état.**
+
+## API de comptes privée
+
+Le compte reste facultatif pour l'usage local. Créer un compte ou se connecter
+ne publie aucun instantané et n'active pas la synchronisation d'un appareil.
+L'identité serveur vient de la session Django, jamais d'un `userId` demandé
+par le client. La sortie JSON ne contient pas de credential de session.
+
+| Route | Contrat |
+| --- | --- |
+| `GET /api/auth/session` | `authenticated`, `user` (ID/username ou null), `csrfToken` masqué et `generation` |
+| `POST /api/auth/register` | JSON `username`, `password`, `invitation` ; compte normal et session, HTTP 201 |
+| `POST /api/auth/login` | JSON `username`, `password` ; HTTP 200 ou erreur générique 401 |
+| `POST /api/auth/logout` | JSON `{}` ; session révoquée, données du compte conservées |
+
+Les POST exigent le cookie CSRF et l'en-tête `X-CSRFToken` obtenu par la
+route de session. Connexion et inscription renvoient un nouveau jeton après
+rotation. Cookies Secure/HttpOnly/SameSite=Strict, réponses non cachables,
+aucun CORS universel ni exemption CSRF. Se déconnecter avant de changer de
+compte sur une même session. Les comptes inactifs et les administrateurs
+ne peuvent pas se connecter par cette API ; promouvoir un compte en admin
+invalide sa session de sync existante. Il n'y a pas d'administration web.
+
+Identifiant normalisé en minuscules : 3 à 32 caractères ASCII, lettres,
+chiffres, `_`, `.` et `-`, début alphanumérique. Mot de passe de 12 caractères
+minimum, contrôlé par les validateurs Django, 1 024 maximum et Argon2 en
+production. Corps JSON de 8 Kio maximum, champs inconnus/dupliqués et chaînes
+Unicode malformées refusés avant le hachage.
+
+Les invitations sont créées **uniquement depuis l'administration privée** :
+
+```sh
+python manage.py create_sync_invitation --hours 24
+```
+
+Le code n'est affiché qu'à l'opérateur. Ne pas publier la sortie ou la
+journaliser. Seul son SHA-256 est stocké ; durée configurable de 1 à 168 heures,
+usage unique, consommation atomique avec la création du compte. Les codes
+d'une ancienne génération/restauration sont invalides. Aucun vrai compte ou
+code destiné à un utilisateur n'est créé pendant la recette automatique.
+
+Les budgets initiaux comptent toutes les tentatives (réussies comprises) :
+cinq par action/identifiant et trente au total par fenêtre de 15 minutes.
+HTTP 429 indique `Retry-After`. Les clés de compteurs sont des HMAC, sans
+nom brut. Il ne s'agit pas d'une limite par IP cliente : les en-têtes reçus
+ne sont pas crus aveuglément. Réglage des limites, attribution de la source
+derrière le proxy, purge des compteurs expirés, récupération et MFA restent
+à traiter avant publication. Ces mécanismes ne remplacent pas le consentement
+et les garde-fous du futur client de synchronisation.
 
 ## Dépendances et tests
 
