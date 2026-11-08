@@ -43,7 +43,8 @@ Les données vivent dans IndexedDB (Dexie). Désinstaller l’app les efface. Me
 ## Synchronisation facultative : fonctionnement prévu
 
 **Cette option est en préparation ; elle n’est pas encore disponible dans la
-PWA ou l’APK.** Son fonctionnement prévu est le suivant :
+PWA ou l’APK publiés.** Le client est implémenté sur la branche de travail,
+sans nouvelle release. Son fonctionnement est le suivant :
 
 | Choix | Compte | Où restent les données ? |
 | --- | --- | --- |
@@ -56,6 +57,13 @@ se connectera au **même compte sur le téléphone et le PC** pour les synchroni
 Les autres utilisateurs n’auront pas accès à ses données. Créer un compte ou
 se connecter ne vaudra pas, à lui seul, activation de la synchronisation ni
 autorisation d’envoyer l’historique local.
+
+L’application reste entièrement utilisable **sans compte**, sans écran de
+connexion imposé au lancement. On peut ouvrir **Réglages › Compte et
+synchronisation** pour créer son compte plus tard, en conservant les données
+déjà présentes. Le serveur privé exige actuellement une invitation. Après
+création ou connexion, la synchronisation reste désactivée : sa confirmation
+d’activation est une action séparée.
 
 L’option pourra être **activée ou désactivée sur chaque appareil**. Une fois
 activée, les données seront envoyées au serveur auto-hébergé de l’éditeur et
@@ -70,6 +78,12 @@ appareils.** La suppression des données serveur devra être une action séparé
 et explicite. Avant une réactivation, les changements faits séparément sur
 plusieurs appareils devront être vérifiés, sans écrasement silencieux.
 
+Les échanges sont suspendus pendant une séance. Une mise à jour distante
+demande son application explicite dans les réglages ; une copie de secours
+reste exportable avant un remplacement. Apparence et voix restent propres
+à chaque appareil. La restauration d’un fichier local ne réactive jamais
+la synchronisation. Les binaires de photos ne sont pas transportés.
+
 ## Backend homelab en préparation
 
 La v2.17.4 corrige la compilation sous Windows et ajoute dans le dépôt les
@@ -79,10 +93,11 @@ disponible** : l'application reste utilisable hors ligne sans compte, et aucun
 backend n'est exposé publiquement. Le backend et l'API de comptes sont installés
 dans la VM privée du homelab : **69 tests natifs réussis**, HTTPS et restauration
 dans une copie hors ligne vérifiés. L'API permet l'inscription sur invitation
-et la connexion/déconnexion sans envoyer de données d'entraînement. Les écrans
-de compte, l'activation/désactivation de la sync, les protections avant accès
-public et l'intégration des clients restent à terminer. Aucun nouvel APK
-n'est publié par cette installation privée.
+et la connexion/déconnexion sans envoyer de données d'entraînement. Cette
+branche ajoute les écrans de compte, l'activation/désactivation par appareil,
+le rapprochement prudent et le transport web/Android. L'accès public,
+la récupération/MFA, la recette sur téléphone et une release des clients
+restent à terminer. Aucun nouvel APK n'est publié par cette installation privée.
 
 Voir [le backend et ses limites](backend/README.md),
 [le plan de synchronisation](docs/design/plans/2026-11-06-sync-backend.md) et

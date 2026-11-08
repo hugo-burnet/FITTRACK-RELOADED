@@ -85,6 +85,31 @@ npx @capacitor/assets generate --android --assetPath assets \
   --splashBackgroundColor '#12110f' --splashBackgroundColorDark '#12110f'
 ```
 
+## Synchronisation facultative — branche de préparation
+
+L’app reste utilisable sans compte. L’inscription est accessible plus tard dans
+Réglages › Compte et synchronisation ; elle conserve les données locales et
+n’active pas les échanges. La version publiée v2.17.5 ne contient pas ce client.
+
+Le pont Android parle seulement aux six routes autorisées d’une origine HTTPS
+fixée à la compilation, sans redirection et avec la validation TLS système.
+Les cookies restent natifs, chiffrés avec AndroidKeyStore, sans accès JavaScript
+ni inclusion dans une sauvegarde. Une restauration sur une autre installation
+désactive le consentement avant tout HTTP automatique. Les logs Capacitor
+sont désactivés pour ne pas y écrire les arguments de connexion.
+
+Une origine vide laisse la sync indisponible et l’usage local intact. Pour un
+service réellement prêt, passer la propriété publique, sans secret :
+
+```sh
+android/gradlew -p android assembleDebug -PfittrackSyncOrigin=https://service-verifie.example
+```
+
+Le workflow transmet la variable de dépôt facultative `FITTRACK_SYNC_ORIGIN`.
+Aucune variable distante n’est créée par cette préparation. Ne pas configurer
+une origine avant l’ouverture vérifiée du service. La compilation locale ne
+remplace pas la recette sur une vraie WebView : voir `docs/recette-telephone.md`.
+
 ## Checkpoint sur le téléphone
 
 1. Télécharge et installe l’APK de la dernière GitHub Release.

@@ -24,6 +24,7 @@ import { prefersReducedMotion } from './platform/reducedMotion';
 import { requestPersistentStorage } from './platform/storagePersistence';
 import { watchNavDirection } from './app/navigation';
 import { router } from './router';
+import { watchSync } from './stores/sync';
 import {
   isTty1Unlocked,
   unlockTty1,
@@ -103,6 +104,7 @@ if (!rootElement) throw new Error('Élément racine #root introuvable');
 const root = createRoot(rootElement);
 
 function mount(seedFailed: boolean) {
+  watchSync();
   root.render(
     <StrictMode>
       <ErrorBoundary>

@@ -100,7 +100,9 @@ const isRank: Check = (value) => typeof value === 'number' && Number.isInteger(v
 /** Un nombre de semaines, de jours… : entier, et au moins 1. */
 const isLength: Check = (value) => isRank(value) && (value as number) >= 1;
 const isFlag: Check = (value) => value === 0 || value === 1;
-const isList: Check = (value) => Array.isArray(value);
+const isEvidence: Check = (value) =>
+  Array.isArray(value) &&
+  value.every((item) => isRecord(item) && isString(item.label) && isNumber(item.value));
 
 const oneOf =
   (values: readonly string[]): Check =>
@@ -189,6 +191,14 @@ const SYNCABLE: Record<string, Check> = {
   updatedAt: isStamp,
   deletedAt: isStamp,
 };
+const SET_TARGETS: Record<string, Check> = {
+  targetReps: isCount,
+  targetRepsMax: isCount,
+  targetWeight: isNumber,
+  targetDurationSeconds: isCount,
+  targetDistanceMeters: isCount,
+  targetRpe: isNumber,
+};
 
 const SPECS: Record<BackupTable, TableSpec> = {
   exercises: {
@@ -203,6 +213,12 @@ const SPECS: Record<BackupTable, TableSpec> = {
       isCustom: isFlag,
     },
     optional: {
+      slug: isString,
+      imageUrl: isString,
+      instructions: isString,
+      userNotes: isString,
+      defaultRestSeconds: isCount,
+      bodyweightLoadFactorIsCustom: isFlag,
       secondaryMuscles: listOf(MUSCLE_GROUPS),
       isUnilateral: isFlag,
       movementPattern: oneOf(MOVEMENT_PATTERNS),
@@ -222,6 +238,12 @@ const SPECS: Record<BackupTable, TableSpec> = {
       exerciseId: isId,
       measurementType: oneOf(MEASUREMENT_TYPES),
     },
+    optional: {
+      sourceTitle: isString,
+      equipmentHint: oneOf(EQUIPMENT),
+      verification: oneOf(['user']),
+      confirmedAt: isStamp,
+    },
     links: [{ field: 'exerciseId', table: 'exercises' }],
   },
   routineFolders: {
@@ -233,6 +255,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
     since: 1,
     key: 'id',
     required: { ...SYNCABLE, name: isString, folderId: isString, order: isRank },
+    optional: { subtitle: isString, notes: isString },
     links: [{ field: 'folderId', table: 'routineFolders' }],
   },
   routineExercises: {
@@ -266,6 +289,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       order: isRank,
       setType: oneOf(SET_TYPES),
     },
+    optional: SET_TARGETS,
     links: [{ field: 'routineExerciseId', table: 'routineExercises' }],
   },
   workouts: {
@@ -281,6 +305,13 @@ const SPECS: Record<BackupTable, TableSpec> = {
       durationSeconds: isCount,
     },
     optional: {
+      notes: isString,
+      deloadPercent: isNumber,
+      programId: isString,
+      programScheduleEntryId: isString,
+      importKey: isString,
+      programLoadIndex: isNumber,
+      importSource: oneOf(EXTERNAL_SOURCES),
       kind: oneOf(WORKOUT_KINDS),
       benchmarkGoal: oneOf(BENCHMARK_GOALS),
       programPhase: oneOf(PROGRAM_PHASES),
@@ -305,6 +336,9 @@ const SPECS: Record<BackupTable, TableSpec> = {
       restSeconds: isCount,
     },
     optional: {
+      repSeconds: isCount,
+      exerciseName: isString,
+      exerciseBodyweightLoadFactor: isNumber,
       exerciseMeasurementType: oneOf(MEASUREMENT_TYPES),
       exercisePrimaryMuscle: oneOf(MUSCLE_GROUPS),
       exerciseSecondaryMuscles: listOf(MUSCLE_GROUPS),
@@ -339,7 +373,15 @@ const SPECS: Record<BackupTable, TableSpec> = {
       isCompleted: isFlag,
       performedAt: isStamp,
     },
-    optional: { weight: isNumber, reps: isCount, durationSeconds: isCount, rpe: isNumber },
+    optional: {
+      ...SET_TARGETS,
+      weight: isNumber,
+      reps: isCount,
+      durationSeconds: isCount,
+      distanceMeters: isCount,
+      rpe: isNumber,
+      unilateralSecondSideStartsAt: isStamp,
+    },
     links: [
       { field: 'workoutExerciseId', table: 'workoutExercises' },
       { field: 'workoutId', table: 'workouts' },
@@ -356,6 +398,14 @@ const SPECS: Record<BackupTable, TableSpec> = {
       value: isNumber,
       achievedAt: isStamp,
       workoutId: isString,
+    },
+    optional: {
+      reps: isCount,
+      weight: isNumber,
+      durationSeconds: isCount,
+      distanceMeters: isCount,
+      workoutSetId: isString,
+      formula: oneOf(['epley', 'brzycki', 'lombardi']),
     },
     links: [
       { field: 'exerciseId', table: 'exercises' },
@@ -383,8 +433,15 @@ const SPECS: Record<BackupTable, TableSpec> = {
       exerciseId: isId,
       code: oneOf(COACH_CODES),
       recommendedAt: isStamp,
-      evidence: isList,
+      evidence: isEvidence,
       status: oneOf(COACH_STATUSES),
+    },
+    optional: {
+      nextLoadKg: isNumber,
+      outcomeLoadKg: isNumber,
+      sourceWorkoutId: isString,
+      outcomeWorkoutId: isString,
+      resolvedAt: isStamp,
     },
     links: [{ field: 'exerciseId', table: 'exercises' }],
   },
@@ -392,11 +449,13 @@ const SPECS: Record<BackupTable, TableSpec> = {
     since: 1,
     key: 'id',
     required: { ...SYNCABLE, type: isId, value: isNumber, unit: isString, measuredAt: isStamp },
+    optional: { notes: isString },
   },
   progressPhotos: {
     since: 1,
     key: 'id',
     required: { ...SYNCABLE, blobKey: isString, thumbnailDataUrl: isString, takenAt: isStamp },
+    optional: { pose: isString, notes: isString },
   },
   programs: {
     since: 6,
@@ -419,6 +478,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       loadIndex: isNumber,
       phase: oneOf(PROGRAM_PHASES),
     },
+    optional: { notes: isString },
     links: [{ field: 'programId', table: 'programs' }],
   },
   programScheduleRevisions: {

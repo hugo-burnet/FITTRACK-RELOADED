@@ -4,6 +4,8 @@ const config: CapacitorConfig = {
   appId: 'com.fittrack.app',
   appName: 'FitTrack',
   webDir: 'dist',
+  // Capacitor's debug bridge logger includes plugin arguments (login passwords).
+  loggingBehavior: 'none',
   backgroundColor: '#12110f',
   plugins: {
     LocalNotifications: {

@@ -11,7 +11,7 @@ const { version } = JSON.parse(
 
 export default defineConfig(({ mode }) => {
   // GitHub Pages needs its repository prefix; Capacitor loads local files.
-  const base = mode === 'android' ? './' : '/FITTRACK-RELOADED/';
+  const base = mode === 'android' ? './' : mode === 'homelab' ? '/' : '/FITTRACK-RELOADED/';
 
   return {
     base,
@@ -56,6 +56,7 @@ export default defineConfig(({ mode }) => {
           // woff2: the TTY1 theme without its font is a different app.
           globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav,jpg,woff2}'],
           navigateFallback: `${base}index.html`,
+          navigateFallbackDenylist: [/^\/api\//],
           cleanupOutdatedCaches: true,
         },
       }),

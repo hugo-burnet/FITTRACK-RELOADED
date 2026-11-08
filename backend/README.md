@@ -11,8 +11,9 @@ instantané sans session 401. Le réseau Docker interne et les processus non roo
 sont contrôlés sur les conteneurs actifs.
 
 L'API de comptes et d'invitations décrite ci-dessous est installée uniquement
-dans cette VM privée. Les écrans de connexion, la récupération et MFA, le stockage
-Android et les limites d'abus/stockage avant ouverture publique restent
+dans cette VM privée. Les écrans et le transport web/Android sont implémentés
+sur la branche de travail, sans release. La récupération et MFA, la recette
+téléphone et les limites d'abus/stockage avant ouverture publique restent
 à livrer. **Ne pas exposer ce service sur Internet en l'état.**
 
 ## API de comptes privée
@@ -182,5 +183,5 @@ génération. Aucune substitution automatique des données d'un appareil n'est p
 La recette du 8 novembre valide aussi sur la VM un export de la base active
 et sa restauration dans une copie hors ligne : secret et génération neufs,
 instance d'origine maintenue active, copie non activée. Ce test ne constitue
-pas une restauration complète du serveur. Les écrans de connexion et la
-synchronisation web/APK restent à livrer.
+pas une restauration complète du serveur. Le client ajouté sur cette branche
+ne constitue pas encore une publication des écrans et de la synchronisation web/APK.

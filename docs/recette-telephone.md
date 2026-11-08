@@ -2,14 +2,20 @@
 
 ## Comptes et synchronisation facultative — client à venir
 
-Le 8 novembre, seule l'API privée est installée sur le homelab. Aucun nouvel
-APK ni écran de compte n'est livré : ces contrôles attendent le client.
+Le 8 novembre, l'API est installée en privé et le client est implémenté sur
+la branche de travail. Aucun nouvel APK n'est publié : ces contrôles attendent
+un candidat signé qui peut mettre à jour l'application existante.
 
 - [ ] Après livraison du client : utiliser l'app hors ligne sans compte ;
   se connecter sans activer la sync et vérifier qu'aucun historique n'est envoyé.
 - [ ] Activer explicitement sur deux appareils du même compte ; désactiver
   sur l'un, modifier localement puis réactiver : conserver les données locales
   et présenter les divergences sans écrasement silencieux.
+- [ ] Fermer et rouvrir l'APK connecté : session retrouvée sans mot de passe
+  stocké dans les données web. Une déconnexion garde séances et routines.
+- [ ] Restaurer les données Android sur une autre installation : aucun échange
+  avant une nouvelle activation. Terminer une séance avant d'appliquer une
+  copie distante ; exporter et ouvrir la sauvegarde de secours.
 
 <a id="mise-a-jour-v2174"></a>
 

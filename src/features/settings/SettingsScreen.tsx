@@ -168,6 +168,8 @@ export function SettingsScreen() {
         <section>
           <SectionTitle>{t('settings.appSection')}</SectionTitle>
           <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+            <ListRow title={t('sync.title')} subtitle={t('sync.linkHint')}
+              trailing={<ChevronRightIcon />} onClick={() => void navigate('/settings/sync')} />
             <ListRow
               title={t('settings.installLink')}
               subtitle={t('settings.installHint')}

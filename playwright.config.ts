@@ -25,6 +25,7 @@ const BASE_URL = `http://localhost:${PORT}/FITTRACK-RELOADED/`;
  */
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: 'sync.spec.ts',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

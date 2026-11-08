@@ -9,6 +9,22 @@
 
 ## Où on en est
 
+- **Client de synchronisation facultative implémenté, recette finale en cours
+  (8 novembre).** L'app reste sans compte par défaut ; création et connexion
+  accessibles plus tard dans Réglages, sans perte locale ni envoi implicite.
+  Confirmation d'activation par appareil, arrêt des échanges, opérations
+  idempotentes persistées, divergences explicites et sauvegarde de secours.
+  Les séances actives bloquent les échanges ; les mises à jour distantes
+  s'appliquent par un choix explicite. Consentement exclu des backups/imports.
+  Pont Android HTTPS et cookies Keystore, origine vide par défaut, logs de
+  credentials désactivés. **Suite globale : 3 949 réussites, un ignoré ; garde
+  d'arrêt ajouté ensuite : 33 tests ciblés réussis.** 43 anciens parcours
+  Chromium et huit nouveaux réussis, types/lint/builds réussis, cinq tests JVM
+  et lint Android réussis. APK de contrôle compilé, non installé/non publié.
+  Frontend privé en cours de livraison. Aucune
+  nouvelle release, fusion, publication ou ouverture publique. Plan
+  `docs/design/plans/2026-11-08-sync-client.md` ; recette téléphone encore due.
+
 - **API de comptes installée en privé (8 novembre, code `1ea1703`).** Inscription sur
   invitation à usage unique liée à la génération, connexion/déconnexion et
   session/CSRF. Argon2 et validation Django, cookies Strict/HttpOnly/Secure,
@@ -23,8 +39,8 @@
   dans une copie hors ligne vérifiées ; aucun port publié, sondes de
   quarantaine et services hôte contrôlés. Pas de nouvelle saisie sudo.
   Plan `docs/design/plans/2026-11-08-account-api.md`.
-  Les interfaces et la sync web/APK, la récupération/MFA et protections avant
-  accès public restent à livrer. Aucune nouvelle release ni publication.
+  La récupération/MFA et protections avant accès public restent à livrer.
+  Les clients ajoutés ensuite sur cette branche ne sont pas encore publiés.
 
 - **Fondations installées dans la VM privée (8 novembre, autorisation ultérieure).**
   Image backend de `d60e30d`, 47 tests natifs réussis sans exclusion, HTTPS/401
@@ -35,7 +51,7 @@
   sudo/groupes de l'hôte. Sondes TCP de quarantaine et services hôte vérifiés ;
   empreinte du jeu nftables actif non relue après cette reprise. Détails dans
   le dépôt homelab, `docs/13-fittrack-sync.md`. **Aucune exposition publique,
-  aucun client de synchronisation ni écran de connexion encore livré.**
+  aucun client ni écran de connexion publié dans l'APK/PWA à cette étape.**
 
 - **Synchronisation facultative précisée (8 novembre).** README actualisé :
   usage local sans compte ni envoi au backend par défaut ; compte requis

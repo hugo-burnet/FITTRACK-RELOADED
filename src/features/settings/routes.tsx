@@ -13,3 +13,4 @@ export const DebugRoute = lazyRoute(() => import('./DebugScreen'), 'DebugScreen'
 export const CreditsRoute = lazyRoute(() => import('./CreditsScreen'), 'CreditsScreen');
 
 export const VolumeRoute = lazyRoute(() => import('./VolumeScreen'), 'VolumeScreen');
+export const SyncRoute = lazyRoute(() => import('./SyncSettings'), 'SyncSettings');

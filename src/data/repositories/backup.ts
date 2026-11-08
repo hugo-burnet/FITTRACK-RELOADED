@@ -1,4 +1,6 @@
 import { db } from '@/data/db';
+import { suspendSyncControl } from '@/data/syncControl';
+import { SYNC_CONTROL_KEY } from '@/lib/sync/types';
 import {
   BACKUP_FORMAT,
   BACKUP_TABLES,
@@ -86,7 +88,10 @@ export async function buildBackup(now = Date.now()): Promise<BackupFile> {
     app: { name: 'FitTrack', schemaVersion: db.verno },
     preferences: readPreferences(),
     tables: Object.fromEntries(
-      BACKUP_TABLES.map((name, index) => [name, rows[index] ?? []]),
+      BACKUP_TABLES.map((name, index) => [
+        name,
+        (rows[index] ?? []).filter((row) => name !== 'settings' || row.key !== SYNC_CONTROL_KEY),
+      ]),
     ) as BackupFile['tables'],
   };
 }
@@ -123,12 +128,22 @@ export async function restoreBackup(backup: BackupFile): Promise<BackupCounts> {
   let preferencesWritten = false;
   try {
     await db.transaction('rw', BACKUP_TABLES.map(tableOf), async () => {
+      // Consent and account binding belong to this device, never to an imported file.
+      const device = await db.settings.get(SYNC_CONTROL_KEY);
       for (const name of BACKUP_TABLES) {
         const table = tableOf(name);
         await table.clear();
-        const rows = tables[name] ?? [];
+        const rows = (tables[name] ?? []).filter(
+          (row) => name !== 'settings' || row.key !== SYNC_CONTROL_KEY,
+        );
         if (rows.length > 0) await table.bulkPut(rows);
       }
+      if (device)
+        await db.settings.put({
+          ...device,
+          value: suspendSyncControl(device.value, true),
+          updatedAt: Date.now(),
+        });
       // Synchronous: a failure here rejects the still-open IndexedDB transaction.
       writePreferences(backup.preferences);
       preferencesWritten = true;

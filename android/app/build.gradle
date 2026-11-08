@@ -9,6 +9,7 @@ def fittrackKeyPassword = System.getenv('FITTRACK_KEY_PASSWORD')
 def fittrackKeystoreConfigured = fittrackKeystoreFile && fittrackKeystorePassword && fittrackKeyAlias && fittrackKeyPassword
 
 android {
+    buildFeatures { buildConfig true }
     namespace = "com.fittrack.app"
     compileSdk = rootProject.ext.compileSdkVersion
     signingConfigs {
@@ -22,6 +23,8 @@ android {
         }
     }
     defaultConfig {
+        // Public, non-secret origin; unset builds remain entirely local on Android.
+        buildConfigField 'String', 'FITTRACK_SYNC_ORIGIN', groovy.json.JsonOutput.toJson(project.findProperty('fittrackSyncOrigin') ?: '')
         applicationId "com.fittrack.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

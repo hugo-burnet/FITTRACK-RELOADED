@@ -8,6 +8,7 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // Plugins must enter the Bridge builder before BridgeActivity creates it.
         registerPlugin(FitTrackAudioFocusPlugin.class);
+        registerPlugin(FitTrackSyncPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

@@ -32,6 +32,8 @@ jobs:
     env:
       # Vide sur un push : `inputs` n'existe pas hors de workflow_dispatch.
       RELEASE_TAG: ${{ inputs.release_tag }}
+      # Non-secret; empty until a verified public service is ready.
+      FITTRACK_SYNC_ORIGIN: ${{ vars.FITTRACK_SYNC_ORIGIN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -92,6 +94,7 @@ jobs:
         run: |
           chmod +x android/gradlew
           android/gradlew -p android assembleDebug \
+            -PfittrackSyncOrigin="$FITTRACK_SYNC_ORIGIN" \
             -PfittrackVersionCode="${{ github.run_number }}" \
             -PfittrackVersionName="$(node -p "require('./package.json').version")"
       - uses: actions/upload-artifact@v4

@@ -5,8 +5,129 @@ import type { BackupRow, BackupTable } from './types';
 
 /** Le schéma courant : rien n'est « absent parce que le fichier est vieux ». */
 const NOW_SCHEMA = 12;
+function accountWithOptionals() {
+  const tables = account();
+  const stamps = { createdAt: 1, updatedAt: 1, deletedAt: 0 };
+  tables.externalExerciseBindings = [
+    {
+      id: 'binding',
+      ...stamps,
+      source: 'hevy_csv',
+      identityKey: 'source',
+      exerciseId: 'ex-1',
+      measurementType: 'weight_reps',
+    },
+  ];
+  tables.coachRecommendations = [
+    {
+      id: 'coach',
+      ...stamps,
+      exerciseId: 'ex-1',
+      code: 'long_rest',
+      recommendedAt: 1,
+      evidence: [],
+      status: 'pending',
+    },
+  ];
+  tables.bodyMeasurements = [
+    { id: 'measure', ...stamps, type: 'weight', value: 80, unit: 'kg', measuredAt: 1 },
+  ];
+  tables.programs = [
+    { id: 'program', ...stamps, name: 'Block', startsAt: 1, durationWeeks: 4, status: 'active' },
+  ];
+  tables.programWeeks = [
+    {
+      id: 'week',
+      ...stamps,
+      programId: 'program',
+      weekIndex: 0,
+      loadIndex: 100,
+      phase: 'construction',
+    },
+  ];
+  return tables;
+}
 
 describe('validateBackupTables', () => {
+  const optionalFields: Partial<Record<BackupTable, string[]>> = {
+    exercises: [
+      'slug',
+      'imageUrl',
+      'instructions',
+      'userNotes',
+      'defaultRestSeconds',
+      'bodyweightLoadFactorIsCustom',
+    ],
+    externalExerciseBindings: ['sourceTitle', 'equipmentHint', 'verification', 'confirmedAt'],
+    routines: ['subtitle', 'notes'],
+    routineSets: [
+      'targetReps',
+      'targetRepsMax',
+      'targetWeight',
+      'targetDurationSeconds',
+      'targetDistanceMeters',
+      'targetRpe',
+    ],
+    workouts: [
+      'notes',
+      'deloadPercent',
+      'programId',
+      'programScheduleEntryId',
+      'importKey',
+      'programLoadIndex',
+      'importSource',
+    ],
+    workoutExercises: ['repSeconds', 'exerciseName', 'exerciseBodyweightLoadFactor'],
+    workoutSets: [
+      'distanceMeters',
+      'targetReps',
+      'targetRepsMax',
+      'targetWeight',
+      'targetDurationSeconds',
+      'targetDistanceMeters',
+      'targetRpe',
+      'unilateralSecondSideStartsAt',
+    ],
+    personalRecords: [
+      'reps',
+      'weight',
+      'durationSeconds',
+      'distanceMeters',
+      'workoutSetId',
+      'formula',
+    ],
+    coachRecommendations: [
+      'nextLoadKg',
+      'outcomeLoadKg',
+      'sourceWorkoutId',
+      'outcomeWorkoutId',
+      'resolvedAt',
+    ],
+    bodyMeasurements: ['notes'],
+    programWeeks: ['notes'],
+  };
+  it.each(
+    Object.entries(optionalFields).flatMap(([table, fields]) =>
+      fields.map((field) => [table as BackupTable, field] as const),
+    ),
+  )('refuse le champ optionnel mal typé %s.%s avant restauration', (table, field) => {
+    const tables = accountWithOptionals();
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+    expect(tables[table].length).toBeGreaterThan(0);
+    tables[table][0]![field] = { unexpected: 'object' };
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+    expect(result.ok).toBe(false);
+    if (!result.ok)
+      expect(result.flaws).toContainEqual({ kind: 'invalid-field', table, index: 0, field });
+  });
+  it.each([null, 'text', { label: {}, value: 1 }, { label: 'rest', value: 'bad' }])(
+    'refuse une preuve coach malformée %j',
+    (evidence) => {
+      const tables = accountWithOptionals();
+      tables.coachRecommendations[0]!.evidence = [evidence];
+      expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(false);
+    },
+  );
   it('accepte un compte complet, sans orphelin', () => {
     const result = validateBackupTables(account(), NOW_SCHEMA);
 
@@ -378,4 +499,3 @@ describe('validateBackupTables — un split sur plusieurs semaines', () => {
     });
   });
 });
-
