@@ -5,18 +5,24 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-08 — backend de test installé dans la VM privée, sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-08 — backend et API de comptes installés dans la VM privée, sur `ccr-homelab-sync-20261108`. Dernière version publiée : [v2.17.5](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
 
 ## Où on en est
 
-- **API de comptes privée, livraison en cours (8 novembre).** Inscription sur
+- **API de comptes installée en privé (8 novembre, code `1ea1703`).** Inscription sur
   invitation à usage unique liée à la génération, connexion/déconnexion et
   session/CSRF. Argon2 et validation Django, cookies Strict/HttpOnly/Secure,
   budgets atomiques initiaux, refus des administrateurs et changement de
   compte explicite. Aucune publication de snapshot par ces opérations.
-  **69 tests backend locaux : 64 réussites, cinq POSIX ignorés sous Windows** ;
+  **69 tests backend natifs réussis dans la VM, sans exclusion** ;
+  local Windows : 64 réussites, cinq contrôles POSIX ignorés ;
   suite frontend 3 864 réussites et un ignoré, typecheck/lint/build réussis.
-  Plan `docs/design/plans/2026-11-08-account-api.md` ; recette native VM à faire.
+  HTTPS réel : session anonyme 200, mauvais identifiants 401, invitation
+  invalide 400, absence de CSRF 403, sync anonyme 401. Aucun compte ou code
+  réel créé. Sauvegarde avant migration et restauration du schéma actualisé
+  dans une copie hors ligne vérifiées ; aucun port publié, sondes de
+  quarantaine et services hôte contrôlés. Pas de nouvelle saisie sudo.
+  Plan `docs/design/plans/2026-11-08-account-api.md`.
   Les interfaces et la sync web/APK, la récupération/MFA et protections avant
   accès public restent à livrer. Aucune nouvelle release ni publication.
 
@@ -29,7 +35,7 @@
   sudo/groupes de l'hôte. Sondes TCP de quarantaine et services hôte vérifiés ;
   empreinte du jeu nftables actif non relue après cette reprise. Détails dans
   le dépôt homelab, `docs/13-fittrack-sync.md`. **Aucune exposition publique,
-  aucun client de synchronisation ni parcours de connexion encore livré.**
+  aucun client de synchronisation ni écran de connexion encore livré.**
 
 - **Synchronisation facultative précisée (8 novembre).** README actualisé :
   usage local sans compte ni envoi au backend par défaut ; compte requis

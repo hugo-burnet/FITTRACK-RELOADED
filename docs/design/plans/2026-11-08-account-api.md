@@ -40,7 +40,7 @@ local par défaut, consentement à la sync indépendant de la connexion.
 - [x] Concurrence d'inscription sur un même code, expiration, restauration,
   rotation CSRF/session, rate limit et conservation des données après logout.
 - [x] Suite backend complète, migrations, portes frontend et relecture indépendante.
-- [ ] Construire les nouvelles images depuis le runtime déjà présent dans la VM,
+- [x] Construire les nouvelles images depuis le runtime déjà présent dans la VM,
   sauvegarder avant migration, recette native/HTTPS et réseau sans port publié.
 
 Le client web/APK, la récupération, MFA et la gestion des abus avant exposition
@@ -59,3 +59,27 @@ publique suivent séparément. Aucun appel réseau n'est ajouté à l'applicatio
   est déjà testée avec deux vrais clients et un seul succès.
 - Références : documentation officielle Django 5.2, authentification,
   protection CSRF et validation des mots de passe.
+
+## Livraison privée vérifiée
+
+- Code installé : `1ea1703f6c3caaede6c04b7fdd016849286cd8aa` ; paquet
+  SHA-256 `22d82a02c4c6ec3ccb33276cfb8e8135ee7d90f014edd3d601ed8d6e7abf61c7`.
+- Images dérivées hors ligne des images précédemment validées `d60e30d` :
+  deux verrous de dépendances identiques. Buildx 0.38.1 installé dans la VM
+  depuis le paquet Docker officiel vérifié, aucune ouverture réseau.
+- 69 tests natifs réussis avant migration, export avant modification de la
+  base, migration puis `check --deploy`. Deux conteneurs actifs non root,
+  racines en lecture seule, réseau interne et aucun port publié.
+- HTTPS réel avec certificat vérifié : session anonyme 200 et cookie CSRF
+  Secure/HttpOnly/Strict ; login invalide 401, invitation invalide 400,
+  mutation sans CSRF 403, sync anonyme 401. Utilisateurs, invitations et
+  instantanés inchangés ; aucune création d'un vrai compte/code.
+- Export du schéma mis à jour et restauration dans une copie hors ligne :
+  secret et génération neufs, copie non activée, instance originale active.
+- Sondes TCP de quarantaine réussies ; services hôte actifs, aucune unité
+  en échec, Jellyfin Healthy et groupes privilégiés de `hugo` inchangés.
+  Le reçu conserve `hostVerified: false` : l'empreinte nftables active sur
+  l'hôte n'a pas été relue avec sudo. Détails dans le dépôt homelab,
+  `docs/13-fittrack-sync.md` et les reçus privés de préparation.
+- Aucune fusion, publication, release APK ou intervention au terminal du
+  propriétaire. Le checkpoint téléphone sera jouable après livraison du client.

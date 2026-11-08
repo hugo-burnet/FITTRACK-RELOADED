@@ -4,12 +4,14 @@ Cette première tranche implémente la persistance d’instantanés par compte,
 le contrôle atomique de révision et l’idempotence. Elle n’est pas encore
 connectée à l’application web ou à l’APK. Ses fondations sont maintenant
 installées dans la VM isolée du homelab, sans port publié ni accès Internet.
-La recette native du 8 novembre 2026 donne **47 tests réussis**, HTTPS avec
-certificat vérifié et réponse 401 attendue sans session. Le réseau Docker
-interne et les processus non root sont contrôlés sur les conteneurs actifs.
+La recette native du 8 novembre 2026 donne **69 tests réussis**, sans exclusion,
+sur le code `1ea1703`. HTTPS avec certificat vérifié : session anonyme 200,
+connexion invalide 401, invitation invalide 400, mutation sans CSRF 403 et
+instantané sans session 401. Le réseau Docker interne et les processus non root
+sont contrôlés sur les conteneurs actifs.
 
-Cette branche ajoute maintenant l'API de comptes et d'invitations décrite
-ci-dessous. Les écrans de connexion, la récupération et MFA, le stockage
+L'API de comptes et d'invitations décrite ci-dessous est installée uniquement
+dans cette VM privée. Les écrans de connexion, la récupération et MFA, le stockage
 Android et les limites d'abus/stockage avant ouverture publique restent
 à livrer. **Ne pas exposer ce service sur Internet en l'état.**
 
@@ -180,5 +182,5 @@ génération. Aucune substitution automatique des données d'un appareil n'est p
 La recette du 8 novembre valide aussi sur la VM un export de la base active
 et sa restauration dans une copie hors ligne : secret et génération neufs,
 instance d'origine maintenue active, copie non activée. Ce test ne constitue
-pas une restauration complète du serveur. Les parcours de connexion et la
+pas une restauration complète du serveur. Les écrans de connexion et la
 synchronisation web/APK restent à livrer.

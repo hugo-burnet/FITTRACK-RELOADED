@@ -1,5 +1,16 @@
 # Recette téléphone — une seule passe
 
+## Comptes et synchronisation facultative — client à venir
+
+Le 8 novembre, seule l'API privée est installée sur le homelab. Aucun nouvel
+APK ni écran de compte n'est livré : ces contrôles attendent le client.
+
+- [ ] Après livraison du client : utiliser l'app hors ligne sans compte ;
+  se connecter sans activer la sync et vérifier qu'aucun historique n'est envoyé.
+- [ ] Activer explicitement sur deux appareils du même compte ; désactiver
+  sur l'un, modifier localement puis réactiver : conserver les données locales
+  et présenter les divergences sans écrasement silencieux.
+
 <a id="mise-a-jour-v2174"></a>
 
 ## Mise à jour v2.17.4
