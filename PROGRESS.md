@@ -5,7 +5,8 @@ confirmation/CSRF/budgets, révocation des sessions et conservation locale.
 Restauration désormais bloquée pour les connexions avant revue des comptes.
 Débordement TTY1 à 200 % identifié dans la navigation et corrigé. Validation
 et déploiement privés consignés dans le dépôt homelab, docs/15 ; aucun push,
-APK, fusion ou accès public autorisé. Contact dédié encore à choisir.
+APK, fusion ou accès public autorisé. Contact choisi ensuite par le propriétaire :
+hgobrnt@gmail.com, affiché dans les informations de confidentialité.
 Validation de cette révision : 3 968 tests frontend réussis, un ignoré ; types,
 lint et build homelab réussis ; 10 parcours E2E sync réussis, et 5 répétitions
 TTY1 réussies après reproduction du défaut 4/5. Backend Windows : 88 tests,

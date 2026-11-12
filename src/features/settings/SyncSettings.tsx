@@ -273,7 +273,9 @@ export function SyncSettings() {
           <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyData')}</p>
           <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyLocal')}</p>
           <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyRetention')}</p>
-          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyContact')}</p>
+          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyContact')}{' '}
+            <a className="break-all underline underline-offset-4" href={`mailto:${t('sync.operatorEmail')}`}>{t('sync.operatorEmail')}</a>
+          </p>
         </section>
         <p role="status" className="text-sm leading-relaxed text-[var(--text-2)]">
           {t(`sync.phases.${view.phase}`)}
