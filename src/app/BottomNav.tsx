@@ -47,7 +47,7 @@ export function BottomNav() {
           const { to, labelKey, Icon } = tab;
           const isActive = matchesTab(tab, pathname);
           return (
-            <li key={to} className="flex-1">
+            <li key={to} className="min-w-0 flex-1">
               <Link
                 viewTransition
                 to={to}
@@ -64,7 +64,7 @@ export function BottomNav() {
                       ${isActive ? 'scale-x-100' : 'scale-x-0'}`}
                 />
                 <Icon />
-                <span className="text-[11px] leading-none font-medium">{t(labelKey)}</span>
+                <span className="max-w-full text-center text-[11px] leading-none font-medium [overflow-wrap:anywhere]">{t(labelKey)}</span>
               </Link>
             </li>
           );

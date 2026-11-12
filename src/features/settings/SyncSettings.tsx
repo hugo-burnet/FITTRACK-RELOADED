@@ -8,6 +8,7 @@ import { SyncError, type SyncRecoveryInfo, type SyncReview } from '@/lib/sync/ty
 import { saveTextFile } from '@/platform/saveFile';
 import { syncCoordinator as sync } from '@/stores/sync';
 import { Button, ConfirmSheet, Input, SectionTitle, Toggle } from '@/ui';
+import { AccountDataControls } from './AccountDataControls';
 
 const ERRORS: Record<string, TranslationKey> = Object.fromEntries(
   [
@@ -30,6 +31,9 @@ const ERRORS: Record<string, TranslationKey> = Object.fromEntries(
     'logout_incomplete',
     'device_restored',
     'consent_not_saved',
+    'confirmation_required',
+    'account_review_required',
+    'export_too_large',
   ].map((code) => [code, `sync.errors.${code}`]),
 ) as Record<string, TranslationKey>;
 
@@ -263,6 +267,14 @@ export function SyncSettings() {
             </Button>
           </section>
         )}
+        {view.user && <AccountDataControls username={view.user.username} busy={busy} run={run} />}
+        <section className="flex flex-col gap-3">
+          <SectionTitle>{t('sync.privacyTitle')}</SectionTitle>
+          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyData')}</p>
+          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyLocal')}</p>
+          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyRetention')}</p>
+          <p className="text-base leading-relaxed text-[var(--text-2)]">{t('sync.privacyContact')}</p>
+        </section>
         <p role="status" className="text-sm leading-relaxed text-[var(--text-2)]">
           {t(`sync.phases.${view.phase}`)}
         </p>

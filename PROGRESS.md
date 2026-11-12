@@ -1,5 +1,16 @@
 # État d'avancement — FitTrack
 
+Reprise du 12 novembre 2026 : export personnel et suppression avec mot de passe,
+confirmation/CSRF/budgets, révocation des sessions et conservation locale.
+Restauration désormais bloquée pour les connexions avant revue des comptes.
+Débordement TTY1 à 200 % identifié dans la navigation et corrigé. Validation
+et déploiement privés consignés dans le dépôt homelab, docs/15 ; aucun push,
+APK, fusion ou accès public autorisé. Contact dédié encore à choisir.
+Validation de cette révision : 3 968 tests frontend réussis, un ignoré ; types,
+lint et build homelab réussis ; 10 parcours E2E sync réussis, et 5 répétitions
+TTY1 réussies après reproduction du défaut 4/5. Backend Windows : 88 tests,
+82 réussis et 6 POSIX ignorés ; validation Linux native lors du déploiement.
+
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > **Court par construction.** Une version publiée et close part dans `docs/journal/` (lecture seule) ;
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne

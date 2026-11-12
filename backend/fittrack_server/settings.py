@@ -49,6 +49,7 @@ data_dir = Path(data_directory)
 if not data_dir.is_dir() or not os.access(data_dir, os.W_OK):
     raise ImproperlyConfigured('FITTRACK_DATA_DIR must be an existing writable data volume.')
 DATABASES = {'default': sqlite_database(data_dir / 'fittrack.sqlite3')}  # noqa: F405
+ACCOUNT_REVIEW_REQUIRED = (data_dir / 'account-review-required').exists()
 
 SECURE_SSL_REDIRECT = True
 # Deployment must strip untrusted forwarding headers at its sole proxy and

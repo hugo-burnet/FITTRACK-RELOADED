@@ -69,6 +69,20 @@ class RestoreTests(TransactionTestCase):
         for name in ('generation', 'django-key'):
             self.assertNotEqual((first / 'secrets' / name).read_bytes(), (self.destination / 'secrets' / name).read_bytes())
 
+    def test_restoration_requires_account_review_in_production_settings(self):
+        self.restore()
+        self.assertTrue((self.destination / 'data' / 'account-review-required').is_file())
+        env = os.environ | {
+            'FITTRACK_DATA_DIR': str(self.destination / 'data'),
+            'FITTRACK_SECRET_FILE': str(self.destination / 'secrets' / 'django-key'),
+            'FITTRACK_GENERATION_FILE': str(self.destination / 'secrets' / 'generation'),
+            'FITTRACK_ALLOWED_HOSTS': 'fittrack.localhost',
+        }
+        result = subprocess.run([sys.executable, '-c',
+            'from fittrack_server.settings import ACCOUNT_REVIEW_REQUIRED; assert ACCOUNT_REVIEW_REQUIRED'],
+            env=env, capture_output=True, text=True, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_existing_destination_and_export_are_preserved(self):
         self.destination.mkdir()
         sentinel = self.destination / 'keep'

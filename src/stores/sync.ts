@@ -13,6 +13,7 @@ import {
 import { parseCursor, parseSession, parseSyncState, record } from '@/lib/sync/protocol';
 import {
   samePrincipal,
+  MAX_SYNC_BYTES,
   SyncError,
   type Principal,
   type SyncReview,
@@ -179,6 +180,39 @@ export class SyncCoordinator {
     } finally {
       await api.clear();
     }
+  }
+  async exportAccount(save: (text: string) => Promise<void>) {
+    const nonce = this.nonce;
+    const api = await this.api();
+    const session = parseSession(await this.send(nonce, api, '/api/auth/session'));
+    if (!session.user) throw new SyncError('authentication_required');
+    const value = await this.send(nonce, api, '/api/account/export');
+    if (nonce !== this.nonce) throw new SyncError('cancelled');
+    if (!record(value) || value.format !== 'fittrack-personal-export' || value.version !== 1 ||
+        typeof value.exportedAt !== 'string' || !Number.isFinite(Date.parse(value.exportedAt)) ||
+        !record(value.account) || value.account.id !== session.user.id ||
+        value.account.username !== session.user.username) throw new SyncError('invalid_response');
+    // Rebuild the allowlisted envelope: never forward unknown server fields to a file.
+    const text = JSON.stringify({ format: value.format, version: 1, exportedAt: value.exportedAt,
+      account: session.user, state: parseSyncState(value.state) });
+    if (new TextEncoder().encode(text).length > MAX_SYNC_BYTES + 8192)
+      throw new SyncError('response_too_large');
+    if (nonce !== this.nonce) throw new SyncError('cancelled');
+    await save(text);
+  }
+  async deleteAccount(password: string, confirmation: string) {
+    await this.deactivate();
+    const nonce = this.nonce;
+    const api = await this.api();
+    const session = parseSession(await this.send(nonce, api, '/api/auth/session'));
+    if (!session.user) throw new SyncError('authentication_required');
+    if (confirmation !== session.user.username) throw new SyncError('confirmation_required');
+    const result = parseSession(await this.send(nonce, api, '/api/account/delete', { password, confirmation }));
+    if (nonce !== this.nonce) throw new SyncError('cancelled');
+    if (result.authenticated) throw new SyncError('invalid_response');
+    await rememberSyncAccount(null);
+    await api.clear();
+    this.set({ user: null, enabled: false, phase: 'local', review: null, error: null });
   }
   private async assertLive(nonce: number, owner: Principal, epoch: string) {
     const control = await getSyncControl();

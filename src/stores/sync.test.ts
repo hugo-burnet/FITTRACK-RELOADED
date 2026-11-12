@@ -42,6 +42,71 @@ function server() {
   return { request, transport, factory };
 }
 describe('optional sync coordinator', () => {
+  it('exports only the authenticated server account without enabling sync', async () => {
+    const api = server();
+    const original = api.request.getMockImplementation()!;
+    api.request.mockImplementation(async (path, body) => path === '/api/account/export' ? {
+      format: 'fittrack-personal-export', version: 1, exportedAt: new Date().toISOString(),
+      account: session.user, state: { generation, revision: 1, snapshot: syncSnapshot() },
+    } : original(path, body));
+    const sync = new SyncCoordinator(api.factory);
+    await sync.checkSession();
+    const save = vi.fn<(text: string) => Promise<void>>(async () => {});
+    await sync.exportAccount(save);
+    expect(JSON.parse(save.mock.calls[0]![0]).account).toEqual(session.user);
+    expect((await getSyncControl()).enabled).toBe(false);
+    expect(api.request.mock.calls.some(([path]) => path === '/api/sync/publish')).toBe(false);
+    expect(await db.workouts.count()).toBe(1);
+  });
+  it('discards a delayed export reply after sign out', async () => {
+    const api = server();
+    const original = api.request.getMockImplementation()!;
+    let reply!: (value: unknown) => void;
+    api.request.mockImplementation(async (path, body) => path === '/api/account/export'
+      ? new Promise((resolve) => { reply = resolve; }) : original(path, body));
+    const sync = new SyncCoordinator(api.factory);
+    await sync.checkSession();
+    const save = vi.fn(async () => {});
+    const exporting = sync.exportAccount(save);
+    const failure = expect(exporting).rejects.toMatchObject({ code: 'cancelled' });
+    await vi.waitFor(() => expect(reply).toBeDefined());
+    await sync.signOut();
+    reply({ format: 'fittrack-personal-export', version: 1, exportedAt: new Date().toISOString(),
+      account: session.user, state: { generation, revision: 1, snapshot: syncSnapshot() } });
+    await failure;
+    expect(save).not.toHaveBeenCalled();
+  });
+  it('exports a valid compact snapshot whose indentation would exceed the response limit', async () => {
+    const api = server();
+    const original = api.request.getMockImplementation()!;
+    const snapshot = syncSnapshot();
+    snapshot.tables.settings = [{ key: 'large-setting', value: Array<number>(1_500_000).fill(0), updatedAt: 1 }];
+    api.request.mockImplementation(async (path, body) => path === '/api/account/export' ? {
+      format: 'fittrack-personal-export', version: 1, exportedAt: new Date().toISOString(),
+      account: session.user, state: { generation, revision: 1, snapshot },
+    } : original(path, body));
+    const sync = new SyncCoordinator(api.factory);
+    const save = vi.fn<(text: string) => Promise<void>>(async () => {});
+    await sync.exportAccount(save);
+    expect(save).toHaveBeenCalledOnce();
+    expect(new TextEncoder().encode(save.mock.calls[0]![0]).length).toBeLessThan(16 * 1024 * 1024);
+  });
+  it('deletes the account with sync disabled and preserves all local workouts', async () => {
+    const api = server();
+    const original = api.request.getMockImplementation()!;
+    api.request.mockImplementation(async (path, body) => path === '/api/account/delete'
+      ? { ...session, authenticated: false, user: null } : original(path, body));
+    const sync = new SyncCoordinator(api.factory);
+    await sync.checkSession();
+    await sync.deleteAccount('synthetic-password', 'alice');
+    expect(sync.getSnapshot().user).toBeNull();
+    expect((await getSyncControl()).enabled).toBe(false);
+    expect(await db.workouts.count()).toBe(1);
+    expect(api.request).toHaveBeenCalledWith('/api/account/delete', {
+      password: 'synthetic-password', confirmation: 'alice',
+    });
+    expect(api.transport.clear).toHaveBeenCalled();
+  });
   it('keeps the current process offline if saving the off switch fails', async () => {
     const api = server();
     const sync = new SyncCoordinator(api.factory);

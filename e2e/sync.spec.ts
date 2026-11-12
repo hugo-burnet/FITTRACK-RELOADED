@@ -27,8 +27,14 @@ async function mockAPI(page: Page) {
     const path = new URL(route.request().url()).pathname;
     calls.push(path);
     if (path === '/api/auth/register' || path === '/api/auth/login') connected = true;
-    if (path === '/api/auth/logout') connected = false;
-    if (path.startsWith('/api/auth/')) {
+    if (path === '/api/auth/logout' || path === '/api/account/delete') connected = false;
+    if (path === '/api/account/export') {
+      await route.fulfill({ json: { format: 'fittrack-personal-export', version: 1,
+        exportedAt: new Date().toISOString(), account: { id: '1', username: 'alice' },
+        state: { generation, revision, snapshot } } });
+      return;
+    }
+    if (path.startsWith('/api/auth/') || path === '/api/account/delete') {
       await route.fulfill({
         json: {
           authenticated: connected,
@@ -68,6 +74,29 @@ async function createAccount(page: Page) {
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
   await expect(page.getByText('Connecté : alice', { exact: true })).toBeVisible();
 }
+
+test('export et suppression sans activer la synchronisation gardent l’historique local', async ({ page }) => {
+  const api = await mockAPI(page);
+  await openApp(page);
+  await seedCompletedWorkouts(page, 1);
+  await page.goto('/#/settings/sync');
+  await createAccount(page);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Exporter mes données du serveur', exact: true }).click();
+  expect((await download).suggestedFilename()).toBe('fittrack-server-account.json');
+  await page.getByRole('button', { name: 'Supprimer mon compte', exact: true }).click();
+  const confirm = page.getByRole('button', { name: 'Supprimer définitivement mon compte', exact: true });
+  await expect(confirm).toBeDisabled();
+  await page.getByLabel('Confirmer mon identifiant', { exact: true }).fill('alice');
+  await expect(confirm).toBeDisabled();
+  await page.getByLabel('Mot de passe actuel', { exact: true }).fill('synthetic-password');
+  await expect(confirm).toBeEnabled();
+  await page.screenshot({ path: 'C:/Users/e6/Documents/homelab/backups/fittrack-account-controls.png', fullPage: true });
+  await confirm.click();
+  await expect(page.getByRole('button', { name: 'Créer un compte', exact: true })).toBeVisible();
+  expect(await storedWorkouts(page)).toHaveLength(1);
+  expect(api.calls).not.toContain('/api/sync/publish');
+});
 test('app sans compte puis inscription ultérieure : historique conservé et aucun envoi', async ({
   page,
 }) => {
@@ -176,10 +205,14 @@ test.describe('mise en page agrandie', () => {
       await page.getByRole('button', { name: /Créer un compte/ }).click();
       await page.screenshot({ path: `test-results/sync/form-${theme}.png`, fullPage: true });
       await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth > innerWidth + 1,
-      );
-      expect(overflow).toBe(false);
+      const overflow = await page.evaluate(() => {
+        if (document.documentElement.scrollWidth <= innerWidth + 1) return [];
+        return [...document.querySelectorAll('*')].filter((node) => {
+          const box = node.getBoundingClientRect(); return box.right > innerWidth + 1 || box.left < -1;
+        }).map((node) => ({ tag: node.tagName, part: node.getAttribute('data-part'),
+          text: node.textContent?.slice(0, 90), width: node.getBoundingClientRect().width }));
+      });
+      expect(overflow).toEqual([]);
       for (const input of await page.getByRole('textbox').all()) {
         const box = await input.boundingBox();
         expect(box?.height).toBeGreaterThanOrEqual(48);

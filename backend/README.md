@@ -146,8 +146,37 @@ métier. Le client doit encore valider et migrer le contenu avec son module
 de sauvegarde avant toute application. Il n’existe pas de fusion implicite.
 
 SQLite utilise `BEGIN IMMEDIATE` pour sérialiser les publications concurrentes.
-Les instantanés sont actuellement archivés par opération, sans purge ; une
-politique d’espace et de rétention est requise avant le lancement.
+Le serveur conserve un seul instantané courant par compte. Les opérations
+gardent les identifiants/empreintes nécessaires à l'idempotence, sans copie
+d'instantané, jusqu'à suppression du compte. SQLite reste en DELETE avec
+timeout 20 s et clés étrangères activées.
+
+## Export et suppression personnels
+
+`GET /api/account/export` exige une session et renvoie une enveloppe
+`fittrack-personal-export` v1 (compte et état serveur), limitée à 16 Mio +
+8192 octets, sans secrets, hash de mot de passe, invitation ou session. Ce
+fichier ne remplace pas la sauvegarde locale et ne contient pas les données
+non synchronisées. Les identifiants de propriétaire fournis sont sans effet.
+
+`POST /api/account/delete` exige CSRF, le mot de passe courant et
+`confirmation` égal à l'identifiant de la session. Budget distinct de connexion,
+révocation de toutes les sessions et cascade état/opérations. L'interface coupe
+la synchronisation avant cette demande et conserve les données locales.
+
+La suppression concerne les lignes actives ; les sauvegardes et anciens dépôts
+ne sont pas purgés par cette route. Rétention homelab configurée : 7 points
+quotidiens, 4 hebdomadaires, 12 mensuels ; les dépôts historiques conservés
+n'ont pas de purge automatique. Les demandes concernant ces copies doivent
+être traitées par l'exploitant et consignées hors de la base restaurée.
+
+Toute nouvelle `restore_sync` crée `data/account-review-required`. Cette
+version refuse connexion et inscription tant que ce fichier existe, et ferme
+les sessions authentifiées. Avant d'activer une restauration, comparer les
+comptes aux demandes de suppression conservées indépendamment, supprimer les
+comptes concernés avec la commande privée, puis retirer le marqueur et
+redémarrer le backend. Ne jamais activer une ancienne image qui ignore ce
+contrôle. La commande de restauration ne rouvre aucun accès réseau.
 
 ## Configuration future de déploiement
 

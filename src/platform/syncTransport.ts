@@ -7,6 +7,8 @@ export type SyncPath =
   | '/api/auth/login'
   | '/api/auth/register'
   | '/api/auth/logout'
+  | '/api/account/export'
+  | '/api/account/delete'
   | '/api/sync/state'
   | '/api/sync/publish';
 export interface SyncTransport {
@@ -23,11 +25,12 @@ interface NativeSync {
   clear(): Promise<void>;
 }
 const native = registerPlugin<NativeSync>('FitTrackSync');
-const GET_PATHS = new Set(['/api/auth/session', '/api/sync/state']);
+const GET_PATHS = new Set(['/api/auth/session', '/api/sync/state', '/api/account/export']);
 const POST_PATHS = new Set([
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/logout',
+  '/api/account/delete',
   '/api/sync/publish',
 ]);
 export function syncMethod(path: string, body: unknown): 'GET' | 'POST' {

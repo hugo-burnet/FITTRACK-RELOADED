@@ -7,8 +7,8 @@ import java.util.Set;
 
 final class SyncHttpPolicy {
     static final int MAX_BYTES = 16 * 1024 * 1024;
-    private static final Set<String> READS = new HashSet<>(Arrays.asList("/api/auth/session", "/api/sync/state"));
-    private static final Set<String> WRITES = new HashSet<>(Arrays.asList("/api/auth/login", "/api/auth/register", "/api/auth/logout", "/api/sync/publish"));
+    private static final Set<String> READS = new HashSet<>(Arrays.asList("/api/auth/session", "/api/sync/state", "/api/account/export"));
+    private static final Set<String> WRITES = new HashSet<>(Arrays.asList("/api/auth/login", "/api/auth/register", "/api/auth/logout", "/api/sync/publish", "/api/account/delete"));
     static URI origin(String value) {
         try {
             URI uri = new URI(value);

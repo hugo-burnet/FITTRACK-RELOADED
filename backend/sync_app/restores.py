@@ -124,10 +124,14 @@ def restore_backup(source, destination):
         generation = str(uuid.uuid4())
         _write_private(credentials / 'generation', generation)
         _write_private(credentials / 'django-key', secrets.token_urlsafe(64))
+        # Backups can predate account deletions. The operator must reconcile
+        # restored accounts with deletion requests before allowing any login.
+        _write_private(data / 'account-review-required', 'Review deleted accounts before removing this marker.')
         result = {
             'format': 'fittrack-restored-instance', 'version': 1,
             'createdAt': datetime.now(timezone.utc).isoformat(),
             'backupSha256': manifest['sha256'], 'generation': generation,
+            'accountReviewRequired': True,
         }
         _write_private(destination / 'restore.json', json.dumps(result, sort_keys=True))
         for path in (data, credentials, destination, destination.parent):

@@ -11,6 +11,7 @@ class SessionGenerationMiddleware:
     def __call__(self, request):
         if request.user.is_authenticated and (
             request.session.get('fittrack_generation') != settings.SYNC_GENERATION
+            or settings.ACCOUNT_REVIEW_REQUIRED
             or request.user.is_staff or request.user.is_superuser
         ):
             logout(request)

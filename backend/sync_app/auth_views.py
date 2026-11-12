@@ -109,6 +109,8 @@ def session(request):
 @never_cache
 @_safe
 def register(request):
+    if settings.ACCOUNT_REVIEW_REQUIRED:
+        return JsonResponse({'error': 'account_review_required'}, status=503)
     if request.user.is_authenticated:
         return JsonResponse({'error': 'logout_required'}, status=409)
     data = _body(request, {'username', 'password', 'invitation'})
@@ -130,6 +132,8 @@ def register(request):
 @never_cache
 @_safe
 def login(request):
+    if settings.ACCOUNT_REVIEW_REQUIRED:
+        return JsonResponse({'error': 'account_review_required'}, status=503)
     if request.user.is_authenticated:
         return JsonResponse({'error': 'logout_required'}, status=409)
     data = _body(request, {'username', 'password'})

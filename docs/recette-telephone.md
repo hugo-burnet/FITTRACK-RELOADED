@@ -320,3 +320,11 @@ Une séance de deux exercices au moins, dont un en barre.
 Noter : l'écran, la version affichée en haut à droite, ce qui s'affiche, ce qui était attendu. Une
 capture d'écran vaut mieux qu'une description. Ne rien corriger dans `PROGRESS.md` avant d'avoir
 retrouvé le point ici : c'est ce qui permet de savoir, la fois d'après, ce qui reste vraiment dû.
+# Compte et donnees serveur — reprise du 12 novembre 2026
+
+Sur une version contenant le nouveau client (aucun APK publie par cette reprise) :
+connecter un compte de test sans activer la sync, exporter sa copie serveur,
+puis supprimer ce compte avec identifiant et mot de passe. Verifier que les
+seances locales restent lisibles hors ligne, que ses autres sessions sont
+refusees et qu'un autre compte reste intact. Lire les limites des sauvegardes
+et le contact exploitant avant toute ouverture publique.
