@@ -11,6 +11,7 @@ import {
   type ProgramCoachContext,
 } from '@/lib/coach';
 import { coachLineFromSource } from '@/lib/coach/fromWorkout';
+import { isDeloadLine } from '@/lib/coach/sets';
 import { muscleVolumeContext, type MuscleVolumeContext } from '@/lib/coach/volume';
 import {
   pickProgramSession,
@@ -21,13 +22,18 @@ import { isWorkingSet } from '@/lib/records';
 import { alive } from './base';
 import { recordBenchmarkObjectives } from './benchmark';
 import {
+  isRefused,
   recordCoachSignals,
   reconcileFollowedLoads,
   supersedePendingRecommendations,
 } from './coachRecommendations';
 import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
 import { getCoachVolumeBounds, getDefaultLoadStepKg, getOneRepMaxFormula } from './settings';
-import { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
+import {
+  getWorkoutDetail,
+  workoutExerciseIdentityOf,
+  type WorkoutDetail,
+} from './workoutDetail';
 
 function cloneSignal(signal: CoachSignal): CoachSignal {
   return {
@@ -367,6 +373,26 @@ export async function loadCoachHistoryLines(
   return lines;
 }
 
+/** Les lignes de la séance elle-même, telles que le moteur les lit. */
+function currentCoachLines(detail: WorkoutDetail): CoachExerciseLine[] {
+  const current: CoachExerciseLine[] = [];
+  for (const line of detail.exercises) {
+    const identity = workoutExerciseIdentityOf(line);
+    if (identity.measurementType === undefined) continue;
+    current.push(
+      coachLineFromSource({
+        workout: detail.workout,
+        exerciseId: line.row.exerciseId,
+        measurementType: identity.measurementType,
+        equipment: identity.equipment ?? line.exercise?.equipment ?? 'other',
+        loadIncrementKg: line.exercise?.loadIncrementKg,
+        sets: line.sets,
+      }),
+    );
+  }
+  return current;
+}
+
 /**
  * Performance evaluation + phase ranking for the open finish screen.
  * Signals stay; load proposals follow `selectProgramAction` on the **target** week.
@@ -384,21 +410,7 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
 
   const history = await loadCoachHistoryLines(exerciseIds, { excludeWorkoutId: workoutId });
 
-  const current: CoachExerciseLine[] = [];
-  for (const line of detail.exercises) {
-    const identity = workoutExerciseIdentityOf(line);
-    if (identity.measurementType === undefined) continue;
-    current.push(
-      coachLineFromSource({
-        workout: detail.workout,
-        exerciseId: line.row.exerciseId,
-        measurementType: identity.measurementType,
-        equipment: identity.equipment ?? line.exercise?.equipment ?? 'other',
-        loadIncrementKg: line.exercise?.loadIncrementKg,
-        sets: line.sets,
-      }),
-    );
-  }
+  const current = currentCoachLines(detail);
 
   const lines = [...history, ...current];
   if (lines.length === 0) return [];
@@ -464,7 +476,19 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
     );
   }
 
-  return pickSignals(signals);
+  const picked = pickSignals(signals);
+  if (picked.length === 0) return picked;
+
+  // Une proposition refusée il y a moins de 14 jours ne se représente pas : `recordCoachSignals` la
+  // taisait déjà à l'enregistrement, mais l'écran de fin la montrait quand même, puisqu'il lit ce retour.
+  const journal = alive(
+    await db.coachRecommendations
+      .where('exerciseId')
+      .anyOf([...new Set(picked.map((signal) => signal.exerciseId))])
+      .toArray(),
+  );
+  const now = Date.now();
+  return picked.filter((signal) => !isRefused(journal, signal, now));
 }
 
 /**
@@ -478,46 +502,61 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
   if ((await db.workouts.get(workoutId))?.kind === 'benchmark') {
     return recordBenchmarkObjectives(workoutId);
   }
+  // Toutes les lectures hors du journal d'abord : la transaction ne porte que `coachRecommendations`.
   const signals = await evaluateCoachForWorkout(workoutId);
-
-  // Resolve what this session answered *before* recording new signals: a fresh
-  // objective supersedes the live one, and a superseded row can no longer be
-  // marked followed. Reversing these two lines records every success as a miss.
   const detail = await getWorkoutDetail(workoutId);
-  if (detail !== null && detail.workout.programId === undefined) {
-    const outcomes = detail.exercises
-      .map((line) => {
-        // Warm-ups are not the load you followed the advice with.
-        const working = line.sets.filter(
-          (set) => set.isCompleted === 1 && set.weight !== undefined && isWorkingSet(set),
-        );
-        const last = working[working.length - 1];
-        return {
-          exerciseId: line.row.exerciseId,
-          loadKg: last?.weight ?? Number.NaN,
-          workoutId,
-        };
-      })
-      .filter((item) => Number.isFinite(item.loadKg));
+  if (detail === null) return signals;
 
-    await reconcileFollowedLoads(outcomes);
+  // Une séance allégée n'est pas une réponse aux objectifs posés : sa charge est celle d'une décharge, pas
+  // d'un refus ni d'un suivi. Même définition que le moteur, pour que les deux ne divergent pas.
+  if (currentCoachLines(detail).some(isDeloadLine)) return signals;
+
+  const worked = detail.exercises.filter((line) =>
+    line.sets.some((set) => set.isCompleted === 1 && isWorkingSet(set)),
+  );
+
+  // Les charges tenues, une par charge distincte des séries de travail de chaque exercice : une dernière
+  // série allégée ne doit pas faire manquer l'objectif tenu aux séries précédentes.
+  const outcomes: { exerciseId: string; loadKg: number; workoutId: string }[] = [];
+  if (detail.workout.programId === undefined) {
+    for (const line of detail.exercises) {
+      for (const set of line.sets) {
+        // Warm-ups are not the load you followed the advice with.
+        if (set.isCompleted !== 1 || set.weight === undefined || !isWorkingSet(set)) continue;
+        const exerciseId = line.row.exerciseId;
+        if (!outcomes.some((o) => o.exerciseId === exerciseId && o.loadKg === set.weight)) {
+          outcomes.push({ exerciseId, loadKg: set.weight, workoutId });
+        }
+      }
+    }
   }
 
-  // Après le suivi des charges (un objectif atteint est `followed`, pas `superseded`), avant les nouvelles
-  // cartes : chaque exercice travaillé repart de cette séance, même quand le coach n'a rien de neuf à dire.
   const recommendedAt = Date.now();
-  if (detail !== null) {
+  const exerciseIds = [...new Set(detail.exercises.map((line) => line.row.exerciseId))];
+
+  // Suivi, retrait et enregistrement ensemble : un enregistrement qui échoue après le retrait laissait
+  // l'exercice sans carte du tout, l'ancienne retirée et la nouvelle perdue.
+  await db.transaction('rw', db.coachRecommendations, async () => {
+    // Finaliser deux fois la même séance (double appel, reprise après crash) ne doit pas retirer les
+    // cartes que le premier appel vient d'écrire pour les remplacer par leurs doubles.
+    const already = alive(
+      await db.coachRecommendations.where('exerciseId').anyOf(exerciseIds).toArray(),
+    ).some((row) => row.sourceWorkoutId === workoutId);
+    if (already) return;
+
+    // Resolve what this session answered *before* recording new signals: a fresh
+    // objective supersedes the live one, and a superseded row can no longer be
+    // marked followed. Reversing these two lines records every success as a miss.
+    await reconcileFollowedLoads(outcomes);
+
+    // Après le suivi des charges (un objectif atteint est `followed`, pas `superseded`), avant les nouvelles
+    // cartes : chaque exercice travaillé repart de cette séance, même quand le coach n'a rien de neuf à dire.
     await supersedePendingRecommendations(
-      detail.exercises
-        .filter((line) => line.sets.some((set) => set.isCompleted === 1 && isWorkingSet(set)))
-        .map((line) => line.row.exerciseId),
+      worked.map((line) => line.row.exerciseId),
       recommendedAt,
     );
-  }
 
-  await recordCoachSignals(signals, {
-    workoutId,
-    recommendedAt,
+    await recordCoachSignals(signals, { workoutId, recommendedAt });
   });
 
   return signals;

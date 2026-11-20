@@ -9,6 +9,7 @@ import type {
   WorkoutSet,
 } from '@/data/types';
 import { selectProgramAction } from '@/lib/coach';
+import { DAY_MS } from '@/lib/coach/constants';
 import { resetDb } from '@/test/resetDb';
 import {
   evaluateCoachForWorkout,
@@ -20,6 +21,7 @@ import {
   listRecommendationsForExercise,
   recordCoachSignals,
 } from './coachRecommendations';
+import { touch } from './base';
 import {
   activateProgram,
   createProgramDraft,
@@ -1385,5 +1387,167 @@ describe('la carte d’un exercice suit sa dernière séance', () => {
     expect((await listPendingRecommendations(['bench'])).map((row) => row.code)).toEqual([
       'returning',
     ]);
+  });
+});
+
+describe('l’enregistrement des cartes à la fin de séance', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  const loadCard = (nextLoadKg: number) => ({
+    exerciseId: exercise.id,
+    code: 'range_completed' as const,
+    severity: 1,
+    nextLoadKg,
+    evidence: [{ label: 'next_load_kg', value: nextLoadKg }],
+  });
+
+  /** Une séance hors programme dont les séries (charge × reps) sont données, plus des champs de séance. */
+  async function seedLoads(
+    id: string,
+    startedAt: number,
+    loads: readonly (readonly [number, number])[],
+    workoutFields: Partial<Workout> = {},
+  ): Promise<void> {
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Test',
+        status: 'completed',
+        startedAt,
+        endedAt: startedAt + 3_600_000,
+        durationSeconds: 3_600,
+        ...workoutFields,
+      }),
+      id,
+    };
+    const row: WorkoutExercise = {
+      ...newEntity<WorkoutExercise>({
+        workoutId: id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 120,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: `${id}-row`,
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add(row);
+    await db.workoutSets.bulkAdd(
+      loads.map(([weight, reps], order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: row.id,
+          exerciseId: exercise.id,
+          workoutId: id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight,
+          reps,
+          isCompleted: 1,
+          performedAt: startedAt + order * 120_000,
+        }),
+        id: `${id}-set-${order}`,
+      })),
+    );
+  }
+
+  async function statuses(): Promise<Record<string, number>> {
+    const counts: Record<string, number> = {};
+    for (const row of await db.coachRecommendations.toArray()) {
+      counts[row.status] = (counts[row.status] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  it('C5 — n’affiche pas une proposition refusée il y a 2 jours, l’affiche à 15 jours', async () => {
+    const now = Date.now();
+    await seedSession('w1', now - 20 * DAY_MS, 12, 100);
+    const [proposal] = await evaluateCoachForWorkout('w1');
+    expect(proposal?.nextLoadKg).toBe(102.5);
+
+    const [card] = await recordCoachSignals([proposal!], { recommendedAt: now - 30 * DAY_MS });
+    const row = (await db.coachRecommendations.get(card!.id))!;
+
+    await db.coachRecommendations.put(
+      touch(row, { status: 'dismissed', resolvedAt: now - 2 * DAY_MS }),
+    );
+    expect(await evaluateCoachForWorkout('w1')).toEqual([]);
+
+    await db.coachRecommendations.put({ ...row, status: 'dismissed', resolvedAt: now - 15 * DAY_MS });
+    expect((await evaluateCoachForWorkout('w1')).map((signal) => signal.nextLoadKg)).toEqual([
+      102.5,
+    ]);
+  });
+
+  it('C7 — une dernière série allégée ne fait pas manquer l’objectif tenu aux séries précédentes', async () => {
+    const now = Date.now();
+    await recordCoachSignals([loadCard(102.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('free', now - DAY_MS, [
+      [102.5, 8],
+      [102.5, 8],
+      [95, 10],
+    ]);
+
+    await finalizeCoachForWorkout('free');
+
+    const target = (await listRecommendationsForExercise(exercise.id)).find(
+      (row) => row.nextLoadKg === 102.5,
+    );
+    expect(target).toMatchObject({ status: 'followed', outcomeLoadKg: 102.5, outcomeWorkoutId: 'free' });
+  });
+
+  it('C2 — une séance allégée ne suit, ne retire ni n’enregistre rien', async () => {
+    const now = Date.now();
+    await recordCoachSignals([loadCard(102.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('light', now - DAY_MS, [[102.5, 12], [102.5, 12], [102.5, 12]], {
+      deloadPercent: 60,
+    });
+
+    await finalizeCoachForWorkout('light');
+
+    const rows = await listRecommendationsForExercise(exercise.id);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ status: 'pending', nextLoadKg: 102.5 });
+  });
+
+  it('C2 — la semaine de décharge d’un programme est traitée de même', async () => {
+    const now = Date.now();
+    await recordCoachSignals([loadCard(102.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('deload-week', now - DAY_MS, [[102.5, 12], [102.5, 12]], { programIsDeload: 1 });
+
+    await finalizeCoachForWorkout('deload-week');
+
+    expect(await statuses()).toEqual({ pending: 1 });
+  });
+
+  it('A2 — un enregistrement qui échoue laisse la carte d’avant en attente', async () => {
+    const now = Date.now();
+    await seedSession('w1', now - 5 * DAY_MS, 12, 100);
+    await recordCoachSignals([loadCard(100)], { recommendedAt: now - 10 * DAY_MS });
+    vi.spyOn(db.coachRecommendations, 'add').mockRejectedValue(new Error('disque plein'));
+
+    await expect(finalizeCoachForWorkout('w1')).rejects.toThrow('disque plein');
+
+    expect(await statuses()).toEqual({ pending: 1 });
+    expect((await db.coachRecommendations.toArray())[0]!.nextLoadKg).toBe(100);
+  });
+
+  it('A3 — finaliser deux fois la même séance ne laisse qu’un jeu de lignes', async () => {
+    await seedSession('w1', Date.now() - 5 * DAY_MS, 12, 100);
+
+    await finalizeCoachForWorkout('w1');
+    const once = await statuses();
+    expect(once).toEqual({ pending: 1 });
+
+    await finalizeCoachForWorkout('w1');
+    expect(await statuses()).toEqual(once);
+    expect(await db.coachRecommendations.count()).toBe(1);
   });
 });

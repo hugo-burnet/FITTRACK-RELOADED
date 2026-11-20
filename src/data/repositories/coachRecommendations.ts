@@ -1,7 +1,17 @@
 import { db } from '@/data/db';
 import type { CoachRecommendation, CoachRecommendationStatus } from '@/data/types';
 import type { CoachSignal } from '@/lib/coach';
+import { DAY_MS } from '@/lib/coach/constants';
 import { alive, newEntity, touch } from './base';
+
+/** Un refus se tait deux semaines, puis la proposition peut revenir : la forme du jour change. */
+export const DISMISSAL_DAYS = 14;
+
+/**
+ * Une carte chiffrée ne se rend plus passé ce délai : « 102,5 kg » posé il y a cinq semaines parle d'un
+ * corps et d'une barre qui ont bougé. La ligne reste `pending` en base ; seule la lecture l'écarte.
+ */
+export const PENDING_MAX_AGE_DAYS = 28;
 
 /**
  * A refusal silences *that proposal*, not the rule that produced it.
@@ -18,6 +28,25 @@ function sameProposal(a: CoachRecommendation, signal: CoachSignal): boolean {
   return a.nextLoadKg === signal.nextLoadKg;
 }
 
+/**
+ * Vrai si cette proposition a été refusée il y a moins de `DISMISSAL_DAYS` jours.
+ *
+ * Une ligne `dismissed` d'avant le correctif n'a pas de `resolvedAt` : on lit alors `updatedAt` (la
+ * date du refus, faute de mieux) plutôt que de la tenir pour refusée à jamais ou de planter.
+ */
+export function isRefused(
+  rows: readonly CoachRecommendation[],
+  signal: CoachSignal,
+  at: number,
+): boolean {
+  return rows.some(
+    (row) =>
+      row.status === 'dismissed' &&
+      sameProposal(row, signal) &&
+      at - (row.resolvedAt ?? row.updatedAt) < DISMISSAL_DAYS * DAY_MS,
+  );
+}
+
 /** Newest-first history for one exercise (fiche exercice). */
 export async function listRecommendationsForExercise(
   exerciseId: string,
@@ -31,10 +60,12 @@ export async function listRecommendationsForExercise(
 /** Pending objective per exercise — never pre-fills a set, only proposes a target. */
 export async function listPendingRecommendations(
   exerciseIds?: readonly string[],
+  now = Date.now(),
 ): Promise<CoachRecommendation[]> {
   if (exerciseIds === undefined) {
     return newestPerExercise(
       alive(await db.coachRecommendations.where('status').equals('pending').toArray()),
+      now,
     );
   }
   if (exerciseIds.length === 0) return [];
@@ -44,10 +75,11 @@ export async function listPendingRecommendations(
   const keys = [...new Set(exerciseIds)].map((id) => [id, 'pending']);
   return newestPerExercise(
     alive(await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray()),
+    now,
   );
 }
 
-function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
+function newestPerExercise(rows: CoachRecommendation[], now: number): CoachRecommendation[] {
   const best = new Map<string, CoachRecommendation>();
   for (const row of rows) {
     const current = best.get(row.exerciseId);
@@ -59,7 +91,10 @@ function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
       best.set(row.exerciseId, row);
     }
   }
-  return [...best.values()];
+  // Après le choix de la plus récente : une vieille carte ne remonte pas parce que la récente est écartée.
+  return [...best.values()].filter(
+    (row) => row.nextLoadKg === undefined || now - row.recommendedAt <= PENDING_MAX_AGE_DAYS * DAY_MS,
+  );
 }
 
 /**
@@ -139,10 +174,7 @@ export async function recordCoachSignals(
 
   await db.transaction('rw', db.coachRecommendations, async () => {
     for (const signal of signals) {
-      const dismissed = existing.some(
-        (row) => row.status === 'dismissed' && sameProposal(row, signal),
-      );
-      if (dismissed) continue;
+      if (isRefused(existing, signal, recommendedAt)) continue;
 
       // Replace prior pending for this exercise — one live objective at a time.
       // `superseded`, never `dismissed`: the user did not answer this one.
@@ -227,10 +259,13 @@ export async function reconcileFollowedLoads(
   const byExercise = new Map(pending.map((row) => [row.exerciseId, row]));
 
   await db.transaction('rw', db.coachRecommendations, async () => {
+    // Plusieurs charges peuvent concerner un exercice : une ligne ne s'écrit qu'une fois.
+    const written = new Set<string>();
     for (const outcome of outcomes) {
       const row = byExercise.get(outcome.exerciseId);
       if (row === undefined || row.nextLoadKg === undefined) continue;
-      if (row.nextLoadKg !== outcome.loadKg) continue;
+      if (row.nextLoadKg !== outcome.loadKg || written.has(row.id)) continue;
+      written.add(row.id);
       await db.coachRecommendations.put(
         touch(row, {
           status: 'followed',
