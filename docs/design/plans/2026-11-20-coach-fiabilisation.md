@@ -29,11 +29,12 @@ Dexie, aucun champ ajouté à un type stocké.
   dans ton rapport, test par test. Sinon c'est ton code qui a tort.
 - Seuils fixés par la spec : refus **14 jours**, carte chiffrée périmée à **28 jours**, reprise
   **strictement plus de 14 jours civils**.
-- **Vague 1 : quatre agents travaillent en même temps dans le même dossier, sur des fichiers
-  disjoints.** Ne modifie que les fichiers de ton groupe. **Ne commite pas, ne lance ni `git add` ni
-  `git stash` ni `git checkout`.** Ne lance que tes tests ciblés (`npx vitest run <fichiers>`), pas la
-  suite complète (dix minutes), pas le build. Un échec qui vient d'un fichier hors de ton groupe : attends
-  une minute, relance ; s'il persiste, signale-le sans y toucher.
+- **Un groupe à la fois, chacun dans son commit.** Ne modifie que les fichiers de ton groupe. Pendant
+  que tu itères, ne lance que tes tests ciblés (`npx vitest run <fichiers>`) ; la suite complète dure dix
+  minutes et c'est l'agent principal qui la lance. Avant de commiter : `npm run typecheck` et
+  `npx eslint <tes fichiers>`. Un seul commit à la fin (`git add` de tes fichiers seulement, jamais
+  `git add -A`), message en français au format `fix(coach): …`, terminé par les deux lignes
+  d'attribution données dans ta consigne. Ne pousse pas.
 - Rapport final, court : fichiers modifiés, tests ajoutés (nom + ce qu'ils prouvent), tests existants
   dont l'assertion a changé et pourquoi, sortie de la dernière exécution des tests, tout écart au plan.
 
@@ -53,7 +54,7 @@ Ce que la spec implique et qu'un test doit tenir (chacun est rattaché à son gr
 
 ---
 
-## Vague 1 — quatre groupes en parallèle
+## Vague 1 — G1, G2, G4, G5, dans cet ordre
 
 ### Groupe G1 — Enregistrement des cartes (A2, A3, C1, C2, C5, C6, C7)
 
