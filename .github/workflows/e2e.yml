@@ -23,7 +23,9 @@ concurrency:
 
 jobs:
   e2e:
-    runs-on: ubuntu-latest
+    # `ubuntu-latest` est passé à 26.04, que Playwright 1.56 ne sait pas équiper (« does not support chromium
+    # on ubuntu26.04-x64 ») : le job échouait à l'installation, avant le premier test. À relever avec Playwright.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
