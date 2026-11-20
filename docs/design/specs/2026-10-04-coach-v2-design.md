@@ -231,6 +231,13 @@ peuvent prescrire le même contrat — ce qui est comparable, c'est la prescript
 
 ### R5 — Le temps qui passe
 
+> **Amendement du 2026-11-20 (fiabilisation, E4).** L'écart se compte en **jours civils locaux**
+> (différence des minuits locaux) et la reprise demande **strictement plus** de `RETURN_GAP_DAYS`.
+> Mesuré en millisecondes, l'écart dépendait de l'heure de début de séance et du changement d'heure ;
+> et quatorze jours pile — un exercice fait toutes les deux semaines — passait pour une reprise, chaque
+> fois. Une séance sans série de travail validée n'est jamais une reprise (E5). Voir
+> `docs/design/specs/2026-11-20-coach-fiabilisation-design.md`.
+
 **Constat.** 15 retours après ≥ 14 jours en 8 semaines. Après 21 jours sans presse, le coach
 propose +5 kg comme si les séances s'enchaînaient.
 

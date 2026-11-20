@@ -141,7 +141,7 @@
 Les deux autres (cible unique, blocs entrelacés) sont corrigés ci-dessus. Ceux-ci sont des **choix de
 règle**, pas des défauts, et demandent l'historique réel pour être jugés (`coach:replay`) :
 
-- le seuil de 14 jours est un couperet pour un exercice fait tous les 14 jours ;
+- ~~le seuil de 14 jours est un couperet pour un exercice fait tous les 14 jours~~ : réglé le 2026-11-20 (strictement plus de 14 jours civils) ;
 - une baisse nette s'appelle « plateau » (la règle demande l'absence de progrès, pas l'absence de baisse) ;
 - une seule série à −1 rep deux séances de suite suffit à `range_missed` ;
 - la moyenne du RPE dilue la dernière série.
