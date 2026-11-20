@@ -8,12 +8,9 @@ import {
   updateSetValues,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import { applyCoachObjective } from '@/data/repositories/coachApply';
+import { applyCoachRecommendation } from '@/data/repositories/coachApply';
 import { bannerReading } from '@/features/benchmark/benchmarkText';
-import {
-  dismissRecommendation,
-  markRecommendationFollowed,
-} from '@/data/repositories/coachRecommendations';
+import { dismissRecommendation } from '@/data/repositories/coachRecommendations';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { DELOAD_PERCENT } from '@/lib/deload';
@@ -436,23 +433,28 @@ export function WorkoutScreen() {
                       coachByExercise.get(line.row.exerciseId) === undefined
                         ? undefined
                         : () =>
-                            void dismissRecommendation(coachByExercise.get(line.row.exerciseId)!.id)
+                            // A rejected write must leave the card up, not surface as an
+                            // unhandled rejection from a bare `void`.
+                            void dismissRecommendation(
+                              coachByExercise.get(line.row.exerciseId)!.id,
+                            ).catch(() => undefined)
                     }
                     onApplyCoach={
                       // Left undefined without a load: an observation has nothing
-                      // to write, and a dead tap target is worse than none.
+                      // to write, and a dead tap target is worse than none. Also
+                      // undefined under a deload: the session already carries its
+                      // own reduced loads, and the objective would overwrite them.
+                      deloadActive ||
                       coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
                         ? undefined
                         : async () => {
-                            const objective = coachByExercise.get(line.row.exerciseId)!;
-                            // Applying *is* accepting: the card closes on the spot
-                            // because it leaves `pending`, not by a local flag a
-                            // remount would forget.
-                            await applyCoachObjective(line.row.id, objective.nextLoadKg!);
-                            await markRecommendationFollowed(objective.id, {
-                              workoutId: workout.id,
-                              loadKg: objective.nextLoadKg,
-                            });
+                            // Applying *is* accepting, and the repository does both in
+                            // one transaction: the card closes because the row leaves
+                            // `pending` — and only if a set was really written.
+                            await applyCoachRecommendation(
+                              coachByExercise.get(line.row.exerciseId)!.id,
+                              workout.id,
+                            );
                           }
                     }
                   />
