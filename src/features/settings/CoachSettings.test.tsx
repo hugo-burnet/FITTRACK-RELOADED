@@ -82,7 +82,7 @@ describe('CoachSettings', () => {
 
       await user.clear(field);
       await user.type(field, '0');
-      expect(within(sheet).getByText(/plus grand que zéro, et d’au plus 50/)).toBeInTheDocument();
+      expect(within(sheet).getByText(/d’au moins 0,25, et d’au plus 50/)).toBeInTheDocument();
       expect(save).toBeDisabled();
 
       await user.clear(field);
@@ -90,6 +90,28 @@ describe('CoachSettings', () => {
       expect(save).toBeDisabled();
 
       expect(await getDefaultLoadStepKg()).toBe(2.5);
+    });
+
+    it('refuse un pas sous le minimum de 0,25 kg et accepte 0,25', async () => {
+      // `> 0` laissait passer 0,1 : un pas que le moteur arrondit ensuite à autre chose que ce qu'on a posé.
+      const user = userEvent.setup();
+      renderSettings();
+
+      await user.click(await screen.findByRole('button', { name: /Pas de charge par défaut/ }));
+      const sheet = await screen.findByRole('dialog', { name: 'Pas de charge par défaut' });
+      const field = within(sheet).getByRole('textbox', { name: 'Pas en kilos' });
+      const save = within(sheet).getByRole('button', { name: 'Enregistrer' });
+
+      await user.type(field, '0,1');
+      expect(save).toBeDisabled();
+      expect(await getDefaultLoadStepKg()).toBeUndefined();
+
+      await user.clear(field);
+      await user.type(field, '0,25');
+      expect(save).toBeEnabled();
+      await user.click(save);
+
+      await waitFor(async () => expect(await getDefaultLoadStepKg()).toBe(0.25));
     });
   });
 });

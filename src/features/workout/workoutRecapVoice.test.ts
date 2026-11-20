@@ -6,6 +6,11 @@ function signal(code: CoachSignalCode): CoachSignal {
   return { code, exerciseId: code, evidence: [], severity: 1 };
 }
 
+/** Une carte qui propose une charge : c'est elle seule qui autorise « hausse » ou « ajustement ». */
+function withLoad(base: CoachSignal): CoachSignal {
+  return { ...base, nextLoadKg: 52.5 };
+}
+
 describe('workoutRecapCues', () => {
   it('annonce un bilan stable quand le coach ne relève rien', () => {
     expect(workoutRecapCues([])).toEqual(['workout-recap-start', 'coach-recap-steady']);
@@ -15,9 +20,9 @@ describe('workoutRecapCues', () => {
     expect(
       workoutRecapCues([
         signal('range_satisfied'),
-        signal('range_ceiling_reached'),
-        signal('range_completed'),
-        signal('range_missed'),
+        withLoad(signal('range_ceiling_reached')),
+        withLoad(signal('range_completed')),
+        withLoad(signal('range_missed')),
         signal('intra_session_drop'),
         signal('long_rest'),
         signal('plateau'),
@@ -33,7 +38,6 @@ describe('workoutRecapCues', () => {
   });
 
   it.each([
-    ['range_missed', 'coach-recap-adjust'],
     ['intra_session_drop', 'coach-recap-fatigue'],
     ['plateau', 'coach-recap-plateau'],
   ] as const)('annonce %s avec le verdict %s', (code, expectedCue) => {
@@ -69,7 +73,7 @@ describe('workoutRecapCues', () => {
       ...signal('range_ceiling_reached'),
       evidence: [{ label: 'ceiling_grinding', value: 1 }],
     };
-    expect(workoutRecapCues([grinding, signal('range_missed')])).toEqual([
+    expect(workoutRecapCues([grinding, withLoad(signal('range_missed'))])).toEqual([
       'workout-recap-start',
       'coach-recap-adjust',
     ]);
@@ -81,5 +85,32 @@ describe('workoutRecapCues', () => {
       evidence: [{ label: 'step_needs_reps', value: 18 }],
     };
     expect(workoutRecapCues([notYet])).toEqual(['workout-recap-start', 'coach-recap-progress']);
+  });
+});
+
+describe('workoutRecapCues — la voix suit la carte', () => {
+  it('ne promet pas de hausse quand la carte ne propose aucune charge', () => {
+    expect(workoutRecapCues([signal('range_ceiling_reached')])).toEqual([
+      'workout-recap-start',
+      'coach-recap-progress',
+    ]);
+    expect(workoutRecapCues([signal('range_completed')])).not.toContain('coach-recap-increase');
+  });
+
+  it('garde la hausse quand la carte propose une charge', () => {
+    expect(workoutRecapCues([withLoad(signal('range_ceiling_reached'))])).toEqual([
+      'workout-recap-start',
+      'coach-recap-increase',
+    ]);
+  });
+
+  it('n’annonce pas d’ajustement sans charge à ajuster', () => {
+    const cues = workoutRecapCues([signal('range_missed')]);
+    expect(cues).not.toContain('coach-recap-adjust');
+    expect(cues).toEqual(['workout-recap-start', 'coach-recap-steady']);
+    expect(workoutRecapCues([withLoad(signal('range_missed'))])).toEqual([
+      'workout-recap-start',
+      'coach-recap-adjust',
+    ]);
   });
 });

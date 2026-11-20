@@ -66,8 +66,16 @@ export function WorkoutFinishScreen() {
     [active?.id],
   );
   const coachSignals = useLiveQuery(
-    async () =>
-      active == null || detail == null ? undefined : await evaluateCoachForWorkout(active.id),
+    async () => {
+      if (active == null || detail == null) return undefined;
+      try {
+        return await evaluateCoachForWorkout(active.id);
+      } catch {
+        // Une requête vive qui rejette relance l'erreur au rendu : l'écran d'erreur global remplacerait
+        // l'écran de fin, et la séance ne pourrait plus être enregistrée pour un conseil qui a échoué.
+        return [];
+      }
+    },
     [active?.id, detail?.workout.updatedAt],
   );
   useEffect(() => {

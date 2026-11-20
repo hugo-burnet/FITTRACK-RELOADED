@@ -678,6 +678,8 @@ const fr = {
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',
+    /** Same hold, followed by the constat that explains it. `{reason}` is the signal's own message. */
+    progressionDeferredWith: 'Maintien — progression différée. {reason}',
     /**
      * Overload selected add_set — volume constat, not a stripped load arrow.
      */
@@ -2011,7 +2013,7 @@ const fr = {
       'et les cibles de programme s’en servent pour tout exercice dont la fiche (« Incrément de charge ») est vide ; ' +
       'la fiche passe avant.',
     loadStepClear: 'Selon le matériel',
-    loadStepInvalid: 'Un pas est un nombre de kilos plus grand que zéro, et d’au plus 50.',
+    loadStepInvalid: 'Un pas est un nombre de kilos d’au moins 0,25, et d’au plus 50.',
     loadStepSave: 'Enregistrer',
     loadStepSaving: 'Enregistrement…',
     loadStepSaveError: 'Le pas n’a pas pu être enregistré. Le précédent reste utilisé.',

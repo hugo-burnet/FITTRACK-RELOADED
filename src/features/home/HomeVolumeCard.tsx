@@ -20,7 +20,15 @@ const MAX_LINES = 4;
  */
 export function HomeVolumeCard() {
   const navigate = useAppNavigate();
-  const lows = useLiveQuery(() => listVolumeLow(), []);
+  const lows = useLiveQuery(async () => {
+    try {
+      return await listVolumeLow();
+    } catch {
+      // Une requête vive qui rejette relance l'erreur au rendu : l'écran d'erreur global remplacerait
+      // tout l'accueil pour une carte facultative. Sans lecture, pas de carte.
+      return [];
+    }
+  }, []);
 
   if (lows === undefined || lows.length === 0) return null;
 

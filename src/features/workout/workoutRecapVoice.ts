@@ -12,6 +12,14 @@ type RecapCue =
   | 'coach-recap-fatigue'
   | 'coach-recap-plateau';
 
+/** Même lecture que la carte : `nextLoadKg`, ou à défaut la preuve `next_load_kg`. */
+function hasProposedLoad(signal: CoachSignal): boolean {
+  return (
+    signal.nextLoadKg !== undefined ||
+    signal.evidence.some((item) => item.label === 'next_load_kg')
+  );
+}
+
 /**
  * `null`: the finding asks for nothing — the plan stays as it is. It must not
  * say « plan inchangé » on its own, or a recap that also says « la charge sera
@@ -32,14 +40,17 @@ function signalCue(signal: CoachSignal): RecapCue | null {
       if (signal.evidence.some((item) => item.label === 'step_needs_reps')) {
         return 'coach-recap-progress';
       }
-      return 'coach-recap-increase';
+      // Sans charge proposée (phase qui l'a retirée, cran sans palier), « une hausse est prévue »
+      // contredirait la carte : le plafond atteint reste un progrès, rien de plus.
+      return hasProposedLoad(signal) ? 'coach-recap-increase' : 'coach-recap-progress';
     // Reprise (R5) : on refait la séance, le plan ne bouge pas. Le bilan d'un benchmark est un écran,
     // pas un résumé de séance : la voix ne le lit pas non plus.
     case 'returning':
     case 'benchmark_calibrated':
       return null;
     case 'range_missed':
-      return 'coach-recap-adjust';
+      // Pas de charge plus légère à proposer : « la charge sera ajustée » serait fausse.
+      return hasProposedLoad(signal) ? 'coach-recap-adjust' : null;
     case 'intra_session_drop':
     case 'long_rest':
       return 'coach-recap-fatigue';

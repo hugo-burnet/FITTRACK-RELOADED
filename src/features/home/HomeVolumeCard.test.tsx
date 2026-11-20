@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as coachVolume from '@/data/repositories/coachVolume';
 import { setCoachVolumeBounds } from '@/data/repositories/settings';
 import { resetDb } from '@/test/resetDb';
 import { seedMuscleWeeks } from '@/test/volumeHistory';
@@ -23,6 +24,18 @@ const train = () => seedMuscleWeeks('lats', [6, 6, 6, 6, 6, 6]);
 
 describe('HomeVolumeCard', () => {
   beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
+
+  it('ne rend rien, sans exception, quand la lecture du volume rejette', async () => {
+    // Une requête vive qui rejette relance l'erreur au rendu : l'écran d'accueil entier cédait la place à
+    // l'écran d'erreur pour une carte facultative.
+    const read = vi.spyOn(coachVolume, 'listVolumeLow').mockRejectedValue(new Error('lecture impossible'));
+    const { container } = renderCard();
+
+    await waitFor(() => expect(read).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(container).toBeEmptyDOMElement();
+  });
 
   it('ne rend rien tant que la personne n’a posé aucun plancher, même à deux séries par semaine', async () => {
     await train();
