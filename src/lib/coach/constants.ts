@@ -16,7 +16,7 @@ export const CONSOLIDATION_RPE_DROP = 0.5;
 export const AT_FAILURE_RPE = 9.5;
 /** RPE comes by halves; a mean can land a hair under a threshold in floats. */
 export const RPE_EPSILON = 1e-9;
-/** Spec coach v2, R5 (décision Q4): from this gap on, a session is a comeback. */
+/** Spec coach v2, R5 (décision Q4), amendée le 2026-11-20 : au-delà de ce nombre de jours civils locaux — strictement —, une séance est une reprise. */
 export const RETURN_GAP_DAYS = 14;
 export const DAY_MS = 86_400_000;
 

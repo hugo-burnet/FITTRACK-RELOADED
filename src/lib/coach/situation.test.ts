@@ -94,7 +94,7 @@ describe('evaluateSituation — one case per situation', () => {
     expect(situationAfter(latest, before)).toBe('floor_missed');
   });
 
-  it('returning: the first session after 14 days or more, even at the ceiling', () => {
+  it('returning: the first session after more than 14 civil days, even at the ceiling', () => {
     const before = session({ workoutId: 'w1', day: 0, reps: [12, 12, 12], weight: 70, target: [10, 12] });
     const latest = session({ workoutId: 'w2', day: 21, reps: [12, 12, 12], weight: 70, target: [10, 12] });
     expect(situationAfter(latest, before)).toBe('returning');

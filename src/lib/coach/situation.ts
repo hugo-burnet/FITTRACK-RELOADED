@@ -17,7 +17,7 @@ import type { CoachEvaluateOptions, CoachExerciseLine, CoachSignalCode } from '.
  * reads as `floor_missed`.
  */
 export type CoachSituation =
-  /** First session after a break of `RETURN_GAP_DAYS` or more: consolidate before climbing. */
+  /** First session after a break of more than `RETURN_GAP_DAYS` civil days: consolidate before climbing. */
   | 'returning'
   /** The floor of the range missed twice at the same load: one step back is on the table. */
   | 'floor_missed'
