@@ -3,11 +3,17 @@ import { db } from '@/data/db';
 import type { CoachSignal } from '@/lib/coach';
 import { resetDb } from '@/test/resetDb';
 import { DAY_MS } from '@/lib/coach/constants';
-import { touch } from './base';
+import { newEntity, touch } from './base';
+import { applyCoachRecommendation } from './coachApply';
+import { saveArchivedWorkout, deleteArchivedWorkout } from './history';
+import { deleteWorkout, discardWorkout } from './workoutLifecycle';
+import { seedWorkout } from '@/test/factories';
+import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import {
   DISMISSAL_DAYS,
   PENDING_MAX_AGE_DAYS,
   dismissRecommendation,
+  markRecommendationFollowed,
   isRefused,
   listPendingRecommendations,
   listRecommendationsForExercise,
@@ -319,5 +325,148 @@ describe('une carte chiffrée périme à 28 jours', () => {
     const drop: CoachSignal = { exerciseId: 'bench', code: 'intra_session_drop', severity: 20, evidence: [] };
     await recordCoachSignals([drop], { recommendedAt: T });
     expect(await listPendingRecommendations(['bench'], T + 60 * DAY_MS)).toHaveLength(1);
+  });
+});
+
+describe('une séance abandonnée, supprimée ou corrigée ne laisse pas de carte fausse', () => {
+  beforeEach(resetDb);
+
+  const load: CoachSignal = {
+    exerciseId: 'bench',
+    code: 'range_completed',
+    severity: 40,
+    nextLoadKg: 102.5,
+    evidence: [{ label: 'next_load_kg', value: 102.5 }],
+  };
+
+  /** Séance en cours avec une série non validée sur le développé couché. */
+  async function seedActiveWorkout(): Promise<string> {
+    const workout = newEntity<Workout>({
+      routineId: '',
+      name: 'Live',
+      status: 'active',
+      startedAt: NOW,
+      endedAt: 0,
+      durationSeconds: 0,
+    });
+    const row = newEntity<WorkoutExercise>({
+      workoutId: workout.id,
+      exerciseId: 'bench',
+      order: 0,
+      supersetGroup: 0,
+      restSeconds: 120,
+    });
+    await db.exercises.add({
+      ...newEntity<Exercise>({
+        name: 'Développé couché',
+        primaryMuscle: 'chest',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isCustom: 0,
+        isUnilateral: 0,
+      }),
+      id: 'bench',
+    });
+    await db.workouts.add(workout);
+    await db.workoutExercises.add(row);
+    await db.workoutSets.add(
+      newEntity<WorkoutSet>({
+        workoutExerciseId: row.id,
+        exerciseId: 'bench',
+        workoutId: workout.id,
+        order: 0,
+        setType: 'normal',
+        side: 'both',
+        reps: 5,
+        isCompleted: 0,
+        performedAt: 0,
+      }),
+    );
+    return workout.id;
+  }
+
+  it('C3 : abandonner la séance où un objectif a été appliqué le remet en attente', async () => {
+    const workoutId = await seedActiveWorkout();
+    const [rec] = await recordCoachSignals([load], { workoutId: 'previous', recommendedAt: NOW });
+    expect(await applyCoachRecommendation(rec!.id, workoutId)).toBe(1);
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('followed');
+
+    await discardWorkout(workoutId);
+
+    const stored = await db.coachRecommendations.get(rec!.id);
+    expect(stored?.status).toBe('pending');
+    // Les clés disparaissent, elles ne valent pas `undefined`.
+    expect(stored).not.toHaveProperty('resolvedAt');
+    expect(stored).not.toHaveProperty('outcomeWorkoutId');
+    expect(stored).not.toHaveProperty('outcomeLoadKg');
+    expect((await listPendingRecommendations(['bench'])).map((row) => row.id)).toEqual([rec!.id]);
+  });
+
+  it('C3 : abandonner une séance ne rouvre pas une carte suivie dans une autre séance', async () => {
+    const workoutId = await seedActiveWorkout();
+    const [rec] = await recordCoachSignals([load], { recommendedAt: NOW });
+    await markRecommendationFollowed(rec!.id, { workoutId: 'autre', loadKg: 102.5 });
+
+    await discardWorkout(workoutId);
+
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('followed');
+  });
+
+  it('C4 : supprimer la séance source retire sa carte en attente, pas celle d’une autre séance', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - DAY_MS, sets: [[100, 5]] });
+    const [fromSource] = await recordCoachSignals([load], { workoutId: source.id, recommendedAt: NOW });
+    const other = { ...load, exerciseId: 'squat' };
+    const [fromOther] = await recordCoachSignals([other], { workoutId: 'autre', recommendedAt: NOW });
+
+    await deleteWorkout(source.id);
+
+    const stored = await db.coachRecommendations.get(fromSource!.id);
+    expect(stored?.status).toBe('superseded');
+    expect(stored?.resolvedAt).toBeGreaterThan(0);
+    expect((await db.coachRecommendations.get(fromOther!.id))?.status).toBe('pending');
+  });
+
+  it('C4 : une carte d’une autre séance du même exercice n’est pas touchée', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - 2 * DAY_MS, sets: [[100, 5]] });
+    const [rec] = await recordCoachSignals([load], { workoutId: 'plus-recente', recommendedAt: NOW });
+
+    await deleteWorkout(source.id);
+
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('pending');
+  });
+
+  it('C4 : corriger la séance source retire sa carte en attente', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - DAY_MS, sets: [[100, 5]] });
+    const [rec] = await recordCoachSignals([load], { workoutId: source.id, recommendedAt: NOW });
+    const row = (await db.workoutExercises.where('workoutId').equals(source.id).toArray())[0]!;
+    const set = (await db.workoutSets.where('workoutId').equals(source.id).toArray())[0]!;
+
+    await saveArchivedWorkout({
+      workoutId: source.id,
+      name: source.name,
+      startedAt: source.startedAt,
+      durationSeconds: 3600,
+      exercises: [
+        {
+          id: row.id,
+          exerciseId: 'bench',
+          supersetGroup: 0,
+          restSeconds: 120,
+          sets: [{ id: set.id, setType: 'normal', side: 'both', weight: 90, reps: 5 }],
+        },
+      ],
+    });
+
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('superseded');
+  });
+
+  it('C4 : supprimer une séance de l’historique retire aussi sa carte', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - DAY_MS, sets: [[100, 5]] });
+    const [rec] = await recordCoachSignals([load], { workoutId: source.id, recommendedAt: NOW });
+
+    await deleteArchivedWorkout(source.id);
+
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('superseded');
   });
 });

@@ -155,6 +155,67 @@ export async function supersedePendingRecommendations(
 }
 
 /**
+ * Remet en attente les cartes qu'une séance avait fait passer `followed`, quand cette séance disparaît.
+ *
+ * Abandonner une séance où l'objectif avait été appliqué laissait la carte « suivie » alors que rien n'a
+ * été tenu : le coach croyait le conseil pris et ne le reproposait plus. Les champs de résultat sont
+ * retirés (clés absentes, pas `undefined`) : ils décrivaient une séance qui n'existe plus.
+ * À appeler dans la transaction de l'appelant, qui doit lister `db.coachRecommendations`.
+ */
+export async function reopenRecommendationsFollowedBy(
+  workoutId: string,
+  exerciseIds: readonly string[],
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'followed']);
+  const followed = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.outcomeWorkoutId === workoutId);
+  if (followed.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    followed.map((row) => {
+      const reopened = touch(row, { status: 'pending' as CoachRecommendationStatus });
+      delete reopened.resolvedAt;
+      delete reopened.outcomeWorkoutId;
+      delete reopened.outcomeLoadKg;
+      return reopened;
+    }),
+  );
+}
+
+/**
+ * Retire les cartes en attente nées d'une séance qu'on supprime ou qu'on corrige.
+ *
+ * Une carte « 102,5 kg » calculée sur une séance effacée, ou sur des charges qu'on vient de rectifier,
+ * parle d'une performance qui n'existe plus telle quelle. `superseded`, jamais `dismissed` : l'utilisateur
+ * n'a pas répondu. Les cartes issues d'une autre séance du même exercice ne bougent pas.
+ * À appeler dans la transaction de l'appelant, qui doit lister `db.coachRecommendations`.
+ */
+export async function retirePendingRecommendationsFrom(
+  workoutId: string,
+  exerciseIds: readonly string[],
+  at: number,
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'pending']);
+  const pending = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.sourceWorkoutId === workoutId);
+  if (pending.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    pending.map((row) =>
+      touch(row, { status: 'superseded' as CoachRecommendationStatus, resolvedAt: at }),
+    ),
+  );
+}
+
+/**
  * Persist signals the user will see. Skips a proposal already dismissed with the
  * same exercise + code + next load so a refused tip does not come back.
  */
