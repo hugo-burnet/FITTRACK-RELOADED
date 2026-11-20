@@ -13,6 +13,7 @@ import {
   effectiveCeiling,
   isDeloadLine,
   judgedSets,
+  prescribedSets,
   progressionSets,
   roundRpe,
   sessionEffort,
@@ -279,9 +280,11 @@ export function rangePartitionSignal(
   // Lot 17 se lit sur les séries que le Lot 18 juge progressables — ni
   // échauffement, ni drop set, ni série allégée à dessein. Depuis le coach v2,
   // la série à l'échec compte pour le plafond mais pas pour le bas de fourchette.
-  const working = progressionSets(line);
+  // Seules les séries qui portent une prescription la jugent : une série ajoutée sans cible est une
+  // série en plus (`prescribedSets`).
+  const working = prescribedSets(progressionSets(line));
   if (working.length === 0) return undefined;
-  const judged = judgedSets(line);
+  const judged = prescribedSets(judgedSets(line));
   const { ceiling, satisfied } = rangeFlags(working, judged);
   if (!ceiling && !satisfied) return undefined;
 
@@ -307,7 +310,11 @@ export function rangePartitionSignal(
 
   // ceiling
   const ceilingReps = effectiveCeiling(working[0]!)!;
-  const lastWeight = [...working].reverse().find((set) => set.weight !== undefined)?.weight;
+  // Une charge non finie (`NaN` d'un import abîmé) n'est pas une charge de référence : « → NaN kg » n'est
+  // pas une consigne. Le constat reste, sans proposition chiffrée.
+  const lastWeight = [...working]
+    .reverse()
+    .find((set) => set.weight !== undefined && Number.isFinite(set.weight))?.weight;
   const evidence: CoachEvidence[] = [
     { label: 'working_sets', value: working.length },
     { label: 'target_reps_max', value: ceilingReps },
@@ -394,7 +401,7 @@ export function rangePartitionSignal(
 function floorMiss(
   line: CoachExerciseLine,
 ): { loadKg: number; lowReps: number; floor: number } | undefined {
-  const working = judgedSets(line);
+  const working = prescribedSets(judgedSets(line));
   if (working.length === 0) return undefined;
 
   let worst: { reps: number; floor: number } | undefined;
@@ -407,7 +414,9 @@ function floorMiss(
   }
   if (worst === undefined) return undefined;
 
-  const loadKg = [...working].reverse().find((set) => set.weight !== undefined)?.weight;
+  const loadKg = [...working]
+    .reverse()
+    .find((set) => set.weight !== undefined && Number.isFinite(set.weight))?.weight;
   if (loadKg === undefined) return undefined;
 
   return { loadKg, lowReps: worst.reps, floor: worst.floor };

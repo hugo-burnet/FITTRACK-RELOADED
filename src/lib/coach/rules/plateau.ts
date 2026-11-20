@@ -5,6 +5,7 @@ import {
   completedWorkingSets,
   isDeloadLine,
   judgedSets,
+  prescribedSets,
   progressionSets,
   roundRpe,
   sessionEffort,
@@ -55,6 +56,13 @@ function mostRepsAtLoad(line: CoachExerciseLine, load: number): number | undefin
   return most;
 }
 
+/** Total reps of a session's working sets at exactly `load`; 0 when none were worked there. */
+function repsAtLoad(line: CoachExerciseLine, load: number): number {
+  return completedWorkingSets(line.sets)
+    .filter((set) => set.weight === load)
+    .reduce((sum, set) => sum + (set.reps ?? 0), 0);
+}
+
 /**
  * Une séance dont chaque série a touché le haut de sa prescription.
  *
@@ -63,7 +71,12 @@ function mostRepsAtLoad(line: CoachExerciseLine, load: number): number | undefin
  * le même 1RM — c'est une fourchette respectée, pas une stagnation.
  */
 function isCappedSession(line: CoachExerciseLine): boolean {
-  return rangeFlags(progressionSets(line), judgedSets(line)).ceiling;
+  // Les mêmes séries que `rangePartitionSignal` : sinon une séance dont le plafond est lu comme atteint
+  // par la carte passerait ici pour une séance plate.
+  return rangeFlags(
+    prescribedSets(progressionSets(line)),
+    prescribedSets(judgedSets(line)),
+  ).ceiling;
 }
 
 /**
@@ -143,6 +156,19 @@ export function plateauSignal(
     if (newestReps !== undefined && priorReps.length > 0 && newestReps > Math.max(...priorReps)) {
       return undefined;
     }
+
+    // **Plus de répétitions au total à la même charge est un progrès aussi.** `10 · 9 · 8` → `10 · 10 · 8`
+    // → `10 · 10 · 9` ne bat jamais le record d'une série (10 partout) ni le 1RM estimé, et passait pour
+    // trois séances plates alors que le volume à cette charge montait de deux répétitions. Cette garde
+    // s'ajoute aux précédentes, elle n'en remplace aucune.
+    const newestTotal = repsAtLoad(window[0]!, newestLoad);
+    // Seules comptent les séances précédentes qui ont travaillé à cette charge : une charge qui baisse
+    // (105 → 100 → 95) n'a rien à battre, et reste un plateau.
+    const priorTotals = window
+      .slice(1)
+      .map((line) => repsAtLoad(line, newestLoad))
+      .filter((total) => total > 0);
+    if (priorTotals.length > 0 && newestTotal > Math.max(...priorTotals)) return undefined;
   }
 
   // **Moins d'effort pour le même travail est un progrès** (R1). Le 1RM estimé ne

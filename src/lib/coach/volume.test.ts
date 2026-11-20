@@ -60,13 +60,57 @@ describe('la semaine glissante', () => {
   });
 
   it('laisse sortir la séance d’il y a sept jours : la fenêtre est ouverte du côté du passé', () => {
-    const entries = [entry(NOW - 7 * 86_400_000, 'chest', 5), entry(NOW - 7 * 86_400_000 + 1, 'chest', 3)];
+    // E8 : la borne est le minuit local d'il y a six jours (le vendredi, NOW étant un jeudi à midi),
+    // et non plus NOW − 7 × 24 h — le jeudi d'avant à midi est donc dehors, le vendredi à minuit dedans.
+    const entries = [
+      entry(NOW - 7 * 86_400_000, 'chest', 5),
+      entry(new Date(2026, 9, 9).getTime(), 'chest', 3),
+    ];
 
     expect(rollingWeekSets(entries, 'chest', NOW)).toBe(3);
   });
 
   it('ne lit pas l’avenir', () => {
     expect(rollingWeekSets([entry(NOW + 60_000, 'chest', 6)], 'chest', NOW)).toBe(0);
+  });
+
+  /**
+   * Sept jours civils, aujourd'hui compris (coach, E8). En 7 × 24 h, une séance à 8 h après des séances
+   * du lundi à 19 h comptait le lundi d'avant : deux séances le même jour de la semaine, double.
+   */
+  it('ne compte pas le lundi précédent quand on est lundi à 8 h et qu’on s’entraîne le lundi à 19 h', () => {
+    const mondayMorning = new Date(2026, 9, 12, 8).getTime();
+    const lastMondayEvening = new Date(2026, 9, 5, 19).getTime();
+    const entries = [
+      entry(lastMondayEvening, 'chest', 4),
+      entry(new Date(2026, 9, 12, 7).getTime(), 'chest', 3),
+    ];
+
+    // Le lundi d'avant est à moins de 7 × 24 h : c'est ce que l'ancienne fenêtre comptait à tort.
+    expect(lastMondayEvening).toBeGreaterThan(mondayMorning - 7 * 86_400_000);
+    expect(rollingWeekSets(entries, 'chest', mondayMorning)).toBe(3);
+  });
+
+  it('commence au minuit local d’il y a six jours, borne comprise', () => {
+    const sixDaysAgoMidnight = new Date(2026, 9, 9).getTime(); // le vendredi, NOW étant un jeudi
+    const entries = [
+      entry(sixDaysAgoMidnight - 1, 'chest', 5),
+      entry(sixDaysAgoMidnight, 'chest', 3),
+    ];
+
+    expect(rollingWeekSets(entries, 'chest', NOW)).toBe(3);
+  });
+
+  it('compte sept jours civils même quand un changement d’heure en raccourcit un', () => {
+    // La France repasse à l'heure d'hiver le dimanche 25 octobre 2026 : la borne du lundi 26 est le mardi
+    // 20 à minuit, soit six jours civils plus tôt mais 6 × 24 h + 1 h de plus en millisecondes.
+    const now = new Date(2026, 9, 26, 8).getTime();
+    const entries = [
+      entry(new Date(2026, 9, 19, 19).getTime(), 'chest', 4),
+      entry(new Date(2026, 9, 20, 0).getTime(), 'chest', 3),
+    ];
+
+    expect(rollingWeekSets(entries, 'chest', now)).toBe(3);
   });
 });
 

@@ -2201,3 +2201,205 @@ describe('R6 — le plafond de volume du muscle', () => {
     expect(ev.volumeWithheld).toBeUndefined();
   });
 });
+
+/**
+ * Fiabilisation du coach, lot E (moteur) : des défauts de lecture, pas de politique. Chaque cas décrit
+ * une séance réussie que le moteur lisait comme un échec.
+ */
+describe('fiabilisation du moteur (lot E)', () => {
+  const DAY = 86_400_000;
+  const noTarget = { targetReps: undefined, targetRepsMax: undefined } as const;
+
+  const session = (
+    id: string,
+    startedAt: number,
+    reps: number[],
+    extra: Partial<CoachSetInput> = {},
+  ): CoachExerciseLine =>
+    line({
+      exerciseId: 'bench',
+      workoutId: id,
+      workoutStartedAt: startedAt,
+      sets: reps.map((value, order) =>
+        set({
+          order,
+          reps: value,
+          weight: 100,
+          performedAt: startedAt + order * 120_000,
+          ...extra,
+        }),
+      ),
+    });
+
+  const codes = (ev: ReturnType<typeof evaluatePerformance>) => ev.signals.map((s) => s.code);
+
+  describe('E2 : une série sans cible est une série en plus', () => {
+    it('ne rend pas le plafond illisible : 12 · 12 · 12 ciblées + une série libre à 6', () => {
+      const latest = session('w2', t0, [12, 12, 12]);
+      latest.sets.push(
+        set({ order: 3, reps: 6, weight: 100, ...noTarget, performedAt: t0 + 3 * 120_000 }),
+      );
+
+      const ev = evaluatePerformance(latest);
+      const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+
+      expect(ceiling).toBeDefined();
+      expect(ceiling!.nextLoadKg).toBeGreaterThan(100);
+    });
+
+    it('ne change pas le contrat : deux séances 7 · 7 · 7, la seconde avec une série libre', () => {
+      const earlier = session('w1', t0 - DAY, [7, 7, 7]);
+      const latest = session('w2', t0, [7, 7, 7]);
+      latest.sets.push(
+        set({ order: 3, reps: 10, weight: 100, ...noTarget, performedAt: t0 + 3 * 120_000 }),
+      );
+
+      const ev = evaluatePerformance(latest, [earlier]);
+
+      expect(codes(ev)).toContain('range_missed');
+    });
+
+    it('lit comme avant une séance dont aucune série n’a de cible', () => {
+      const free = (id: string, startedAt: number, reps: number[]) =>
+        session(id, startedAt, reps, noTarget);
+
+      const ev = evaluatePerformance(free('w2', t0, [12, 12, 12]), [free('w1', t0 - DAY, [7, 7, 7])]);
+
+      expect(codes(ev)).not.toContain('range_ceiling_reached');
+      expect(codes(ev)).not.toContain('range_satisfied');
+      expect(codes(ev)).not.toContain('range_missed');
+    });
+  });
+
+  describe('E3 : plus de répétitions au total à la même charge est un progrès', () => {
+    it('ne déclare pas de plateau sur 10 · 9 · 8 → 10 · 10 · 8 → 10 · 10 · 9', () => {
+      const history = [
+        session('w1', t0 - 14 * DAY, [10, 9, 8]),
+        session('w2', t0 - 7 * DAY, [10, 10, 8]),
+      ];
+      const ev = evaluatePerformance(session('w3', t0, [10, 10, 9]), history);
+
+      expect(codes(ev)).not.toContain('plateau');
+      expect(ev.allowedActions).toContain('increase_reps');
+    });
+
+    it('contre-épreuve : 10 · 9 · 8 trois fois reste un plateau', () => {
+      const history = [
+        session('w1', t0 - 14 * DAY, [10, 9, 8]),
+        session('w2', t0 - 7 * DAY, [10, 9, 8]),
+      ];
+      const ev = evaluatePerformance(session('w3', t0, [10, 9, 8]), history);
+
+      expect(codes(ev)).toContain('plateau');
+    });
+  });
+
+  describe('E4 : la reprise se compte en jours civils locaux, strictement au-delà de 14', () => {
+    const at = (year: number, month: number, day: number, hour: number) =>
+      new Date(year, month, day, hour).getTime();
+    const worked = (id: string, startedAt: number) => session(id, startedAt, [10, 10, 10]);
+
+    it('14 jours civils, de 19 h à 8 h : ce n’est pas une pause', () => {
+      const ev = evaluatePerformance(worked('w2', at(2026, 7, 15, 8)), [
+        worked('w1', at(2026, 7, 1, 19)),
+      ]);
+
+      expect(codes(ev)).not.toContain('returning');
+    });
+
+    it('15 jours civils, de 8 h à 8 h : une reprise de 15 jours', () => {
+      const ev = evaluatePerformance(worked('w2', at(2026, 7, 16, 8)), [
+        worked('w1', at(2026, 7, 1, 8)),
+      ]);
+
+      expect(ev.signals.find((s) => s.code === 'returning')?.evidence).toContainEqual({
+        label: 'gap_days',
+        value: 15,
+      });
+    });
+
+    it('14 jours civils à cheval sur le retour à l’heure d’hiver (14 × 24 h + 1 h) : pas une reprise', () => {
+      const ev = evaluatePerformance(worked('w2', at(2026, 10, 1, 8)), [
+        worked('w1', at(2026, 9, 18, 8)),
+      ]);
+
+      expect(codes(ev)).not.toContain('returning');
+    });
+
+    it('15 jours civils à cheval sur le passage à l’heure d’été (15 × 24 h − 1 h) : une reprise', () => {
+      const ev = evaluatePerformance(worked('w2', at(2026, 3, 6, 8)), [
+        worked('w1', at(2026, 2, 22, 8)),
+      ]);
+
+      expect(ev.signals.find((s) => s.code === 'returning')?.evidence).toContainEqual({
+        label: 'gap_days',
+        value: 15,
+      });
+    });
+  });
+
+  describe('E5 : pas de reprise sans série de travail validée', () => {
+    it('une dernière séance faite 20 jours après, réduite à un échauffement, ne dit pas « reprise »', () => {
+      const latest = line({
+        exerciseId: 'bench',
+        workoutId: 'w2',
+        workoutStartedAt: t0,
+        sets: [set({ order: 0, reps: 10, weight: 40, setType: 'warmup', ...noTarget })],
+      });
+
+      const ev = evaluatePerformance(latest, [session('w1', t0 - 20 * DAY, [10, 10, 10])]);
+
+      expect(codes(ev)).not.toContain('returning');
+    });
+  });
+
+  describe('E6 : une fourchette inversée se lit comme une cible unique', () => {
+    it('targetReps 10, targetRepsMax 8, 10 · 10 · 10 : plafond atteint, jamais bas manqué', () => {
+      const inverted = { targetReps: 10, targetRepsMax: 8 };
+      const ev = evaluatePerformance(session('w2', t0, [10, 10, 10], inverted), [
+        session('w1', t0 - DAY, [10, 10, 10], inverted),
+      ]);
+
+      expect(codes(ev)).toContain('range_ceiling_reached');
+      expect(codes(ev)).not.toContain('range_missed');
+      expect(ev.signals.find((s) => s.code === 'range_ceiling_reached')?.evidence).toContainEqual({
+        label: 'target_reps_max',
+        value: 10,
+      });
+    });
+
+    it('9 · 9 · 9 sous une cible inversée de 10 ne touche pas un « plafond » de 8', () => {
+      const ev = evaluatePerformance(
+        session('w1', t0, [9, 9, 9], { targetReps: 10, targetRepsMax: 8 }),
+      );
+
+      expect(codes(ev)).not.toContain('range_ceiling_reached');
+    });
+  });
+
+  describe('E7 : une charge non finie ne produit jamais de proposition chiffrée', () => {
+    it('plafond atteint avec weight NaN : le constat reste, sans charge ni preuve NaN', () => {
+      const ev = evaluatePerformance(session('w1', t0, [12, 12, 12], { weight: Number.NaN }));
+      const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
+
+      expect(ceiling).toBeDefined();
+      expect(ceiling!.nextLoadKg).toBeUndefined();
+      const labels = ceiling!.evidence.map((item) => item.label);
+      expect(labels).not.toContain('next_load_kg');
+      expect(labels).not.toContain('current_load_kg');
+      expect(ceiling!.evidence.every((item) => Number.isFinite(item.value))).toBe(true);
+    });
+
+    it('bas manqué deux fois avec weight NaN : aucun range_missed chiffré', () => {
+      const nan = { weight: Number.NaN };
+      const ev = evaluatePerformance(session('w2', t0, [7, 7, 7], nan), [
+        session('w1', t0 - DAY, [7, 7, 7], nan),
+      ]);
+
+      expect(ev.signals.find((s) => s.code === 'range_missed')?.nextLoadKg).toBeUndefined();
+      expect(ev.signals.every((s) => s.evidence.every((item) => Number.isFinite(item.value)))).toBe(
+        true,
+      );
+    });
+  });
+});

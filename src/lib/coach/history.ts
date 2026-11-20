@@ -1,5 +1,5 @@
 import { DAY_MS, RETURN_GAP_DAYS } from './constants';
-import { completedWorkingSets } from './sets';
+import { completedWorkingSets, prescribedSets } from './sets';
 import type { CoachExerciseLine, CoachSetInput } from './types';
 
 /**
@@ -102,33 +102,57 @@ export function sortNewestFirst(lines: readonly CoachExerciseLine[]): CoachExerc
  */
 export function contractKey(line: CoachExerciseLine): string {
   const pairs = new Set(
-    completedWorkingSets(line.sets).map(
+    prescribedSets(completedWorkingSets(line.sets)).map(
       (set) => `${set.targetReps ?? ''}-${set.targetRepsMax ?? ''}`,
     ),
   );
   return [...pairs].sort().join('|');
 }
 
+/** Midnight of the local calendar day `timestamp` falls on. */
+function localMidnight(timestamp: number): number {
+  const date = new Date(timestamp);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+}
+
+/**
+ * Whole local calendar days between two instants. `Math.round` because two midnights are 23 or 25 hours
+ * apart across a clock change: dividing by 24 h would count 14 civil days as 13,96 or 14,04.
+ */
+function civilDaysBetween(newer: number, older: number): number {
+  return Math.round((localMidnight(newer) - localMidnight(older)) / DAY_MS);
+}
+
 /**
  * The sessions since the latest comeback, and the gap that opened it when the
- * comeback is the session under review (spec coach v2, R5).
+ * comeback is the session under review (spec coach v2, R5, amendée par la
+ * fiabilisation E4).
  *
  * The gap is measured from the previous session of the exercise *whatever its
  * contract*: a week in 12–15 between two weeks in 8–12 is not a break. Rules
  * that compare sessions do not reach across a break — three weeks off is not
  * the same lifter, and a plateau or a missed floor from before says nothing
  * about after.
+ *
+ * **Des jours civils locaux, et strictement plus de 14.** Mesurée en millisecondes, la pause dépendait de
+ * l'heure de début de séance (19 h le 1er, 8 h le 15 : 13 jours et 13 heures, mais 14 jours civils à
+ * l'inverse) et d'un changement d'heure ; et un exercice qui revient toutes les deux semaines, quatorze
+ * jours pile, passait pour une reprise alors que ce n'est pas une pause.
  */
 export function sinceLatestReturn(newestFirst: readonly CoachExerciseLine[]): {
   lines: CoachExerciseLine[];
   gapDays: number | undefined;
 } {
   for (let i = 0; i + 1 < newestFirst.length; i += 1) {
-    const gap = newestFirst[i]!.workoutStartedAt - newestFirst[i + 1]!.workoutStartedAt;
-    if (gap >= RETURN_GAP_DAYS * DAY_MS) {
+    const gapDays = civilDaysBetween(
+      newestFirst[i]!.workoutStartedAt,
+      newestFirst[i + 1]!.workoutStartedAt,
+    );
+    if (gapDays > RETURN_GAP_DAYS) {
       return {
         lines: newestFirst.slice(0, i + 1),
-        gapDays: i === 0 ? Math.floor(gap / DAY_MS) : undefined,
+        gapDays: i === 0 ? gapDays : undefined,
       };
     }
   }
