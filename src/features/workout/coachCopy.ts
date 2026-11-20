@@ -263,9 +263,11 @@ export function coachSignalMessage(signal: SignalLike): string {
     });
   }
 
-  // Progression without an authorized increase: the card is the hold, not a load step.
+  // Progression without an authorized increase: the card is the hold, not a load step. The hold prefixes
+  // the constat instead of replacing it: alone it said « Maintien » without the reps, the RPE or the return
+  // that explain why.
   if (hasFlag(signal, FLAG_PROGRESSION_DEFERRED)) {
-    return t('coach.progressionDeferred');
+    return t('coach.progressionDeferredWith', { reason: baseSignalMessage(signal) });
   }
 
   const reason = baseSignalMessage(signal);

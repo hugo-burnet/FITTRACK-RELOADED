@@ -112,6 +112,21 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Plus de carte « Reprise » périmée.** Après une carte « Reprise après N jours », refaire l'exercice
       dans une autre routine une séance sans rien de particulier : à la séance suivante, la carte n'est
       plus là. Un exercice absent de la séance garde la sienne. *(cette session)*
+- [ ] **Coach, « Appliquer » sous un échauffement.** Une carte chiffrée à l'écran, une série 1 passée en
+      Échauffement : « Appliquer » met la charge sur les séries de travail, l'échauffement garde la sienne.
+      Toutes les séries déjà validées : « Appliquer » ne ferme pas la carte. *(v2.18.0)*
+- [ ] **Coach, appliquer puis ne pas faire.** « Appliquer » sur un exercice, puis le sauter et terminer :
+      à la séance suivante de l'exercice, la carte est revenue. Même chose après avoir abandonné la séance.
+      *(v2.18.0)*
+- [ ] **Coach, « Ignorer » n'est plus définitif.** Ignorer une carte : elle ne revient pas à la séance
+      suivante ; la même proposition peut revenir passé deux semaines. *(v2.18.0)*
+- [ ] **Coach, série ajoutée.** Sur un 8 – 12, faire 10 · 10 · 10 puis « Ajouter une série » faite à 9,
+      deux séances : la carte ne dit **pas** « bas de fourchette manqué ». *(v2.18.0)*
+- [ ] **Coach, séance allégée.** Une carte chiffrée en attente, puis une séance en décharge (menu ⋮ ›
+      deload) : pas d'« Appliquer » sur la carte ; à la vraie séance d'après, la carte est toujours là.
+      *(v2.18.0)*
+- [ ] **Coach, une erreur ne bloque rien.** Terminer une séance : l'écran de fin s'affiche toujours et
+      la séance s'enregistre (rien à provoquer : à noter seulement si un écran d'erreur apparaît). *(v2.18.0)*
 - [ ] Série validée en thème **TTY1** : `[x]`, le repos qui clignote, la jauge d'effort ; la feuille
       des plaques ; l'historique. Police lisible à bout de bras. *(v2.8.0)*
 

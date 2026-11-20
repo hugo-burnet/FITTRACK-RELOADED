@@ -16,6 +16,20 @@ export function completedWorkingSets(sets: readonly CoachSetInput[]): CoachSetIn
     .sort((a, b) => a.order - b.order || a.performedAt - b.performedAt);
 }
 
+/**
+ * Les séries qui portent une prescription (`targetReps` ou `targetRepsMax`) quand au moins une en porte,
+ * sinon toutes. Une série ajoutée en cours de séance sans cible est une série *en plus* : elle ne rend pas
+ * la fourchette illisible (le plafond d'un `12 · 12 · 12` plus une série libre à 6 était perdu) et ne
+ * change pas le contrat de répétitions. Une séance dont aucune série n'est ciblée — séance libre, import
+ * Hevy — se lit exactement comme avant : toutes ses séries.
+ */
+export function prescribedSets(sets: readonly CoachSetInput[]): CoachSetInput[] {
+  const carrying = sets.filter(
+    (set) => set.targetReps !== undefined || set.targetRepsMax !== undefined,
+  );
+  return carrying.length > 0 ? carrying : sets.slice();
+}
+
 /** Is `weight` an easier set than `reference`? Assistance reads the other way. */
 function isEasierLoad(weight: number, reference: number, role: WeightRole): boolean {
   return role === 'assist' ? weight > reference : weight < reference;
@@ -80,7 +94,17 @@ export function isDeloadLine(line: CoachExerciseLine): boolean {
       line.deloadPercent < 100);
 }
 
-/** Ceiling of the prescribed rep contract: open top of a range, or the single target. */
+/**
+ * Ceiling of the prescribed rep contract: open top of a range, or the single target.
+ *
+ * Un maximum qui n'est pas strictement au-dessus du minimum (`10–8`, ou `10–10`) n'ouvre aucune
+ * fourchette : c'est une cible unique de `targetReps`. Lire 8 comme plafond déclarait « plafond
+ * atteint » sur 9 répétitions alors que la prescription en demande 10.
+ */
 export function effectiveCeiling(set: CoachSetInput): number | undefined {
-  return set.targetRepsMax ?? set.targetReps;
+  if (set.targetReps === undefined) return set.targetRepsMax;
+  if (set.targetRepsMax !== undefined && set.targetRepsMax > set.targetReps) {
+    return set.targetRepsMax;
+  }
+  return set.targetReps;
 }

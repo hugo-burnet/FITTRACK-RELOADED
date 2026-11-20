@@ -275,3 +275,24 @@ export async function settleLayout(page: Page): Promise<void> {
       ),
   );
 }
+
+/**
+ * Valide `sets` séries de la première carte de la séance en cours (`weight` kg × `reps`), termine la
+ * séance et l'enregistre. Les champs sont ceux de la première carte : « Série N — kg » existe sur
+ * chaque exercice, et c'est la première que la séance « Poussée » (le développé couché) met en tête.
+ */
+export async function logFirstExerciseAndFinish(
+  page: Page,
+  { sets, weight, reps }: { sets: number; weight: number; reps: number },
+): Promise<void> {
+  for (let number = 1; number <= sets; number += 1) {
+    await page.getByRole('textbox', { name: new RegExp(`^Série ${number} — kg`) }).first().fill(String(weight));
+    await page.getByRole('textbox', { name: new RegExp(`^Série ${number} — reps`) }).first().fill(String(reps));
+    await page.getByRole('button', { name: `Valider la série ${number}` }).first().click();
+    // Le compteur ne bouge qu'une fois la série relue en base : l'écriture est faite.
+    await expect(page.getByText(new RegExp(`^${number} séries? sur \\d+$`))).toBeVisible();
+  }
+  await page.getByRole('button', { name: 'Terminer la séance' }).click();
+  await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+}

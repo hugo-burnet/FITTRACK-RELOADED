@@ -12,6 +12,7 @@ import { resolveRestSeconds } from '@/lib/rest';
 import { localOffsetMinutes } from '@/lib/timezone';
 import { alive, newEntity, softDelete, touch } from './base';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
+import { reopenRecommendationsFollowedBy, retirePendingRecommendationsFrom } from './coachRecommendations';
 import { reconcileRecordsForExercises } from './recordReconciliation';
 import { getOneRepMaxFormula } from './settings';
 
@@ -301,7 +302,7 @@ export async function finishWorkout(workoutId: string): Promise<void> {
  * row survives for the trash and for the Lot 14 sync; nothing reads it.
  */
 export async function discardWorkout(workoutId: string): Promise<void> {
-  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+  await db.transaction('rw', [...RECORD_PROJECTION_TABLES, db.coachRecommendations], async () => {
     const workout = await db.workouts.get(workoutId);
     if (workout === undefined) return;
     const [rows, sets] = await Promise.all([
@@ -323,6 +324,8 @@ export async function discardWorkout(workoutId: string): Promise<void> {
       .equals(workoutId)
       .modify({ deletedAt: now, updatedAt: now });
     await db.workouts.put(touch(workout, { status: 'discarded', deletedAt: now }));
+    // Un objectif appliqué dans cette séance n'a pas été tenu : la carte redevient proposable.
+    await reopenRecommendationsFollowedBy(workoutId, [...affectedExerciseIds]);
     await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }
@@ -334,7 +337,7 @@ export async function discardWorkout(workoutId: string): Promise<void> {
  * and the records: a ghost row that is very hard to diagnose weeks later.
  */
 export async function deleteWorkout(workoutId: string): Promise<void> {
-  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+  await db.transaction('rw', [...RECORD_PROJECTION_TABLES, db.coachRecommendations], async () => {
     const [rows, sets] = await Promise.all([
       db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
       db.workoutSets.where('workoutId').equals(workoutId).toArray(),
@@ -348,6 +351,10 @@ export async function deleteWorkout(workoutId: string): Promise<void> {
     await db.workoutSets.where('workoutId').equals(workoutId).modify(deleted);
     await db.workoutExercises.where('workoutId').equals(workoutId).modify(deleted);
     await softDelete(db.workouts, workoutId);
+    // Les cartes nées de cette séance parleraient d'une performance effacée.
+    await retirePendingRecommendationsFrom(workoutId, [...affectedExerciseIds], deleted.deletedAt);
+    // Et celles qu'elle avait suivies ne l'ont plus été : l'objectif reste à tenir.
+    await reopenRecommendationsFollowedBy(workoutId, [...affectedExerciseIds]);
     await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }

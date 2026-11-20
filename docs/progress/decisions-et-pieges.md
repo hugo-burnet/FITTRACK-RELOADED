@@ -7,6 +7,52 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-20 — Fiabilisation du coach (v2.18.0)
+
+**Demande.** « Audite mon coach, et les fonctionnalités autour. J'aimerais le fiabiliser », puis, à la question de ce
+qui n'allait pas : « ça sautait des charges, ça ne mettait pas les bonnes augmentations, on dirait qu'il ignore encore le
+RPE », et « je te laisse tout gérer, tu peux écrire et valider ». Les choix ci-dessous sont donc **ceux de l'agent**, à relire.
+Spec : `docs/design/specs/2026-11-20-coach-fiabilisation-design.md` ; plan : `docs/design/plans/2026-11-20-coach-fiabilisation.md`.
+
+**L'audit** (trois passes : moteur, données, écran) a trouvé une trentaine de défauts, aucun dans les arrondis ni les
+migrations : tous dans des chemins de la vraie vie que personne n'avait joués. Les plus lourds, corrigés :
+- une exception du coach sur l'écran de fin relançait l'erreur au rendu (`useLiveQuery`) et pouvait empêcher de terminer ;
+- « Appliquer » écrasait échauffements et dégressives, n'écrivait qu'une des deux lignes d'un exercice en double, marquait
+  « suivie » une carte qui n'avait rien écrit, et réécrivait la pleine charge en séance allégée ;
+- « Ignorer » taisait une proposition **pour toujours** ; une séance allégée effaçait l'objectif en attente ; une séance
+  abandonnée, supprimée ou corrigée laissait des cartes fausses ; une carte appliquée puis non tenue disparaissait ;
+- la fin de séance n'était pas atomique (ancienne carte retirée, nouvelle perdue) ;
+- « Ajouter une série » fabriquait une cible égale aux répétitions faites et perdait la fourchette — d'où de faux
+  « bas de fourchette manqué » et de fausses baisses de charge ;
+- un faux plateau en double progression (`10·9·8 → 10·10·8 → 10·10·9`) ; la reprise au couperet de 14 jours pile, et
+  dépendante de l'heure de la séance ; le volume par muscle compté en double.
+
+**Choix de l'agent, à relire.**
+- **Un refus dure 14 jours** (`DISMISSAL_DAYS`). Une durée se lit et se teste ; « jusqu'à ce que la performance change »
+  demandait de définir « changer ».
+- **Une carte chiffrée de plus de 28 jours n'est plus proposée** (`PENDING_MAX_AGE_DAYS`), à la lecture, sans rien effacer.
+- **Reprise : strictement plus de 14 jours civils locaux** (amendement R5).
+- **Une série sans cible à côté de séries ciblées est une série en plus** (`prescribedSets`), pour la fourchette, le bas
+  manqué, le contrat de répétitions et la séance plafonnée.
+- **Plus de répétitions au total à la même charge n'est pas un plateau.** Revers assumé (relecture finale, M5) : ajouter
+  une série monte le total ; à juger avec le lot F.
+- **Corriger une séance dans l'historique retire ses cartes en attente**, même pour une simple note ; la carte revient à
+  la séance suivante de l'exercice.
+- `markRecommendationFollowed` est retirée : « Appliquer » passe par `applyCoachRecommendation`, une seule transaction.
+
+**Ce qui n'est pas fait.** Le **lot F** — la politique du RPE (lu en moyenne, seul seuil à 9,5) et des sauts de charge
+(remise dans la fourchette jusqu'à ± 30 % depuis la meilleure série d'une seule séance). C'est ce que l'utilisateur a senti
+à la salle, mais ce sont des règles qui font ce qui est écrit : les changer demande l'historique réel. Le CSV fourni (format
+Hevy, 47 séances) n'a pas les fourchettes : il montre un **yo-yo** de charge (pec fly 5 → 7,5 → 10 → 7,5 → 10 → 7,5 → 5 →
+7,5 → 10) et des montées à RPE moyen ≥ 9, sans dire si le coach les proposait. **Il faut la sauvegarde JSON** pour
+`npm run coach:replay`.
+
+**Pièges.**
+- Deux tests de cadence de `WorkoutScreen.integration.test.tsx` échouent sous charge dans la suite complète et passent seuls
+  (déjà vu à la v2.17.4) : instabilité, pas régression.
+- Ici, Playwright attendait une révision de `chromium_headless_shell` absente : l'E2E a tourné avec
+  `PLAYWRIGHT_BROWSERS_PATH` pointé sur un lien vers la révision installée. Rien de changé dans le dépôt.
+
 ### 2026-11-06 — Cyber : la barre de repos prend de vrais dégâts
 
 - **Retour de l'utilisateur** : « quand on fait −15 s ça fait des traits horizontaux, mais moi je voulais une vraie
@@ -1323,6 +1369,15 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Coach : pas de rattrapage au démarrage** (2026-11-20). Une app tuée entre `finishWorkout` et
+  `finalizeCoachForWorkout` laisse la séance sans carte et les anciennes en attente. Fenêtre de quelques
+  millisecondes ; un marqueur sur la séance demanderait le schéma, la sauvegarde et la synchro.
+- **Coach : validation des recommandations restaurées** (2026-11-20). `validate.ts` ne contrôle ni `nextLoadKg` ni les
+  éléments d'`evidence` ; ne touche qu'un fichier retouché à la main. Attend la fusion de la branche de synchronisation,
+  qui réécrit ce fichier.
+- **`applyCoachObjective`** (2026-11-20) n'a plus d'appelant de production hors `applyCoachRecommendation` ; gardée
+  exportée et testée.
 
 - **Remboursée le 2026-10-14 — `lib/coach/evaluate.ts` (1 051 lignes) n'a jamais été consigné.** Il avait
   grandi tranche après tranche du coach v2 (994 lignes au 13 octobre, la plus grosse source hors

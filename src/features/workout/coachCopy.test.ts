@@ -113,19 +113,66 @@ describe('coachSignalMessage — range missed', () => {
 });
 
 describe('coachSignalMessage — phase intention copy', () => {
-  it('progression without increase_* reads as deferred maintain', () => {
-    // Load proposal stripped by shaping; flag stamped for UI.
-    const message = coachSignalMessage({
-      code: 'range_ceiling_reached',
+  it('progression without increase_* says the hold and keeps the constat', () => {
+    // Load proposal stripped by shaping; flag stamped for UI. The hold used to replace the constat, and the
+    // card then read « Maintien » with nothing to say why (reps at the ceiling, RPE, return after a break).
+    const signal = {
+      code: 'range_ceiling_reached' as const,
       evidence: [
         { label: 'working_sets', value: 3 },
         { label: 'target_reps_max', value: 12 },
         { label: 'progression_deferred', value: 1 },
       ],
-    });
-    expect(message).toBe(t('coach.progressionDeferred'));
-    expect(message).toBe('Maintien — progression différée');
+    };
+    const message = coachSignalMessage(signal);
+    expect(message).toContain('Maintien — progression différée');
+    expect(message).toContain(t('coach.range_ceiling_reached_constat', { sets: 3, reps: 12 }));
     expect(message).not.toContain('→');
+  });
+
+  describe.each([
+    ['returning', [{ label: 'gap_days', value: 21 }]],
+    [
+      'range_ceiling_reached',
+      [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'session_rpe', value: 10 },
+      ],
+    ],
+    [
+      'intra_session_drop',
+      [
+        { label: 'first_reps', value: 10 },
+        { label: 'low_reps', value: 6 },
+        { label: 'drop_reps', value: 4 },
+      ],
+    ],
+    [
+      'consolidating',
+      [
+        { label: 'current_load_kg', value: 60 },
+        { label: 'rpe_before', value: 9 },
+        { label: 'rpe_after', value: 8 },
+      ],
+    ],
+  ] as const)('%s portant progression_deferred', (code, evidence) => {
+    const bare = { code, evidence: [...evidence] };
+    const flagged = {
+      code,
+      evidence: [...evidence, { label: 'progression_deferred', value: 1 }],
+    };
+
+    it('dit le maintien et le constat du même signal sans le drapeau', () => {
+      const message = coachSignalMessage(flagged);
+      expect(message).toContain('Maintien — progression différée');
+      expect(message).toContain(coachSignalMessage(bare));
+    });
+
+    it('n’écrit jamais « → » suivi d’une charge sans charge proposée', () => {
+      expect(coachSignalMessage(flagged)).not.toMatch(/→\s*\d/);
+    });
   });
 
   it('shaped ceiling without next load is constat-only — no arrow, no 0 kg', () => {

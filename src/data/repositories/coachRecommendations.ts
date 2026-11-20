@@ -1,7 +1,17 @@
 import { db } from '@/data/db';
 import type { CoachRecommendation, CoachRecommendationStatus } from '@/data/types';
 import type { CoachSignal } from '@/lib/coach';
+import { DAY_MS } from '@/lib/coach/constants';
 import { alive, newEntity, touch } from './base';
+
+/** Un refus se tait deux semaines, puis la proposition peut revenir : la forme du jour change. */
+export const DISMISSAL_DAYS = 14;
+
+/**
+ * Une carte chiffrée ne se rend plus passé ce délai : « 102,5 kg » posé il y a cinq semaines parle d'un
+ * corps et d'une barre qui ont bougé. La ligne reste `pending` en base ; seule la lecture l'écarte.
+ */
+export const PENDING_MAX_AGE_DAYS = 28;
 
 /**
  * A refusal silences *that proposal*, not the rule that produced it.
@@ -18,6 +28,25 @@ function sameProposal(a: CoachRecommendation, signal: CoachSignal): boolean {
   return a.nextLoadKg === signal.nextLoadKg;
 }
 
+/**
+ * Vrai si cette proposition a été refusée il y a moins de `DISMISSAL_DAYS` jours.
+ *
+ * Une ligne `dismissed` d'avant le correctif n'a pas de `resolvedAt` : on lit alors `updatedAt` (la
+ * date du refus, faute de mieux) plutôt que de la tenir pour refusée à jamais ou de planter.
+ */
+export function isRefused(
+  rows: readonly CoachRecommendation[],
+  signal: CoachSignal,
+  at: number,
+): boolean {
+  return rows.some(
+    (row) =>
+      row.status === 'dismissed' &&
+      sameProposal(row, signal) &&
+      at - (row.resolvedAt ?? row.updatedAt) < DISMISSAL_DAYS * DAY_MS,
+  );
+}
+
 /** Newest-first history for one exercise (fiche exercice). */
 export async function listRecommendationsForExercise(
   exerciseId: string,
@@ -31,10 +60,12 @@ export async function listRecommendationsForExercise(
 /** Pending objective per exercise — never pre-fills a set, only proposes a target. */
 export async function listPendingRecommendations(
   exerciseIds?: readonly string[],
+  now = Date.now(),
 ): Promise<CoachRecommendation[]> {
   if (exerciseIds === undefined) {
     return newestPerExercise(
       alive(await db.coachRecommendations.where('status').equals('pending').toArray()),
+      now,
     );
   }
   if (exerciseIds.length === 0) return [];
@@ -44,10 +75,11 @@ export async function listPendingRecommendations(
   const keys = [...new Set(exerciseIds)].map((id) => [id, 'pending']);
   return newestPerExercise(
     alive(await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray()),
+    now,
   );
 }
 
-function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
+function newestPerExercise(rows: CoachRecommendation[], now: number): CoachRecommendation[] {
   const best = new Map<string, CoachRecommendation>();
   for (const row of rows) {
     const current = best.get(row.exerciseId);
@@ -59,7 +91,10 @@ function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
       best.set(row.exerciseId, row);
     }
   }
-  return [...best.values()];
+  // Après le choix de la plus récente : une vieille carte ne remonte pas parce que la récente est écartée.
+  return [...best.values()].filter(
+    (row) => row.nextLoadKg === undefined || now - row.recommendedAt <= PENDING_MAX_AGE_DAYS * DAY_MS,
+  );
 }
 
 /**
@@ -84,6 +119,31 @@ export async function supersedePendingLoadRecommendations(
         status: 'superseded' as CoachRecommendationStatus,
         resolvedAt,
       }),
+    ),
+  );
+}
+
+/**
+ * Retire les cartes en attente **sans charge** des exercices donnés : les observations (« reprise »,
+ * « plafond de volume »…) parlent d'une séance qui n'est plus la dernière. Une carte chiffrée reste :
+ * elle attend une vraie séance pour être tenue ou remplacée. À appeler dans la transaction de l'appelant.
+ */
+export async function supersedePendingObservations(
+  exerciseIds: readonly string[],
+  resolvedAt = Date.now(),
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'pending']);
+  const observations = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.nextLoadKg === undefined);
+  if (observations.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    observations.map((row) =>
+      touch(row, { status: 'superseded' as CoachRecommendationStatus, resolvedAt }),
     ),
   );
 }
@@ -120,6 +180,67 @@ export async function supersedePendingRecommendations(
 }
 
 /**
+ * Remet en attente les cartes qu'une séance avait fait passer `followed`, quand cette séance disparaît.
+ *
+ * Abandonner une séance où l'objectif avait été appliqué laissait la carte « suivie » alors que rien n'a
+ * été tenu : le coach croyait le conseil pris et ne le reproposait plus. Les champs de résultat sont
+ * retirés (clés absentes, pas `undefined`) : ils décrivaient une séance qui n'existe plus.
+ * À appeler dans la transaction de l'appelant, qui doit lister `db.coachRecommendations`.
+ */
+export async function reopenRecommendationsFollowedBy(
+  workoutId: string,
+  exerciseIds: readonly string[],
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'followed']);
+  const followed = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.outcomeWorkoutId === workoutId);
+  if (followed.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    followed.map((row) => {
+      const reopened = touch(row, { status: 'pending' as CoachRecommendationStatus });
+      delete reopened.resolvedAt;
+      delete reopened.outcomeWorkoutId;
+      delete reopened.outcomeLoadKg;
+      return reopened;
+    }),
+  );
+}
+
+/**
+ * Retire les cartes en attente nées d'une séance qu'on supprime ou qu'on corrige.
+ *
+ * Une carte « 102,5 kg » calculée sur une séance effacée, ou sur des charges qu'on vient de rectifier,
+ * parle d'une performance qui n'existe plus telle quelle. `superseded`, jamais `dismissed` : l'utilisateur
+ * n'a pas répondu. Les cartes issues d'une autre séance du même exercice ne bougent pas.
+ * À appeler dans la transaction de l'appelant, qui doit lister `db.coachRecommendations`.
+ */
+export async function retirePendingRecommendationsFrom(
+  workoutId: string,
+  exerciseIds: readonly string[],
+  at: number,
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'pending']);
+  const pending = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.sourceWorkoutId === workoutId);
+  if (pending.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    pending.map((row) =>
+      touch(row, { status: 'superseded' as CoachRecommendationStatus, resolvedAt: at }),
+    ),
+  );
+}
+
+/**
  * Persist signals the user will see. Skips a proposal already dismissed with the
  * same exercise + code + next load so a refused tip does not come back.
  */
@@ -139,10 +260,7 @@ export async function recordCoachSignals(
 
   await db.transaction('rw', db.coachRecommendations, async () => {
     for (const signal of signals) {
-      const dismissed = existing.some(
-        (row) => row.status === 'dismissed' && sameProposal(row, signal),
-      );
-      if (dismissed) continue;
+      if (isRefused(existing, signal, recommendedAt)) continue;
 
       // Replace prior pending for this exercise — one live objective at a time.
       // `superseded`, never `dismissed`: the user did not answer this one.
@@ -190,32 +308,6 @@ export async function dismissRecommendation(id: string): Promise<void> {
 }
 
 /**
- * Accepting an objective in session: applying *is* accepting, and the card
- * closes because the row leaves `pending`, not by a local flag a remount would
- * forget.
- *
- * Complémentaire de `reconcileFollowedLoads`, pas concurrent : les deux ne
- * touchent qu'une ligne `pending`, donc la charge réellement tenue en fin de
- * séance ne réécrit pas un objectif déjà accepté à la main.
- */
-export async function markRecommendationFollowed(
-  id: string,
-  outcome: { workoutId?: string; loadKg?: number } = {},
-): Promise<void> {
-  const row = await db.coachRecommendations.get(id);
-  if (row === undefined || row.deletedAt !== 0) return;
-  if (row.status !== 'pending') return;
-  await db.coachRecommendations.put(
-    touch(row, {
-      status: 'followed',
-      resolvedAt: Date.now(),
-      outcomeWorkoutId: outcome.workoutId,
-      outcomeLoadKg: outcome.loadKg,
-    }),
-  );
-}
-
-/**
  * After a session, if the working load matched a pending nextLoad, mark followed.
  * Does not invent follow without a numeric proposal.
  */
@@ -227,10 +319,13 @@ export async function reconcileFollowedLoads(
   const byExercise = new Map(pending.map((row) => [row.exerciseId, row]));
 
   await db.transaction('rw', db.coachRecommendations, async () => {
+    // Plusieurs charges peuvent concerner un exercice : une ligne ne s'écrit qu'une fois.
+    const written = new Set<string>();
     for (const outcome of outcomes) {
       const row = byExercise.get(outcome.exerciseId);
       if (row === undefined || row.nextLoadKg === undefined) continue;
-      if (row.nextLoadKg !== outcome.loadKg) continue;
+      if (row.nextLoadKg !== outcome.loadKg || written.has(row.id)) continue;
+      written.add(row.id);
       await db.coachRecommendations.put(
         touch(row, {
           status: 'followed',

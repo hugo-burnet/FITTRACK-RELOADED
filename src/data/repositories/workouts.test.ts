@@ -1139,6 +1139,38 @@ describe('composer la séance en cours', () => {
 
     expect([copy.targetReps, copy.targetRepsMax]).toEqual([8, 12]);
   });
+
+  /**
+   * Une série ajoutée hérite de la prescription de la précédente (coach, E1). Elle prenait pour cible
+   * les répétitions *faites* et perdait le haut de la fourchette : en 8 – 12, `10 · 10 · 10` plus une
+   * série ajoutée faite à 9 se lisait « bas de fourchette manqué ».
+   */
+  it('recopie la fourchette prescrite de la série faite, pas ses répétitions', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const planned = await addSet(row.id, {
+      targetWeight: 100,
+      targetReps: 8,
+      targetRepsMax: 12,
+    });
+    await completeSet(planned.id, { weight: 100, reps: 10 });
+
+    const copy = await duplicateLastSet(row.id);
+
+    expect([copy.targetReps, copy.targetRepsMax]).toEqual([8, 12]);
+    expect(copy.targetWeight).toBe(100);
+  });
+
+  it('sans aucune prescription, la nouvelle série prend les répétitions faites', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const first = await addSet(row.id, {});
+    await completeSet(first.id, { weight: 100, reps: 10 });
+
+    const copy = await duplicateLastSet(row.id);
+
+    expect([copy.targetReps, copy.targetRepsMax]).toEqual([10, undefined]);
+  });
 });
 
 describe('saisie et correction d’une série', () => {

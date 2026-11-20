@@ -17,6 +17,7 @@ import type { WorkoutSet } from '@/data/types';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName } from '@/i18n/labels';
+import { DELOAD_PERCENT } from '@/lib/deload';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { applyEffortPrompt } from '@/stores/effortPrompt';
 import { useHoldTimer } from '@/stores/holdTimer';
@@ -444,6 +445,34 @@ describe('WorkoutScreen — objectif du coach', () => {
     await waitFor(() => {
       expect(screen.queryByText(/haut de la fourchette/)).not.toBeInTheDocument();
     });
+  });
+
+  it('montre la carte mais pas « Appliquer » quand la séance est allégée', async () => {
+    const workoutId = await seedActiveWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const exerciseId = detail?.exercises[0]?.row.exerciseId ?? '';
+    // Le deload porte déjà ses propres charges : y écrire l'objectif les écraserait.
+    await db.workouts.update(workoutId, { deloadPercent: DELOAD_PERCENT });
+
+    await recordCoachSignals([
+      {
+        exerciseId,
+        code: 'range_ceiling_reached',
+        severity: 1,
+        nextLoadKg: 50,
+        evidence: [
+          { label: 'working_sets', value: 3 },
+          { label: 'target_reps_max', value: 12 },
+          { label: 'current_load_kg', value: 47.5 },
+          { label: 'next_load_kg', value: 50 },
+        ],
+      },
+    ]);
+
+    renderWorkout();
+
+    expect(await screen.findByText(/haut de la fourchette/)).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Appliquer 50 kg/ })).not.toBeInTheDocument();
   });
 
   it('laisse refuser sans rien écrire dans la grille', async () => {

@@ -12,6 +12,7 @@
 import { resolveLoadStep } from '@/lib/loadIncrement';
 import { buildAllowedActions, pickSignals } from './arbitrate';
 import { contractKey, mergeLinesForWorkout, sinceLatestReturn, sortNewestFirst } from './history';
+import { completedWorkingSets } from './sets';
 import { intraSessionDropSignal, longRestSignal } from './rules/drop';
 import { consolidationSignal, plateauSignal } from './rules/plateau';
 import { rangeMissedSignal, rangePartitionSignal } from './rules/range';
@@ -71,9 +72,12 @@ export function evaluatePerformance(
   const contract = contractKey(latest);
   const comparable = sinceReturn.filter((entry) => contractKey(entry) === contract);
 
-  if (gapDays !== undefined) signals.push(returningSignal(latest, gapDays));
+  // Une reprise se constate sur une série de travail faite : un exercice rouvert pour un échauffement
+  // validé, ou rien du tout, n'est pas un retour que la charge doit attendre.
+  const returning = gapDays !== undefined && completedWorkingSets(latest.sets).length > 0;
+  if (returning) signals.push(returningSignal(latest, gapDays));
 
-  const range = rangePartitionSignal(latest, increment, gapDays !== undefined);
+  const range = rangePartitionSignal(latest, increment, returning);
   if (range) signals.push(range);
 
   const missed = rangeMissedSignal(comparable, increment);

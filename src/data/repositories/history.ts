@@ -12,6 +12,7 @@ import { newEntity, touch } from './base';
 import { exerciseSnapshotOfRow } from '@/lib/exerciseSnapshot';
 import { loadExerciseSnapshots } from './exerciseSnapshot';
 import { getWorkoutDetail, type WorkoutDetail } from './workouts';
+import { reopenRecommendationsFollowedBy, retirePendingRecommendationsFrom } from './coachRecommendations';
 import { reconcileRecordsForExercises } from './recordReconciliation';
 import { getOneRepMaxFormula } from './settings';
 
@@ -260,7 +261,7 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
     draft.exercises.map((row) => row.exerciseId),
   );
 
-  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+  await db.transaction('rw', [...RECORD_PROJECTION_TABLES, db.coachRecommendations], async () => {
     const workout = await db.workouts.get(draft.workoutId);
     if (
       workout === undefined ||
@@ -425,6 +426,12 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
     });
 
     await db.workouts.put(updatedWorkout);
+    // Une charge corrigée change ce que la carte issue de cette séance affirmait.
+    await retirePendingRecommendationsFrom(
+      draft.workoutId,
+      [...affectedExerciseIds],
+      updatedWorkout.updatedAt,
+    );
     await db.workoutExercises.bulkPut([...nextRows, ...deletedRows]);
     await db.workoutSets.bulkPut([...nextSets, ...deletedSets]);
     for (const row of nextRows) affectedExerciseIds.add(row.exerciseId);
@@ -436,7 +443,7 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
   });
 }
 export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
-  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+  await db.transaction('rw', [...RECORD_PROJECTION_TABLES, db.coachRecommendations], async () => {
     const workout = await db.workouts.get(workoutId);
     if (
       workout === undefined ||
@@ -458,6 +465,9 @@ export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
     const deleted = { deletedAt: now, updatedAt: now };
 
     await db.workouts.put({ ...workout, ...deleted });
+    await retirePendingRecommendationsFrom(workoutId, [...affectedExerciseIds], now);
+    // Les cartes qu'elle avait suivies redeviennent à tenir : la séance qui les tenait n'existe plus.
+    await reopenRecommendationsFollowedBy(workoutId, [...affectedExerciseIds]);
     await db.workoutExercises.bulkPut(rows.map((row) => ({ ...row, ...deleted })));
     await db.workoutSets.bulkPut(sets.map((set) => ({ ...set, ...deleted })));
     await reconcileRecordsForExercises(

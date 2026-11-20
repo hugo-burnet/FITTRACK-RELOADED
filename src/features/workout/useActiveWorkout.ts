@@ -76,10 +76,16 @@ export function useActiveWorkout(): ActiveWorkoutData {
       return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
     }
     const ids = detail.exercises.map((line) => line.row.exerciseId);
-    const pending = await listPendingRecommendations(ids);
-    return detail.workout.programId === undefined
-      ? pending
-      : pending.filter((recommendation) => recommendation.nextLoadKg === undefined);
+    try {
+      const pending = await listPendingRecommendations(ids);
+      return detail.workout.programId === undefined
+        ? pending
+        : pending.filter((recommendation) => recommendation.nextLoadKg === undefined);
+    } catch {
+      // Une requête vive qui rejette relance l'erreur au rendu : l'écran d'erreur global remplacerait la
+      // séance en direct pour des cartes facultatives. Sans lecture, pas de carte.
+      return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
+    }
   }, [detail?.workout.id, detail?.exercises.map((line) => line.row.exerciseId).join('|')]);
 
   const workoutId = detail?.workout.id;

@@ -14,6 +14,7 @@ import {
   getWorkoutDetail,
   startWorkout,
 } from '@/data/repositories/workouts';
+import * as coachEvaluate from '@/data/repositories/coachEvaluate';
 import * as workoutsRepository from '@/data/repositories/workouts';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { resetDb } from '@/test/resetDb';
@@ -133,6 +134,37 @@ describe('WorkoutFinishScreen', () => {
     expect((await db.workouts.get(workout.id))?.status).toBe('active');
 
     gate.resolve();
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'workout-saved', workoutId: workout.id }),
+    );
+    expect((await db.workouts.get(workout.id))?.status).toBe('completed');
+  });
+
+  it('shows the finish screen and still saves when the coach evaluation rejects', async () => {
+    // A rejecting live query rethrows at render and the global error screen replaces this one: the
+    // session could no longer be saved because an advisory computation failed.
+    const workout = await startWorkout('', 'Coach en panne');
+    const exercise = await createCustomExercise({
+      name: 'Audit',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 20, reps: 8 });
+    const evaluate = vi
+      .spyOn(coachEvaluate, 'evaluateCoachForWorkout')
+      .mockRejectedValue(new Error('coach en panne'));
+    const report = vi.fn();
+    renderFinishScreen(report);
+
+    const save = (await screen.findByText('Enregistrer la séance')).closest('button');
+    await waitFor(() => expect(evaluate).toHaveBeenCalled());
+    await userEvent.click(save as HTMLButtonElement);
+
     await waitFor(() =>
       expect(report).toHaveBeenCalledWith({ type: 'workout-saved', workoutId: workout.id }),
     );

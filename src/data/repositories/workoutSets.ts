@@ -162,10 +162,19 @@ export async function duplicateLastSet(workoutExerciseId: string): Promise<Worko
   return appendSet(workoutExerciseId, (siblings) => {
     const last = lastWorkingSet(siblings);
 
+    // **Une série prescrite garde sa prescription.** Prendre pour cible les répétitions faites
+    // perdait le haut de la fourchette : en 8 – 12, `10 · 10 · 10` plus une série ajoutée faite à 9
+    // se lisait « bas de fourchette manqué ». Sans cible (séance libre), on propose ce qui a été fait.
+    const prescribed = last?.targetReps !== undefined;
+
     return {
       setType: last?.setType ?? 'normal',
-      targetReps: last?.reps ?? last?.targetReps,
-      targetRepsMax: last?.reps === undefined ? last?.targetRepsMax : undefined,
+      targetReps: prescribed ? last.targetReps : (last?.reps ?? last?.targetReps),
+      targetRepsMax: prescribed
+        ? last.targetRepsMax
+        : last?.reps === undefined
+          ? last?.targetRepsMax
+          : undefined,
       targetWeight: last?.weight ?? last?.targetWeight,
       targetDurationSeconds: last?.durationSeconds ?? last?.targetDurationSeconds,
       targetDistanceMeters: last?.distanceMeters ?? last?.targetDistanceMeters,

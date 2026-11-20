@@ -21,8 +21,6 @@ export const VOLUME_MIN_WEEKS_WORKED = 3;
 /** Semaines consécutives sous le plancher posé avant de le dire. */
 export const VOLUME_LOW_WEEKS = 2;
 
-const DAY_MS = 86_400_000;
-
 /** Les séries de travail d'un muscle dans une séance : ce que la lecture du volume consomme. */
 export interface VolumeEntry {
   /** Le début de la séance. */
@@ -87,15 +85,24 @@ export interface LocalWeek {
   end: number;
 }
 
-/** Les séries directes d'un muscle sur les sept derniers jours glissants, `now` compris. */
+/**
+ * Les séries directes d'un muscle sur les sept derniers jours civils, aujourd'hui compris : du minuit
+ * local d'il y a six jours jusqu'à `now`.
+ *
+ * Pas 7 × 24 h : une séance à 8 h après des séances du lundi à 19 h comptait le lundi d'avant, deux
+ * séances le même jour de la semaine pour une, et la fenêtre fausse deux fois l'an au changement d'heure.
+ */
 export function rollingWeekSets(
   entries: readonly VolumeEntry[],
   muscle: MuscleGroup,
   now: number,
 ): number {
-  const since = now - 7 * DAY_MS;
+  const since = new Date(now);
+  since.setHours(0, 0, 0, 0);
+  since.setDate(since.getDate() - 6);
+  const from = since.getTime();
   return entries
-    .filter((entry) => entry.muscle === muscle && entry.at > since && entry.at <= now)
+    .filter((entry) => entry.muscle === muscle && entry.at >= from && entry.at <= now)
     .reduce((total, entry) => total + entry.sets, 0);
 }
 

@@ -48,7 +48,7 @@ function LoadStepForm({ initial, onClose }: { initial: number | undefined; onClo
   const [saveState, setSaveState] = useState<SaveState>('idle');
 
   // Vide veut dire « selon le matériel » : c'est un choix qu'on touche, pas un champ qu'il faut vider.
-  const valid = draft === undefined || (draft > 0 && draft <= LOAD_STEP_MAX_KG);
+  const valid = draft === undefined || (draft >= LOAD_STEP_MIN_KG && draft <= LOAD_STEP_MAX_KG);
 
   const change = (next: number | undefined) => {
     setDraft(next);
