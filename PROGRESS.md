@@ -5,11 +5,21 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-06 — **v2.17.5 publiée**, la barre de repos Cyber prend de vrais dégâts. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5).
+**Dernière mise à jour :** 2026-11-20 — **v2.18.0 publiée**, le coach fiabilisé. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.18.0).
 
 ## Où on en est
 
-- **Publié : v2.17.5**, à la demande de l'utilisateur (« Merge push et versionne ») :
+- **Publié : v2.18.0**, le coach fiabilisé ([journal](docs/journal/2026-11-20-versions-v2-18-0.md)). Audit en trois passes, puis une
+  trentaine de défauts corrigés test d'abord : fin de séance qui ne casse plus et s'enregistre d'un bloc, « Appliquer » qui n'écrit que
+  les séries de travail, refus de 14 jours, plus de carte fausse après une séance allégée, abandonnée, supprimée ou corrigée, série
+  ajoutée et double progression lues juste, reprise en jours civils. Choix de l'agent à relire : `decisions-et-pieges.md` (2026-11-20).
+  Fusion `5e6c03a`. **Dû** : recette § 2, lignes *(v2.18.0)*. **Reste** : le lot F (RPE et sauts de charge) — il faut la sauvegarde
+  JSON pour `npm run coach:replay` ; le CSV montre un yo-yo de charge, sans dire si le coach le proposait.
+- **CI E2E** : `ubuntu-latest` est passé à 26.04, que Playwright 1.56 ne sait pas équiper ; job épinglé sur `ubuntu-24.04` (`ac5d52f`).
+  **Branche de synchro** `ccr-homelab-sync-20261108` (16 commits, attend Caddy) : non touchée ; elle réécrit `validate.ts`, où attend
+  la validation stricte des recommandations restaurées.
+
+- **Avant : v2.17.5**, à la demande de l'utilisateur (« Merge push et versionne ») :
   [la release](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.17.5), APK `FitTrack-v2.17.5.apk`
   ([journal](docs/journal/2026-11-06-versions-v2-17-5.md)). Thème Cyber : au −15 s, la barre de repos encaisse comme une barre de vie
   — la vie chute, le morceau perdu flashe blanc puis rouge et se vide ; deux −15 rapprochés s'additionnent. Fusion `4f4fd17`, quatre
