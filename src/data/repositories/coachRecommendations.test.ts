@@ -13,7 +13,6 @@ import {
   DISMISSAL_DAYS,
   PENDING_MAX_AGE_DAYS,
   dismissRecommendation,
-  markRecommendationFollowed,
   isRefused,
   listPendingRecommendations,
   listRecommendationsForExercise,
@@ -406,7 +405,14 @@ describe('une séance abandonnée, supprimée ou corrigée ne laisse pas de cart
   it('C3 : abandonner une séance ne rouvre pas une carte suivie dans une autre séance', async () => {
     const workoutId = await seedActiveWorkout();
     const [rec] = await recordCoachSignals([load], { recommendedAt: NOW });
-    await markRecommendationFollowed(rec!.id, { workoutId: 'autre', loadKg: 102.5 });
+    await db.coachRecommendations.put(
+      touch((await db.coachRecommendations.get(rec!.id))!, {
+        status: 'followed',
+        resolvedAt: NOW,
+        outcomeWorkoutId: 'autre',
+        outcomeLoadKg: 102.5,
+      }),
+    );
 
     await discardWorkout(workoutId);
 
@@ -468,5 +474,31 @@ describe('une séance abandonnée, supprimée ou corrigée ne laisse pas de cart
     await deleteArchivedWorkout(source.id);
 
     expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('superseded');
+  });
+
+  it('M4 : supprimer la séance qui avait suivi une carte la remet en attente', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - DAY_MS, sets: [[102.5, 5]] });
+    const [rec] = await recordCoachSignals([load], { workoutId: 'previous', recommendedAt: NOW });
+    await db.coachRecommendations.put(
+      touch(rec!, { status: 'followed', resolvedAt: NOW, outcomeWorkoutId: source.id, outcomeLoadKg: 102.5 }),
+    );
+
+    await deleteWorkout(source.id);
+
+    const stored = await db.coachRecommendations.get(rec!.id);
+    expect(stored?.status).toBe('pending');
+    expect(stored).not.toHaveProperty('outcomeWorkoutId');
+  });
+
+  it('M4 : supprimer une séance de l’historique remet aussi en attente la carte qu’elle avait suivie', async () => {
+    const source = await seedWorkout({ exerciseId: 'bench', performedAt: NOW - DAY_MS, sets: [[102.5, 5]] });
+    const [rec] = await recordCoachSignals([load], { workoutId: 'previous', recommendedAt: NOW });
+    await db.coachRecommendations.put(
+      touch(rec!, { status: 'followed', resolvedAt: NOW, outcomeWorkoutId: source.id, outcomeLoadKg: 102.5 }),
+    );
+
+    await deleteArchivedWorkout(source.id);
+
+    expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('pending');
   });
 });

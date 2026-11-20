@@ -12,7 +12,7 @@ import { newEntity, touch } from './base';
 import { exerciseSnapshotOfRow } from '@/lib/exerciseSnapshot';
 import { loadExerciseSnapshots } from './exerciseSnapshot';
 import { getWorkoutDetail, type WorkoutDetail } from './workouts';
-import { retirePendingRecommendationsFrom } from './coachRecommendations';
+import { reopenRecommendationsFollowedBy, retirePendingRecommendationsFrom } from './coachRecommendations';
 import { reconcileRecordsForExercises } from './recordReconciliation';
 import { getOneRepMaxFormula } from './settings';
 
@@ -466,6 +466,8 @@ export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
 
     await db.workouts.put({ ...workout, ...deleted });
     await retirePendingRecommendationsFrom(workoutId, [...affectedExerciseIds], now);
+    // Les cartes qu'elle avait suivies redeviennent à tenir : la séance qui les tenait n'existe plus.
+    await reopenRecommendationsFollowedBy(workoutId, [...affectedExerciseIds]);
     await db.workoutExercises.bulkPut(rows.map((row) => ({ ...row, ...deleted })));
     await db.workoutSets.bulkPut(sets.map((set) => ({ ...set, ...deleted })));
     await reconcileRecordsForExercises(

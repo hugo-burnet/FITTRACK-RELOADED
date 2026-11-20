@@ -24,7 +24,9 @@ import { recordBenchmarkObjectives } from './benchmark';
 import {
   isRefused,
   recordCoachSignals,
+  reopenRecommendationsFollowedBy,
   reconcileFollowedLoads,
+  supersedePendingObservations,
   supersedePendingRecommendations,
 } from './coachRecommendations';
 import { loadVolumeEntries, volumeEntriesOfWorkout } from './coachVolume';
@@ -476,19 +478,21 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
     );
   }
 
-  const picked = pickSignals(signals);
-  if (picked.length === 0) return picked;
+  if (signals.length === 0) return [];
 
   // Une proposition refusée il y a moins de 14 jours ne se représente pas : `recordCoachSignals` la
   // taisait déjà à l'enregistrement, mais l'écran de fin la montrait quand même, puisqu'il lit ce retour.
+  // Le filtre passe **avant** `pickSignals`, qui ne garde qu'un signal par exercice : après, le refus de la
+  // proposition chiffrée emportait avec elle l'observation de moindre sévérité (une chute de répétitions),
+  // qui n'avait pourtant jamais été refusée.
   const journal = alive(
     await db.coachRecommendations
       .where('exerciseId')
-      .anyOf([...new Set(picked.map((signal) => signal.exerciseId))])
+      .anyOf([...new Set(signals.map((signal) => signal.exerciseId))])
       .toArray(),
   );
   const now = Date.now();
-  return picked.filter((signal) => !isRefused(journal, signal, now));
+  return pickSignals(signals.filter((signal) => !isRefused(journal, signal, now)));
 }
 
 /**
@@ -507,9 +511,34 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
   const detail = await getWorkoutDetail(workoutId);
   if (detail === null) return signals;
 
+  // Les exercices que la séance a portés, supprimés compris : `finishWorkout` efface les séries non
+  // validées et leur ligne, et c'est précisément l'exercice qu'« Appliquer » avait suivi sans qu'il soit
+  // fait. Lus avant la transaction, qui ne porte que le journal.
+  const [allRows, allSets] = await Promise.all([
+    db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+    db.workoutSets.where('workoutId').equals(workoutId).toArray(),
+  ]);
+  const followedIds = [
+    ...new Set([...allRows.map((row) => row.exerciseId), ...allSets.map((set) => set.exerciseId)]),
+  ];
+
   // Une séance allégée n'est pas une réponse aux objectifs posés : sa charge est celle d'une décharge, pas
   // d'un refus ni d'un suivi. Même définition que le moteur, pour que les deux ne divergent pas.
-  if (currentCoachLines(detail).some(isDeloadLine)) return signals;
+  // Elle ne suit rien, mais elle ne tient pas non plus ce qu'« Appliquer » y avait posé : la carte suivie
+  // par cette séance revient, et l'observation périmée des exercices travaillés est retirée (une carte
+  // chiffrée, elle, attend la prochaine vraie séance).
+  if (currentCoachLines(detail).some(isDeloadLine)) {
+    await db.transaction('rw', db.coachRecommendations, async () => {
+      await reopenRecommendationsFollowedBy(workoutId, followedIds);
+      await supersedePendingObservations(
+        detail.exercises
+          .filter((line) => line.sets.some((set) => set.isCompleted === 1 && isWorkingSet(set)))
+          .map((line) => line.row.exerciseId),
+        Date.now(),
+      );
+    });
+    return signals;
+  }
 
   const worked = detail.exercises.filter((line) =>
     line.sets.some((set) => set.isCompleted === 1 && isWorkingSet(set)),
@@ -521,8 +550,10 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
   if (detail.workout.programId === undefined) {
     for (const line of detail.exercises) {
       for (const set of line.sets) {
-        // Warm-ups are not the load you followed the advice with.
+        // Warm-ups are not the load you followed the advice with, nor is a drop-set: it is lighter by
+        // design, and « 100, 100, puis 95 dégressive » ne tient pas un objectif de 95.
         if (set.isCompleted !== 1 || set.weight === undefined || !isWorkingSet(set)) continue;
+        if (set.setType === 'dropset') continue;
         const exerciseId = line.row.exerciseId;
         if (!outcomes.some((o) => o.exerciseId === exerciseId && o.loadKg === set.weight)) {
           outcomes.push({ exerciseId, loadKg: set.weight, workoutId });
@@ -543,6 +574,11 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
       await db.coachRecommendations.where('exerciseId').anyOf(exerciseIds).toArray(),
     ).some((row) => row.sourceWorkoutId === workoutId);
     if (already) return;
+
+    // Avant le suivi : une carte « suivie » par cette séance (« Appliquer ») ne l'est que si une série de
+    // travail a réellement été tenue à sa charge, ce que `reconcileFollowedLoads` recompte juste après.
+    // Après la garde, pas avant : au second appel, elle rouvrirait ce que le premier vient de suivre.
+    await reopenRecommendationsFollowedBy(workoutId, followedIds);
 
     // Resolve what this session answered *before* recording new signals: a fresh
     // objective supersedes the live one, and a superseded row can no longer be

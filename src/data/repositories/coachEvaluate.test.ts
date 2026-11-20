@@ -22,6 +22,7 @@ import {
   recordCoachSignals,
 } from './coachRecommendations';
 import { touch } from './base';
+import { applyCoachRecommendation } from './coachApply';
 import {
   activateProgram,
   createProgramDraft,
@@ -1525,6 +1526,143 @@ describe('l’enregistrement des cartes à la fin de séance', () => {
     await finalizeCoachForWorkout('deload-week');
 
     expect(await statuses()).toEqual({ pending: 1 });
+  });
+
+  it('I1 (A) — « Appliquer » puis exercice non fait : la carte revient et n’est pas retirée', async () => {
+    const now = Date.now();
+    const [card] = await recordCoachSignals([loadCard(82.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('skipped', now - DAY_MS, [[80, 8]]);
+    await db.workoutSets.update('skipped-set-0', { isCompleted: 0 });
+    expect(await applyCoachRecommendation(card!.id, 'skipped')).toBe(1);
+    expect((await db.coachRecommendations.get(card!.id))?.status).toBe('followed');
+
+    // `finishWorkout` efface les séries non validées, puis la ligne vide.
+    await db.workoutSets.update('skipped-set-0', { deletedAt: now });
+    await db.workoutExercises.update('skipped-row', { deletedAt: now });
+
+    await finalizeCoachForWorkout('skipped');
+
+    const stored = await db.coachRecommendations.get(card!.id);
+    expect(stored?.status).toBe('pending');
+    expect(stored).not.toHaveProperty('outcomeWorkoutId');
+  });
+
+  it('I1 (B) — « Appliquer » puis séance allégée : la carte revient, un double appel ne double rien', async () => {
+    const now = Date.now();
+    const [card] = await recordCoachSignals([loadCard(82.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('light2', now - DAY_MS, [[80, 8]], { deloadPercent: 60 });
+    await db.workoutSets.update('light2-set-0', { isCompleted: 0 });
+    await applyCoachRecommendation(card!.id, 'light2');
+    await db.workoutSets.update('light2-set-0', { isCompleted: 1 });
+
+    await finalizeCoachForWorkout('light2');
+    await finalizeCoachForWorkout('light2');
+
+    expect((await db.coachRecommendations.get(card!.id))?.status).toBe('pending');
+    expect(await db.coachRecommendations.count()).toBe(1);
+  });
+
+  it('I1 — appliquée et tenue : elle reste suivie après la fin de séance, même finalisée deux fois', async () => {
+    const now = Date.now();
+    const [card] = await recordCoachSignals([loadCard(82.5)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('held', now - DAY_MS, [[82.5, 8]]);
+    await db.workoutSets.update('held-set-0', { isCompleted: 0 });
+    await applyCoachRecommendation(card!.id, 'held');
+    await db.workoutSets.update('held-set-0', { isCompleted: 1 });
+
+    await finalizeCoachForWorkout('held');
+    await finalizeCoachForWorkout('held');
+
+    expect(await db.coachRecommendations.get(card!.id)).toMatchObject({
+      status: 'followed',
+      outcomeWorkoutId: 'held',
+    });
+  });
+
+  it('M1 — une proposition refusée ne fait pas disparaître l’observation du même exercice', async () => {
+    const now = Date.now();
+    // Séance précédente, puis la séance évaluée : 4 × 12 à 100 (plafond) mais une chute de reps.
+    await seedLoads('prev', now - 10 * DAY_MS, [[100, 12], [100, 12], [100, 12]]);
+    await seedLoads('cur', now - DAY_MS, [[100, 12], [100, 12], [100, 12], [100, 6]]);
+    // Trois séries prescrites au plafond d'un 8 – 12 ; la quatrième, en plus, sans cible, s'effondre.
+    for (const order of [0, 1, 2]) {
+      await db.workoutSets.update(`cur-set-${order}`, { targetReps: 8, targetRepsMax: 12 });
+    }
+    const baseline = await evaluateCoachForWorkout('cur');
+    const proposal = baseline.find((signal) => signal.nextLoadKg !== undefined);
+    expect(proposal).toBeDefined();
+    const [card] = await recordCoachSignals([proposal!], { recommendedAt: now - 5 * DAY_MS });
+    await db.coachRecommendations.put(
+      touch(card!, { status: 'dismissed', resolvedAt: now - 2 * DAY_MS }),
+    );
+
+    const signals = await evaluateCoachForWorkout('cur');
+
+    expect(signals.some((signal) => signal.code === 'intra_session_drop')).toBe(true);
+  });
+
+  it('M2 — séance allégée : l’observation périmée est retirée, la carte chiffrée reste', async () => {
+    const now = Date.now();
+    await db.exercises.add({ ...exercise, id: 'squat', name: 'Squat' });
+    await recordCoachSignals(
+      [
+        { exerciseId: exercise.id, code: 'returning', severity: 1, evidence: [] },
+        { ...loadCard(102.5), exerciseId: 'squat' },
+      ],
+      { recommendedAt: now - 3 * DAY_MS },
+    );
+    await seedLoads('light3', now - DAY_MS, [[60, 12]], { deloadPercent: 60 });
+    await db.workoutExercises.add({
+      ...newEntity<WorkoutExercise>({
+        workoutId: 'light3',
+        exerciseId: 'squat',
+        order: 1,
+        supersetGroup: 0,
+        restSeconds: 120,
+        exerciseName: 'Squat',
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'light3-squat',
+    });
+    await db.workoutSets.add({
+      ...newEntity<WorkoutSet>({
+        workoutExerciseId: 'light3-squat',
+        exerciseId: 'squat',
+        workoutId: 'light3',
+        order: 0,
+        setType: 'normal',
+        side: 'both',
+        weight: 60,
+        reps: 12,
+        isCompleted: 1,
+        performedAt: now - DAY_MS,
+      }),
+      id: 'light3-squat-set',
+    });
+
+    await finalizeCoachForWorkout('light3');
+
+    const benchRows = await listRecommendationsForExercise(exercise.id);
+    expect(benchRows.map((row) => row.status)).toEqual(['superseded']);
+    const squatRows = await listRecommendationsForExercise('squat');
+    expect(squatRows.map((row) => row.status)).toEqual(['pending']);
+  });
+
+  it('M3 — une dégressive plus légère ne fait pas suivre un objectif de baisse', async () => {
+    const now = Date.now();
+    const [card] = await recordCoachSignals([loadCard(95)], { recommendedAt: now - 3 * DAY_MS });
+    await seedLoads('drop', now - DAY_MS, [
+      [100, 8],
+      [100, 8],
+      [95, 10],
+    ]);
+    await db.workoutSets.update('drop-set-2', { setType: 'dropset' });
+
+    await finalizeCoachForWorkout('drop');
+
+    const rows = await listRecommendationsForExercise(exercise.id);
+    expect(rows.find((row) => row.id === card!.id)?.status).not.toBe('followed');
   });
 
   it('A2 — un enregistrement qui échoue laisse la carte d’avant en attente', async () => {

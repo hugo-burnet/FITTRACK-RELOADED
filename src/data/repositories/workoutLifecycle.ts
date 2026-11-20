@@ -353,6 +353,8 @@ export async function deleteWorkout(workoutId: string): Promise<void> {
     await softDelete(db.workouts, workoutId);
     // Les cartes nées de cette séance parleraient d'une performance effacée.
     await retirePendingRecommendationsFrom(workoutId, [...affectedExerciseIds], deleted.deletedAt);
+    // Et celles qu'elle avait suivies ne l'ont plus été : l'objectif reste à tenir.
+    await reopenRecommendationsFollowedBy(workoutId, [...affectedExerciseIds]);
     await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }

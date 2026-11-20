@@ -124,6 +124,31 @@ export async function supersedePendingLoadRecommendations(
 }
 
 /**
+ * Retire les cartes en attente **sans charge** des exercices donnés : les observations (« reprise »,
+ * « plafond de volume »…) parlent d'une séance qui n'est plus la dernière. Une carte chiffrée reste :
+ * elle attend une vraie séance pour être tenue ou remplacée. À appeler dans la transaction de l'appelant.
+ */
+export async function supersedePendingObservations(
+  exerciseIds: readonly string[],
+  resolvedAt = Date.now(),
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const keys = uniqueIds.map((id) => [id, 'pending']);
+  const observations = alive(
+    await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray(),
+  ).filter((row) => row.nextLoadKg === undefined);
+  if (observations.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    observations.map((row) =>
+      touch(row, { status: 'superseded' as CoachRecommendationStatus, resolvedAt }),
+    ),
+  );
+}
+
+/**
  * Retire every pending card of exercises a closed session worked — observations included.
  *
  * `recordCoachSignals` only replaces a card with a new one. A session where the coach has nothing new to
@@ -279,32 +304,6 @@ export async function dismissRecommendation(id: string): Promise<void> {
   if (row.status !== 'pending') return;
   await db.coachRecommendations.put(
     touch(row, { status: 'dismissed', resolvedAt: Date.now() }),
-  );
-}
-
-/**
- * Accepting an objective in session: applying *is* accepting, and the card
- * closes because the row leaves `pending`, not by a local flag a remount would
- * forget.
- *
- * Complémentaire de `reconcileFollowedLoads`, pas concurrent : les deux ne
- * touchent qu'une ligne `pending`, donc la charge réellement tenue en fin de
- * séance ne réécrit pas un objectif déjà accepté à la main.
- */
-export async function markRecommendationFollowed(
-  id: string,
-  outcome: { workoutId?: string; loadKg?: number } = {},
-): Promise<void> {
-  const row = await db.coachRecommendations.get(id);
-  if (row === undefined || row.deletedAt !== 0) return;
-  if (row.status !== 'pending') return;
-  await db.coachRecommendations.put(
-    touch(row, {
-      status: 'followed',
-      resolvedAt: Date.now(),
-      outcomeWorkoutId: outcome.workoutId,
-      outcomeLoadKg: outcome.loadKg,
-    }),
   );
 }
 
