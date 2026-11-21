@@ -186,8 +186,12 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
                   <h3 className="text-base font-semibold text-[var(--text-1)]">
                     {identity.name === undefined ? (
                       t('history.deletedExercise')
+                    ) : line.exercise === undefined ? (
+                      // Supprimé de la bibliothèque : l'instantané garde son nom, mais la fiche
+                      // n'existe plus (suppression douce) — un lien mènerait à « Cet exercice
+                      // n'existe plus ». Le nom reste, sans lien.
+                      exerciseDisplayName(identity.name, identity.isUnilateral)
                     ) : (
-                      // Un exercice supprimé n'a plus de page : seul un nom vivant est un lien.
                       <button
                         type="button"
                         className="-my-3 min-h-12 w-full py-3 text-left"

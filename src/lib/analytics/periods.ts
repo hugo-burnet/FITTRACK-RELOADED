@@ -19,6 +19,23 @@ const WEEKS: Record<Exclude<PeriodKey, 'all'>, number> = {
   '52w': 52,
 };
 
+export const isPeriodKey = (value: string | null): value is PeriodKey =>
+  PERIOD_KEYS.some((key) => key === value);
+
+/**
+ * La plus courte période qui contient `at` : ce qu'il faut ouvrir pour qu'une
+ * séance déjà vue sur une mini-courbe n'ait pas disparu de la vue plein écran.
+ * `'all'` quand aucune période finie ne la contient.
+ */
+export function periodCovering(at: number, now: number): PeriodKey {
+  for (const key of PERIOD_KEYS) {
+    if (key === 'all') continue;
+    const { from } = periodBounds(key, now);
+    if (from !== undefined && at >= from) return key;
+  }
+  return 'all';
+}
+
 export interface PeriodBounds {
   /** Inclusive. Absent for `'all'` — no invented birthday for the app. */
   from?: number;

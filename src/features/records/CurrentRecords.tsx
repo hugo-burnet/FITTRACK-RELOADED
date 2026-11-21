@@ -8,6 +8,8 @@ import { ChevronRightIcon } from '@/ui/icons';
 type Props = {
   groups: readonly ExerciseCurrentRecords[];
   onOpenExercise: (exerciseId: string) => void;
+  /** Faux pour un exercice supprimé : il garde ses records, plus sa page. */
+  canOpenExercise?: (exerciseId: string) => boolean;
   onOpenRecord: (entry: RecordTimelineEntry) => void;
 };
 
@@ -22,7 +24,12 @@ const shortDate = (at: number): string =>
  * La date reste en sous-titre : savoir que le 62,5 kg date de trois mois dit
  * déjà s'il est à battre.
  */
-export function CurrentRecords({ groups, onOpenExercise, onOpenRecord }: Props) {
+export function CurrentRecords({
+  groups,
+  onOpenExercise,
+  canOpenExercise = () => true,
+  onOpenRecord,
+}: Props) {
   return (
     <div className="space-y-4">
       {groups.map((group) => {
@@ -31,9 +38,13 @@ export function CurrentRecords({ groups, onOpenExercise, onOpenRecord }: Props) 
           <Card key={group.exerciseId}>
             <ListRow
               title={name}
-              ariaLabel={t('records.openExercise', { exercise: name })}
-              onClick={() => onOpenExercise(group.exerciseId)}
-              trailing={<ChevronRightIcon />}
+              {...(canOpenExercise(group.exerciseId)
+                ? {
+                    ariaLabel: t('records.openExercise', { exercise: name }),
+                    onClick: () => onOpenExercise(group.exerciseId),
+                    trailing: <ChevronRightIcon />,
+                  }
+                : {})}
             />
             {group.entries.map((entry) => {
               const context = recordContext(entry.record);

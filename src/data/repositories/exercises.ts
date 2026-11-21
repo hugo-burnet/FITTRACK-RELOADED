@@ -78,6 +78,17 @@ export async function countExercises(): Promise<number> {
   return db.exercises.where('deletedAt').equals(0).count();
 }
 
+/**
+ * Les ids des exercices vivants, en une lecture sur l'index `deletedAt`.
+ *
+ * Pour les écrans qui montrent des exercices lus dans l'historique (un nom
+ * d'instantané survit à la suppression) et ne doivent lier que ceux qui ont
+ * encore une page : `getExercise` d'un exercice supprimé renvoie `undefined`.
+ */
+export async function liveExerciseIds(): Promise<Set<string>> {
+  return new Set(await db.exercises.where('deletedAt').equals(0).primaryKeys());
+}
+
 export async function getExercise(id: string): Promise<Exercise | undefined> {
   const exercise = await db.exercises.get(id);
   return exercise !== undefined && exercise.deletedAt === 0 ? exercise : undefined;

@@ -47,6 +47,7 @@ export {
 export {
   programAdherence,
   programWeeklyTonnage,
+  slotState,
   type ProgramAdherence,
   type ProgramAdherenceInput,
 } from './progress';

@@ -21,6 +21,8 @@ export interface WeekTonnage {
   series: number[];
   /** Moyenne des douze dernières semaines connues, semaine en cours comprise, zéros compris. */
   average: number;
+  /** Le nombre de semaines que `average` porte : douze au plus, moins quand l'histoire est plus courte. */
+  averageWeeks: number;
 }
 
 /**
@@ -38,6 +40,7 @@ export function weekTonnage(buckets: readonly WeeklyVolumeBucket[]): WeekTonnage
     current: last.tonnage,
     series: buckets.slice(-SPARKLINE_WEEKS).map((bucket) => bucket.tonnage),
     average: total / window.length,
+    averageWeeks: window.length,
   };
 }
 

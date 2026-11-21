@@ -1068,6 +1068,8 @@ const fr = {
     detailAdherenceLabel: 'Assiduité',
     detailAdherenceToDate: 'prévues à ce jour',
     detailAdherenceTotal: 'sur le programme',
+    /** Sous le chiffre « à ce jour » de la tuile large : le total du programme, en une phrase. */
+    detailAdherenceOverall: '{done} sur {planned} sur tout le programme',
     detailAdherenceSpoken: '{done} séances faites sur {planned}',
     detailTonnageLabel: 'Tonnage',
     detailTonnageCurrent: 'sem. {number}, en cours',
@@ -1764,6 +1766,13 @@ const fr = {
     /** « 4 séries : 6 · 5 · 5 · 5 reps, lun. 16 nov. » — la charge est dans le chiffre. */
     lastTimeUniform: '{sets} : {reps} reps, {date}',
     lastTimePlain: '{sets}, {date}',
+    /** Exercice assisté : la charge est une aide, pas un poids soulevé. */
+    lastTimeAssistUnit: 'kg d’assistance',
+    lastTimeAssistSuffix: 'd’assistance',
+    /** Sous le titre d'une ligne « Séances » : la série écrite à droite est celle-ci, pas le record. */
+    sessionSubtitle: '{sets} · {best}',
+    topSetHeaviest: 'la plus lourde',
+    topSetLeastAssisted: 'la moins assistée',
     /** Écrite poids × reps (« 80 kg × 8 ») ; le détail dit ce que le record mesure, en tonnage. */
     bestSet: 'Meilleure série',
     bestSetDetail: 'Le plus de poids × reps en une série : {volume}, {date}',
@@ -2680,7 +2689,8 @@ const fr = {
 
     /** « Cette semaine » : le tonnage (la seule G), les séances, le programme. */
     tonnageLabel: 'Tonnage · 8 semaines',
-    tonnageDetail: 'Semaine en cours. Moyenne sur 12 semaines : {average}.',
+    tonnageDetail: 'Semaine en cours. Moyenne sur {weeks} semaines : {average}.',
+    tonnageDetailOne: 'Semaine en cours. Moyenne sur 1 semaine : {average}.',
     tonnageHint: 'Voir le volume semaine par semaine',
     sessionsLabel: 'Séances',
     sessionsCaption: 'cette semaine',
@@ -2707,7 +2717,9 @@ const fr = {
     /** « Corps et muscles » : les muscles sous leur plancher, le poids. */
     floorLabel: 'Sous le plancher',
     floorMany: 'À regarder : {muscles}.',
-    floorHint: 'Voir les séries par muscle',
+    floorHint: 'Voir le volume par muscle et ses planchers',
+    floorUnset: 'Aucun plancher réglé : règle-en un pour être prévenu.',
+    floorUnsetHint: 'Régler les planchers par muscle',
     weightLabel: 'Poids de corps',
     weightDetail: '{change} depuis la pesée précédente ({previous}).',
     weightHint: 'Voir les mensurations',

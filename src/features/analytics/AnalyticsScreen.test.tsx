@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { newEntity } from '@/data/repositories/base';
 import { db } from '@/data/db';
+import { deleteExercise } from '@/data/repositories/exercises';
 import { saveMeasurement } from '@/data/repositories/measurements';
 import {
   activateProgram,
@@ -12,7 +13,7 @@ import {
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
 import { rebuildAllRecords } from '@/data/repositories/personalRecords';
-import { setWeeklyTrainingGoal } from '@/data/repositories/settings';
+import { setCoachVolumeBounds, setWeeklyTrainingGoal } from '@/data/repositories/settings';
 import type { Workout } from '@/data/types';
 import { startOfLocalWeek } from '@/lib/history';
 import { day, seedWorkout } from '@/test/factories';
@@ -21,7 +22,8 @@ import { seedExercise, seedRoutine } from '@/test/routineSeed';
 import { AnalyticsScreen } from './AnalyticsScreen';
 
 function Where() {
-  return <output data-testid="where">{useLocation().pathname}</output>;
+  const location = useLocation();
+  return <output data-testid="where">{`${location.pathname}${location.search}`}</output>;
 }
 
 const renderScreen = () =>
@@ -75,6 +77,8 @@ describe('AnalyticsScreen', () => {
     await seedWorkout({ exerciseId: bench.id, performedAt: day(0), sets: [[90, 5]] });
     await rebuildAllRecords();
     await setWeeklyTrainingGoal(3);
+    // Un plancher réglé : sans lui, la tuile ne dit pas « 0 » (cf. le test dédié).
+    await setCoachVolumeBounds('chest', { floor: 1 });
     await saveMeasurement({ type: 'body_weight', value: 84.1, unit: 'kg', measuredAt: day(0) });
     await saveMeasurement({ type: 'body_weight', value: 82.4, unit: 'kg', measuredAt: day(7) });
     await seedProgram();
@@ -119,9 +123,10 @@ describe('AnalyticsScreen', () => {
       ['Séances', '/analytics/weekly'],
       ['Programme en cours', `/programs/${programId}`],
       ['Dernier record', `/exercises/${bench.id}`],
-      ['Records battus', '/analytics/records'],
+      // Le nombre compte toute la chronologie : la page s'ouvre sur la chronologie, où il se retrouve.
+      ['Records battus', '/analytics/records?vue=chronologie'],
       ['Paliers', '/analytics/milestones'],
-      ['Sous le plancher', '/analytics/muscles'],
+      ['Sous le plancher', '/settings/volume'],
       ['Poids de corps', '/analytics/measurements'],
       ['Rapport mensuel', '/analytics/months'],
     ];
@@ -129,6 +134,38 @@ describe('AnalyticsScreen', () => {
       await user.click(await tile(label));
       expect(screen.getByTestId('where')).toHaveTextContent(path);
     }
+  });
+
+  it('« Dernier record » d’un exercice supprimé mène à la séance du record, pas à une fiche qui n’existe plus', async () => {
+    const user = userEvent.setup();
+    const bench = await seedExercise({ name: 'Développé couché (barre)' });
+    const workout = await seedWorkout({
+      exerciseId: bench.id,
+      performedAt: Date.now(),
+      sets: [[100, 5]],
+    });
+    await rebuildAllRecords();
+    await deleteExercise(bench.id);
+
+    renderScreen();
+
+    // Le record doit être lu avant le clic : sans lui, la tuile ouvre la page des records.
+    await waitFor(async () =>
+      expect((await tile('Dernier record')).textContent).toContain('Développé couché (barre)'),
+    );
+    await user.click(await tile('Dernier record'));
+    expect(screen.getByTestId('where')).toHaveTextContent(`/history/${workout.id}`);
+  });
+
+  it('sans aucun plancher réglé, « Sous le plancher » ne dit pas 0 : il invite à en régler un', async () => {
+    const bench = await seedExercise({ name: 'Développé couché (barre)' });
+    await seedWorkout({ exerciseId: bench.id, performedAt: Date.now(), sets: [[100, 5]] });
+
+    renderScreen();
+
+    const floor = await tile('Sous le plancher');
+    await waitFor(() => expect(floor.textContent).toContain('Aucun plancher réglé'));
+    expect(plain(floor.textContent ?? '')).not.toMatch(/Sous le plancher\s*0/);
   });
 
   it('n’offre pas le programme sans programme actif', async () => {
