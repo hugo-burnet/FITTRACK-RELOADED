@@ -23,6 +23,7 @@ export type { ItemState } from './ReorderableList';
 export { RestPicker } from './RestPicker';
 export { SectionTitle } from './SectionTitle';
 export { Skeleton } from './Skeleton';
+export { Sparkline } from './Sparkline';
 export { Segmented } from './Segmented';
 export type { SegmentedOption } from './Segmented';
 export { Sheet } from './Sheet';
