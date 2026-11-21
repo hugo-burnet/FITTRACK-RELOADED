@@ -750,6 +750,11 @@ const fr = {
     title: 'Records',
     link: 'Records',
     subtitle: 'Tous tes jalons personnels',
+    /** Les deux vues : ce qui est vrai aujourd'hui, et comment on y est arrivé. */
+    viewsLabel: 'Vue des records',
+    viewCurrent: 'En cours',
+    viewTimeline: 'Chronologie',
+    openExercise: 'Voir {exercise}',
     allExercises: 'Tous les exercices',
     allTypes: 'Tous les records',
     unknownExercise: 'Exercice indisponible',
