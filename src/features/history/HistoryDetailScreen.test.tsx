@@ -4,7 +4,15 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
-import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  CoachRecommendation,
+  Exercise,
+  PersonalRecord,
+  Program,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { HistoryDetailScreen } from './HistoryDetailScreen';
 
@@ -193,5 +201,125 @@ describe('HistoryDetailScreen — partage', () => {
     expect(await screen.findByRole('status')).toHaveTextContent(
       'La séance n’a pas pu être partagée ni copiée.',
     );
+  });
+});
+
+describe('HistoryDetailScreen — le contexte, les records et le coach', () => {
+  beforeEach(resetDb);
+
+  async function renderWithRoutes(workoutId: string) {
+    render(
+      <MemoryRouter initialEntries={[`/history/${workoutId}`]}>
+        <Routes>
+          <Route path="/history/:workoutId" element={<HistoryDetailScreen />} />
+          <Route path="/programs/:id" element={<p>Fiche du programme</p>} />
+          <Route path="/exercises/:id" element={<p>Fiche de l’exercice</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await screen.findByText('Développé couché');
+  }
+
+  it('n’affiche ni programme, ni records, ni coach pour une séance libre', async () => {
+    const workout = await seedArchivedWorkout();
+    await renderWithRoutes(workout.id);
+
+    expect(screen.queryByText('Records de cette séance')).not.toBeInTheDocument();
+    expect(screen.queryByText('Ce que le coach en a conclu')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Semaine/)).not.toBeInTheDocument();
+  });
+
+  it('montre le programme de la séance, avec sa semaine et sa phase, et mène à sa fiche', async () => {
+    const workout = await seedArchivedWorkout();
+    const program = newEntity<Program>({
+      name: 'Hypertrophie · automne',
+      startsAt: STARTED_AT,
+      durationWeeks: 6,
+      status: 'active',
+    });
+    await db.programs.add(program);
+    await db.workouts.update(workout.id, {
+      programId: program.id,
+      programWeekIndex: 1,
+      programPhase: 'progression',
+    });
+    await renderWithRoutes(workout.id);
+
+    const link = await screen.findByRole('button', { name: /Hypertrophie · automne/ });
+    expect(link).toHaveTextContent('Semaine 2 / 6 · Progression');
+    await userEvent.click(link);
+
+    expect(await screen.findByText('Fiche du programme')).toBeInTheDocument();
+  });
+
+  it('garde la ligne d’un programme supprimé, sans lien', async () => {
+    const workout = await seedArchivedWorkout();
+    const program = newEntity<Program>({
+      name: 'Ancien',
+      startsAt: STARTED_AT,
+      durationWeeks: 6,
+      status: 'completed',
+    });
+    await db.programs.add({ ...program, deletedAt: STARTED_AT });
+    await db.workouts.update(workout.id, { programId: program.id, programWeekIndex: 0 });
+    await renderWithRoutes(workout.id);
+
+    expect(await screen.findByText('Programme supprimé')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Programme supprimé/ })).not.toBeInTheDocument();
+  });
+
+  it('liste les records de la séance par exercice, chaque ligne menant à l’exercice', async () => {
+    const workout = await seedArchivedWorkout();
+    const exerciseId = (await db.exercises.toArray())[0]!.id;
+    const record = newEntity<PersonalRecord>({
+      exerciseId,
+      type: 'max_weight',
+      value: 80,
+      achievedAt: STARTED_AT + 60_000,
+      workoutId: workout.id,
+      weight: 80,
+      reps: 10,
+    });
+    await db.personalRecords.add(record);
+    await renderWithRoutes(workout.id);
+
+    expect(await screen.findByText('Records de cette séance')).toBeInTheDocument();
+    await userEvent.click(await screen.findByRole('button', { name: /Charge max/ }));
+
+    expect(await screen.findByText('Fiche de l’exercice')).toBeInTheDocument();
+  });
+
+  it('dit ce que le coach a conclu de la séance, avec l’état de sa proposition', async () => {
+    const workout = await seedArchivedWorkout();
+    const exerciseId = (await db.exercises.toArray())[0]!.id;
+    await db.coachRecommendations.add(
+      newEntity<CoachRecommendation>({
+        exerciseId,
+        code: 'range_ceiling_reached',
+        recommendedAt: STARTED_AT + 3_600_000,
+        nextLoadKg: 82.5,
+        evidence: [
+          { label: 'current_load_kg', value: 80 },
+          { label: 'working_sets', value: 4 },
+          { label: 'target_reps_max', value: 8 },
+        ],
+        status: 'followed',
+        sourceWorkoutId: workout.id,
+      }),
+    );
+    await renderWithRoutes(workout.id);
+
+    expect(await screen.findByText('Ce que le coach en a conclu')).toBeInTheDocument();
+    expect(screen.getByText('Suivie')).toBeInTheDocument();
+    expect(screen.getByText('82,5')).toBeInTheDocument();
+  });
+
+  it('ouvre la page de l’exercice depuis le titre de sa carte', async () => {
+    const workout = await seedArchivedWorkout();
+    await renderWithRoutes(workout.id);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Développé couché' }));
+
+    expect(await screen.findByText('Fiche de l’exercice')).toBeInTheDocument();
   });
 });

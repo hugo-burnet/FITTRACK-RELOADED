@@ -1465,6 +1465,11 @@ const fr = {
     detailDuration: 'Durée',
     detailNotes: 'Notes',
     detailTotals: 'Totaux',
+    /** Le mot est « programme », jamais « bloc » (vocabulaire de la v3). */
+    programDeleted: 'Programme supprimé',
+    programWeekOnly: 'Semaine {current}',
+    detailRecords: 'Records de cette séance',
+    detailCoach: 'Ce que le coach en a conclu',
     /** Past tense: the recap says what this session did, not what it targets. */
     detailMuscles: 'Muscles travaillés',
     /**
@@ -1477,13 +1482,6 @@ const fr = {
     detailSets: 'Séries de travail',
     detailReps: 'Répétitions',
     detailTonnage: 'Tonnage',
-    detailTime: 'Temps',
-    /**
-     * Le seul chiffre estimé de la carte le dit lui-même, et dit aussi où on
-     * le règle : une estimation qu'on ne peut pas corriger est un chiffre subi.
-     */
-    detailTimeHint:
-      'Le temps compte les exercices chronométrés à la seconde, et les séries en répétitions à la cadence réglée sur l’exercice — 3 s par répétition par défaut.',
     detailDistance: 'Distance',
     detailSet: 'Série {number}',
     detailRpe: 'RPE {value}',
