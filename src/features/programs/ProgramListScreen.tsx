@@ -9,7 +9,7 @@ import { ProgramHeroCard } from './ProgramHeroCard';
 import type { ProgramStatus } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { Button, EmptyState, HeaderAction, ListRow } from '@/ui';
+import { Button, Card, EmptyState, HeaderAction, ListRow } from '@/ui';
 import { ChevronRightIcon, PlusIcon } from '@/ui/icons';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 
@@ -114,7 +114,7 @@ export function ProgramListScreen() {
         </div>
       )}
       {query?.status === 'ready' && otherPrograms(query).length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
+        <Card>
           {otherPrograms(query).map(({ program }) => (
             <ListRow
               key={program.id}
@@ -132,7 +132,7 @@ export function ProgramListScreen() {
               onClick={() => void navigate(`/programs/${program.id}`)}
             />
           ))}
-        </div>
+        </Card>
       )}
     </Screen>
   );

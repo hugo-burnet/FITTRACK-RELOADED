@@ -456,7 +456,7 @@ export function WorkoutExerciseCard({
                   key={column.field}
                   style={{ width: index === 0 ? WIDTH.first : WIDTH.second }}
                   className={`shrink-0 text-center font-semibold text-[var(--text-2)] ${
-                    column.unit === 'reps' ? 'label-xs' : 'text-[0.6875rem] tracking-[0.08em]'
+                    column.unit === 'reps' ? 'label-xs' : 'text-xs tracking-[0.08em]'
                   }`}
                 >
                   {column.prefix}

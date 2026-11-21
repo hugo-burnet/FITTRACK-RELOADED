@@ -8,7 +8,7 @@ import {
   subscribeInstall,
   type InstallOutcome,
 } from '@/platform/install';
-import { ListRow } from '@/ui';
+import { Card, ListRow } from '@/ui';
 
 /** Every answer the browser can give to "install this", each with its sentence. */
 const INSTALL_MESSAGE = {
@@ -49,14 +49,14 @@ export function InstallSettings() {
 
   return (
     <div>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.installLink')}
           subtitle={t('settings.installHint')}
           disabled={standalone}
           onClick={() => void install()}
         />
-      </div>
+      </Card>
       {shownOutcome !== null && (
         <p
           role="status"

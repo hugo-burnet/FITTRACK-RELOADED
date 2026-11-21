@@ -31,7 +31,7 @@ function Unit({ unit }: { unit: TargetUnit }) {
   return unit === 'reps' ? (
     <span className="label-xs font-semibold text-[var(--text-2)]">{unitLabel(unit)}</span>
   ) : (
-    <span className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]">
+    <span className="text-xs font-semibold tracking-[0.08em] text-[var(--text-2)]">
       {unitLabel(unit)}
     </span>
   );

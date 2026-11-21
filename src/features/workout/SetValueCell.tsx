@@ -40,7 +40,7 @@ export function SetValueCell({ value, ghost, target, onChange, width, integer, .
         <span
           aria-hidden="true"
           className="tabular pointer-events-none absolute inset-x-0 top-1 truncate px-1 text-center
-            text-[0.6875rem] leading-none text-[var(--text-2)]"
+            text-xs leading-none text-[var(--text-2)]"
         >
           {target}
         </span>

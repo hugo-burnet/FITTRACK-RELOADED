@@ -63,7 +63,7 @@ export function BottomNav() {
                       ${isActive ? 'scale-x-100' : 'scale-x-0'}`}
                 />
                 <Icon />
-                <span className="text-[11px] leading-none font-medium">{t(labelKey)}</span>
+                <span className="text-xs leading-none font-medium">{t(labelKey)}</span>
               </Link>
             </li>
           );

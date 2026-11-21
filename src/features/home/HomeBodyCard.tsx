@@ -2,7 +2,7 @@ import { lazy, Suspense, useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { Card } from '@/ui';
+import { Card, ListRow } from '@/ui';
 
 /**
  * Le corps travaillé, en tête d'écran, et les trois analyses à son pied.
@@ -62,21 +62,14 @@ export function HomeBodyCard() {
           <HomeMuscleMap onResolved={setDrawn} />
         </Suspense>
 
-        <div className="grid grid-cols-3">
-          {LINKS.map(({ to, labelKey, nameKey }) => (
-            <button
-              key={to}
-              type="button"
-              aria-label={t(nameKey)}
-              onClick={() => void navigate(to)}
-              className="flex min-h-14 items-center justify-center border-l border-[var(--border)]
-                p-4 text-base font-semibold text-[var(--text-1)] first:border-l-0
-                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
+        {LINKS.map(({ to, labelKey, nameKey }) => (
+          <ListRow
+            key={to}
+            title={t(labelKey)}
+            ariaLabel={t(nameKey)}
+            onClick={() => void navigate(to)}
+          />
+        ))}
       </Card>
     </section>
   );

@@ -13,7 +13,7 @@ import {
   REMINDER_WEEK_ORDER,
   reminderClockValue,
 } from '@/lib/reminders';
-import { Input, LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { Card, Input, LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
 
 /**
  * RF-53 — the three notifications, each with its own switch.
@@ -52,7 +52,7 @@ export function NotificationSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.notificationsSection')}</SectionTitle>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.notificationsRest')}
           subtitle={t('settings.notificationsRestHint')}
@@ -99,18 +99,14 @@ export function NotificationSettings() {
             />
           }
         />
-      </div>
+      </Card>
 
       {preferences.reminders && (
-        <div className="mt-3 rounded-2xl bg-[var(--surface-1)] p-4">
+        <Card padded className="mt-3">
           <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
             {t('settings.notificationsDays')}
           </p>
-          <div
-            role="group"
-            aria-label={t('settings.notificationsDays')}
-            className="flex gap-1.5"
-          >
+          <div role="group" aria-label={t('settings.notificationsDays')} className="flex gap-1.5">
             {REMINDER_WEEK_ORDER.map((day) => {
               const checked = preferences.schedule.days.includes(day);
 
@@ -153,7 +149,7 @@ export function NotificationSettings() {
               ? t('settings.notificationsNoDay')
               : t('settings.notificationsNext', { date: reminderMoment(next) })}
           </p>
-        </div>
+        </Card>
       )}
 
       <LearnMore>

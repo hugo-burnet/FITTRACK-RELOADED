@@ -10,7 +10,7 @@ import {
   loadAnnouncerEcho,
   loadAnnouncerMode,
 } from '@/stores/announcer';
-import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { Card, LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
 import { ANNOUNCER_MODES } from './announcerModes';
 
 /** One clip answers for the folder — the pack is written in one run. */
@@ -74,7 +74,7 @@ export function AnnouncerSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.announcerSection')}</SectionTitle>
-      <div className="rounded-2xl bg-[var(--surface-1)] p-4">
+      <Card padded>
         <div
           role="radiogroup"
           aria-label={t('settings.announcer')}
@@ -103,10 +103,10 @@ export function AnnouncerSettings() {
             </button>
           ))}
         </div>
-      </div>
+      </Card>
 
       {mode !== 'silence' && (
-        <div className="mt-3 overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+        <Card className="mt-3">
           <ListRow
             title={t('settings.announcerEcho')}
             trailing={
@@ -118,12 +118,14 @@ export function AnnouncerSettings() {
               />
             }
           />
-        </div>
+        </Card>
       )}
 
       {/* Aucune phrase d'aide visible : le groupe tient en ses boutons, et tout ce qu'il dit se déplie. */}
       <LearnMore>
-        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('settings.announcerHint')}</p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.announcerHint')}
+        </p>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.announcerMusicHint')}
         </p>

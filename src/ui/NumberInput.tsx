@@ -125,7 +125,7 @@ export function NumberInput({
           <span
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-3 flex items-center
-              text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]"
+              text-xs font-semibold tracking-[0.08em] text-[var(--text-2)]"
           >
             {suffix}
           </span>

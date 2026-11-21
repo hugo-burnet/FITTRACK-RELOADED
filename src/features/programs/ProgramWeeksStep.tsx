@@ -9,7 +9,7 @@ import {
   type ProgramRecipeId,
 } from '@/lib/programs';
 import { t } from '@/i18n/fr';
-import { Button, ListRow, NumberInput, Sheet } from '@/ui';
+import { Button, Card, ListRow, NumberInput, Sheet } from '@/ui';
 import {
   LOAD_INDEX_PRESETS,
   PHASE_LABEL_KEYS,
@@ -117,7 +117,7 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
         ligne et la liste ne se scanne plus. Elle vit dans la feuille, au moment
         où on choisit la phase.
       */}
-      <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
+      <Card>
         {weeks.map((week, index) => {
           const number = index + 1;
           const deload = week.phase === 'deload';
@@ -160,7 +160,7 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
             />
           );
         })}
-      </div>
+      </Card>
 
       <Sheet
         open={editor !== null}
