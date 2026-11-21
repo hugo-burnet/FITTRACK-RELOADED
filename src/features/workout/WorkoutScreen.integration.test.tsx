@@ -728,6 +728,31 @@ describe('WorkoutScreen — écriture durable', () => {
     expect(useRestTimer.getState().setId).toBe(set.id);
   });
 
+  it('efface « Terminer la séance » le temps du repos, et le garde dans le menu ⋮', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
+    renderWorkout();
+
+    expect(await screen.findByRole('button', { name: 'Terminer la séance' })).toBeInTheDocument();
+
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    await userEvent.click(complete);
+    await screen.findByRole('group', { name: 'Repos' });
+    expect(screen.queryByRole('button', { name: 'Terminer la séance' })).toBeNull();
+
+    // Le menu de la séance la garde, repos ou pas.
+    await userEvent.click(screen.getByRole('button', { name: 'Options de la séance' }));
+    expect(await screen.findByRole('button', { name: 'Terminer la séance' })).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+
+    // Le repos passé, la bande revient.
+    await userEvent.click(screen.getByRole('button', { name: 'Passer le repos' }));
+    await waitFor(() => expect(screen.queryByRole('group', { name: 'Repos' })).toBeNull());
+    expect(await screen.findByRole('button', { name: 'Terminer la séance' })).toBeInTheDocument();
+  });
+
   it('shows a write error without starting rest', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);

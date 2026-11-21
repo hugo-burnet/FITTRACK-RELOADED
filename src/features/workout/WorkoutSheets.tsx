@@ -181,6 +181,15 @@ export function WorkoutSheets({
           },
           { label: t('workout.rename'), onSelect: () => setSheet({ kind: 'rename' }) },
           { label: t('workout.workoutNotesLabel'), onSelect: () => setSheet({ kind: 'notes' }) },
+          // « Terminer la séance » s'efface du pied de l'écran pendant un repos (`WorkoutScreen`) :
+          // il reste ici, toujours, avec le même geste que la bande (l'écran de bilan confirme).
+          {
+            label: t('workout.finish'),
+            onSelect: () => {
+              setSheet(null);
+              void navigate('/workout/finish');
+            },
+          },
         ]}
       />
 

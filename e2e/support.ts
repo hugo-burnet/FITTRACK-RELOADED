@@ -291,7 +291,20 @@ export async function logFirstExerciseAndFinish(
     // Le compteur ne bouge qu'une fois la série relue en base : l'écriture est faite.
     await expect(page.getByText(new RegExp(`^${number} séries? sur \\d+$`))).toBeVisible();
   }
-  await page.getByRole('button', { name: 'Terminer la séance' }).click();
+  await finishWorkout(page);
   await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
   await expect(page).toHaveURL(/#\/$/);
+}
+
+/**
+ * Ouvre le bilan depuis l'écran de séance. Pendant un repos, « Terminer la séance » s'efface du pied de
+ * l'écran (on ne termine pas en plein repos) : on passe le repos d'abord, comme le ferait la personne,
+ * puis la bande revient. Hors repos, le bouton est déjà là.
+ */
+export async function finishWorkout(page: Page): Promise<void> {
+  const skip = page.getByRole('button', { name: 'Passer le repos' });
+  const finish = page.getByRole('button', { name: 'Terminer la séance' });
+  await expect(skip.or(finish)).toBeVisible();
+  if (await skip.isVisible()) await skip.click();
+  await finish.click();
 }

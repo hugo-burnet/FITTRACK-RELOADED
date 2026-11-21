@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openApp } from './support';
+import { finishWorkout, openApp } from './support';
 
 test.describe('une séance libre, sans routine', () => {
   test('de l’accueil vide à l’historique, sans rien perdre', async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe('une séance libre, sans routine', () => {
     // La série validée ouvre le repos : elle est écrite en base.
     await expect(page.getByText(/^Repos \d+:\d\d$/)).toBeVisible();
 
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await expect(page).toHaveURL(/#\/workout\/finish$/);
     await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
 

@@ -31,7 +31,8 @@ describe('RestDock — le repos, en bas de l’écran de séance', () => {
     const given = props();
     const { container } = render(<RestDock {...given} />);
 
-    expect(screen.getByText('Repos 1:00')).toBeInTheDocument();
+    // Le libellé et le chiffre sont deux éléments d'une même ligne : le groupe les lit « Repos 1:00 ».
+    expect(screen.getByRole('group', { name: 'Repos' })).toHaveTextContent(/Repos 1:00/);
     // La barre de repos — et en Cyber sa barre de vie et ses dégâts — vit ici désormais.
     expect(container.querySelector('[data-part="meter-rail"]')).not.toBeNull();
     expect(container.querySelector('[data-part="rest-loss"]')).not.toBeNull();
