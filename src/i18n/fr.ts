@@ -352,6 +352,8 @@ const fr = {
   workout: {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
+    /** Le nom du groupe « décompte + −15 s / +15 s / Passer » dans la barre de repos en bas de la séance. */
+    restGroup: 'Repos',
     /** −15 s et +15 s pendant le repos, de part et d'autre de la carte qui se repose. */
     restMinus: '−15 s',
     restPlus: '+15 s',

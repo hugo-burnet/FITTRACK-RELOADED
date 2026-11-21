@@ -1,3 +1,4 @@
+import { t } from '@/i18n/fr';
 import { RestRail, RestStatus } from './RestRail';
 import { RestShift } from './RestShift';
 
@@ -15,7 +16,10 @@ type Props = {
 };
 
 /**
- * Le repos en cours, épinglé en bas de l'écran de séance, juste au-dessus de « Terminer la séance ».
+ * Le repos en cours, épinglé en bas de l'écran de séance, au-dessus de la barre de navigation — sur
+ * UNE rangée (le chiffre, puis −15 s / +15 s / Passer) sous un filet de progression, 69 px au lieu de 117.
+ * « Terminer la séance » s'efface le temps du repos (`WorkoutScreen`) : on ne termine pas en plein repos,
+ * et la commande reste dans le menu ⋮ de l'en-tête.
  *
  * Il vivait dans l'en-tête de la carte de l'exercice qui se repose, en 14 px, et sortait de l'écran
  * dès qu'on faisait défiler jusqu'à l'exercice suivant — avec ses −15 s / +15 s (audit v2.19,
@@ -32,18 +36,24 @@ export function RestDock({ startedAt, endsAt, audioSuppressed, onDone, onShift, 
   return (
     <div
       data-part="rest-dock"
-      className="shrink-0 border-t border-[var(--border)] bg-[var(--surface-1)] px-3 pt-2 pb-3"
+      role="group"
+      aria-label={t('workout.restGroup')}
+      className="@container relative shrink-0 border-t border-[var(--border)] bg-[var(--surface-1)]"
     >
-      <div className="relative pb-4">
+      {/* Le filet, sur toute la largeur, au bord haut de la rangée. */}
+      <RestRail
+        startedAt={startedAt}
+        endsAt={endsAt}
+        audioSuppressed={audioSuppressed}
+        onDone={onDone}
+      />
+      {/* Une rangée : le chiffre, puis les trois gestes. À 200 % de police elle ne tient plus — le seuil
+          est en `rem`, donc il suit la police (comme `TileGrid`) : le chiffre passe au-dessus des
+          boutons, qui gardent toute la largeur. */}
+      <div className="flex flex-col gap-2 px-2 pt-3 pb-2 @[23rem]:px-3 @[23rem]:flex-row @[23rem]:items-center @[23rem]:gap-3">
         <RestStatus endsAt={endsAt} />
-        <RestRail
-          startedAt={startedAt}
-          endsAt={endsAt}
-          audioSuppressed={audioSuppressed}
-          onDone={onDone}
-        />
+        <RestShift onShift={onShift} onSkip={onSkip} className="min-w-0 @[23rem]:flex-1" />
       </div>
-      <RestShift onShift={onShift} onSkip={onSkip} />
     </div>
   );
 }

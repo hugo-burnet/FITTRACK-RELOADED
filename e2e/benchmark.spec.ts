@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   createRoutineFromTemplate,
+  finishWorkout,
   findHorizontalOverflow,
   openApp,
   settleLayout,
@@ -45,7 +46,7 @@ test.describe('benchmark', () => {
     await page.getByRole('button', { name: 'Valider la série 1' }).click();
     await expect(page.getByText('1 série sur 3')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await expect(page.getByText(/C’est une séance test/)).toBeVisible();
     // Pas de carte du coach : un maximum n'est pas une séance de travail à juger.
     await expect(page.getByRole('article', { name: 'Coach' })).toHaveCount(0);
@@ -194,7 +195,7 @@ test.describe('benchmark', () => {
     await page.getByRole('textbox', { name: 'Série 1 — reps' }).fill('18');
     await page.getByRole('button', { name: 'Valider la série 1' }).click();
     await expect(page.getByText('1 série sur 5')).toBeVisible();
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
 
     // 40 × 18 est un max de 64 kg. Trois séries d'un 15 – 20 : la première doit pouvoir en faire 21, la
@@ -232,7 +233,7 @@ test.describe('benchmark', () => {
     await page.getByRole('textbox', { name: 'Série 1 — kg' }).fill('100');
     await page.getByRole('button', { name: 'Valider la série 1' }).click();
     await expect(page.getByText('1 série sur 15')).toBeVisible();
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
     await expect(page).toHaveURL(/#\/$/);
 
@@ -251,7 +252,7 @@ test.describe('benchmark', () => {
     await page.getByRole('button', { name: 'Valider la série 1' }).click();
     await expect(page.getByText('1 série sur 3')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await page.getByRole('button', { name: 'Enregistrer la séance' }).click();
     await expect(page).toHaveURL(/#\/benchmark\/[^/]+$/);
     const squat = page.getByRole('region', { name: 'Squat (barre, nuque)' });

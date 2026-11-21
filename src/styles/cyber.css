@@ -519,7 +519,7 @@
   --hp: var(--accent-ink);
   direction: rtl;
   height: 7px;
-  bottom: 3px;
+  top: 0;
   border-radius: 0;
   clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
   background:
@@ -593,7 +593,7 @@
   --ghost: var(--cyber-crit);
   display: block;
   height: 7px;
-  bottom: 3px;
+  top: 0;
   clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
 }
 /* Dans le rouge des dix dernières secondes, les dégâts se détachent en blanc. */

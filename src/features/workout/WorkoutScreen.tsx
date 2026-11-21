@@ -148,6 +148,7 @@ export function WorkoutScreen() {
     rest.setId === null
       ? undefined
       : exercises.find((line) => line.sets.some((set) => set.id === rest.setId));
+  const resting = restLine !== undefined;
 
   return (
     <Screen
@@ -236,7 +237,7 @@ export function WorkoutScreen() {
           {/* Le repos, hors de la zone qui défile : il reste sous les yeux quand on passe à
               l'exercice suivant (audit v2.19, constat 3). Monté tant que la série qui se repose est
               dans la séance, comme l'était sa barre dans la carte. */}
-          {restLine !== undefined && rest.setId !== null && (
+          {resting && rest.setId !== null && (
             <RestDock
               key={rest.setId}
               startedAt={rest.startedAt}
@@ -262,13 +263,17 @@ export function WorkoutScreen() {
               }}
             />
           )}
-          <ActionBand
-            label={t('workout.finish')}
-            tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
-            onClick={() => {
-              void navigate('/workout/finish');
-            }}
-          />
+          {/* On ne termine pas en plein repos : la bande s'efface le temps du repos et revient dès
+              qu'il est fini ou passé. La commande reste dans le menu ⋮ de l'en-tête. */}
+          {!resting && (
+            <ActionBand
+              label={t('workout.finish')}
+              tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
+              onClick={() => {
+                void navigate('/workout/finish');
+              }}
+            />
+          )}
         </>
       }
     >
