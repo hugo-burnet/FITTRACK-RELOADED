@@ -35,22 +35,45 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > Entre parenthèses : la version où le point est apparu, pour retrouver sa section dans
 > `docs/journal/`.
 
-## Fondations de la v3.0 *(branche `claude/fittrack-v3-foundations-ntgpcx`, pas encore publiée)*
+## Mise à jour v3.0.0 — la refonte par objets (10 min)
 
-- [ ] **Accueil, l'îlot.** La semaine (« 2 / 4 ») et le poids du jour sont deux plaques séparées, plus une bande
-      coupée d'un filet. Taper le poids ouvre sa saisie ; taper la semaine ouvre les séances par semaine. Police du
-      téléphone au plus grand : les deux plaques passent l'une sous l'autre, rien n'est coupé.
-- [ ] **Accueil, le corps.** Sous la carte du corps, les trois analyses sont trois lignes empilées (plus trois cases
-      côte à côte) ; chacune mène au même écran qu'avant.
-- [ ] **Onglets soulignés.** Planifier (Routines / Programmes / Guide), la fiche d'un exercice (Suivi /
-      Documentation) et l'Historique (Journal / Calendrier) marquent l'onglet courant d'un soulignement orange, plus
-      d'un aplat. Le thème (Réglages › Apparence), l'annonceur et le type de série gardent l'aplat : c'est un choix.
+Installer **par-dessus** la v2.19, sans désinstaller, après avoir exporté une sauvegarde.
+
+- [ ] **Mise à jour sans perte.** Après installation : routines, historique, records, programme en cours et
+      mensurations sont là, à l'identique.
+- [ ] **Progression en tuiles.** Trois groupes : « Cette semaine » (le tonnage avec sa petite courbe sur 8 semaines,
+      le dernier segment en pointillé ; les séances ; le programme en cours), « Records » (le dernier record, le nombre
+      de records, les paliers), « Corps et muscles ». Chaque tuile mène à sa page ; la liste des exercices n'y est plus.
+- [ ] **Page d'un exercice.** Exercices › un exercice déjà fait : « La dernière fois » (qui ignore les séances test),
+      charge max, 1RM, meilleure série écrite « 80 kg × 8 », la courbe qui ouvre la vue plein écran, ce qu'en dit le
+      coach, les séances qui ouvrent leur détail. La carte des muscles est dans l'onglet Documentation.
+- [ ] **Détail d'une séance passée.** Historique › une séance d'un programme : la ligne « Semaine N / M · phase » qui
+      ouvre le programme, les totaux en tuiles (plus de « Temps estimé »), ses records, ce que le coach en a conclu ;
+      le nom de chaque exercice ouvre sa page.
+- [ ] **Détail d'un programme.** Planifier › Programmes › le programme en cours : semaine X / N, assiduité, tonnage
+      par semaine, ce que la phase change au coach en une phrase, et les semaines passées dont chaque séance faite
+      ouvre son détail.
+- [ ] **Records.** Progression › Records : par défaut, les records **en cours** par exercice ; la chronologie derrière
+      l'onglet. Une meilleure série se lit « 62,5 kg × 8 », jamais « 500 kg ».
+- [ ] **Accueil, jamais sans « Démarrer ».** Avec un dossier de routines, la suggestion reste (aucune feuille ne
+      s'ouvre seule) ; l'en-tête dit ce qu'il suit. Un programme sans séance aujourd'hui propose quand même de lancer
+      une routine.
+- [ ] **Séance libre.** Sur un accueil sans routine (ou un dossier vide) : « Séance libre » démarre une séance, on
+      ajoute un exercice, on valide une série, on termine : elle est dans l'historique. « Créer une routine » ouvre
+      directement le choix « vide ou modèle ».
+- [ ] **Un seul mot.** Planifier dit « programme » partout (plus « bloc »), « Répartition » (plus « Split »),
+      « Séance test » (plus « Benchmark ») ; les trois sous-onglets n'ont pas de flèche retour.
+- [ ] **Accueil, l'îlot.** La semaine (« 2 / 4 ») et le poids du jour sont deux plaques séparées. Taper le poids ouvre
+      sa saisie. Police du téléphone au plus grand : les deux plaques passent l'une sous l'autre, rien n'est coupé.
+- [ ] **Accueil, le corps.** Sous la carte du corps, les trois analyses sont trois lignes empilées, avec un chevron.
+- [ ] **Onglets soulignés.** Planifier, la fiche d'un exercice et l'Historique marquent l'onglet courant d'un
+      soulignement orange. Le thème (Réglages › Apparence), l'annonceur et le type de série gardent l'aplat.
 - [ ] **Alerte en jaune.** Réglages, sans sauvegarde : « Aucune sauvegarde sur cet appareil » est jaune (Sombre),
       brun (Clair), orange (Cyber) — plus rouge. Un échec d'écriture reste rouge.
-- [ ] **Plus de clignotement.** À l'ouverture de l'accueil, de l'historique ou des records, la place réservée ne
-      pulse plus : elle est posée, immobile, puis le contenu arrive.
-- [ ] **Petites unités.** En séance, les unités sous les valeurs (« kg », « min ») sont un cran plus lisibles
-      (12 px au lieu de 11) ; la barre d'onglets du bas n'a pas changé, police au plus grand comprise.
+- [ ] **Plus de clignotement.** À l'ouverture de l'accueil, de l'historique ou des records, la place réservée est
+      posée, immobile, puis le contenu arrive.
+- [ ] **Titres stables.** En passant d'un écran à l'autre (Routines, Programmes, Guide, Réglages), le titre ne saute
+      plus ; Réglages a sa flèche retour.
 
 ## 0. Installation (2 min)
 
