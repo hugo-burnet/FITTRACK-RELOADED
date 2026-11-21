@@ -248,6 +248,9 @@ describe('ExerciseDetailScreen vues Suivi et Documentation', () => {
   });
 });
 
+/** Cinq lectures en base avant le premier chiffre : la suite complète, en parallèle, dépasse la seconde par défaut. */
+const SLOW = { timeout: 5_000 };
+
 describe('ExerciseDetailScreen onglet Suivi', () => {
   beforeEach(async () => {
     await resetDb();
@@ -283,7 +286,7 @@ describe('ExerciseDetailScreen onglet Suivi', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    const tile = await screen.findByRole('button', { name: /^La dernière fois/ });
+    const tile = await screen.findByRole('button', { name: /^La dernière fois/ }, SLOW);
     expect(tile).toHaveTextContent('100');
     expect(tile).toHaveTextContent('1 série : 5 reps');
 
@@ -297,7 +300,7 @@ describe('ExerciseDetailScreen onglet Suivi', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    const tile = await screen.findByRole('button', { name: /^Charge max · 1 séance/ });
+    const tile = await screen.findByRole('button', { name: /^Charge max · 1 séance/ }, SLOW);
     expect(tile).toHaveAttribute('data-size', 'G');
     expect(document.querySelectorAll('[data-size="G"]')).toHaveLength(1);
 
@@ -311,7 +314,7 @@ describe('ExerciseDetailScreen onglet Suivi', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    const sessions = (await screen.findByText('Séances')).closest('section')!;
+    const sessions = (await screen.findByText('Séances', undefined, SLOW)).closest('section')!;
     await user.click(within(sessions).getByRole('button', { name: /1 série/ }));
     await waitFor(() =>
       expect(screen.getByLabelText('URL courante')).toHaveTextContent('/history/workout'),
@@ -322,7 +325,7 @@ describe('ExerciseDetailScreen onglet Suivi', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    const coach = (await screen.findByText('Le coach')).closest('section')!;
+    const coach = (await screen.findByText('Le coach', undefined, SLOW)).closest('section')!;
     await user.click(within(coach).getByRole('button', { name: 'Voir la séance' }));
     await waitFor(() =>
       expect(screen.getByLabelText('URL courante')).toHaveTextContent('/history/workout'),
@@ -333,12 +336,12 @@ describe('ExerciseDetailScreen onglet Suivi', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    await screen.findByRole('button', { name: /^La dernière fois/ });
+    await screen.findByRole('button', { name: /^La dernière fois/ }, SLOW);
     expect(screen.queryByRole('button', { name: 'Terminé' })).toBeNull();
     expect(screen.queryByText('Muscles travaillés')).toBeNull();
 
     await user.click(screen.getByRole('tab', { name: 'Documentation' }));
-    expect(await screen.findByText('Muscles travaillés')).toBeVisible();
+    expect(await screen.findByText('Muscles travaillés', undefined, SLOW)).toBeVisible();
   });
 });
 
