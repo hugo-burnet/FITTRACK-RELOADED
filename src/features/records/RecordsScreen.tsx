@@ -13,6 +13,7 @@ import { t } from '@/i18n/fr';
 import { exerciseDisplayName, recordLabel } from '@/i18n/labels';
 import { Button, EmptyState, FilterChip, OptionSheet, type Option } from '@/ui';
 import { RecordRail } from './RecordRail';
+import { Skeleton } from '../../ui/Skeleton';
 
 const ALL = '';
 
@@ -137,8 +138,8 @@ export function RecordsScreen() {
 
         {projectionCurrent === undefined || allEntries === undefined || entries === undefined ? (
           <div aria-busy="true" aria-label={t('records.loading')} className="mt-7 space-y-4">
-            <div className="h-40 animate-pulse rounded-xl bg-[var(--surface-1)]" />
-            <div className="h-20 animate-pulse rounded-xl bg-[var(--surface-1)]" />
+            <Skeleton height="h-40" />
+            <Skeleton height="h-20" />
           </div>
         ) : projectionCurrent === false ? (
           <EmptyState
