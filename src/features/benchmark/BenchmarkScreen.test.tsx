@@ -62,7 +62,7 @@ async function seedBenchmark(
     setIds.push(...sets.map((set) => set.id));
   }
 
-  const workout = await startBenchmarkFromRoutine(routine.id, 'Benchmark · Push', options.goal);
+  const workout = await startBenchmarkFromRoutine(routine.id, 'Séance test · Push', options.goal);
   const detail = (await getWorkoutDetail(workout.id))!;
   for (const [index, [weight, reps]] of results.entries()) {
     await completeSet(detail.exercises[index]!.sets[0]!.id, { weight, reps });
@@ -275,7 +275,7 @@ describe('BenchmarkScreen', () => {
   it('dit qu’un benchmark absent n’existe plus', async () => {
     renderScreen('inconnu');
 
-    expect(await screen.findByText('Ce benchmark n’existe plus.')).toBeInTheDocument();
+    expect(await screen.findByText('Cette séance test n’existe plus.')).toBeInTheDocument();
   });
 
   it('ne relance pas l’écriture sur un double appui tant que la première n’est pas finie', async () => {
@@ -413,7 +413,7 @@ describe('BenchmarkScreen', () => {
     const card = await screen.findByRole('region', { name: 'Développé couché' });
     expect(
       within(card).getByText(
-        'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
+        'La routine a changé depuis cette séance test : vérifie la charge avant de l’appliquer.',
       ),
     ).toBeInTheDocument();
     const toggle = within(card).getByRole('switch', { name: /Développé couché/ });

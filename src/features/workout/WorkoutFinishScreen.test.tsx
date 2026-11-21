@@ -320,7 +320,7 @@ describe('WorkoutFinishScreen', () => {
       await activeBenchmark();
       renderFinishScreen();
 
-      expect(await screen.findByText(/C’est un benchmark/)).toBeInTheDocument();
+      expect(await screen.findByText(/C’est une séance test/)).toBeInTheDocument();
       await screen.findByRole('button', { name: 'Enregistrer la séance' });
       // Une absence ne s'attend pas : on laisse au calcul du coach le temps de répondre, comme le
       // jumeau de ce test (« attend le calcul du coach… ») attend l'appel qui, lui, doit venir.

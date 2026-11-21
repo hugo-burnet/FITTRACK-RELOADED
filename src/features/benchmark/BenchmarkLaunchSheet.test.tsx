@@ -72,11 +72,11 @@ describe('BenchmarkLaunchSheet', () => {
     const user = userEvent.setup();
     const onClose = renderSheet(routine);
 
-    await user.click(await screen.findByRole('button', { name: 'Lancer le benchmark' }));
+    await user.click(await screen.findByRole('button', { name: 'Lancer la séance test' }));
 
     expect(await screen.findByText('Séance en direct')).toBeInTheDocument();
     const workout = (await getActiveWorkout())!;
-    expect(workout).toMatchObject({ kind: 'benchmark', name: 'Benchmark · Push' });
+    expect(workout).toMatchObject({ kind: 'benchmark', name: 'Séance test · Push' });
     expect(workout).not.toHaveProperty('benchmarkGoal');
     expect(onClose).toHaveBeenCalled();
   });
@@ -93,11 +93,11 @@ describe('BenchmarkLaunchSheet', () => {
     // Le nombre qui guide le choix de la charge : environ 18 fois en léger.
     expect(screen.getByText(/Choisis une charge que tu penses tenir environ 18 fois/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+    await user.click(screen.getByRole('button', { name: 'Lancer la séance test' }));
 
     await waitFor(async () => expect((await getActiveWorkout())?.benchmarkGoal).toBe('light'));
     // L'historique dit le style : on y retrouve un benchmark léger sans l'ouvrir.
-    expect(await getActiveWorkout()).toMatchObject({ name: 'Benchmark léger · Push' });
+    expect(await getActiveWorkout()).toMatchObject({ name: 'Séance test (léger) · Push' });
     expect(await screen.findByText('Séance en direct')).toBeInTheDocument();
   });
 
@@ -110,7 +110,7 @@ describe('BenchmarkLaunchSheet', () => {
     expect(screen.getByText(/environ 8 fois/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Classique · 8 – 12 reps' }));
     expect(screen.getByText(/environ 12 fois/)).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+    await user.click(screen.getByRole('button', { name: 'Lancer la séance test' }));
 
     await waitFor(async () => expect((await getActiveWorkout())?.benchmarkGoal).toBe('classic'));
   });

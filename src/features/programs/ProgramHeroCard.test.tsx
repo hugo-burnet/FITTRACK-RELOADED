@@ -85,7 +85,7 @@ describe('ProgramHeroCard', () => {
     });
   });
 
-  it('annonce un bloc futur sans afficher de commande de démarrage', () => {
+  it('annonce un programme futur sans afficher de commande de démarrage', () => {
     renderCard({
       ...projection,
       week: { ...projection.week!, weekIndex: 2 },

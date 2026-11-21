@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
@@ -18,7 +17,6 @@ import { Screen } from '@/app/Screen';
  * vérifié par un humain. Aucune transformation de format ne retire ce statut.
  */
 export function WikiProgrammingScreen() {
-  const navigate = useAppNavigate();
   const guide = listArticleFamilies().find((family) => family.id === 'programming');
   const articles = guide?.articles ?? [];
   const unreviewed = articles.some((article) => article.reviewState === 'pending_human_review');
@@ -26,7 +24,6 @@ export function WikiProgrammingScreen() {
   return (
     <Screen
       title={t('knowledge.programming.title')}
-      onBack={() => void navigate('/knowledge')}
       action={
         <span className="record-figure text-sm text-[var(--text-2)]">
           {t(

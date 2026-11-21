@@ -142,13 +142,13 @@ describe('parcours de création d’un programme', () => {
     ).toHaveAttribute('href', '/knowledge/programmation/programming-deload');
   });
 
-  it('active un bloc de huit semaines avec un split lundi/jeudi et une décharge en semaine 5', async () => {
+  it('active un programme de huit semaines avec un split lundi/jeudi et une décharge en semaine 5', async () => {
     const mondayRoutine = await createRoutine('Force A');
     const thursdayRoutine = await createRoutine('Force B');
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Bloc force');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Bloc force');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Durée' }), '8');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
@@ -184,7 +184,7 @@ describe('parcours de création d’un programme', () => {
     expect(within(stepper).queryAllByRole('listitem')).toHaveLength(0);
     expect(within(stepper).getByText('Étape 3 sur 3 · Semaines')).toBeVisible();
     expect(screen.queryByRole('button', { name: 'Cadre' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Répartition' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();
 
     // Le trajet de départ est déjà la recette Hypertrophie : le bouton doit le
@@ -214,7 +214,7 @@ describe('parcours de création d’un programme', () => {
         name: 'Modifier la semaine 5, 05 — 60 % · Décharge',
       }),
     ).toBeVisible();
-    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le programme' }));
 
     const programs = await waitFor(async () => {
       const stored = await listPrograms();
@@ -241,13 +241,13 @@ describe('parcours de création d’un programme', () => {
     await expectRoute(`/programs/${programId}`);
   });
 
-  it('active un bloc dont le split tient sur deux semaines, une liste de séances par semaine', async () => {
+  it('active un programme dont le split tient sur deux semaines, une liste de séances par semaine', async () => {
     const upper = await createRoutine('UPPER A');
     const push = await createRoutine('PUSH A');
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Haut / bas puis PPL');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Haut / bas puis PPL');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Durée' }), '8');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
@@ -282,7 +282,7 @@ describe('parcours de création d’un programme', () => {
       push.id,
     );
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
-    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le programme' }));
 
     const programs = await waitFor(async () => {
       const stored = await listPrograms();
@@ -316,7 +316,7 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'UL puis PPL');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'UL puis PPL');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
     await user.click(await screen.findByRole('button', { name: '2 semaines' }));
@@ -344,7 +344,7 @@ describe('parcours de création d’un programme', () => {
     expect(screen.getByRole('combobox', { name: 'Routine de la séance 5' })).toHaveValue(legsA.id);
 
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
-    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le programme' }));
 
     const programs = await waitFor(async () => {
       const stored = await listPrograms();
@@ -374,7 +374,7 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Sans dossier');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Sans dossier');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
@@ -388,7 +388,7 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Cycle');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Cycle');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
     await user.click(await screen.findByRole('button', { name: '2 semaines' }));
@@ -439,7 +439,7 @@ describe('parcours de création d’un programme', () => {
 
     renderProgramFlow(`/programs/${program.id}`);
 
-    // Le bloc a commencé la semaine dernière : on est dans la semaine 2 du bloc,
+    // Le programme a commencé la semaine dernière : on est dans la semaine 2 du programme,
     // donc dans la semaine 2 du cycle.
     expect(await screen.findByText('Semaine 2 du cycle de 2 semaines')).toBeVisible();
     // La ligne d'une séance porte « nom, état » : le bouton « Démarrer PUSH A »
@@ -448,7 +448,7 @@ describe('parcours de création d’un programme', () => {
     expect(screen.queryByRole('button', { name: /^UPPER A, / })).not.toBeInTheDocument();
   });
 
-  it('réécrit un bloc actif à cycle sans décaler ses semaines', async () => {
+  it('réécrit un programme actif à cycle sans décaler ses semaines', async () => {
     const upper = await createRoutine('UPPER A');
     const push = await createRoutine('PUSH A');
     const program = await createProgramDraft({
@@ -478,12 +478,12 @@ describe('parcours de création d’un programme', () => {
 
     renderProgramFlow(`/programs/${program.id}/edit`);
 
-    // L'éditeur s'ouvre sur la semaine courante du bloc, la 2 : elle joue PUSH A.
+    // L'éditeur s'ouvre sur la semaine courante du programme, la 2 : elle joue PUSH A.
     // Le cycle y est donc lu à partir d'elle — PUSH A en première semaine — et
     // la page le dit, sans quoi les deux semaines se liraient comme échangées.
     expect(
       await screen.findByText(
-        'Le cycle repart à la semaine 2 du bloc : sa semaine 1 est celle qu’on y jouera.',
+        'Le cycle repart à la semaine 2 du programme : sa semaine 1 est celle qu’on y jouera.',
       ),
     ).toBeVisible();
     expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveValue(push.id);
@@ -509,12 +509,12 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Bloc stable');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Bloc stable');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
     await user.click(await screen.findByRole('button', { name: 'Retour' }));
 
-    const name = screen.getByRole('textbox', { name: 'Nom du bloc' });
+    const name = screen.getByRole('textbox', { name: 'Nom du programme' });
     await user.clear(name);
     await user.type(name, 'Bloc durable');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Durée' }), '10');
@@ -526,7 +526,7 @@ describe('parcours de création d’un programme', () => {
     });
   });
 
-  it('publie le split modifié d’un bloc actif à la semaine suivante sûre', async () => {
+  it('publie le split modifié d’un programme actif à la semaine suivante sûre', async () => {
     const routine = await createRoutine('Force active');
     const replacement = await createRoutine('Force suivante');
     const today = new Date();
@@ -670,10 +670,10 @@ describe('parcours de création d’un programme', () => {
     ).toBeVisible();
     expect(screen.queryByRole('navigation', { name: /^Étape/ })).not.toBeInTheDocument();
     expect(screen.queryByText(/^Étape \d sur 3/)).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Split' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Répartition' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Semaines' })).toBeVisible();
     // Le cadre d'un actif est posé : son nom et sa durée ne se rejouent pas ici.
-    expect(screen.queryByRole('textbox', { name: 'Nom du bloc' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Nom du programme' })).not.toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' })).toBeVisible();
   });
@@ -695,7 +695,7 @@ describe('parcours de création d’un programme', () => {
         screen.queryByRole('button', { name: new RegExp(`Modifier la semaine ${index + 1},`) }),
       ).not.toBeInTheDocument();
     }
-    // Le motif est ancré au bloc, pas à la retouche : S5 reprend au début du
+    // Le motif est ancré au programme, pas à la retouche : S5 reprend au début du
     // motif de quatre semaines, S8 est la Décharge.
     expect(
       screen.getByRole('button', { name: 'Modifier la semaine 5, 05 — 100 % · Construction' }),
@@ -747,7 +747,7 @@ describe('parcours de création d’un programme', () => {
     });
 
     // L'activation vit sur la fiche, là où l'on voit ce qu'on lance.
-    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Activer le programme' }));
     await waitFor(async () => {
       expect((await getProgramDetail(program.id))?.program.status).toBe('active');
     });
@@ -761,7 +761,7 @@ describe('parcours de création d’un programme', () => {
     renderProgramFlow('/programs/unreadable/edit');
 
     expect(
-      await screen.findByText('Le bloc n’a pas pu être lu. Tes données restent sur cet appareil.'),
+      await screen.findByText('Le programme n’a pas pu être lu. Tes données restent sur cet appareil.'),
     ).toBeVisible();
     read.mockRestore();
   });
@@ -773,13 +773,13 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Bloc cassé');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Bloc cassé');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     expect(
       await screen.findByText(
-        'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
+        'Les routines n’ont pas pu être lues. Réessaie avant de composer la répartition.',
       ),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Continuer' })).toBeDisabled();
@@ -791,19 +791,19 @@ describe('parcours de création d’un programme', () => {
     renderProgramFlow();
 
     // La contrainte est lisible avant d'être enfreinte.
-    expect(await screen.findByText(/les semaines du bloc se comptent du lundi/)).toBeVisible();
+    expect(await screen.findByText(/les semaines du programme se comptent du lundi/)).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Donne un nom au bloc.');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Donne un nom au programme.');
 
-    await user.type(screen.getByRole('textbox', { name: 'Nom du bloc' }), 'Bloc force');
+    await user.type(screen.getByRole('textbox', { name: 'Nom du programme' }), 'Bloc force');
     // Un mercredi : seule la date est en cause, et c'est la seule chose que dit
     // le message. Avant, il redemandait le nom et la durée, tous deux corrects.
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-19');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Le départ tombe un lundi : un bloc se compte en semaines pleines.',
+      'Le départ tombe un lundi : un programme se compte en semaines pleines.',
     );
   });
 
@@ -812,7 +812,7 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow();
 
-    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Premier bloc');
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du programme' }), 'Premier programme');
     await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
@@ -871,7 +871,7 @@ async function createTrackingProgram(name = 'Bloc suivi') {
   return { program, routines, entries: detail!.revisions[0]!.entries };
 }
 
-describe('suivi du bloc courant', () => {
+describe('suivi du programme courant', () => {
   beforeEach(async () => {
     vi.spyOn(Date, 'now').mockReturnValue(TRACKING_NOW);
     await resetDb();
@@ -968,7 +968,7 @@ describe('suivi du bloc courant', () => {
     ]);
   });
 
-  it('ne propose plus de calibrer les charges d’un bloc terminé', async () => {
+  it('ne propose plus de calibrer les charges d’un programme terminé', async () => {
     const { program } = await createTrackingProgram();
     await completeProgram(program.id);
     renderProgramFlow(`/programs/${program.id}`);
@@ -1021,7 +1021,7 @@ describe('suivi du bloc courant', () => {
     });
   });
 
-  it('affiche l’historique par contexte sur le détail d’un bloc terminé', async () => {
+  it('affiche l’historique par contexte sur le détail d’un programme terminé', async () => {
     const { program, entries } = await createTrackingProgram();
     const completed = await startWorkoutFromProgram({
       programId: program.id,
@@ -1036,7 +1036,7 @@ describe('suivi du bloc courant', () => {
     expect(await screen.findByRole('button', { name: 'Force terminée, Terminée' })).toBeDisabled();
   });
 
-  it('supprime le bloc depuis la fiche sans toucher aux séances de l’historique', async () => {
+  it('supprime le programme depuis la fiche sans toucher aux séances de l’historique', async () => {
     const { program, entries } = await createTrackingProgram();
     const { workout } = await startWorkoutFromProgram({
       programId: program.id,
@@ -1049,21 +1049,23 @@ describe('suivi du bloc courant', () => {
     renderProgramFlow(`/programs/${program.id}`);
 
     await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
-    await user.click(await screen.findByRole('button', { name: /Supprimer le bloc/ }));
+    await user.click(await screen.findByRole('button', { name: /Supprimer le programme/ }));
     // La feuille de confirmation dit ce qui reste avant de demander de confirmer.
     expect(
       await screen.findByText(/Les séances déjà faites restent dans ton historique/),
     ).toBeVisible();
-    const sheet = await screen.findByRole('dialog', { name: 'Supprimer le bloc' });
-    await user.click(within(sheet).getByRole('button', { name: 'Supprimer le bloc' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Supprimer le programme' });
+    await user.click(within(sheet).getByRole('button', { name: 'Supprimer le programme' }));
 
     await waitFor(async () => {
       expect(await listPrograms()).toHaveLength(0);
     });
     const stored = await db.workouts.get(workout.id);
     expect(stored).toMatchObject({ id: workout.id, deletedAt: 0, programId: program.id });
-    // Retour à la liste, désormais vide — la fiche du bloc n'existe plus.
-    expect(await screen.findByText(/Aucun bloc pour l’instant/)).toBeVisible();
+    // Retour à la liste, désormais vide — la fiche du programme n'existe plus.
+    expect(await screen.findByText(/Aucun programme pour l’instant/)).toBeVisible();
+    // La liste est un onglet frère de Planifier : pas de flèche retour.
+    expect(screen.queryByRole('button', { name: 'Retour' })).not.toBeInTheDocument();
   });
 
   it('démarre sans repli 1RM : identity copie les cibles de la routine', async () => {
@@ -1166,15 +1168,15 @@ describe('suivi du bloc courant', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('confirme un décalage en semaines entières et avertit lorsque le bloc a commencé', async () => {
+  it('confirme un décalage en semaines entières et avertit lorsque le programme a commencé', async () => {
     const { program } = await createTrackingProgram();
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
     await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
-    await user.click(screen.getByRole('button', { name: /^Décaler le bloc/ }));
+    await user.click(screen.getByRole('button', { name: /^Décaler le programme/ }));
     expect(
-      screen.getByText('Le bloc a déjà commencé. Les séances passées ne bougeront pas.'),
+      screen.getByText('Le programme a déjà commencé. Les séances passées ne bougeront pas.'),
     ).toBeVisible();
     const weeks = screen.getByRole('spinbutton', { name: 'Nombre de semaines' });
     await user.clear(weeks);
@@ -1191,18 +1193,18 @@ describe('suivi du bloc courant', () => {
     });
   });
 
-  it('termine le bloc après confirmation sans supprimer ses semaines ni son split', async () => {
+  it('termine le programme après confirmation sans supprimer ses semaines ni son split', async () => {
     const { program } = await createTrackingProgram();
     const before = await getProgramDetail(program.id);
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
     await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
-    await user.click(screen.getByRole('button', { name: /^Terminer le bloc/ }));
+    await user.click(screen.getByRole('button', { name: /^Terminer le programme/ }));
     expect(
-      screen.getByText('Les semaines, le split et les séances restent dans ton historique.'),
+      screen.getByText('Les semaines, la répartition et les séances restent dans ton historique.'),
     ).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Terminer le bloc' }));
+    await user.click(screen.getByRole('button', { name: 'Terminer le programme' }));
 
     await waitFor(async () => {
       const after = await getProgramDetail(program.id);
@@ -1211,12 +1213,12 @@ describe('suivi du bloc courant', () => {
       expect(after?.revisions).toEqual(before?.revisions);
     });
     expect(await screen.findByText(/^Terminé · 4 semaines/)).toBeVisible();
-    // Le menu reste, mais il ne propose plus qu'une chose : un bloc terminé ne
+    // Le menu reste, mais il ne propose plus qu'une chose : un programme terminé ne
     // se modifie ni ne se décale, il se supprime.
     await user.click(screen.getByRole('button', { name: 'Actions du programme' }));
-    expect(await screen.findByRole('button', { name: /Supprimer le bloc/ })).toBeVisible();
+    expect(await screen.findByRole('button', { name: /Supprimer le programme/ })).toBeVisible();
     expect(screen.queryByRole('button', { name: /Modifier à partir de/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Décaler le bloc/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Décaler le programme/ })).not.toBeInTheDocument();
   });
 
   it('isole une routine manquante à sa ligne et garde les autres séances disponibles', async () => {
@@ -1248,13 +1250,13 @@ describe('suivi du bloc courant', () => {
   });
 });
 
-describe('liste des blocs', () => {
+describe('liste des programmes', () => {
   beforeEach(resetDb);
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('ouvre un bloc qui n’a pas encore commencé, et le supprime depuis sa fiche', async () => {
+  it('ouvre un programme qui n’a pas encore commencé, et le supprime depuis sa fiche', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(TRACKING_NOW);
     const routine = await createRoutine('Force à venir');
     const program = await createProgramDraft({
@@ -1279,14 +1281,14 @@ describe('liste des blocs', () => {
 
     // Rien à démarrer avant le 17, rien à réparer : la carte du héros n'a aucun
     // bouton, et la liste ne le remet pas en rangée puisqu'il est déjà en tête.
-    // Sans porte sur l'en-tête, le bloc n'était atteignable par rien — donc ni
+    // Sans porte sur l'en-tête, le programme n'était atteignable par rien — donc ni
     // modifiable, ni décalable, ni supprimable.
     expect(
-      await screen.findByText('Le bloc commence le 17 août. Aucune séance ne démarre avant.'),
+      await screen.findByText('Le programme commence le 17 août. Aucune séance ne démarre avant.'),
     ).toBeVisible();
     expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Ouvrir le bloc Fin d’été' }));
+    await user.click(screen.getByRole('button', { name: 'Ouvrir le programme Fin d’été' }));
     await expectRoute(`/programs/${program.id}`);
 
     // La semaine se lit en entier, repos compris, avant même le départ : c'est
@@ -1300,10 +1302,10 @@ describe('liste des blocs', () => {
     }
 
     await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
-    await user.click(await screen.findByRole('button', { name: /^Supprimer le bloc/ }));
+    await user.click(await screen.findByRole('button', { name: /^Supprimer le programme/ }));
     await user.click(
-      within(await screen.findByRole('dialog', { name: 'Supprimer le bloc' })).getByRole('button', {
-        name: 'Supprimer le bloc',
+      within(await screen.findByRole('dialog', { name: 'Supprimer le programme' })).getByRole('button', {
+        name: 'Supprimer le programme',
       }),
     );
 
@@ -1313,7 +1315,7 @@ describe('liste des blocs', () => {
   });
 
   it('affiche les statuts brouillon, actif et terminé sans transformer la liste en tableau de bord', async () => {
-    // Même horloge que le bloc de suivi : un départ au 3 août 2026, lu au
+    // Même horloge que le programme de suivi : un départ au 3 août 2026, lu au
     // 31 août, a déjà quitté ses quatre semaines, et le héros disparaît.
     vi.spyOn(Date, 'now').mockReturnValue(TRACKING_NOW);
     const completed = await createProgramDraft({
@@ -1360,7 +1362,7 @@ describe('liste des blocs', () => {
 
     renderProgramFlow('/programs');
 
-    // Le bloc actif est le héros : il se nomme et dit sa semaine, sans étiquette
+    // Le programme actif est le héros : il se nomme et dit sa semaine, sans étiquette
     // de statut — il est le seul à porter un bouton. Les autres restent des
     // rangées, avec la leur.
     expect(await screen.findByText('Bloc actif')).toBeVisible();
@@ -1378,8 +1380,8 @@ describe('liste des blocs', () => {
 
   it('signale la séance à réparer quand sa routine a quitté la bibliothèque', async () => {
     const { program, routine } = await createEditableActiveProgram();
-    // Permis depuis que le bloc ne gouverne plus la bibliothèque : supprimer
-    // une routine ne demande pas la permission au bloc, et c'est cet écran-ci
+    // Permis depuis que le programme ne gouverne plus la bibliothèque : supprimer
+    // une routine ne demande pas la permission au programme, et c'est cet écran-ci
     // qui porte la réparation.
     await routinesRepository.deleteRoutine(routine.id);
     renderProgramFlow(`/programs/${program.id}`);

@@ -27,7 +27,7 @@ function renderRow(program: HomeProgramProjection | null) {
 }
 
 describe('HomeProgramsRow', () => {
-  it('ne répète pas le bloc que la carte du dessus nomme déjà', async () => {
+  it('ne répète pas le programme que la carte du dessus nomme déjà', async () => {
     renderRow(projection());
 
     expect(await screen.findByText('Programmes')).toBeVisible();
@@ -35,13 +35,13 @@ describe('HomeProgramsRow', () => {
     // Deux fois le même nom à 16 px d'écart se lit comme une erreur.
     expect(screen.queryByText('Bloc force')).not.toBeInTheDocument();
     expect(screen.queryByText(/Semaine \d+ sur \d+/)).not.toBeInTheDocument();
-    expect(screen.queryByText('Aucun bloc actif')).not.toBeInTheDocument();
+    expect(screen.queryByText('Aucun programme actif')).not.toBeInTheDocument();
   });
 
-  it('reste là quand aucun bloc ne tourne', async () => {
+  it('reste là quand aucun programme ne tourne', async () => {
     renderRow(null);
 
-    expect(await screen.findByText('Aucun bloc actif')).toBeVisible();
+    expect(await screen.findByText('Aucun programme actif')).toBeVisible();
   });
 
   it('ouvre la liste des blocs', async () => {
