@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -69,6 +69,8 @@ const renderScreen = () =>
     <MemoryRouter initialEntries={['/analytics/exercises/bench']}>
       <Routes>
         <Route path="/analytics/exercises/:exerciseId" element={<ExerciseAnalyticsScreen />} />
+        <Route path="/exercises/:id" element={<p>Fiche de l’exercice</p>} />
+        <Route path="/history/:id" element={<p>Détail de la séance</p>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -110,5 +112,22 @@ describe('ExerciseAnalyticsScreen estimated 1RM', () => {
 
     await waitFor(() => expect(screen.getAllByText('112,5 kg').length).toBeGreaterThan(0));
     expect(await db.personalRecords.count()).toBe(0);
+  });
+
+  it('renvoie à la fiche de l’exercice', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    await user.click(await screen.findByRole('button', { name: 'Voir la fiche de l’exercice' }));
+    expect(await screen.findByText('Fiche de l’exercice')).toBeVisible();
+  });
+
+  it('ouvre la séance depuis la table des séances', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const section = (await screen.findByText('Séances')).closest('section')!;
+    await user.click(within(section).getByRole('button'));
+    expect(await screen.findByText('Détail de la séance')).toBeVisible();
   });
 });

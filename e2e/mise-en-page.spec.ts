@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import {
   createRoutineFromTemplate,
   findHorizontalOverflow,
@@ -23,6 +23,8 @@ import {
  * débordent de 160 px). Un thème rétro dont le charme est la grille de pixels n'a pas de sens à
  * deux fois sa taille — consigné dans `docs/progress/decisions-et-pieges.md`, pas corrigé.
  */
+const TRACKED_EXERCISE = 'e2e-tracked';
+
 const ROUTES = [
   '/',
   '/routines',
@@ -43,6 +45,10 @@ const ROUTES = [
   // Un nom libre long, avec des espaces et un deux-points : le titre et les lignes ne doivent
   // ni déborder ni pousser les commandes hors de l'écran.
   `/analytics/measurements/${encodeURIComponent('custom:Tour de poignet gauche, au repos')}`,
+  // La page d'un exercice avec de quoi remplir chaque groupe (repères, courbe, coach, séances) et
+  // la vue plein écran qui y renvoie — pas leur état vide.
+  `/exercises/${TRACKED_EXERCISE}`,
+  `/analytics/exercises/${TRACKED_EXERCISE}`,
 ] as const;
 
 const CASES: { theme: ThemeName; scale: number }[] = [
@@ -75,6 +81,7 @@ for (const { theme, scale } of CASES) {
       { type: 'custom:Tour de poignet gauche, au repos', value: 17, unit: 'cm', daysAgo: 20 },
       { type: 'custom:Tour de poignet gauche, au repos', value: 17.5, unit: 'cm', daysAgo: 3 },
     ]);
+    await seedTrackedExercise(page);
     // Une séance en cours : l'écran qui compte le plus, et le rideau d'ouverture TTY1 (cinq
     // secondes) saute quand une séance tourne.
     await startSuggestedWorkout(page, '5×5 — A');
@@ -165,3 +172,127 @@ test('Réglages : chaque commande des six écrans fait au moins 48 px', async ({
   }
   expect(failures, failures.join('\n')).toEqual([]);
 });
+
+/**
+ * Un exercice au nom long, cinq séances qui montent, trois records et une entrée du coach rattachée à
+ * une séance : de quoi dessiner tous les groupes de la page d'un exercice. Même méthode que
+ * `seedCompletedWorkouts` — une seconde connexion à la base, puis le rechargement du test.
+ */
+async function seedTrackedExercise(page: Page): Promise<void> {
+  await page.evaluate(async (exerciseId) => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('fittrack');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const transaction = database.transaction(
+      [
+        'exercises',
+        'workouts',
+        'workoutExercises',
+        'workoutSets',
+        'personalRecords',
+        'coachRecommendations',
+      ],
+      'readwrite',
+    );
+    const day = 86_400_000;
+    const name = 'Développé couché incliné aux haltères, prise neutre';
+    const stamp = (at: number) => ({ createdAt: at, updatedAt: at, deletedAt: 0 });
+    const now = Date.now();
+
+    transaction.objectStore('exercises').put({
+      id: exerciseId,
+      ...stamp(now),
+      name,
+      primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps', 'shoulders'],
+      equipment: 'dumbbell',
+      measurementType: 'weight_reps',
+      isCustom: 1,
+      isUnilateral: 0,
+    });
+
+    const loads = [30, 32, 34, 36, 38];
+    let lastWorkoutId = '';
+    loads.forEach((weight, index) => {
+      const startedAt = now - (loads.length - index) * 7 * day;
+      const workoutId = crypto.randomUUID();
+      const rowId = crypto.randomUUID();
+      lastWorkoutId = workoutId;
+      transaction.objectStore('workouts').put({
+        id: workoutId,
+        ...stamp(startedAt),
+        routineId: '',
+        name: `Poussée ${index + 1}`,
+        status: 'completed',
+        startedAt,
+        endedAt: startedAt + 3_600_000,
+        durationSeconds: 3600,
+      });
+      transaction.objectStore('workoutExercises').put({
+        id: rowId,
+        ...stamp(startedAt),
+        workoutId,
+        exerciseId,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: name,
+        exerciseMeasurementType: 'weight_reps',
+      });
+      for (let order = 0; order < 4; order += 1) {
+        transaction.objectStore('workoutSets').put({
+          id: crypto.randomUUID(),
+          ...stamp(startedAt),
+          workoutExerciseId: rowId,
+          exerciseId,
+          workoutId,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight,
+          reps: 8,
+          isCompleted: 1,
+          performedAt: startedAt + order * 120_000,
+        });
+      }
+    });
+
+    const achievedAt = now - 7 * day;
+    const record = (type: string, value: number, extra: object) =>
+      transaction.objectStore('personalRecords').put({
+        id: crypto.randomUUID(),
+        ...stamp(achievedAt),
+        exerciseId,
+        type,
+        value,
+        achievedAt,
+        workoutId: lastWorkoutId,
+        weight: 38,
+        reps: 8,
+        ...extra,
+      });
+    record('max_weight', 38, {});
+    record('best_1rm', 48.1, { formula: 'epley' });
+    record('max_volume_set', 304, {});
+
+    transaction.objectStore('coachRecommendations').put({
+      id: crypto.randomUUID(),
+      ...stamp(achievedAt),
+      exerciseId,
+      code: 'range_ceiling_reached',
+      recommendedAt: achievedAt,
+      nextLoadKg: 40,
+      evidence: [],
+      status: 'followed',
+      sourceWorkoutId: lastWorkoutId,
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    database.close();
+  }, TRACKED_EXERCISE);
+}

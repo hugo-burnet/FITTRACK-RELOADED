@@ -3,6 +3,9 @@ import { t } from '@/i18n/fr';
 import { measurementShape } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 
+/** Ce que le calcul lit d'une série : `WorkoutSet` comme `HistoricalSet` y répondent. */
+type SetLike = Pick<WorkoutSet, 'setType' | 'weight' | 'reps'>;
+
 const decimal = (value: number): string => value.toLocaleString('fr-FR');
 
 /**
@@ -12,7 +15,7 @@ const decimal = (value: number): string => value.toLocaleString('fr-FR');
  * valid value). Taking the heaviest load there showed the worst set of the
  * session as its best. Equal load: more repetitions wins.
  */
-function betterByLoad(candidate: WorkoutSet, best: WorkoutSet, assisted: boolean): boolean {
+function betterByLoad(candidate: SetLike, best: SetLike, assisted: boolean): boolean {
   if (candidate.weight === best.weight) return (candidate.reps ?? 0) > (best.reps ?? 0);
   return assisted ? candidate.weight! < best.weight! : candidate.weight! > best.weight!;
 }
@@ -23,18 +26,18 @@ function betterByLoad(candidate: WorkoutSet, best: WorkoutSet, assisted: boolean
  * covered without naming any of them.
  */
 export function topSetLabel(
-  sets: WorkoutSet[],
+  sets: readonly SetLike[],
   measurementType: MeasurementType,
 ): string | undefined {
   const assisted = measurementShape(measurementType).weightRole === 'assist';
   const workingSets = sets.filter(isWorkingSet);
-  const best = workingSets.reduce<WorkoutSet | undefined>((acc, candidate) => {
+  const best = workingSets.reduce<SetLike | undefined>((acc, candidate) => {
     // A load of 0 is a result only for assistance: no help at all.
     if (candidate.weight === undefined || candidate.weight < 0) return acc;
     if (candidate.weight === 0 && !assisted) return acc;
     return acc === undefined || betterByLoad(candidate, acc, assisted) ? candidate : acc;
   }, undefined);
-  const mostReps = workingSets.reduce<WorkoutSet | undefined>((acc, candidate) => {
+  const mostReps = workingSets.reduce<SetLike | undefined>((acc, candidate) => {
     if (candidate.reps === undefined || candidate.reps <= 0) return acc;
     return acc === undefined || candidate.reps > acc.reps! ? candidate : acc;
   }, undefined);

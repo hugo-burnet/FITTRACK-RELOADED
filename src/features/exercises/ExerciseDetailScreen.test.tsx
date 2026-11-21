@@ -5,7 +5,14 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import { setDefaultLoadStepKg } from '@/data/repositories/settings';
-import type { Exercise, PersonalRecord, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  CoachRecommendation,
+  Exercise,
+  PersonalRecord,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { ExerciseDetailScreen } from './ExerciseDetailScreen';
 
@@ -127,11 +134,14 @@ describe('ExerciseDetailScreen persisted records', () => {
   it('reads the persisted projection even when raw sets contain different best values', async () => {
     renderScreen();
 
-    const section = (await screen.findByText('Records')).closest('section');
+    // Les records sont des tuiles du groupe « Repères » : le nom accessible d'une tuile est
+    // son libellé puis son chiffre, qui est ce que la projection persistée dit.
+    const section = (await screen.findByText('Repères')).closest('section');
     expect(section).not.toBeNull();
-    expect(within(section!).getByText('Charge max')).toBeVisible();
-    expect(within(section!).getByText('122,5 kg')).toBeVisible();
-    expect(within(section!).getByText('1RM estimé')).toBeVisible();
+    const maxWeight = within(section!).getByRole('button', { name: /^Charge max/ });
+    expect(maxWeight).toHaveTextContent('122,5');
+    expect(maxWeight).toHaveTextContent('kg');
+    const oneRepMax = within(section!).getByRole('button', { name: /^1RM estimé/ });
     /**
      * Valeur brute persistée en pleine précision, relue au 0,1 kg du graphique.
      *
@@ -141,8 +151,8 @@ describe('ExerciseDetailScreen persisted records', () => {
      * fausse précision. Les deux branches ont trouvé cette assertion périmée
      * chacune de leur côté et l'ont corrigée à la même valeur.
      */
-    expect(within(section!).getByText('137,3 kg')).toBeVisible();
-    expect(within(section!).getByText('120 kg × 5 · Epley')).toBeVisible();
+    expect(oneRepMax).toHaveTextContent('137,3');
+    // Le contexte « 120 kg × 5 · Epley » n'est plus dit sur la fiche : la frise de records le porte.
     expect(within(section!).queryByText('100 kg × 5')).toBeNull();
   });
 
@@ -150,7 +160,7 @@ describe('ExerciseDetailScreen persisted records', () => {
     const user = userEvent.setup();
     renderScreen();
 
-    await user.click(await screen.findByRole('button', { name: 'Voir tous les records' }));
+    await user.click(await screen.findByRole('button', { name: /^Charge max(?! ·)/ }));
     await waitFor(() =>
       expect(screen.getByLabelText('URL courante')).toHaveTextContent(
         '/analytics/records?exerciseId=bench',
@@ -235,5 +245,119 @@ describe('ExerciseDetailScreen vues Suivi et Documentation', () => {
     await user.click(screen.getByRole('tab', { name: 'Suivi' }));
 
     expect(await screen.findByText('Notes')).toBeVisible();
+  });
+});
+
+/** Cinq lectures en base avant le premier chiffre : la suite complète, en parallèle, dépasse la seconde par défaut. */
+const SLOW = { timeout: 5_000 };
+
+describe('ExerciseDetailScreen onglet Suivi', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.transaction(
+      'rw',
+      db.exercises,
+      db.workouts,
+      db.workoutExercises,
+      db.workoutSets,
+      db.coachRecommendations,
+      async () => {
+        await db.exercises.add(exercise);
+        await db.workouts.add(workout);
+        await db.workoutExercises.add(row);
+        await db.workoutSets.add(rawSet);
+        await db.coachRecommendations.add({
+          ...newEntity<CoachRecommendation>({
+            exerciseId: exercise.id,
+            code: 'range_ceiling_reached',
+            recommendedAt: workout.startedAt,
+            nextLoadKg: 102.5,
+            evidence: [],
+            status: 'followed',
+            sourceWorkoutId: workout.id,
+          }),
+          id: 'rec',
+        });
+      },
+    );
+  });
+
+  it('écrit la dernière fois avec sa charge et ses reps, et mène à la séance', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const tile = await screen.findByRole('button', { name: /^La dernière fois/ }, SLOW);
+    expect(tile).toHaveTextContent('100');
+    expect(tile).toHaveTextContent('1 série : 5 reps');
+
+    await user.click(tile);
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL courante')).toHaveTextContent('/history/workout'),
+    );
+  });
+
+  it('porte la progression dans la seule tuile G, qui ouvre la vue plein écran', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const tile = await screen.findByRole('button', { name: /^Charge max · 1 séance/ }, SLOW);
+    expect(tile).toHaveAttribute('data-size', 'G');
+    expect(document.querySelectorAll('[data-size="G"]')).toHaveLength(1);
+
+    await user.click(tile);
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL courante')).toHaveTextContent('/analytics/exercises/bench'),
+    );
+  });
+
+  it('chaque ligne de séance mène à sa séance', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const sessions = (await screen.findByText('Séances', undefined, SLOW)).closest('section')!;
+    await user.click(within(sessions).getByRole('button', { name: /1 série/ }));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL courante')).toHaveTextContent('/history/workout'),
+    );
+  });
+
+  it('ouvre la séance source d’une recommandation du coach', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const coach = (await screen.findByText('Le coach', undefined, SLOW)).closest('section')!;
+    await user.click(within(coach).getByRole('button', { name: 'Voir la séance' }));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL courante')).toHaveTextContent('/history/workout'),
+    );
+  });
+
+  it('n’a plus de bande « Terminé », et la carte des muscles est dans la Documentation', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    await screen.findByRole('button', { name: /^La dernière fois/ }, SLOW);
+    expect(screen.queryByRole('button', { name: 'Terminé' })).toBeNull();
+    expect(screen.queryByText('Muscles travaillés')).toBeNull();
+
+    await user.click(screen.getByRole('tab', { name: 'Documentation' }));
+    expect(await screen.findByText('Muscles travaillés', undefined, SLOW)).toBeVisible();
+  });
+});
+
+describe('ExerciseDetailScreen exercice jamais fait', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+  });
+
+  it('ne dessine aucune section vide', async () => {
+    renderScreen();
+
+    expect(await screen.findByText(/Aucune séance avec cet exercice/)).toBeVisible();
+    expect(screen.queryByText('Repères')).toBeNull();
+    expect(screen.queryByText('Progression')).toBeNull();
+    expect(screen.queryByText('Le coach')).toBeNull();
+    expect(screen.queryByText('Séances')).toBeNull();
   });
 });

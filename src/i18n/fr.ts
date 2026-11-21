@@ -1746,13 +1746,35 @@ const fr = {
     musclesSecondary: 'Aussi sollicités',
 
     viewsLabel: 'Vues de la fiche',
-    recordsSection: 'Records',
     recordsLink: 'Voir tous les records',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
 
-    historySection: 'Historique',
+    /** Le groupe de tuiles du haut du Suivi : où en est-on sur cet exercice. */
+    markersSection: 'Repères',
+    lastTime: 'La dernière fois',
+    /** « 4 séries : 6 · 5 · 5 · 5 reps, lun. 16 nov. » — la charge est dans le chiffre. */
+    lastTimeUniform: '{sets} : {reps} reps, {date}',
+    lastTimePlain: '{sets}, {date}',
+    /** Écrite poids × reps (« 80 kg × 8 ») ; le détail dit ce que le record mesure, en tonnage. */
+    bestSet: 'Meilleure série',
+    bestSetDetail: 'Le plus de poids × reps en une série : {volume}, {date}',
+    recordsHint: 'Voir les records de cet exercice',
+
+    /** La tuile G : la courbe de l'exercice, qui ouvre la vue plein écran. */
+    progressionSection: 'Progression',
+    progressionLabel: '{metric} · {count} séances',
+    progressionLabelOne: '{metric} · 1 séance',
+    progressionSince: '{delta} depuis le {date}',
+    progressionFlat: 'Inchangé depuis le {date}',
+    progressionHint: 'Ouvrir la courbe en plein écran',
+
+    /** La parole du coach sur cet exercice, sous la courbe. */
+    coachSection: 'Le coach',
+    seeWorkout: 'Voir la séance',
+
+    sessionsSection: 'Séances',
     historyEmpty: 'Aucune séance avec cet exercice. La première l’ouvrira.',
     historySetCount: '{count} séries',
     historySetCountOne: '1 série',
@@ -1805,8 +1827,6 @@ const fr = {
 
     catalogueNote:
       'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes, ton repos, ton incrément et son chargement, si.',
-    /** Not "Enregistrer": there is nothing left to save, only somewhere to go. */
-    done: 'Terminé',
     edit: 'Modifier',
     delete: 'Supprimer l’exercice',
     deleteHint:
@@ -2641,6 +2661,8 @@ const fr = {
     action: 'Analyses',
     /** L'entrée depuis la fiche exercice. */
     exerciseLink: 'Voir la progression',
+    /** La vue plein écran renvoie à la fiche : on y arrive de Progression, on en repart vers l'exercice. */
+    exerciseSheetLink: 'Voir la fiche de l’exercice',
     pickExercise: 'Choisis un exercice pour voir sa progression.',
     empty: 'Aucun exercice pratiqué pour l’instant. La première séance ouvrira cet écran.',
 
