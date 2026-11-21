@@ -2016,7 +2016,6 @@ const fr = {
      * n'a été relue par un humain, ce que le bandeau dit sans détour.
      */
     programming: {
-      title: 'Programmation',
       entry: 'Volume, fréquence, deload…',
       intro:
         'Volume, fréquence, tempo, ordre des exercices, deload, progression. Chaque ligne vient d’un tableau du document source : affirmation, niveau de confiance, population étudiée, type de preuve, contradictions et limites.',
