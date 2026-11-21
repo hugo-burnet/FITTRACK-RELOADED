@@ -235,6 +235,12 @@
 :root[data-theme='tty1'] [data-part='row'] {
   border-bottom-style: dotted;
 }
+/* Le filet entre deux chiffres empilés dans une tuile suit la même règle : pointillé. La légende d'une
+   tuile `G` (`data-part='legend'`) n'a rien à ajouter ici : la tuile porte `rounded-2xl`, la règle
+   `:has([data-part='legend'])` ci-dessus la pose déjà sur le filet du haut. */
+:root[data-theme='tty1'] [data-part='tile-split'] {
+  border-top-style: dotted;
+}
 
 /* `SectionTitle` : « ── Titre ───── ». Le titre de l'historique récent partage sa ligne avec un lien,
    d'où `flex: 1`. */

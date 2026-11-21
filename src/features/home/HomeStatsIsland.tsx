@@ -4,12 +4,12 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { getLatestBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { t } from '@/i18n/fr';
 import type { WeeklyRegularity } from '@/lib/history';
-import { Card } from '@/ui';
+import { Tile, TileGrid } from '@/ui';
 import { formatNumber } from '@/ui/numberField';
 import { HomeBodyWeightSheet } from './HomeBodyWeightSheet';
 
 /**
- * Les deux chiffres personnels de l'accueil, sur une seule bande.
+ * Les deux chiffres personnels de l'accueil, deux tuiles côte à côte.
  *
  * Ils tenaient deux cartes et près de trois cents pixels — un compteur de
  * semaine sur deux colonnes, une saisie de poids avec ses ± de 48 px — au-dessus
@@ -18,9 +18,9 @@ import { HomeBodyWeightSheet } from './HomeBodyWeightSheet';
  * la séance à lancer.
  *
  * Chaque tuile reste une cible entière : la semaine ouvre l'écran Rythme, le
- * poids ouvre sa feuille de saisie. Le libellé est en bas et en petit, la valeur
- * en haut et en grand — l'œil descend sur la ligne des chiffres, pas sur celle
- * des mots.
+ * poids ouvre sa feuille de saisie. Ce qu'elle fait se dit dans `hint` (lu en
+ * description) ; son nom accessible est ce qu'on voit, « poids du jour 82,4 kg ».
+ * La grille (`TileGrid`) passe à une colonne quand la police du système grossit.
  */
 export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }) {
   const navigate = useAppNavigate();
@@ -31,31 +31,39 @@ export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }
 
   return (
     <section>
-      <Card>
-        <div className="grid grid-cols-2">
-          <Tile
-            label={t('home.islandWeek')}
-            value={
-              currentGoal === null ? String(currentCompleted) : `${currentCompleted} / ${currentGoal}`
-            }
-            ariaLabel={t('home.weekLink')}
-            onClick={() => void navigate('/analytics/weekly')}
-          />
-          <Tile
-            label={t('home.islandWeight')}
-            /* Rien plutôt qu'un tiret tant que la lecture n'est pas revenue : la
-               tuile ne doit pas afficher « aucune pesée » une frame avant
-               d'afficher 82,4. */
-            value={latest === undefined ? ' ' : latest === null ? '—' : formatNumber(latest.valueKg)}
-            suffix={latest == null ? undefined : t('units.kg')}
-            ariaLabel={t('home.weightLink')}
-            onClick={() => {
-              setWeightOpen(true);
-            }}
-            divided
-          />
-        </div>
-      </Card>
+      <TileGrid>
+        <Tile
+          size="S"
+          label={t('home.islandWeek')}
+          value={
+            currentGoal === null
+              ? { value: String(currentCompleted) }
+              : {
+                  value: `${currentCompleted} / ${currentGoal}`,
+                  spoken: t('home.weekSpoken', { done: currentCompleted, goal: currentGoal }),
+                }
+          }
+          hint={t('home.weekLink')}
+          onClick={() => void navigate('/analytics/weekly')}
+        />
+        <Tile
+          size="S"
+          label={t('home.islandWeight')}
+          /* `undefined` tant que la lecture n'est pas revenue : la tuile ne doit pas afficher
+             « aucune mesure » une frame avant d'afficher 82,4. `null` : aucune pesée. */
+          value={
+            latest === undefined
+              ? undefined
+              : latest === null
+                ? null
+                : { value: formatNumber(latest.valueKg), unit: t('units.kg') }
+          }
+          hint={t('home.weightLink')}
+          onClick={() => {
+            setWeightOpen(true);
+          }}
+        />
+      </TileGrid>
 
       <HomeBodyWeightSheet
         open={weightOpen}
@@ -63,36 +71,5 @@ export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }
         onOpenCurve={() => void navigate('/analytics/measurements/body_weight')}
       />
     </section>
-  );
-}
-
-interface TileProps {
-  label: string;
-  value: string;
-  suffix?: string;
-  ariaLabel: string;
-  onClick: () => void;
-  /** La seule séparation entre deux tuiles — la carte n'en porte aucune. */
-  divided?: boolean;
-}
-
-function Tile({ label, value, suffix, ariaLabel, onClick, divided }: TileProps) {
-  return (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      onClick={onClick}
-      className={`flex min-h-20 flex-col justify-between p-4 text-left
-        transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
-        ${divided ? 'border-l border-[var(--border)]' : ''}`}
-    >
-      <span className="metric truncate text-2xl leading-none font-semibold text-[var(--text-1)]">
-        {value}
-        {suffix !== undefined && (
-          <span className="ml-1 text-sm font-semibold text-[var(--text-2)]">{suffix}</span>
-        )}
-      </span>
-      <span className="label-xs mt-2 truncate font-semibold text-[var(--text-2)]">{label}</span>
-    </button>
   );
 }

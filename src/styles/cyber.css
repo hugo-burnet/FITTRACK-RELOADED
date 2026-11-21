@@ -208,6 +208,24 @@
   background-repeat: no-repeat;
   background-color: var(--cyber-plate);
 }
+/* Une tuile est une plaque de 173 px : la hachure du coin (88 × 26 px) courrait sous son chiffre. Réduite de
+   moitié, elle reste un coin. Le sélecteur est plus spécifique que celui de la plaque, il lui succède donc
+   sans `!important` ; `background-size` se répète en entier car il ne se surcharge pas couche par couche. */
+:root[data-theme='cyber'] [data-part='tile'].rounded-2xl:not(.ring-2) {
+  background-size:
+    12px 2px,
+    2px 12px,
+    12px 2px,
+    2px 12px,
+    44px 12px,
+    34% 30%;
+}
+/* La plaque pose sa couleur hors de toute couche : elle écrase l'utilitaire `active:bg-…` du composant, et
+   la tuile pressée ne bougerait pas. */
+:root[data-theme='cyber'] [data-part='tile']:active {
+  background-color: var(--surface-2);
+}
+
 /* Les lignes d'une plaque (ListRow, la ligne de SwipeToDelete) peignaient leur propre fond opaque : elles
    le perdent, la plaque suffit. La zone de suppression de SwipeToDelete reste invisible tant qu'on ne
    glisse pas (elle est rognée à zéro) : rien ne transparaît au repos. */

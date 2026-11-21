@@ -26,5 +26,8 @@ export { Skeleton } from './Skeleton';
 export { Sheet } from './Sheet';
 export { SwipeToDelete } from './SwipeToDelete';
 export { Textarea } from './Textarea';
+export { Tile } from './Tile';
+export type { TileProps, TileValue } from './Tile';
+export { TileGrid } from './TileGrid';
 export { Toggle } from './Toggle';
 export { UndoRow } from './UndoRow';

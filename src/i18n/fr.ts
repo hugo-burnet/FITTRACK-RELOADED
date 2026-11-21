@@ -38,6 +38,8 @@ const fr = {
     lockRoutineOrder: 'Verrouiller l’ordre des routines',
     /** Le repli du texte d'aide long : un seul libellé pour tous les écrans. */
     learnMore: 'En savoir plus',
+    /** Lu à la place du `—` d'une tuile : une mesure jamais prise n'est pas un zéro. */
+    noMeasure: 'aucune mesure',
   },
 
   nav: {
@@ -255,6 +257,8 @@ const fr = {
     islandWeek: 'cette semaine',
     islandWeight: 'poids du jour',
     weekLink: 'Voir les séances par semaine',
+    /** La semaine « 2 / 4 », telle qu'un lecteur d'écran la dit. */
+    weekSpoken: '{done} sur {goal}',
     weightLink: 'Renseigner le poids du jour',
 
     /** La carte principale : quelle routine lancer aujourd'hui. */
