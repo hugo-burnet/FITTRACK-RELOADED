@@ -276,7 +276,7 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t('routines.dragHandle', { name })}
-              className="flex w-11 shrink-0 cursor-grab items-center justify-center
+              className="flex w-[48px] shrink-0 cursor-grab items-center justify-center
                 text-[var(--text-2)] active:cursor-grabbing"
               {...state.handleProps}
             >
@@ -303,7 +303,7 @@ export function WorkoutExerciseCard({
                   </span>
                 )}
                 <span
-                  className={`min-w-0 truncate text-base ${
+                  className={`min-w-0 line-clamp-2 text-base [overflow-wrap:anywhere] ${
                     expanded ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'
                   }`}
                 >
@@ -372,7 +372,7 @@ export function WorkoutExerciseCard({
               type="button"
               aria-label={t(hold !== null ? 'workout.holdStop' : 'workout.paceStop')}
               onClick={onStopPace}
-              className="flex w-12 shrink-0 items-center justify-center text-[var(--accent-ink)]
+              className="flex w-[48px] shrink-0 items-center justify-center text-[var(--accent-ink)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
               <StopIcon width={18} height={18} />
@@ -382,7 +382,7 @@ export function WorkoutExerciseCard({
               type="button"
               aria-label={t(timed ? 'workout.holdOpen' : 'workout.paceOpen', { name })}
               onClick={onPace}
-              className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
+              className="flex w-[48px] shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
               <StopwatchIcon width={20} height={20} />
@@ -394,7 +394,7 @@ export function WorkoutExerciseCard({
               type="button"
               aria-label={t('workout.plates')}
               onClick={onPlates}
-              className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
+              className="flex w-[48px] shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
               <PlateIcon width={20} height={20} />
@@ -405,7 +405,7 @@ export function WorkoutExerciseCard({
             type="button"
             aria-label={t('workout.exerciseMenu', { name })}
             onClick={onMenu}
-            className="flex w-12 shrink-0 items-center justify-center text-[var(--text-2)]
+            className="flex w-[48px] shrink-0 items-center justify-center text-[var(--text-2)]
               transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
           >
             <MoreIcon />
