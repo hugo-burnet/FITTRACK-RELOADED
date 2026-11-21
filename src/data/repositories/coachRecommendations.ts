@@ -57,6 +57,21 @@ export async function listRecommendationsForExercise(
   return rows.sort((a, b) => b.recommendedAt - a.recommendedAt || b.createdAt - a.createdAt);
 }
 
+/**
+ * Ce que le coach a conclu d'une séance (détail d'une séance passée) : les lignes qu'elle a produites.
+ *
+ * `sourceWorkoutId` n'est pas indexé : on filtre la table entière. À ce volume (une ligne par exercice et
+ * par séance, au plus quelques milliers sur des années) c'est plus rapide qu'une migration de schéma.
+ */
+export async function listRecommendationsForWorkout(
+  workoutId: string,
+): Promise<CoachRecommendation[]> {
+  const rows = alive(await db.coachRecommendations.toArray()).filter(
+    (row) => row.sourceWorkoutId === workoutId,
+  );
+  return rows.sort((a, b) => b.recommendedAt - a.recommendedAt || b.createdAt - a.createdAt);
+}
+
 /** Pending objective per exercise — never pre-fills a set, only proposes a target. */
 export async function listPendingRecommendations(
   exerciseIds?: readonly string[],
