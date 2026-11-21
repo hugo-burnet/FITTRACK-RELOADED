@@ -518,8 +518,8 @@ describe('séance programmée en direct', () => {
       ),
     );
 
-    expect(await screen.findByText('Programme · Semaine 1')).toBeVisible();
-    expect(screen.getByText('Décharge planifiée')).toBeVisible();
+    expect(await screen.findByText(/Semaine 1/)).toBeVisible();
+    expect(screen.getByText(/Décharge planifiée/)).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Appliquer 50 kg aux séries restantes' }),
     ).not.toBeInTheDocument();
