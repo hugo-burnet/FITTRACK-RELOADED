@@ -38,6 +38,8 @@ const fr = {
     lockRoutineOrder: 'Verrouiller l’ordre des routines',
     /** Le repli du texte d'aide long : un seul libellé pour tous les écrans. */
     learnMore: 'En savoir plus',
+    /** Lu à la place du `—` d'une tuile : une mesure jamais prise n'est pas un zéro. */
+    noMeasure: 'aucune mesure',
   },
 
   nav: {
@@ -255,6 +257,8 @@ const fr = {
     islandWeek: 'cette semaine',
     islandWeight: 'poids du jour',
     weekLink: 'Voir les séances par semaine',
+    /** La semaine « 2 / 4 », telle qu'un lecteur d'écran la dit. */
+    weekSpoken: '{done} sur {goal}',
     weightLink: 'Renseigner le poids du jour',
 
     /** La carte principale : quelle routine lancer aujourd'hui. */
@@ -289,6 +293,13 @@ const fr = {
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
     chooseRoutineFolder: 'Choisir les dossiers',
+    /** Aucun choix de dossier : la suggestion suit toutes les routines, et le dit. */
+    allRoutines: 'Toutes les routines',
+    /** Sans routine : le premier jour, ou un samedi hors plan. */
+    freeWorkout: 'Séance libre',
+    freeWorkoutError: 'La séance n’a pas pu démarrer. Réessaie.',
+    /** Bloc actif sans séance aujourd’hui : la routine habituelle, en bouton secondaire. */
+    offPlanStart: 'Lancer {name}',
     changeRoutineFolder: 'Changer de dossier',
     rootRoutineFolder: 'Sans dossier',
     emptyRoutineFolder: 'Aucune routine dans ce dossier.',
@@ -300,17 +311,17 @@ const fr = {
       'Coche plusieurs dossiers si ton cycle les traverse : la suggestion suit alors toutes leurs routines.',
     routineFolderPickOne: 'Coche au moins un dossier.',
     routineFolderWriteError: 'Impossible de changer de dossier.',
-    programSection: 'Bloc en cours',
+    programSection: 'Programme en cours',
     programWeek: 'Semaine {current} sur {total}',
-    /** La ligne « Programmes » quand aucun bloc ne tourne. */
-    programsNone: 'Aucun bloc actif',
-    programStarts: 'Le bloc commence le {date}. Aucune séance ne démarre avant.',
+    /** La ligne « Programmes » quand aucun programme ne tourne. */
+    programsNone: 'Aucun programme actif',
+    programStarts: 'Le programme commence le {date}. Aucune séance ne démarre avant.',
     programNextWeek: 'La semaine {week} commence le {date}.',
     programWeekComplete: 'Toutes les séances prévues cette semaine sont terminées.',
-    programTodayRule: 'Prévue aujourd’hui dans ton bloc.',
+    programTodayRule: 'Prévue aujourd’hui dans ton programme.',
     programMissedRule: 'Prévue le {date} et encore à faire.',
-    programUpcomingRule: 'Prochaine séance du bloc, prévue le {date}.',
-    programStartError: 'La séance n’a pas pu démarrer. Vérifie le bloc puis réessaie.',
+    programUpcomingRule: 'Prochaine séance du programme, prévue le {date}.',
+    programStartError: 'La séance n’a pas pu démarrer. Vérifie le programme puis réessaie.',
     /** La lecture a échoué — pas la base : rien n'est perdu, seulement illisible. */
     readError: 'Ces données n’ont pas pu être lues. Tes séances sont intactes sur l’appareil.',
 
@@ -420,8 +431,8 @@ const fr = {
     rpeProgramTarget: 'Cible du programme · {value} / 10',
     rpeOption: 'RPE {value} sur 10',
     rpeClear: 'Effacer le RPE',
-    programContext: 'Programme · Semaine {week}',
-    programDeload: 'Décharge planifiée',
+    programWeek: 'Semaine {week}',
+    programWeekDeload: 'Semaine {week} · Décharge planifiée',
     exerciseMenu: 'Options de {name}',
     progress: '{done} séries sur {total}',
     progressOne: '1 série sur {total}',
@@ -559,8 +570,10 @@ const fr = {
   finish: {
     title: 'Fin de séance',
     duration: 'Durée',
-    sets: 'Séries',
-    reps: 'Reps',
+    sets: 'Séries de travail',
+    setsOne: 'Série de travail',
+    reps: 'Répétitions',
+    repsOne: 'Répétition',
     tonnage: 'Tonnage',
     time: 'Temps',
     distance: 'Distance',
@@ -579,7 +592,8 @@ const fr = {
     muscleDetails: 'Voir les muscles travaillés',
     saveFailed:
       'La séance n’a pas pu être enregistrée. Elle reste ouverte. Réessaie avec « Enregistrer la séance ».',
-    setSummary: '{count} série(s) · dernière : {reading}',
+    setSummary: '{count} séries · dernière : {reading}',
+    setSummaryOne: '1 série · dernière : {reading}',
     coachSection: 'Coach',
   },
 
@@ -664,9 +678,9 @@ const fr = {
      * Pas de flèche : elle est réservée à la charge à mettre.
      */
     benchmark_calibrated:
-      'Benchmark : {reps} répétitions à {tested} kg, soit un max {max}. Pour ta fourchette ({range}), démarre à {weight} kg.',
+      'Séance test : {reps} répétitions à {tested} kg, soit un max {max}. Pour ta fourchette ({range}), démarre à {weight} kg.',
     benchmarkCalibratedSets:
-      'Benchmark : {reps} répétitions à {tested} kg, soit un max {max}. Pour {sets} séries de {range}, démarre à {weight} kg.',
+      'Séance test : {reps} répétitions à {tested} kg, soit un max {max}. Pour {sets} séries de {range}, démarre à {weight} kg.',
     /** Le max d'un benchmark : une estimation, ou — au-delà de 30 répétitions — un plancher. */
     benchmarkMaxAbout: 'd’environ {value} kg',
     benchmarkMaxAtLeast: 'd’au moins {value} kg',
@@ -700,7 +714,7 @@ const fr = {
     statusPending: 'En attente',
     statusFollowed: 'Suivie',
     statusDismissed: 'Ignorée',
-    // Deux causes désormais : l'activation d'un bloc et un signal plus récent.
+    // Deux causes désormais : l'activation d'un programme et un signal plus récent.
     // « Remplacée par le programme » mentirait sur la seconde. Ce n'est jamais
     // un refus — d'où un mot neutre.
     statusSuperseded: 'Remplacée',
@@ -746,8 +760,16 @@ const fr = {
     title: 'Records',
     link: 'Records',
     subtitle: 'Tous tes jalons personnels',
+    /** Les deux vues : ce qui est vrai aujourd'hui, et comment on y est arrivé. */
+    viewsLabel: 'Vue des records',
+    viewCurrent: 'En cours',
+    viewTimeline: 'Chronologie',
+    openExercise: 'Voir {exercise}',
     allExercises: 'Tous les exercices',
     allTypes: 'Tous les records',
+    /** Le nom du critère sur la puce tant qu'aucun filtre n'est choisi, comme dans l'Historique. */
+    exerciseFilter: 'Exercice',
+    typeFilter: 'Type',
     unknownExercise: 'Exercice indisponible',
     exerciseSheetTitle: 'Exercice',
     typeSheetTitle: 'Type de record',
@@ -794,6 +816,8 @@ const fr = {
     unlockedHint: 'Acquis pour de bon. Ni une pause, ni une blessure ne te le reprendront.',
 
     achievedOn: 'le {date}',
+    /** Dans la feuille du jeton : le palier mène à la séance qui l'a franchi. */
+    openWorkout: 'Voir la séance',
     countOne: '1 palier',
     count: '{count} paliers',
 
@@ -1017,24 +1041,66 @@ const fr = {
 
   program: {
     listTitle: 'Programmes',
-    listCreate: 'Créer un bloc',
-    listEmpty: 'Aucun bloc pour l’instant. Commence par poser quatre semaines d’entraînement.',
+    listCreate: 'Créer un programme',
+    listEmpty: 'Aucun programme pour l’instant. Commence par poser quatre semaines d’entraînement.',
     listDuration: '{count} semaines · départ le {date}',
     statusDraft: 'Brouillon',
     statusActive: 'Actif',
     statusCompleted: 'Terminé',
-    detailTitle: 'Suivi du bloc',
+    detailTitle: 'Suivi du programme',
     /**
-     * La carte du bloc actif mène à sa fiche — la seule porte vers ses options
-     * (modifier, décaler, supprimer). Sans elle, un bloc qui n'a pas encore
+     * La carte du programme actif mène à sa fiche — la seule porte vers ses options
+     * (modifier, décaler, supprimer). Sans elle, un programme qui n'a pas encore
      * commencé n'a aucun bouton : la liste le retire de ses lignes puisqu'il est
      * déjà en tête, et il n'était plus atteignable du tout.
      */
-    openBlock: 'Ouvrir le bloc {name}',
+    openBlock: 'Ouvrir le programme {name}',
     progressWeek: 'Semaine {current} / {total}',
-    progressBefore: 'Le bloc commence le {date}.',
+    progressBefore: 'Le programme commence le {date}.',
     progressAfter: 'Les {count} semaines sont terminées.',
     intentionTitle: 'Intention de la semaine',
+    /**
+     * Le détail d'un programme (v3). Le mot est « programme », partout dans Planifier ;
+     * les clés plus anciennes de cet écran disent encore « block » ou « split » et gardent leur nom.
+     */
+    detailActionsLabel: 'Actions du programme',
+    detailStatusLine: '{status} · {count} semaines · départ le {date}',
+    detailProgressTitle: 'Avancement',
+    detailWeekLabel: 'Semaine du programme',
+    detailWeekPhase: '{phase}, du {from} au {to}',
+    detailWeekBefore: 'Le programme commence le {date}.',
+    detailWeekAfter: 'Les {count} semaines sont terminées.',
+    detailNextDeload: 'La semaine {number} est une décharge.',
+    detailAdherenceLabel: 'Assiduité',
+    detailAdherenceToDate: 'prévues à ce jour',
+    detailAdherenceTotal: 'sur le programme',
+    /** Sous le chiffre « à ce jour » de la tuile large : le total du programme, en une phrase. */
+    detailAdherenceOverall: '{done} sur {planned} sur tout le programme',
+    detailAdherenceSpoken: '{done} séances faites sur {planned}',
+    detailTonnageLabel: 'Tonnage',
+    detailTonnageCurrent: 'sem. {number}, en cours',
+    detailTonnageWeek: 'sem. {number}',
+    detailCoachTitle: 'Ce que ça change au coach',
+    detailCoachBuild:
+      'Quand une série atteint le haut de la fourchette, il te propose d’abord une charge plus lourde, jamais une série de plus.',
+    detailCoachOverload:
+      'Quand une série atteint le haut de la fourchette, il te propose d’abord une série de plus, avant la charge.',
+    detailCoachDeload:
+      'Il ne propose rien de nouveau : il maintient. Une séance de décharge n’est jamais lue comme un plateau.',
+    detailCoachReturn:
+      'Il préfère maintenir. Une répétition de plus ou une charge plus lourde ne viennent qu’après.',
+    detailCoachNextDeload: 'La semaine prochaine, en décharge, il ne propose rien : il maintient.',
+    detailPastTitle: 'Semaines passées',
+    detailPastCount: '{done} / {planned}',
+    detailOpenSession: 'Ouvrir la séance {name}, {date}',
+    detailSessionDate: '{date} · {tonnage}',
+    weekdayShort1: 'Lun.',
+    weekdayShort2: 'Mar.',
+    weekdayShort3: 'Mer.',
+    weekdayShort4: 'Jeu.',
+    weekdayShort5: 'Ven.',
+    weekdayShort6: 'Sam.',
+    weekdayShort7: 'Dim.',
 
     /**
      * Le pont vers le corpus. Le libellé ne promet pas une réponse : il dit où
@@ -1045,7 +1111,7 @@ const fr = {
     evidenceCountMany: '{count} fiches — {section}',
     /**
      * La section liste les sept jours, pas seulement ceux qui portent une
-     * séance : un bloc se lit autant à ses jours de repos qu'à ses séances.
+     * séance : un programme se lit autant à ses jours de repos qu'à ses séances.
      * « Séances de la semaine » mentait sur ce qu'on y trouve.
      */
     sessionsTitle: 'La semaine',
@@ -1058,64 +1124,64 @@ const fr = {
     missingRoutine: 'Routine supprimée',
     missingRoutineHint: 'La routine prévue {day} n’existe plus.',
     missingRoutineLocked: 'Cette semaine contient déjà une séance et ne peut plus être modifiée.',
-    missingRoutineCompleted: 'Ce bloc est terminé et ne peut plus être modifié.',
+    missingRoutineCompleted: 'Ce programme est terminé et ne peut plus être modifié.',
     repairSplit: 'Choisir une autre routine',
     replaceRoutineTitle: 'Remplacer la routine supprimée',
     replaceRoutineHint:
       'Choisis la routine qui doit prendre sa place à partir de la semaine {week}.',
     replaceRoutineLabel: 'Routine de remplacement',
     replaceRoutineConfirm: 'Confirmer le remplacement',
-    replaceRoutineFailed: 'La routine n’a pas pu être remplacée. Vérifie le bloc puis réessaie.',
+    replaceRoutineFailed: 'La routine n’a pas pu être remplacée. Vérifie le programme puis réessaie.',
     replaceRoutineEmpty: 'Aucune routine disponible. Tu peux en créer une vide ici.',
     replaceRoutineCreateLabel: 'Nom de la nouvelle routine',
     replaceRoutineCreatePlaceholder: 'Ex. Poussée A',
     replaceRoutineCreate: 'Créer et utiliser cette routine',
     startSession: 'Démarrer {name}',
     upcomingTitle: 'Semaines suivantes',
-    actionsLabel: 'Options du bloc',
-    actionsTitle: 'Actions du bloc',
+    actionsLabel: 'Options du programme',
+    actionsTitle: 'Actions du programme',
     editFuture: 'Modifier à partir de…',
-    editFutureHint: 'Préparer le split d’une semaine future.',
-    shiftAction: 'Décaler le bloc',
+    editFutureHint: 'Préparer la répartition d’une semaine future.',
+    shiftAction: 'Décaler le programme',
     shiftActionHint: 'Déplacer le calendrier par semaines entières.',
-    shiftTitle: 'Décaler le bloc',
+    shiftTitle: 'Décaler le programme',
     shiftWeeksLabel: 'Nombre de semaines',
-    shiftWeeksHint: 'Positif pour repousser, négatif pour avancer. Le bloc reste calé au lundi.',
-    shiftStartedWarning: 'Le bloc a déjà commencé. Les séances passées ne bougeront pas.',
+    shiftWeeksHint: 'Positif pour repousser, négatif pour avancer. Le programme reste calé au lundi.',
+    shiftStartedWarning: 'Le programme a déjà commencé. Les séances passées ne bougeront pas.',
     shiftConfirm: 'Confirmer le décalage',
-    completeAction: 'Terminer le bloc',
+    completeAction: 'Terminer le programme',
     completeHint: 'Arrêter les prochaines séances sans effacer les données.',
-    completeTitle: 'Terminer le bloc',
-    completeBody: 'Les semaines, le split et les séances restent dans ton historique.',
-    // Terminer ≠ supprimer : l'un arrête le bloc, l'autre l'efface. Le corps
+    completeTitle: 'Terminer le programme',
+    completeBody: 'Les semaines, la répartition et les séances restent dans ton historique.',
+    // Terminer ≠ supprimer : l'un arrête le programme, l'autre l'efface. Le corps
     // dit ce qui reste, parce que c'est la seule question qu'on se pose ici.
-    deleteAction: 'Supprimer le bloc',
-    deleteHint: 'Effacer le bloc. Les séances déjà faites ne bougent pas.',
-    deleteTitle: 'Supprimer le bloc',
+    deleteAction: 'Supprimer le programme',
+    deleteHint: 'Effacer le programme. Les séances déjà faites ne bougent pas.',
+    deleteTitle: 'Supprimer le programme',
     deleteBody:
-      'Les séances déjà faites restent dans ton historique. Le split et les semaines de ce bloc disparaissent.',
+      'Les séances déjà faites restent dans ton historique. La répartition et les semaines de ce programme disparaissent.',
     detailReadError: 'Le suivi n’a pas pu être lu. Tes données restent sur cet appareil.',
     actionError: 'L’action n’a pas pu être enregistrée. Réessaie.',
-    newTitle: 'Nouveau bloc',
-    editTitle: 'Modifier le bloc',
-    notFound: 'Ce bloc n’existe plus.',
-    loading: 'Chargement du bloc…',
+    newTitle: 'Nouveau programme',
+    editTitle: 'Modifier le programme',
+    notFound: 'Ce programme n’existe plus.',
+    loading: 'Chargement du programme…',
     stepBasics: 'Cadre',
-    stepSplit: 'Split',
+    stepSplit: 'Répartition',
     stepWeeks: 'Semaines',
     stepProgress: 'Étape {current} sur 3 · {name}',
-    basicsIntro: 'Pose les limites du bloc avant de choisir les séances.',
-    nameLabel: 'Nom du bloc',
+    basicsIntro: 'Pose les limites du programme avant de choisir les séances.',
+    nameLabel: 'Nom du programme',
     namePlaceholder: 'Force · fin d’été',
     startsAtLabel: 'Lundi de départ',
-    startsAtHint: 'Un lundi : les semaines du bloc se comptent du lundi au dimanche.',
+    startsAtHint: 'Un lundi : les semaines du programme se comptent du lundi au dimanche.',
     durationLabel: 'Durée',
     durationOption: '{count} semaines',
     existingBasicsHint: 'Le cadre de ce brouillon est déjà enregistré.',
     continue: 'Continuer',
-    activate: 'Activer le bloc',
+    activate: 'Activer le programme',
     // Un brouillon s'enregistre, il ne s'active pas depuis l'éditeur : mettre
-    // le bloc en route est une décision qui se prend sur la fiche, où l'on voit
+    // le programme en route est une décision qui se prend sur la fiche, où l'on voit
     // ce qu'on lance.
     saveDraft: 'Enregistrer le brouillon',
     continueCreation: 'Continuer la création',
@@ -1123,23 +1189,23 @@ const fr = {
     saveRevisionWeek: 'Utiliser à partir de la semaine {number}',
     effectiveWeekLabel: 'Semaine d’entrée en vigueur',
     effectiveWeekHint:
-      'La semaine courante apparaît seulement si aucune séance du bloc n’y est enregistrée.',
-    splitIntro: 'Ce rythme se répète chaque semaine du bloc.',
+      'La semaine courante apparaît seulement si aucune séance du programme n’y est enregistrée.',
+    splitIntro: 'Ce rythme se répète chaque semaine du programme.',
     /**
      * Un split peut tenir sur plusieurs semaines : un cycle, rejoué en boucle
-     * pendant tout le bloc. « Chaque semaine » est le cas d'un cycle d'une
+     * pendant tout le programme. « Chaque semaine » est le cas d'un cycle d'une
      * semaine — le split des premières versions, qui reste le défaut.
      */
     cycleLabel: 'Durée du cycle',
     cycleOne: 'Chaque semaine',
     cycleMany: '{count} semaines',
     cycleHintMany:
-      'Les {count} semaines du cycle se rejouent dans l’ordre, en boucle, jusqu’à la fin du bloc.',
-    // Sur un bloc déjà lancé, la révision repart de la première semaine de son
+      'Les {count} semaines du cycle se rejouent dans l’ordre, en boucle, jusqu’à la fin du programme.',
+    // Sur un programme déjà lancé, la révision repart de la première semaine de son
     // cycle : sans cette phrase, les semaines d'un cycle tourné par rapport à
     // celui qu'on avait posé se liraient comme échangées.
     cycleRestartHint:
-      'Le cycle repart à la semaine {number} du bloc : sa semaine 1 est celle qu’on y jouera.',
+      'Le cycle repart à la semaine {number} du programme : sa semaine 1 est celle qu’on y jouera.',
     cycleWeekTitle: 'Semaine {number} du cycle',
     cycleWeekEmpty: 'Aucune séance : cette semaine du cycle est un repos complet.',
     // Court : « Ajouter une séance à la semaine 1 » passait à la ligne et laissait
@@ -1167,12 +1233,12 @@ const fr = {
     addSession: 'Ajouter une séance',
     removeSession: 'Retirer la séance {number}',
     routinesLoading: 'Chargement des routines…',
-    routinesReadError: 'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
+    routinesReadError: 'Les routines n’ont pas pu être lues. Réessaie avant de composer la répartition.',
     newRoutine: 'Nouvelle routine',
     newRoutineLabel: 'Nom de la routine',
     newRoutinePlaceholder: 'Poussée',
     newRoutineHint:
-      'Elle est créée vide et prend sa place dans le split. Les exercices s’ajoutent depuis l’onglet Routines, avant la première séance.',
+      'Elle est créée vide et prend sa place dans la répartition. Les exercices s’ajoutent depuis l’onglet Routines, avant la première séance.',
     newRoutineCreate: 'Créer et placer',
     weekday1: 'Lundi',
     weekday2: 'Mardi',
@@ -1181,7 +1247,8 @@ const fr = {
     weekday5: 'Vendredi',
     weekday6: 'Samedi',
     weekday7: 'Dimanche',
-    weeksIntro: 'Règle l’intention de chaque semaine : phase et niveau.',
+    weeksIntro:
+      'Règle l’intention de chaque semaine : phase et niveau. Une surcharge pousse un peu plus fort ; une décharge allège la semaine pour récupérer.',
     week: 'Semaine {number}',
     editWeekReading: 'Modifier la semaine {number}, {line}',
     editWeekTitle: 'Semaine {number}',
@@ -1223,20 +1290,20 @@ const fr = {
       return: 'Reprise',
     },
     saveWeek: 'Enregistrer la semaine',
-    errorBasicsName: 'Donne un nom au bloc.',
-    errorBasicsDate: 'Choisis la date de départ du bloc.',
-    errorBasicsMonday: 'Le départ tombe un lundi : un bloc se compte en semaines pleines.',
+    errorBasicsName: 'Donne un nom au programme.',
+    errorBasicsDate: 'Choisis la date de départ du programme.',
+    errorBasicsMonday: 'Le départ tombe un lundi : un programme se compte en semaines pleines.',
     errorBasicsDuration: 'La durée va de 4 à 12 semaines.',
     errorSplit: 'Choisis un jour et une routine pour chaque séance.',
-    errorWeeks: 'Vérifie la phase et le niveau de chaque semaine avant d’activer le bloc.',
-    errorRead: 'Le bloc n’a pas pu être lu. Tes données restent sur cet appareil.',
+    errorWeeks: 'Vérifie la phase et le niveau de chaque semaine avant d’activer le programme.',
+    errorRead: 'Le programme n’a pas pu être lu. Tes données restent sur cet appareil.',
     errorSave: 'Cette étape n’a pas pu être enregistrée. Réessaie.',
-    errorAnotherActive: 'Un autre bloc est actif. Termine-le avant d’activer celui-ci.',
-    errorRoutineMissing: 'Une routine du split n’est plus disponible. Choisis-en une autre.',
-    errorNoFutureRevision: 'Ce bloc n’a plus de semaine future à modifier.',
-    replaceActiveTitle: 'Remplacer le bloc actif',
+    errorAnotherActive: 'Un autre programme est actif. Termine-le avant d’activer celui-ci.',
+    errorRoutineMissing: 'Une routine de la répartition n’est plus disponible. Choisis-en une autre.',
+    errorNoFutureRevision: 'Ce programme n’a plus de semaine future à modifier.',
+    replaceActiveTitle: 'Remplacer le programme actif',
     replaceActiveBody:
-      'Le bloc actif sera terminé avec tout son historique, puis ce nouveau bloc prendra sa place.',
+      'Le programme actif sera terminé avec tout son historique, puis ce nouveau programme prendra sa place.',
     replaceActiveConfirm: 'Remplacer et activer',
   },
 
@@ -1421,10 +1488,11 @@ const fr = {
   history: {
     title: 'Historique',
     regularity: 'Régularité',
-    streak: 'Semaines',
-    streakOne: 'Semaine',
+    streak: 'Semaines tenues',
+    streakOne: 'Semaine tenue',
     weeklyGoal: 'Objectif hebdo',
-    defineGoal: 'Définir',
+    goalHint: 'Régler l’objectif hebdomadaire',
+    goalSpoken: '{done} séances sur {goal} cette semaine',
     goalPrompt: 'Choisis ton rythme pour suivre ta régularité.',
     goalSheetTitle: 'Séances par semaine',
     goalInput: 'Nombre de séances par semaine',
@@ -1461,6 +1529,11 @@ const fr = {
     detailDuration: 'Durée',
     detailNotes: 'Notes',
     detailTotals: 'Totaux',
+    /** Le mot est « programme », jamais « bloc » (vocabulaire de la v3). */
+    programDeleted: 'Programme supprimé',
+    programWeekOnly: 'Semaine {current}',
+    detailRecords: 'Records de cette séance',
+    detailCoach: 'Ce que le coach en a conclu',
     /** Past tense: the recap says what this session did, not what it targets. */
     detailMuscles: 'Muscles travaillés',
     /**
@@ -1471,15 +1544,10 @@ const fr = {
     detailMusclesLabel: 'Les muscles travaillés pendant cette séance',
     detailExercises: 'Exercices',
     detailSets: 'Séries de travail',
+    detailSetsOne: 'Série de travail',
     detailReps: 'Répétitions',
+    detailRepsOne: 'Répétition',
     detailTonnage: 'Tonnage',
-    detailTime: 'Temps',
-    /**
-     * Le seul chiffre estimé de la carte le dit lui-même, et dit aussi où on
-     * le règle : une estimation qu'on ne peut pas corriger est un chiffre subi.
-     */
-    detailTimeHint:
-      'Le temps compte les exercices chronométrés à la seconde, et les séries en répétitions à la cadence réglée sur l’exercice — 3 s par répétition par défaut.',
     detailDistance: 'Distance',
     detailSet: 'Série {number}',
     detailRpe: 'RPE {value}',
@@ -1696,13 +1764,42 @@ const fr = {
     musclesSecondary: 'Aussi sollicités',
 
     viewsLabel: 'Vues de la fiche',
-    recordsSection: 'Records',
     recordsLink: 'Voir tous les records',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
 
-    historySection: 'Historique',
+    /** Le groupe de tuiles du haut du Suivi : où en est-on sur cet exercice. */
+    markersSection: 'Repères',
+    lastTime: 'La dernière fois',
+    /** « 4 séries : 6 · 5 · 5 · 5 reps, lun. 16 nov. » — la charge est dans le chiffre. */
+    lastTimeUniform: '{sets} : {reps} reps, {date}',
+    lastTimePlain: '{sets}, {date}',
+    /** Exercice assisté : la charge est une aide, pas un poids soulevé. */
+    lastTimeAssistUnit: 'kg d’assistance',
+    lastTimeAssistSuffix: 'd’assistance',
+    /** Sous le titre d'une ligne « Séances » : la série écrite à droite est celle-ci, pas le record. */
+    sessionSubtitle: '{sets} · {best}',
+    topSetHeaviest: 'la plus lourde',
+    topSetLeastAssisted: 'la moins assistée',
+    /** Écrite poids × reps (« 80 kg × 8 ») ; le détail dit ce que le record mesure, en tonnage. */
+    bestSet: 'Meilleure série',
+    bestSetDetail: 'Le plus de poids × reps en une série : {volume}, {date}',
+    recordsHint: 'Voir les records de cet exercice',
+
+    /** La tuile G : la courbe de l'exercice, qui ouvre la vue plein écran. */
+    progressionSection: 'Progression',
+    progressionLabel: '{metric} · {count} séances',
+    progressionLabelOne: '{metric} · 1 séance',
+    progressionSince: '{delta} depuis le {date}',
+    progressionFlat: 'Inchangé depuis le {date}',
+    progressionHint: 'Ouvrir la courbe en plein écran',
+
+    /** La parole du coach sur cet exercice, sous la courbe. */
+    coachSection: 'Le coach',
+    seeWorkout: 'Voir la séance',
+
+    sessionsSection: 'Séances',
     historyEmpty: 'Aucune séance avec cet exercice. La première l’ouvrira.',
     historySetCount: '{count} séries',
     historySetCountOne: '1 série',
@@ -1755,8 +1852,6 @@ const fr = {
 
     catalogueNote:
       'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes, ton repos, ton incrément et son chargement, si.',
-    /** Not "Enregistrer": there is nothing left to save, only somewhere to go. */
-    done: 'Terminé',
     edit: 'Modifier',
     delete: 'Supprimer l’exercice',
     deleteHint:
@@ -1930,7 +2025,6 @@ const fr = {
      * n'a été relue par un humain, ce que le bandeau dit sans détour.
      */
     programming: {
-      title: 'Programmation',
       entry: 'Volume, fréquence, deload…',
       intro:
         'Volume, fréquence, tempo, ordre des exercices, deload, progression. Chaque ligne vient d’un tableau du document source : affirmation, niveau de confiance, population étudiée, type de preuve, contradictions et limites.',
@@ -2033,7 +2127,7 @@ const fr = {
     loadStepSheetTitle: 'Pas de charge par défaut',
     loadStepLabel: 'Pas en kilos',
     loadStepHint:
-      'Le plus petit saut de charge de ta salle, par exemple 1,125 avec de petites plaques. Le coach, le benchmark ' +
+      'Le plus petit saut de charge de ta salle, par exemple 1,125 avec de petites plaques. Le coach, la séance test ' +
       'et les cibles de programme s’en servent pour tout exercice dont la fiche (« Incrément de charge ») est vide ; ' +
       'la fiche passe avant.',
     loadStepClear: 'Selon le matériel',
@@ -2216,9 +2310,9 @@ const fr = {
       coachRecommendations: 'journal du coach',
       bodyMeasurements: 'mensurations',
       progressPhotos: 'photos',
-      programs: 'blocs',
-      programWeeks: 'semaines de bloc',
-      programScheduleRevisions: 'plannings de bloc',
+      programs: 'programmes',
+      programWeeks: 'semaines de programme',
+      programScheduleRevisions: 'plannings de programme',
       programScheduleEntries: 'séances planifiées',
       settings: 'réglages',
     },
@@ -2591,12 +2685,55 @@ const fr = {
     action: 'Analyses',
     /** L'entrée depuis la fiche exercice. */
     exerciseLink: 'Voir la progression',
+    /** La vue plein écran renvoie à la fiche : on y arrive de Progression, on en repart vers l'exercice. */
+    exerciseSheetLink: 'Voir la fiche de l’exercice',
     pickExercise: 'Choisis un exercice pour voir sa progression.',
-    empty: 'Aucun exercice pratiqué pour l’instant. La première séance ouvrira cet écran.',
 
-    /** Les deux sections de l'écran d'accueil des analyses. */
-    overviewSection: 'Vue d’ensemble',
-    exercisesSection: 'Exercices',
+    /** Les groupes de tuiles de l'écran Progression, puis la ligne des bilans. */
+    weekSection: 'Cette semaine',
+    recordsSection: 'Records',
+    bodySection: 'Corps et muscles',
+    reviewsSection: 'Bilans',
+
+    /** « Cette semaine » : le tonnage (la seule G), les séances, le programme. */
+    tonnageLabel: 'Tonnage · 8 semaines',
+    tonnageDetail: 'Semaine en cours. Moyenne sur {weeks} semaines : {average}.',
+    tonnageDetailOne: 'Semaine en cours. Moyenne sur 1 semaine : {average}.',
+    tonnageHint: 'Voir le volume semaine par semaine',
+    sessionsLabel: 'Séances',
+    sessionsCaption: 'cette semaine',
+    sessionsSpoken: '{done} sur {goal} cette semaine',
+    streakLineOne: '1 semaine tenue d’affilée.',
+    streakLineMany: '{weeks} semaines tenues d’affilée.',
+    streakNone: 'Aucune semaine tenue d’affilée pour l’instant.',
+    sessionsNoGoal: 'Aucun objectif hebdo : fixe ton rythme pour suivre ta série.',
+    sessionsHint: 'Voir le rythme semaine par semaine',
+    programLabel: 'Programme en cours',
+    programValue: '{current} / {total}',
+    programDetail: '{name} — {phase}, {level} %. Fin le {date}',
+    programDetailNoWeek: '{name}. Fin le {date}',
+    programHint: 'Ouvrir le programme',
+
+    /** « Records » : le dernier, puis les deux comptes. */
+    latestRecordLabel: 'Dernier record',
+    latestRecordLine: '{exercise} · {type}, {gain} le {date}',
+    latestRecordLineFirst: '{exercise} · {type} le {date}',
+    latestRecordHint: 'Ouvrir l’exercice',
+    recordsCountLabel: 'Records battus',
+    recordsCountHint: 'Voir tous les records',
+    milestonesLabel: 'Paliers',
+    milestonesHint: 'Voir les paliers',
+
+    /** « Corps et muscles » : les muscles sous leur plancher, le poids. */
+    floorLabel: 'Sous le plancher',
+    floorClear: 'Tous les muscles sont au-dessus du plancher.',
+    floorMany: 'À regarder : {muscles}.',
+    floorHint: 'Voir le volume par muscle et ses planchers',
+    floorUnset: 'Aucun plancher réglé : règle-en un pour être prévenu.',
+    floorUnsetHint: 'Régler les planchers par muscle',
+    weightLabel: 'Poids de corps',
+    weightDetail: '{change} depuis la pesée précédente ({previous}).',
+    weightHint: 'Voir les mensurations',
 
     exportImage: 'Exporter en image',
     exportImageFooter: 'FitTrack · exporté le {date}',
@@ -2776,10 +2913,10 @@ const fr = {
    * d'une routine, le bilan sur son écran.
    */
   benchmark: {
-    menu: 'Benchmark de cette routine',
+    menu: 'Séance test de cette routine',
     menuHint: 'Une série à l’échec par exercice, pour caler les charges',
     menuEmptyHint: 'Cette routine n’a aucun exercice.',
-    launchTitle: 'Benchmark',
+    launchTitle: 'Séance test',
     launchBody:
       'Une seule série par exercice, menée jusqu’à l’échec.\n' +
       'Choisis ton style, puis la charge avec laquelle tu penses faire le nombre de répétitions indiqué : plus ton essai en est loin, moins la charge proposée est fiable.\n' +
@@ -2801,17 +2938,17 @@ const fr = {
     },
     goalHint:
       'Choisis une charge que tu penses tenir environ {reps} fois. Si tu acceptes le bilan, la routine prend cette fourchette et la charge.',
-    launchConfirm: 'Lancer le benchmark',
-    workoutName: 'Benchmark · {name}',
-    /** Avec un style : l'historique le dit, on retrouve un benchmark léger sans l'ouvrir. */
-    workoutNameGoal: 'Benchmark {style} · {name}',
+    launchConfirm: 'Lancer la séance test',
+    workoutName: 'Séance test · {name}',
+    /** Avec un style : l'historique le dit, on retrouve une séance test légère sans l'ouvrir. */
+    workoutNameGoal: 'Séance test ({style}) · {name}',
     workoutBanner:
-      'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
+      'Séance test · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
     workoutBannerGoal:
-      'Benchmark {style} · une série à l’échec par exercice, avec la charge que tu penses tenir environ {reps} fois.',
-    finishNote: 'C’est un benchmark : le coach en tire la charge de chaque exercice, à lire après l’enregistrement.',
-    title: 'Bilan du benchmark',
-    notFound: 'Ce benchmark n’existe plus.',
+      'Séance test ({style}) · une série à l’échec par exercice, avec la charge que tu penses tenir environ {reps} fois.',
+    finishNote: 'C’est une séance test : le coach en tire la charge de chaque exercice, à lire après l’enregistrement.',
+    title: 'Bilan de la séance test',
+    notFound: 'Cette séance test n’existe plus.',
     intro:
       'Une série à l’échec par exercice. Pour chacun, le coach cherche la charge qui tient toutes les séries de la routine dans sa fourchette : il compte la fatigue d’une série à l’autre (le repos, le type d’exercice) et garde environ deux répétitions en réserve à la dernière.',
     zone: 'Fourchette de la routine : {range}',
@@ -2839,7 +2976,7 @@ const fr = {
     aligned: 'La routine est déjà à ce niveau.',
     noLine: 'Cet exercice n’est pas dans la routine : rien à écrire.',
     routineEmpty: 'La routine n’a aucune série de travail pour cet exercice : rien à écrire.',
-    routineChanged: 'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
+    routineChanged: 'La routine a changé depuis cette séance test : vérifie la charge avant de l’appliquer.',
     /** Des répétitions qui ne sont pas un compte entier (« 12,5 ») : la formule ne sait pas les lire. */
     unreadable: 'Ces répétitions ne sont pas un nombre entier : rien à estimer.',
     /** Au-delà de 30 répétitions : le max est un plancher, la charge un minimum. */
@@ -2857,12 +2994,12 @@ const fr = {
     appliedMany: '{count} exercices mis à jour dans la routine.',
     appliedNone: 'La routine a changé depuis le bilan : rien n’a été écrit.',
     applyFailed: 'La routine n’a pas pu être mise à jour.',
-    historyCard: 'Benchmark',
+    historyCard: 'Séance test',
     historyLink: 'Voir le bilan',
     /** Sur la fiche d'un programme : les charges de ses séances viennent de ses routines. */
     programTitle: 'Calibrer les charges',
     programHint:
-      'Les charges d’un programme viennent de ses routines. Un benchmark par routine règle celles de départ.',
+      'Calibrer, c’est régler la charge de départ. Les charges d’un programme viennent de ses routines : une séance test par routine les fixe.',
   },
 
   weekly: {

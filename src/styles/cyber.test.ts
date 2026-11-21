@@ -55,10 +55,16 @@ describe('Cyber tokens', () => {
     ['--text-2', '--surface-1', 4.5],
     ['--text-2', '--surface-2', 4.5],
     ['--text-2', '--accent-soft', 4.5],
+    // La prose (Y1) : les phrases, les valeurs lues et les placeholders, sur les deux plaques.
+    ['--cyber-prose', '--surface-0', 4.5],
+    ['--cyber-prose', '--surface-1', 4.5],
+    ['--cyber-prose', '--surface-2', 4.5],
+    ['--accent-data', '--surface-2', 4.5],
     ['--accent-ink', '--surface-0', 4.5],
     ['--accent-ink', '--surface-2', 4.5],
     ['--accent-on-fill', '--accent-fill', 4.5],
     ['--danger-ink', '--surface-1', 4.5],
+    ['--warn-ink', '--surface-1', 4.5],
     ['--accent-data', '--surface-1', 3],
     ['--axis', '--surface-1', 3],
   ])('%s on %s reaches %s:1', (foreground, background, minimum) => {
@@ -106,5 +112,13 @@ describe('Cyber translucent plates', () => {
 
     expect(contrast(color('--text-2'), hex(under))).toBeGreaterThanOrEqual(4.5);
     expect(contrast(color('--text-1'), hex(under))).toBeGreaterThanOrEqual(7);
+    // La prose, elle, doit rester lisible sous les mêmes plaques, et se distinguer du blanc des valeurs.
+    expect(contrast(color('--cyber-prose'), hex(under))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(color('--cyber-prose'), color('--text-1'))).toBeLessThan(2);
+  });
+
+  it('reserves the red for engraved labels: prose, placeholders and the confirmation body read in --cyber-prose', () => {
+    expect(skin).toMatch(/\[class\*='text-\[var\(--text-2\)\]'\]:not\([^)]*\.label-xs/);
+    expect(skin).toMatch(/::placeholder\s*\{\s*color: var\(--cyber-prose\)/);
   });
 });

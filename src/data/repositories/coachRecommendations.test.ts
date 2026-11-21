@@ -16,6 +16,7 @@ import {
   isRefused,
   listPendingRecommendations,
   listRecommendationsForExercise,
+  listRecommendationsForWorkout,
   recordCoachSignals,
   reconcileFollowedLoads,
   supersedePendingLoadRecommendations,
@@ -500,5 +501,35 @@ describe('une séance abandonnée, supprimée ou corrigée ne laisse pas de cart
     await deleteArchivedWorkout(source.id);
 
     expect((await db.coachRecommendations.get(rec!.id))?.status).toBe('pending');
+  });
+
+  it('lit ce que le coach a conclu d’une séance : ses propositions, plus récentes d’abord, sans celles des autres', async () => {
+    await recordCoachSignals(
+      [
+        signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 82.5 }),
+        signal({ exerciseId: 'press', code: 'range_completed', nextLoadKg: 52.5 }),
+      ],
+      { workoutId: 'w1', recommendedAt: NOW },
+    );
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 85 })],
+      { workoutId: 'w2', recommendedAt: NOW + 1_000 },
+    );
+
+    const rows = await listRecommendationsForWorkout('w1');
+
+    expect(rows.map((row) => row.exerciseId).sort()).toEqual(['bench', 'press']);
+    expect(rows.every((row) => row.sourceWorkoutId === 'w1')).toBe(true);
+  });
+
+  it('ne rend rien pour une séance sans proposition, ni les lignes supprimées', async () => {
+    const [row] = await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed' })],
+      { workoutId: 'w1', recommendedAt: NOW },
+    );
+    await db.coachRecommendations.put(touch(row!, { deletedAt: NOW }));
+
+    expect(await listRecommendationsForWorkout('w1')).toEqual([]);
+    expect(await listRecommendationsForWorkout('absente')).toEqual([]);
   });
 });

@@ -15,6 +15,7 @@ import { HomeStatsIsland } from './HomeStatsIsland';
 import { HomeVolumeCard } from './HomeVolumeCard';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
 import { useHomeDashboard } from './useHomeDashboard';
+import { Skeleton } from '@/ui/Skeleton';
 
 /**
  * Où une séance préparée commence.
@@ -65,9 +66,9 @@ export function HomeScreen() {
           // Deux blocs de la hauteur de ce qu'ils remplacent — la carte du jour
           // et la ligne des blocs : l'écran ne sursaute pas quand les données
           // arrivent, et le corps en dessous ne descend pas d'un cran.
-          <div aria-hidden="true" className="space-y-6">
-            <div className="h-44 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-            <div className="h-16 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+          <div aria-busy="true" className="space-y-6">
+            <Skeleton height="h-44" />
+            <Skeleton height="h-16" />
           </div>
         )}
 
@@ -82,7 +83,18 @@ export function HomeScreen() {
         {state.status === 'ready' && (
           <>
             {state.data.activeProgram !== null ? (
-              <ProgramHeroCard program={state.data.activeProgram} disabled={active != null} />
+              <ProgramHeroCard
+                program={state.data.activeProgram}
+                disabled={active != null}
+                offPlan={
+                  state.data.suggestedRoutine === null
+                    ? null
+                    : {
+                        routineId: state.data.suggestedRoutine.routineId,
+                        name: state.data.suggestedRoutine.name,
+                      }
+                }
+              />
             ) : (
               <HomeSuggestionCard
                 suggestion={state.data.suggestedRoutine}

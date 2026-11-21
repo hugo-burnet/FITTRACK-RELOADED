@@ -1,6 +1,4 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import type { ReactNode } from 'react';
-import { getDefaultRepSeconds } from '@/data/repositories/settings';
+import { useAppNavigate } from '@/app/navigation';
 import {
   workoutExerciseIdentityOf,
   type WorkoutDetail,
@@ -10,6 +8,7 @@ import { t } from '@/i18n/fr';
 import {
   exerciseDisplayName,
   formatDuration,
+  groupedNumber,
   partReading,
   setTypeLabel,
   unitLabel,
@@ -17,13 +16,15 @@ import {
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { isTimedMeasurement, measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
-import { resolveRepSeconds } from '@/lib/tempo';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
-import { Card, SectionTitle } from '@/ui';
+import { Card, SectionTitle, Tile, TileGrid } from '@/ui';
 import { balanceHighlight } from '@/ui/muscleMap';
 import { formatNumber } from '@/ui/numberField';
+import { HistoryCoachConclusions } from './HistoryCoachConclusions';
 import { HistoryMusclesCard } from './HistoryMusclesCard';
+import { HistoryProgramLine } from './HistoryProgramLine';
+import { HistoryRecords } from './HistoryRecords';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -62,21 +63,9 @@ function MetadataRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function TotalReading({ label, value }: { label: string; value: ReactNode }) {
-  return (
-    <div className="flex min-h-24 flex-col justify-between border-r border-b border-[var(--border)] p-4 last:border-r-0">
-      <span className="metric text-2xl font-semibold text-[var(--text-1)]">{value}</span>
-      <span className="label-xs mt-3 font-semibold text-[var(--text-2)]">{label}</span>
-    </div>
-  );
-}
-
 export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   const { workout, exercises } = detail;
-  // The tempo behind the session's working time. Read here rather than passed
-  // in: the preference is what the metronome used, and the recap has to count
-  // the same seconds the lifter was clicked through.
-  const defaultRepSeconds = useLiveQuery(getDefaultRepSeconds);
+  const navigate = useAppNavigate();
   // The row's own snapshot, then today's library — the rule the export reads a
   // past session through, and the only way this screen and a document shared
   // from it can agree after the exercise has been renamed or re-typed.
@@ -88,13 +77,12 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
     measurementType: line.row.exerciseMeasurementType ?? line.exercise?.measurementType,
     sets: line.sets.filter((set) => set.isCompleted === 1),
   }));
-  const entries: VolumeEntry[] = completed.flatMap(({ line, identity, sets }) =>
+  const entries: VolumeEntry[] = completed.flatMap(({ identity, sets }) =>
     sets.map((set) => ({
       set,
       weightRole: measurementShape(identity.measurementType).weightRole,
       bodyweightLoadFactor: identity.bodyweightLoadFactor,
       timed: isTimedMeasurement(identity.measurementType),
-      repSeconds: resolveRepSeconds(line.row.repSeconds, defaultRepSeconds),
     })),
   );
   const totals = sessionTotals(entries, detail.bodyWeightKg);
@@ -113,36 +101,19 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   const distancePart = performedParts('distance_time', {
     distanceMeters: totals.distanceMeters,
   }).at(0);
-  const totalReadings = [
-    {
-      label: t('history.detailSets'),
-      value: String(totals.workingSets),
-      visible: true,
-    },
-    {
-      label: t('history.detailReps'),
-      value: String(totals.totalReps),
-      visible: true,
-    },
-    {
-      label: t('history.detailTonnage'),
-      value: `${formatNumber(totals.tonnage)} ${unitLabel('kg')}`,
-      visible: totals.tonnage > 0,
-    },
-    {
-      label: t('history.detailTime'),
-      value: formatDuration(totals.workingSeconds),
-      visible: totals.workingSeconds > 0,
-    },
-    {
-      label: t('history.detailDistance'),
-      value: distancePart === undefined ? '' : partReading(distancePart),
-      visible: totals.distanceMeters > 0,
-    },
-  ].filter((reading) => reading.visible);
+  /** Pour nommer les recommandations du coach : elles ne portent que l'id de leur exercice. */
+  const exerciseNames = new Map(
+    completed.flatMap(({ line, identity }) =>
+      identity.name === undefined
+        ? []
+        : [[line.row.exerciseId, exerciseDisplayName(identity.name, identity.isUnilateral)] as const],
+    ),
+  );
 
   return (
     <div className="flex flex-col gap-8">
+      <HistoryProgramLine workout={workout} />
+
       <Card>
         <MetadataRow
           label={t('history.detailDate')}
@@ -151,10 +122,6 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
         <MetadataRow
           label={t('history.detailStart')}
           value={startTime.format(workout.startedAt)}
-        />
-        <MetadataRow
-          label={t('history.detailDuration')}
-          value={formatDuration(workout.durationSeconds)}
         />
       </Card>
 
@@ -169,27 +136,44 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
         </section>
       )}
 
-      <section>
-        <SectionTitle>{t('history.detailTotals')}</SectionTitle>
-        <Card>
-          <div className="grid grid-cols-2 [&>*:nth-child(even)]:border-r-0">
-            {totalReadings.map((reading) => (
-              <TotalReading
-                key={reading.label}
-                label={reading.label}
-                value={reading.value}
-              />
-            ))}
-          </div>
-          {/* Une estimation se présente comme telle. Le chiffre est lisible
-              seulement si on sait d'où il sort — et la cadence, elle, se règle. */}
-          {totals.workingSeconds > 0 && (
-            <p className="px-4 py-3 text-sm leading-relaxed text-[var(--text-2)]">
-              {t('history.detailTimeHint')}
-            </p>
-          )}
-        </Card>
-      </section>
+      {/* Quatre tuiles `S` sans lien : la séance est passée, ces chiffres ne mènent nulle part.
+          La durée est celle de l'horloge. L'ancien « Temps » (reps × cadence) en était une estimation
+          qui se confondait avec elle : il a été retiré plutôt que présenté comme un second temps. */}
+      <TileGrid title={t('history.detailTotals')}>
+        <Tile
+          size="S"
+          label={t('history.detailDuration')}
+          value={{ value: formatDuration(workout.durationSeconds) }}
+        />
+        {totals.tonnage > 0 && (
+          <Tile
+            size="S"
+            label={t('history.detailTonnage')}
+            value={{ value: groupedNumber(totals.tonnage), unit: unitLabel('kg') }}
+          />
+        )}
+        <Tile
+          size="S"
+          label={t(totals.workingSets === 1 ? 'history.detailSetsOne' : 'history.detailSets')}
+          value={{ value: String(totals.workingSets) }}
+        />
+        <Tile
+          size="S"
+          label={t(totals.totalReps === 1 ? 'history.detailRepsOne' : 'history.detailReps')}
+          value={{ value: String(totals.totalReps) }}
+        />
+        {totals.distanceMeters > 0 && distancePart !== undefined && (
+          <Tile
+            size="S"
+            label={t('history.detailDistance')}
+            value={{ value: partReading(distancePart) }}
+          />
+        )}
+      </TileGrid>
+
+      <HistoryRecords workoutId={workout.id} />
+
+      <HistoryCoachConclusions workoutId={workout.id} names={exerciseNames} />
 
       {/* The same drawing as the end-of-session recap, from the same figures:
           reopening a session in the Journal must show what closing it showed.
@@ -209,9 +193,22 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
               <Card key={line.row.id}>
                 <div className="border-b border-[var(--border)] px-4 py-3">
                   <h3 className="text-base font-semibold text-[var(--text-1)]">
-                    {identity.name === undefined
-                      ? t('history.deletedExercise')
-                      : exerciseDisplayName(identity.name, identity.isUnilateral)}
+                    {identity.name === undefined ? (
+                      t('history.deletedExercise')
+                    ) : line.exercise === undefined ? (
+                      // Supprimé de la bibliothèque : l'instantané garde son nom, mais la fiche
+                      // n'existe plus (suppression douce) — un lien mènerait à « Cet exercice
+                      // n'existe plus ». Le nom reste, sans lien.
+                      exerciseDisplayName(identity.name, identity.isUnilateral)
+                    ) : (
+                      <button
+                        type="button"
+                        className="-my-3 min-h-12 w-full py-3 text-left"
+                        onClick={() => void navigate(`/exercises/${line.row.exerciseId}`)}
+                      >
+                        {exerciseDisplayName(identity.name, identity.isUnilateral)}
+                      </button>
+                    )}
                   </h3>
                   {line.row.notes?.trim() && (
                     <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-[var(--text-2)]">

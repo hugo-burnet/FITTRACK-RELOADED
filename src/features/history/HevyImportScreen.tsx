@@ -28,6 +28,7 @@ import {
   type HevyImportDraft,
   type HevyMappingDraftRow,
 } from './hevyImportDraft';
+import { Skeleton } from '@/ui/Skeleton';
 
 type ReadyState = {
   data: HevyImportData;
@@ -284,7 +285,9 @@ export function HevyImportScreen() {
       footer={footer}
     >
       {state.step === 'file' && gate === 'unknown' && (
-        <div aria-hidden="true" className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+        <div aria-busy="true">
+          <Skeleton height="h-40" />
+        </div>
       )}
 
       {state.step === 'file' && gate === 'blocked' && (
@@ -303,9 +306,9 @@ export function HevyImportScreen() {
       )}
 
       {state.step === 'preparing' && (
-        <div aria-hidden="true" className="space-y-4">
-          <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-          <div className="h-72 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+        <div aria-busy="true" className="space-y-4">
+          <Skeleton height="h-40" />
+          <Skeleton height="h-72" />
         </div>
       )}
 

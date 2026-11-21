@@ -179,19 +179,19 @@ describe('parcours de composition d’une routine', () => {
       renderRoutineFlow();
 
       await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
-      await user.click(screen.getByRole('button', { name: /Benchmark de cette routine/ }));
+      await user.click(screen.getByRole('button', { name: /Séance test de cette routine/ }));
 
       // Rien n'est lancé tant qu'on n'a pas lu et confirmé.
       expect(await getActiveWorkout()).toBeUndefined();
       expect(await screen.findByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeVisible();
-      await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+      await user.click(screen.getByRole('button', { name: 'Lancer la séance test' }));
 
       await waitFor(() =>
         expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
       );
       expect(await getActiveWorkout()).toMatchObject({
         kind: 'benchmark',
-        name: 'Benchmark · Push',
+        name: 'Séance test · Push',
         routineId: routine.id,
       });
     });
@@ -201,18 +201,18 @@ describe('parcours de composition d’une routine', () => {
       const user = userEvent.setup();
       renderRoutineFlow(`/routines/${routine.id}`);
 
-      await user.click(await screen.findByRole('button', { name: /Benchmark de cette routine/ }));
+      await user.click(await screen.findByRole('button', { name: /Séance test de cette routine/ }));
 
       expect(await getActiveWorkout()).toBeUndefined();
       expect(await screen.findByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeVisible();
-      await user.click(screen.getByRole('button', { name: 'Lancer le benchmark' }));
+      await user.click(screen.getByRole('button', { name: 'Lancer la séance test' }));
 
       await waitFor(() =>
         expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
       );
       expect(await getActiveWorkout()).toMatchObject({
         kind: 'benchmark',
-        name: 'Benchmark · Push',
+        name: 'Séance test · Push',
         routineId: routine.id,
       });
     });
@@ -222,18 +222,18 @@ describe('parcours de composition d’une routine', () => {
       const user = userEvent.setup();
       const first = renderRoutineFlow(`/routines/${empty.id}`);
       await screen.findByDisplayValue('Vide');
-      expect(screen.queryByRole('button', { name: /Benchmark de cette routine/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Séance test de cette routine/ })).not.toBeInTheDocument();
       first.unmount();
 
       const routine = await routineWithExercise('Pull');
       await workoutsRepository.startWorkout('', 'En cours');
       renderRoutineFlow(`/routines/${routine.id}`);
 
-      const row = await screen.findByRole('button', { name: /Benchmark de cette routine/ });
+      const row = await screen.findByRole('button', { name: /Séance test de cette routine/ });
       expect(row).toBeDisabled();
       expect(row).toHaveTextContent('Une séance est déjà en cours');
       await user.click(row);
-      expect(screen.queryByRole('button', { name: 'Lancer le benchmark' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Lancer la séance test' })).not.toBeInTheDocument();
     });
 
     it('ne se propose pas pour une routine sans exercice, et dit pourquoi', async () => {
@@ -243,7 +243,7 @@ describe('parcours de composition d’une routine', () => {
 
       await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
 
-      const entry = screen.getByRole('button', { name: /Benchmark de cette routine/ });
+      const entry = screen.getByRole('button', { name: /Séance test de cette routine/ });
       expect(entry).toBeDisabled();
       expect(entry).toHaveTextContent('Cette routine n’a aucun exercice.');
     });
@@ -256,7 +256,7 @@ describe('parcours de composition d’une routine', () => {
 
       await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
 
-      const entry = screen.getByRole('button', { name: /Benchmark de cette routine/ });
+      const entry = screen.getByRole('button', { name: /Séance test de cette routine/ });
       expect(entry).toBeDisabled();
       expect(entry).toHaveTextContent('Une séance est déjà en cours');
     });

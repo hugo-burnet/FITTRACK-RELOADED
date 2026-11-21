@@ -13,6 +13,7 @@ import {
   recordLabel,
   recordValue,
   weeklyVolumeMetricLabel,
+  groupedNumber,
   weeklyVolumeReading,
   weeklyVolumeScaleReading,
 } from './labels';
@@ -71,6 +72,19 @@ describe('personal record labels', () => {
   it('makes assistance and session tonnage explicit', () => {
     expect(recordValue(record('min_assistance', 25))).toBe('25 kg d’assistance');
     expect(recordContext(record('max_volume_session', 1_250))).toBe('Tonnage de la séance');
+  });
+
+  it('writes the best set as weight × reps, never as a tonnage that reads like a load', () => {
+    const best = record('max_volume_set', 500, { weight: 62.5, reps: 8 });
+
+    expect(recordValue(best)).toBe('62,5 kg × 8');
+    expect(recordContext(best)).toBe('');
+    // Un gain de tonnage (« +60 kg ») se lirait comme +60 kg sur la barre.
+    expect(recordGain(best, 440)).toBeUndefined();
+  });
+
+  it('falls back to the stored tonnage when an old best set lost its weight or reps', () => {
+    expect(recordValue(record('max_volume_set', 500))).toBe('500 kg');
   });
 
   it('does not mistake ambiguous repetition weight for added load', () => {
@@ -207,5 +221,20 @@ describe('body measurement labels', () => {
     expect(measurementChangeReading(-1.5, 'cm')).toBe('\u22121,5 cm');
     expect(measurementChangeReading(-0.25, 'kg')).toBe('\u22120,25 kg');
     expect(measurementChangeReading(0, 'cm')).toBe('inchangé');
+  });
+});
+
+describe('groupedNumber', () => {
+  it('groups thousands with a space that never breaks', () => {
+    expect(groupedNumber(10_872)).toMatch(/^10[\u00a0\u202f]872$/);
+  });
+
+  it('leaves a number under a thousand alone and keeps the decimal comma', () => {
+    expect(groupedNumber(340)).toBe('340');
+    expect(groupedNumber(712.5)).toBe('712,5');
+  });
+
+  it('rounds to one decimal, like every other tonnage', () => {
+    expect(groupedNumber(1_234.56)).toMatch(/^1[\u00a0\u202f]234,6$/);
   });
 });

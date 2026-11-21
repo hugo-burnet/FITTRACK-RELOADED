@@ -123,6 +123,12 @@ export function WorkoutScreen() {
 
   const { workout, exercises } = detail;
   const deloadActive = workout.deloadPercent === DELOAD_PERCENT;
+  const programWeek =
+    workout.programId !== undefined && workout.programWeekIndex !== undefined
+      ? t(workout.programIsDeload === 1 ? 'workout.programWeekDeload' : 'workout.programWeek', {
+          week: workout.programWeekIndex + 1,
+        })
+      : undefined;
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const coachByExercise = new Map(
     (pendingCoach ?? []).map((row) => [row.exerciseId, row] as const),
@@ -190,9 +196,13 @@ export function WorkoutScreen() {
             <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
               <p
                 data-part="progress-line"
-                className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]"
+                className="label-xs min-w-0 flex-1 line-clamp-2 py-1 font-semibold text-[var(--text-2)]
+                  [overflow-wrap:anywhere]"
               >
-                {workoutProgressLine(completedSets, totalSets)}
+                <span>{workoutProgressLine(completedSets, totalSets)}</span>
+                {/* La semaine du programme : une simple suite de la ligne, plus la carte vide
+                    de 80 px qui repoussait la première série. */}
+                {programWeek !== undefined && <span> · {programWeek}</span>}
               </p>
               <SeriesMeter done={completedSets} total={totalSets} />
               {deloadActive && (
@@ -268,20 +278,6 @@ export function WorkoutScreen() {
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
               {bannerReading(workout.benchmarkGoal)}
             </p>
-          </Card>
-        )}
-        {workout.programId !== undefined && workout.programWeekIndex !== undefined && (
-          <Card padded>
-            <div className="flex min-h-12 items-center justify-between gap-3">
-              <p className="label-xs font-semibold text-[var(--text-2)]">
-                {t('workout.programContext', { week: workout.programWeekIndex + 1 })}
-              </p>
-              {workout.programIsDeload === 1 && (
-                <p className="text-sm font-semibold text-[var(--accent-ink)]">
-                  {t('workout.programDeload')}
-                </p>
-              )}
-            </div>
           </Card>
         )}
         {exercises.length === 0 ? (

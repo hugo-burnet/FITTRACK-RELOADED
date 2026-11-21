@@ -273,7 +273,7 @@ export function RoutineEditorScreen() {
                 item indices one for one, so a stray child would misalign every
                 drag. */}
             <div className="flex min-h-12 items-center pl-1">
-              <p className="label-xs min-w-0 flex-1 font-semibold text-[var(--text-2)]">
+              <p className="metric min-w-0 flex-1 text-sm text-[var(--text-2)]">
                 {routineSummaryLine(exercises.length, setCount)}
               </p>
               <OrderLockButton

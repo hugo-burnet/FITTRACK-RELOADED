@@ -54,6 +54,32 @@ describe('HomeStatsIsland', () => {
     expect(screen.queryByLabelText('Poids du corps')).not.toBeInTheDocument();
   });
 
+  it('names each tile by what is seen, and describes what it does', async () => {
+    await bodyMeasurements.saveBodyWeight(82.4, Date.now());
+    renderIsland(regularity({ currentGoal: 4 }));
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'poids du jour 82,4 kg',
+        description: 'Renseigner le poids du jour',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'cette semaine 2 sur 4',
+        description: 'Voir les séances par semaine',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('says there is no measurement, not zero, before the first weigh-in', async () => {
+    renderIsland();
+
+    expect(
+      await screen.findByRole('button', { name: 'poids du jour aucune mesure' }),
+    ).toBeInTheDocument();
+  });
+
   it('leads from the weigh-in sheet to the weight curve', async () => {
     const user = userEvent.setup();
     await bodyMeasurements.saveBodyWeight(82.4, Date.now());
@@ -66,7 +92,9 @@ describe('HomeStatsIsland', () => {
       </MemoryRouter>,
     );
 
-    await user.click(await screen.findByRole('button', { name: 'Renseigner le poids du jour' }));
+    await user.click(
+      await screen.findByRole('button', { description: 'Renseigner le poids du jour' }),
+    );
     await user.click(await screen.findByRole('button', { name: 'Voir la courbe et l’historique' }));
 
     expect(await screen.findByText('courbe de body_weight')).toBeInTheDocument();
@@ -76,7 +104,9 @@ describe('HomeStatsIsland', () => {
     const user = userEvent.setup();
     renderIsland();
 
-    await user.click(await screen.findByRole('button', { name: 'Renseigner le poids du jour' }));
+    await user.click(
+      await screen.findByRole('button', { description: 'Renseigner le poids du jour' }),
+    );
 
     expect(await screen.findByLabelText('Poids du corps')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Augmenter' })).not.toBeInTheDocument();

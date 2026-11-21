@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
 import type { ArticleFamilyGroup } from './articleCatalogue';
+import { ChevronRightIcon } from '@/ui/icons';
 
 function countLabel(count: number): string {
   return t(
@@ -29,9 +30,7 @@ function FamilyCard({ family }: { family: ArticleFamilyGroup }) {
                 text-sm leading-6 text-[var(--text-1)]"
             >
               <span>{article.title}</span>
-              <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]">
-                →
-              </span>
+              <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]"><ChevronRightIcon /></span>
             </Link>
           </li>
         ))}
@@ -80,9 +79,7 @@ export function WikiBrowse() {
             {t('learn.entryHint')}
           </span>
         </span>
-        <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
-          →
-        </span>
+        <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]"><ChevronRightIcon /></span>
       </Link>
 
       <Link
@@ -97,9 +94,7 @@ export function WikiBrowse() {
             {t('injury.entryHint')}
           </span>
         </span>
-        <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]">
-          →
-        </span>
+        <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]"><ChevronRightIcon /></span>
       </Link>
 
       <Link
@@ -111,9 +106,7 @@ export function WikiBrowse() {
         <span className="font-semibold text-[var(--accent-ink)]">
           {t('knowledge.wiki.questionsEntry')}
         </span>
-        <span aria-hidden="true" className="text-[var(--accent-ink)]">
-          →
-        </span>
+        <span aria-hidden="true" className="text-[var(--accent-ink)]"><ChevronRightIcon /></span>
       </Link>
 
       {content.map((family) => (

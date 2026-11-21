@@ -10,7 +10,7 @@ import {
   loadAnnouncerEcho,
   loadAnnouncerMode,
 } from '@/stores/announcer';
-import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { Card, LearnMore, ListRow, SectionTitle, Segmented, Toggle } from '@/ui';
 import { ANNOUNCER_MODES } from './announcerModes';
 
 /** One clip answers for the folder — the pack is written in one run. */
@@ -74,39 +74,21 @@ export function AnnouncerSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.announcerSection')}</SectionTitle>
-      <div className="rounded-2xl bg-[var(--surface-1)] p-4">
-        <div
-          role="radiogroup"
-          aria-label={t('settings.announcer')}
-          /* Deux colonnes depuis qu'il y a quatre modes : « Voix uniquement »
-             ne tient pas sur un quart de 375 px, et une rangée qui tronque ses
-             propres libellés ne se choisit pas. */
-          data-part="segmented"
-          className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
-        >
-          {ANNOUNCER_MODES.map(({ value, labelKey }) => (
-            <button
-              key={value}
-              type="button"
-              role="radio"
-              aria-checked={mode === value}
-              onClick={() => choose(value)}
-              className={`min-h-12 rounded-lg px-2 text-base font-semibold
-                transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                ${
-                  mode === value
-                    ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                    : 'text-[var(--text-2)]'
-                }`}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-      </div>
+      <Card padded>
+        {/* Deux colonnes depuis qu'il y a quatre modes : « Voix uniquement »
+            ne tient pas sur un quart de 375 px, et une rangée qui tronque ses
+            propres libellés ne se choisit pas. `Segmented` range quatre options
+            en deux rangées de deux. */}
+        <Segmented
+          label={t('settings.announcer')}
+          value={mode}
+          onChange={choose}
+          options={ANNOUNCER_MODES.map(({ value, labelKey }) => ({ value, label: t(labelKey) }))}
+        />
+      </Card>
 
       {mode !== 'silence' && (
-        <div className="mt-3 overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+        <Card className="mt-3">
           <ListRow
             title={t('settings.announcerEcho')}
             trailing={
@@ -118,12 +100,14 @@ export function AnnouncerSettings() {
               />
             }
           />
-        </div>
+        </Card>
       )}
 
       {/* Aucune phrase d'aide visible : le groupe tient en ses boutons, et tout ce qu'il dit se déplie. */}
       <LearnMore>
-        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('settings.announcerHint')}</p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.announcerHint')}
+        </p>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.announcerMusicHint')}
         </p>

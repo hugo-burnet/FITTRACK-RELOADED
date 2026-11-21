@@ -2,24 +2,36 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useSearchParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
+import { useExerciseLinks } from '@/app/useExerciseLinks';
+import { useGoBack } from '@/app/useGoBack';
 import { Screen } from '@/app/Screen';
+import { currentRecordsByExercise } from '@/data/repositories/currentRecords';
 import {
   isRecordProjectionCurrent,
   listRecordTimeline,
   rebuildAllRecords,
+  type RecordTimelineEntry,
 } from '@/data/repositories/personalRecords';
 import type { PersonalRecordType } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName, recordLabel } from '@/i18n/labels';
-import { Button, EmptyState, FilterChip, OptionSheet, type Option } from '@/ui';
+import { Button, EmptyState, FilterChip, OptionSheet, Tabs, type Option } from '@/ui';
+import { CurrentRecords } from './CurrentRecords';
 import { RecordRail } from './RecordRail';
+import { Skeleton } from '@/ui/Skeleton';
 
 const ALL = '';
 
+type View = 'current' | 'timeline';
+/** Dans l'URL, pour que la flèche retour d'un écran voisin retrouve la même vue. */
+const TIMELINE_PARAM = 'chronologie';
+
 export function RecordsScreen() {
   const navigate = useAppNavigate();
+  const goBack = useGoBack('/analytics');
   const [searchParams, setSearchParams] = useSearchParams();
   const exerciseId = searchParams.get('exerciseId') ?? ALL;
+  const view: View = searchParams.get('vue') === TIMELINE_PARAM ? 'timeline' : 'current';
   const [type, setType] = useState<PersonalRecordType | typeof ALL>(ALL);
   const [exerciseOpen, setExerciseOpen] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
@@ -28,6 +40,7 @@ export function RecordsScreen() {
   const hasFilters = exerciseId !== ALL || type !== ALL;
 
   const projectionCurrent = useLiveQuery(isRecordProjectionCurrent, []);
+  const hasPage = useExerciseLinks();
   const allEntries = useLiveQuery(() => listRecordTimeline(), []);
   const filteredEntries = useLiveQuery(
     () =>
@@ -107,38 +120,57 @@ export function RecordsScreen() {
     }
   };
 
+  const selectView = (next: View) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (next === 'timeline') nextParams.set('vue', TIMELINE_PARAM);
+    else nextParams.delete('vue');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const openRecord = (entry: RecordTimelineEntry) =>
+    void navigate(
+      entry.workoutStatus === 'active' ? '/workout' : `/history/${entry.record.workoutId}`,
+    );
+
   const clearFilters = () => {
     setType(ALL);
     selectExercise(ALL);
   };
 
   return (
-    <Screen title={t('records.title')} onBack={() => void navigate('/analytics')}>
+    <Screen title={t('records.title')} onBack={goBack}>
       <div className="flex min-h-full flex-col">
-        <div className="flex shrink-0 gap-2 pb-1">
-          <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
-            <FilterChip
-              label={
-                selectedExercise?.label ??
-                (exerciseId === ALL ? t('records.allExercises') : t('records.unknownExercise'))
-              }
-              active={exerciseId !== ALL}
-              onClick={() => setExerciseOpen(true)}
-            />
+        {/* Rien à filtrer dans une collection vide : les puces ne s'affichent pas (sauf si un filtre
+            d'adresse est déjà posé, qu'il faut alors pouvoir lever). */}
+        {(hasFilters || allEntries === undefined || allEntries.length > 0) && (
+          /* Une grille qui se replie : deux `flex-1` serrés à 200 % ne laissent à chaque puce que « Ex… » et
+              « Ty… ». Sous 10 rem par puce, elles s'empilent. */
+          <div className="grid shrink-0 grid-cols-[repeat(auto-fit,minmax(min(10rem,100%),1fr))] gap-2 pb-1">
+            <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
+              <FilterChip
+                label={
+                  exerciseId === ALL
+                    ? t('records.exerciseFilter')
+                    : (selectedExercise?.label ?? t('records.unknownExercise'))
+                }
+                active={exerciseId !== ALL}
+                onClick={() => setExerciseOpen(true)}
+              />
+            </div>
+            <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
+              <FilterChip
+                label={type === ALL ? t('records.typeFilter') : recordLabel(type)}
+                active={type !== ALL}
+                onClick={() => setTypeOpen(true)}
+              />
+            </div>
           </div>
-          <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
-            <FilterChip
-              label={type === ALL ? t('records.allTypes') : recordLabel(type)}
-              active={type !== ALL}
-              onClick={() => setTypeOpen(true)}
-            />
-          </div>
-        </div>
+        )}
 
         {projectionCurrent === undefined || allEntries === undefined || entries === undefined ? (
           <div aria-busy="true" aria-label={t('records.loading')} className="mt-7 space-y-4">
-            <div className="h-40 animate-pulse rounded-xl bg-[var(--surface-1)]" />
-            <div className="h-20 animate-pulse rounded-xl bg-[var(--surface-1)]" />
+            <Skeleton height="h-40" />
+            <Skeleton height="h-20" />
           </div>
         ) : projectionCurrent === false ? (
           <EmptyState
@@ -178,19 +210,34 @@ export function RecordsScreen() {
               ) : (
                 <EmptyState title={t('records.emptyTitle')} body={t('records.emptyBody')} />
               ))}
-            <div className={entries.length === 0 ? 'hidden' : 'mt-7'}>
-              <RecordRail
-                entries={entries}
-                knownRecordIds={allEntries.map((entry) => entry.record.id)}
-                visibleKnownRecordIds={visibleKnownRecordIds}
-                onOpen={(entry) =>
-                  void navigate(
-                    entry.workoutStatus === 'active'
-                      ? '/workout'
-                      : `/history/${entry.record.workoutId}`,
-                  )
-                }
-              />
+            <div className={entries.length === 0 ? 'hidden' : 'mt-4'}>
+              <Tabs
+                label={t('records.viewsLabel')}
+                value={view}
+                items={[
+                  { value: 'current', label: t('records.viewCurrent') },
+                  { value: 'timeline', label: t('records.viewTimeline') },
+                ]}
+                onChange={selectView}
+              >
+                <div className="mt-5">
+                  {view === 'current' ? (
+                    <CurrentRecords
+                      groups={currentRecordsByExercise(entries)}
+                      onOpenExercise={(id) => void navigate(`/exercises/${id}`)}
+                      canOpenExercise={hasPage}
+                      onOpenRecord={openRecord}
+                    />
+                  ) : (
+                    <RecordRail
+                      entries={entries}
+                      knownRecordIds={allEntries.map((entry) => entry.record.id)}
+                      visibleKnownRecordIds={visibleKnownRecordIds}
+                      onOpen={openRecord}
+                    />
+                  )}
+                </div>
+              </Tabs>
             </div>
           </>
         )}

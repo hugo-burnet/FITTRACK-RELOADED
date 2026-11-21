@@ -4,6 +4,7 @@ import { t } from '@/i18n/fr';
 import questionsDocument from './wiki-questions.json';
 import { findSectionIdForClaim, findWikiSection } from './wikiIndex';
 import { Screen } from '@/app/Screen';
+import { ChevronRightIcon } from '@/ui/icons';
 
 type CoveredQuestion = { questionId: string; text: string; claimIds: string[] };
 type UncoveredQuestion = { questionId: string; text: string; missing: string };
@@ -46,9 +47,7 @@ function CoveredCard({ question }: { question: CoveredQuestion }) {
                 className="flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-2)] px-4 py-2 text-sm leading-6 text-[var(--text-1)]"
               >
                 <span>{section.title}</span>
-                <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
-                  →
-                </span>
+                <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]"><ChevronRightIcon /></span>
               </Link>
             </li>
           ))}

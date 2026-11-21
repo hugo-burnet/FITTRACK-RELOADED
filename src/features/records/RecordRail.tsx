@@ -24,6 +24,9 @@ const longDate = (at: number): string =>
   });
 
 function readingParts(value: string): { figure: string; unit?: string } {
+  // « 62,5 kg × 8 » est une série entière : la couper à la dernière espace
+  // ferait de « 8 » une unité.
+  if (value.includes('×')) return { figure: value };
   const separator = value.lastIndexOf(' ');
   return separator < 0
     ? { figure: value }

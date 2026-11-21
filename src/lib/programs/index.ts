@@ -44,3 +44,10 @@ export {
   type ProgramRecipeId,
   type ProgramRecipeWeek,
 } from './recipes';
+export {
+  programAdherence,
+  programWeeklyTonnage,
+  slotState,
+  type ProgramAdherence,
+  type ProgramAdherenceInput,
+} from './progress';

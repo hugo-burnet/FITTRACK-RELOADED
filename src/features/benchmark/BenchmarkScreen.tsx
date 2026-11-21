@@ -9,6 +9,7 @@ import type { BenchmarkLine } from '@/lib/benchmark';
 import { ActionBand, Card } from '@/ui';
 import { BenchmarkLineCard } from './BenchmarkLineCard';
 import { appliedReading } from './benchmarkText';
+import { Skeleton } from '@/ui/Skeleton';
 
 /** Posé par l'écran de fin de séance : on arrive d'une séance qui vient d'être close, pas de l'historique. */
 export interface BenchmarkLocationState {
@@ -55,9 +56,9 @@ export function BenchmarkScreen() {
   if (report === undefined) {
     return (
       <Screen title="" onBack={leave}>
-        <div aria-hidden="true" className="space-y-4">
-          <div className="h-24 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-          <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+        <div aria-busy="true" className="space-y-4">
+          <Skeleton height="h-24" />
+          <Skeleton height="h-40" />
         </div>
       </Screen>
     );

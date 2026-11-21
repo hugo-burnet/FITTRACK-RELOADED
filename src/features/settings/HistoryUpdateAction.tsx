@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { inspectHistoryResnapshot, resnapshotHistory } from '@/data/repositories/historyRepair';
 import { t } from '@/i18n/fr';
-import { Button, ConfirmSheet, SectionTitle } from '@/ui';
+import { Button, Card, ConfirmSheet, SectionTitle } from '@/ui';
 
 export function HistoryUpdateAction() {
   const preview = useLiveQuery(inspectHistoryResnapshot, []);
@@ -36,7 +36,7 @@ export function HistoryUpdateAction() {
   return (
     <section>
       <SectionTitle>{t('settings.repairLink')}</SectionTitle>
-      <div className="rounded-2xl bg-[var(--surface-1)] p-4">
+      <Card padded>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('settings.repairHint')}</p>
 
         <div className="my-4 border-y border-[var(--border)] py-4">
@@ -68,7 +68,7 @@ export function HistoryUpdateAction() {
         >
           {busy ? t('debug.working') : t('settings.repairConfirmAction')}
         </Button>
-      </div>
+      </Card>
 
       {report !== undefined && (
         <p

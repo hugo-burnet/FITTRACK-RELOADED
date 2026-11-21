@@ -101,8 +101,26 @@ const recordNumber = (value: number, precision = 100): string =>
 const recordKilograms = (value: number, precision?: number): string =>
   `${recordNumber(value, precision)} ${unitLabel('kg')}`;
 
+/**
+ * « 62,5 kg × 8 » — la meilleure série, écrite comme on la lit à la salle.
+ *
+ * Le record stocke le tonnage (500) pour pouvoir le comparer, mais l'afficher
+ * tel quel se lisait comme une charge de 500 kg (audit v2.18, constat 10).
+ * `undefined` quand la ligne n'a pas gardé sa charge ou ses reps : l'appelant
+ * retombe alors sur le tonnage plutôt que d'inventer une série.
+ */
+const setReading = (record: PersonalRecord): string | undefined =>
+  record.weight !== undefined && record.reps !== undefined
+    ? t('record.weightRepsContext', {
+        weight: recordKilograms(record.weight),
+        reps: recordNumber(record.reps),
+      })
+    : undefined;
+
 export function recordValue(record: PersonalRecord): string {
   switch (record.type) {
+    case 'max_volume_set':
+      return setReading(record) ?? recordKilograms(record.value);
     case 'max_reps':
       return `${recordNumber(record.value)} ${unitLabel('reps')}`;
     case 'max_duration':
@@ -144,7 +162,9 @@ export function recordContext(record: PersonalRecord): string {
       formula: oneRepMaxFormulaLabel(record.formula),
     });
   }
-  if (record.type === 'max_volume_set') return weightReps ?? '';
+  // La valeur de la meilleure série dit déjà « poids × reps » : la répéter ici
+  // ferait lire deux fois la même ligne.
+  if (record.type === 'max_volume_set') return '';
   // `max_reps` is shared by added-load and assisted movements. The persisted
   // event does not carry that weight role, so omitting it is safer than calling
   // assistance a positive added load.
@@ -172,6 +192,9 @@ export function recordGain(
   previousValue?: number,
 ): string | undefined {
   if (previousValue === undefined) return undefined;
+  // Le gain d'une série se compterait en tonnage (« +60 kg ») alors que la
+  // valeur affichée est « poids × reps » : il se lirait comme +60 kg à la barre.
+  if (record.type === 'max_volume_set') return undefined;
   const delta =
     record.type === 'min_assistance'
       ? previousValue - record.value
@@ -338,11 +361,22 @@ const weeklyDurationReading = (value: number): string => {
     : formatDuration(roundedToMinute);
 };
 
+/**
+ * « 10 872 » — a tonnage figure with its thousands grouped, one decimal at most.
+ *
+ * `formatNumber` is a field formatter (it must round-trip through an input) and writes
+ * « 10872 » : on a reading that is a figure nobody can scan. Every tonnage shown as text
+ * goes through here, so « 10 872 kg » reads the same on the finish screen, in the detail
+ * and in the charts.
+ */
+export function groupedNumber(value: number): string {
+  return (Math.round(value * 10) / 10).toLocaleString('fr-FR');
+}
+
 /** A weekly total, without second-level noise on an hour-scale chart. */
 export function weeklyVolumeReading(value: number, metric: WeeklyVolumeMetric): string {
   if (metric === 'duration') return weeklyDurationReading(value);
-  const rounded = Math.round(value * 10) / 10;
-  return `${rounded.toLocaleString('fr-FR')} ${unitLabel('kg')}`;
+  return `${groupedNumber(value)} ${unitLabel('kg')}`;
 }
 
 /** « août 2026 » — the name of a month, wherever a report names one. */

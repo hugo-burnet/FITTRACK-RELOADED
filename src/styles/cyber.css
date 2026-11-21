@@ -72,10 +72,18 @@
   /* Quand la structure est rouge, l'erreur ne se distingue plus par sa couleur seule : elle est plus
      vive, et garde toujours son mot. */
   --danger-ink: #ff2e63;
+  /* Le jaune agit et le rouge encadre : l'alerte qui n'a rien perdu prend l'orange. */
+  --warn-ink: #ff9f1c;
 
   --scrim: rgb(5 5 9 / 0.75);
 
   /* Les jetons propres au skin. */
+  /* La prose : une phrase (aide, corps d'une feuille, sous-titre de ligne, valeur lue, placeholder) se
+     lit en blanc cassé. Le rouge `--text-2` reste aux libellés gravés (`label-xs`, `SectionTitle`,
+     unités) : « le rouge encadre » ; et `--danger-ink` redevient le seul rouge vif d'une confirmation.
+     11,4:1 sur une plaque, 10,3:1 sur `--surface-2` (cyber.test.ts) : sous le blanc des valeurs
+     (`--text-1`, 17,2:1), de quoi ne pas les confondre avec elles. */
+  --cyber-prose: #c4ccd3;
   --cyber-focus: #5ef6ff;
   --cyber-crit: #ff3c46;
   --cyber-line: rgb(255 107 99 / 0.07);
@@ -175,6 +183,11 @@
       center / 18px 8px no-repeat;
 }
 
+/* Dans l'en-tête d'un dossier, le compte suivait les trois hachures du titre sans respiration. */
+:root[data-theme='cyber'] [data-part='fold'] > .record-figure {
+  margin-left: 8px;
+}
+
 /*
  * Les plaques.
  *
@@ -195,7 +208,7 @@
     12px 2px,
     2px 12px,
     88px 26px,
-    34% 30%;
+    34% 10px;
   background-position:
     5px 5px,
     5px 5px,
@@ -206,6 +219,53 @@
   background-repeat: no-repeat;
   background-color: var(--cyber-plate);
 }
+/* La trame verticale du coin bas-gauche tient dans le `p-4` du bas (10 px sur 16) : à 30 % de la hauteur, elle
+   passait sous le libellé de chaque tuile, le sous-titre de la dernière ligne et les jours du calendrier. */
+/* Une tuile est une plaque de 173 px : la hachure du coin (88 × 26 px) courrait sous son chiffre. Réduite de
+   moitié, elle reste un coin. Le sélecteur est plus spécifique que celui de la plaque, il lui succède donc
+   sans `!important` ; `background-size` se répète en entier car il ne se surcharge pas couche par couche. */
+:root[data-theme='cyber'] [data-part='tile'].rounded-2xl:not(.ring-2) {
+  background-size:
+    12px 2px,
+    2px 12px,
+    12px 2px,
+    2px 12px,
+    44px 12px,
+    34% 10px;
+}
+/* La plaque pose sa couleur hors de toute couche : elle écrase l'utilitaire `active:bg-…` du composant, et
+   la tuile pressée ne bougerait pas. */
+:root[data-theme='cyber'] [data-part='tile']:active {
+  background-color: var(--surface-2);
+}
+
+/* Une plaque d'une seule ligne (« Programmes » sur l'accueil, « Dossier » dans l'éditeur) fait 56 px : la hachure
+   du coin (88 × 26 px) en couvrait la moitié et touchait le chevron. Elle prend la taille de celle d'une tuile. */
+:root[data-theme='cyber'] .rounded-2xl:not(.ring-2):has(> [data-part='row']:only-child) {
+  background-size:
+    12px 2px,
+    2px 12px,
+    12px 2px,
+    2px 12px,
+    44px 12px,
+    34% 10px;
+}
+/* Le calendrier de l'Historique est une grille, pas une plaque : ni hachure sur les en-têtes de colonne, ni
+   équerre sur le « L ». Ses jours hors du mois sont un écho du mois voisin, plus pâle que le mois lui-même (en
+   rouge plein, ils ressortaient plus que lui (5,1:1 en prose à 62 %) et se lisaient comme des jours manqués). */
+:root[data-theme='cyber'] [data-part='calendar'].rounded-2xl:not(.ring-2),
+:root[data-theme='cyber'] [data-part='calendar'] > .rounded-2xl:not(.ring-2) {
+  background-image: none;
+}
+:root[data-theme='cyber'] [data-part='calendar'] button.bg-\[var\(--surface-0\)\] {
+  color: color-mix(in srgb, var(--cyber-prose) 62%, var(--surface-0));
+}
+/* Sur un état vide, le bouton est plafonné (`max-w-64`) : la zone qui défile est large, le bouton ne l'est pas,
+   et la règle `@container` plus bas ne le voit pas. La hachure et le plot recouvraient la dernière lettre. */
+:root[data-theme='cyber'] [data-part='empty-state'] [data-part='button'][data-variant='primary'].w-full {
+  background-image: none;
+}
+
 /* Les lignes d'une plaque (ListRow, la ligne de SwipeToDelete) peignaient leur propre fond opaque : elles
    le perdent, la plaque suffit. La zone de suppression de SwipeToDelete reste invisible tant qu'on ne
    glisse pas (elle est rognée à zéro) : rien ne transparaît au repos. */
@@ -223,10 +283,42 @@
   }
 }
 
-/* Les feuilles : un trait jaune en tête, une bande hachurée dessous. */
+/* Les feuilles : un trait jaune en tête. */
 :root[data-theme='cyber'] .sheet-panel {
   border-top: 2px solid var(--accent-ink);
   border-radius: 0;
+}
+
+/*
+ * La prose.
+ *
+ * Le composant pose `text-[var(--text-2)]` sur ce qu'il veut discret, qu'il s'agisse d'un libellé gravé ou
+ * d'une phrase ; ce thème a deux rôles pour ce que les autres appellent « secondaire ». Une phrase
+ * (aide sous un champ, corps de feuille, sous-titre de ligne, valeur de réglage, légende d'un état vide)
+ * prend `--cyber-prose` ; le rouge reste à ce qui est gravé : `label-xs` (donc `SectionTitle`), ce qui est
+ * en gras (les unités, les valeurs d'un libellé), ce qui est interlettré (les unités des champs). Sans cela,
+ * l'explication d'une suppression et son verbe étaient du même rouge (1,29:1 de luminance).
+ * Le sélecteur lit la classe, pas un composant : il suit une phrase d'où qu'elle vienne.
+ */
+:root[data-theme='cyber']
+  :is(p, span, div, li, dd)[class*='text-[var(--text-2)]']:not(
+    .label-xs,
+    .font-semibold,
+    .uppercase,
+    [class*='tracking-'],
+    :has(> .record-figure)
+  ) {
+  color: var(--cyber-prose);
+}
+/* Les pictogrammes d'une ligne (chevron, ⋯) restent à la structure : ils héritent la couleur de leur
+   enveloppe, qui vient de changer. */
+:root[data-theme='cyber'] [class*='text-[var(--text-2)]'] svg:not([class*='text-']) {
+  color: var(--text-2);
+}
+/* Un champ vide ne doit pas ressembler à un champ en erreur : le placeholder est de la prose. */
+:root[data-theme='cyber'] ::placeholder {
+  color: var(--cyber-prose);
+  opacity: 1;
 }
 
 /*
@@ -296,8 +388,7 @@
   gap: 6px 4px;
   padding: 0;
 }
-:root[data-theme='cyber'] [data-part='segmented'] > *,
-:root[data-theme='cyber'] [data-part='segmented'] > li > a {
+:root[data-theme='cyber'] [data-part='segmented'] > * {
   background: var(--surface-2);
   border-radius: 0;
   clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
@@ -306,7 +397,7 @@
 }
 :root[data-theme='cyber']
   [data-part='segmented']
-  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  [aria-checked='true'] {
   background: var(--accent-fill);
   color: var(--accent-on-fill);
 }
@@ -394,6 +485,18 @@
 :root[data-theme='cyber'] .record-figure.text-\[2\.5rem\] {
   color: var(--accent-ink);
   text-shadow: var(--cyber-aberration);
+}
+/* Le cyan compte : un chiffre qu'on lit (durée du journal, valeur passée d'un record, relevé) prend la
+   couleur de la donnée, pas celle des libellés. Après la règle de la prose, à spécificité égale. Un chiffre
+   barré (la ligne qu'on vient de supprimer) et le grand chiffre du record (jaune, ci-dessus) y échappent. */
+:root[data-theme='cyber']
+  :is(.metric, .record-figure)[class*='text-[var(--text-2)]']:not(
+    .label-xs,
+    .line-through,
+    .text-\[2\.5rem\]
+  ),
+:root[data-theme='cyber'] [class*='text-[var(--text-2)]'] > .record-figure:not(.text-\[2\.5rem\]) {
+  color: var(--accent-data);
 }
 
 /* Les pictogrammes : extrémités carrées, angles vifs. Sur le `svg` et ce qu'il contient : un attribut

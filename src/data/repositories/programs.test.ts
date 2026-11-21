@@ -15,6 +15,7 @@ import {
   deleteProgram,
   getActiveProgramDetail,
   getProgramDetail,
+  getProgramHeader,
   listPrograms,
   replaceActiveProgram,
   replaceMissingProgramRoutine,
@@ -743,5 +744,25 @@ describe('program projections and deletion', () => {
     expect(entries.every((row) => row.deletedAt !== 0)).toBe(true);
     expect((await db.routines.get(routineId))?.deletedAt).toBe(0);
     expect((await db.workouts.get(workout.id))?.deletedAt).toBe(0);
+  });
+});
+
+describe('getProgramHeader', () => {
+  it('lit le nom et le nombre de semaines, sans les semaines ni les révisions', async () => {
+    const program = await createProgramDraft({ name: 'Hypertrophie', startsAt: MONDAY, durationWeeks: 6 });
+
+    expect(await getProgramHeader(program.id)).toEqual({
+      id: program.id,
+      name: 'Hypertrophie',
+      durationWeeks: 6,
+    });
+  });
+
+  it('rend null pour un programme inconnu ou supprimé', async () => {
+    const program = await createProgramDraft({ name: 'Ancien', startsAt: MONDAY, durationWeeks: 4 });
+    await deleteProgram(program.id);
+
+    expect(await getProgramHeader(program.id)).toBeNull();
+    expect(await getProgramHeader('absent')).toBeNull();
   });
 });

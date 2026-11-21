@@ -14,6 +14,7 @@ import {
   type EvidenceCandidate,
   type EvidenceSearchOutcome,
 } from './searchEvidence';
+import { ChevronRightIcon } from '@/ui/icons';
 
 const STATUS_KEYS = {
   absence_of_evidence: 'knowledge.status.absenceOfEvidence',
@@ -106,7 +107,7 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
               className="mt-4 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
             >
               {t('knowledge.wiki.readInSection')}
-              <span aria-hidden="true">→</span>
+              <span aria-hidden="true"><ChevronRightIcon /></span>
             </Link>
           )}
         </div>

@@ -130,7 +130,7 @@ function RoutineRow({
         {subtitle !== undefined && subtitle !== '' && (
           <span className="truncate text-sm text-[var(--text-2)]">{subtitle}</span>
         )}
-        <span className="label-xs font-semibold text-[var(--text-2)]">
+        <span className="metric text-sm text-[var(--text-2)]">
           {routineSummaryLine(exerciseCount, setCount)}
         </span>
       </button>

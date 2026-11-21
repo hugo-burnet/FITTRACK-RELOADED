@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { getExercise } from '@/data/repositories/exercises';
@@ -18,7 +18,7 @@ import {
   metricSeries,
   type MetricKey,
 } from '@/lib/analytics/metrics';
-import { PERIOD_KEYS, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
+import { PERIOD_KEYS, isPeriodKey, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
 import { toAnalyticsSessions } from '@/lib/analytics/sessions';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
 import { ChartExportAction } from './ChartExportAction';
@@ -39,6 +39,10 @@ const longDate = (at: number): string =>
 export function ExerciseAnalyticsScreen() {
   const { exerciseId = '' } = useParams();
   const navigate = useAppNavigate();
+  // La période d'ouverture : la mini-courbe de la fiche la fixe pour que les
+  // séances qu'elle montrait n'aient pas disparu de la vue plein écran.
+  const [searchParams] = useSearchParams();
+  const requestedPeriod = searchParams.get('periode');
 
   const [metricOpen, setMetricOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);
@@ -63,7 +67,7 @@ export function ExerciseAnalyticsScreen() {
     period: PeriodKey;
     metricKey?: MetricKey;
     selectedIndex?: number;
-  }>(() => ({ exerciseId, period: '12w' }));
+  }>(() => ({ exerciseId, period: isPeriodKey(requestedPeriod) ? requestedPeriod : '12w' }));
 
   if (view.exerciseId !== exerciseId) setView({ exerciseId, period: view.period });
 
@@ -178,6 +182,16 @@ export function ExerciseAnalyticsScreen() {
           </div>
         )}
 
+        {/* Le chemin inverse de la fiche : cette vue n'a pas d'autre sortie vers l'exercice. */}
+        {exercise !== undefined && (
+          <Card>
+            <ListRow
+              title={t('analytics.exerciseSheetLink')}
+              onClick={() => void navigate(`/exercises/${exerciseId}`)}
+            />
+          </Card>
+        )}
+
         {/* The accessible table. Not a hidden twin of the chart: it is the same
             session list the exercise sheet already shows, and it holds every
             value, so nothing is reachable through the drawing alone. */}
@@ -191,7 +205,7 @@ export function ExerciseAnalyticsScreen() {
                   <ListRow
                     key={point.workoutId}
                     title={longDate(point.timestamp)}
-                    onClick={() => setSelectedIndex(index)}
+                    onClick={() => void navigate(`/history/${point.workoutId}`)}
                     trailing={
                       <span
                         className={`metric text-base font-semibold ${

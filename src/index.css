@@ -12,9 +12,6 @@
   --color-accent-dim: var(--accent-fill-pressed);
   --color-accent-fg: var(--accent-on-fill);
 
-  --color-danger: #ff5c5c;
-  --color-warn: #ffb020;
-
   /*
    * Le mouvement de l'app, en quatre gestes et pas un de plus.
    *
@@ -111,6 +108,7 @@
   --axis: #756e64; /* 3,5:1 on a card, 3,9:1 on the page */
 
   --danger-ink: #ff5c5c; /* 5,8:1 on --surface-1 */
+  --warn-ink: #f5c518; /* 10,8:1 on --surface-1 : un risque à régler, rien de perdu */
 
   --scrim: rgb(0 0 0 / 0.6);
 
@@ -121,12 +119,12 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --surface-0: #f7f8f6;
+  --surface-0: #f1f3ef;
   --surface-1: #ffffff;
-  --surface-2: #eef1ec;
-  --border: #d9e0d8;
-  --text-1: #182019; /* 15,7:1 on --surface-0 */
-  --text-2: #5c675e; /* 5,9:1 on a card, 5,2:1 on --surface-2 */
+  --surface-2: #e8ece6;
+  --border: #d0d8cf;
+  --text-1: #182019; /* 14,9:1 on --surface-0 */
+  --text-2: #5c675e; /* 5,9:1 on a card, 5,3:1 on the page, 4,9:1 on --surface-2 */
   --text-3: #8e998f;
 
   --accent-fill: #b54708;
@@ -140,9 +138,10 @@
 
   --accent-data: #b96b35;
 
-  --axis: #869087; /* 3,3:1 on a card, 3,1:1 on the page */
+  --axis: #808a81; /* 3,6:1 on a card, 3,2:1 on the page */
 
-  --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 5.10 on a pressed row */
+  --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 4.9 on a pressed row */
+  --warn-ink: #7a5c00; /* 6,3:1 on a card, 5,9:1 on the page */
 }
 
 /* Utilities stay in Tailwind's layer so component padding can override them. */
@@ -156,12 +155,12 @@
   letter-spacing: -0.03em;
 }
 
-/* Personal-record readouts: the machine's engraved figures, not UI copy. */
+/* Personal-record readouts: the machine's engraved figures, not UI copy. Tabular figures of the
+   theme's own sans, not a system monospace: a monospace comma owns a full cell, and « 36, 4 » read as
+   two numbers. TTY1 (a monospace by nature) and Cyber re-declare their family in their own sheet. */
 @utility record-figure {
-  font-family:
-    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
 }
 
 /* Small labels must use --text-2, never the low-contrast --text-3. */

@@ -35,4 +35,10 @@ describe('WikiProgrammingScreen', () => {
     // un identifiant `cand.e1.*` n'a rien à faire sur un sommaire.
     expect(screen.queryByText(/cand\.e1\./u)).toBeNull();
   });
+
+  it('est un onglet frère de Planifier : aucune flèche retour', () => {
+    renderScreen();
+
+    expect(screen.queryByRole('button', { name: 'Retour' })).toBeNull();
+  });
 });

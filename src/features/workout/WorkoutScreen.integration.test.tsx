@@ -28,6 +28,7 @@ import { resetDb } from '@/test/resetDb';
 import { seedWorkout } from '@/test/factories';
 import { WorkoutScreen } from './WorkoutScreen';
 import { heldSecondsAt } from './holdDuration';
+import { PACE_SETTLE_MS } from './paceMachine';
 
 async function seedActiveWorkout(): Promise<string> {
   const exercise = await createCustomExercise({
@@ -80,6 +81,31 @@ async function writeBehindTheScreen(setId: string, changes: Partial<WorkoutSet>)
     transaction.onerror = () => reject(transaction.error);
   });
   database.close();
+}
+
+/**
+ * Fenêtre d'attente d'une cadence qui s'arme : la machine de rythme laisse **toujours** retomber
+ * `PACE_SETTLE_MS` (600 ms, vraie minuterie) avant de figer la cible, pour ne pas lire le « 1 » de
+ * « 10 ». Le `waitFor` par défaut (1 s) n'y laissait que 400 ms de marge : sous la charge de la suite
+ * complète, le relais d'horloge et le rendu les mangeaient. Ce délai est celui du produit, plus la
+ * latence qu'on tolère — pas un temps de grâce arbitraire.
+ */
+const PACE_ARMED = { timeout: PACE_SETTLE_MS + 3_000 };
+
+/**
+ * Ralentit l'horloge de `Date.now` (÷10) pour les assertions sur la préparation « Départ · 10 ».
+ *
+ * La préparation vaut dix secondes **comptées depuis la frappe** ; le texte ne dit « 10 » que tant que
+ * moins d'une seconde s'est écoulée, et la minuterie de stabilisation (600 ms) en consomme déjà la
+ * moitié : il restait ~400 ms de réel pour tout le reste, et un processeur chargé les dépassait. Les
+ * minuteries (`setTimeout`) restent réelles ; seule la lecture de l'heure est ralentie, donc les
+ * secondes de la préparation ne s'écoulent plus qu'au dixième de la latence.
+ */
+function slowClock(factor = 10): () => void {
+  const realNow = Date.now.bind(Date);
+  const origin = realNow();
+  const spy = vi.spyOn(Date, 'now').mockImplementation(() => origin + (realNow() - origin) / factor);
+  return () => spy.mockRestore();
 }
 
 function deferred<T>() {
@@ -303,7 +329,7 @@ describe('WorkoutScreen — benchmark', () => {
     renderWorkout();
 
     expect(
-      await screen.findByText(/Benchmark léger · une série à l’échec par exercice.*environ 18 fois/),
+      await screen.findByText(/Séance test \(léger\) · une série à l’échec par exercice.*environ 18 fois/),
     ).toBeInTheDocument();
   });
 
@@ -855,9 +881,13 @@ describe('WorkoutScreen — effort et fatigue', () => {
     renderWorkout();
 
     await screen.findByText('Développé couché');
+    // Le repos d'abord : saisir des reps pendant qu'aucune horloge ne tourne arme la préparation
+    // « Départ · 10 », qui se lance seule 600 ms plus tard — et le bouton « Lancer la cadence »
+    // disparaissait si la suite du test mettait plus longtemps que cela (charge CPU). Avec un repos en
+    // cours, la frappe n'arme rien, et le test pose ce qu'il affirme : le chrono de la carte lance.
+    act(() => useRestTimer.getState().start('previous-set', 90));
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await waitFor(async () => expect(await firstSet(workoutId)).toMatchObject({ reps: 8 }));
-    act(() => useRestTimer.getState().start('previous-set', 90));
 
     await user.click(
       screen.getByRole('button', {
@@ -907,6 +937,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     const first = (await getWorkoutDetail(workoutId))?.exercises[0]?.sets[0];
     if (first === undefined) throw new Error('série absente');
 
+    slowClock();
     const user = userEvent.setup();
     renderWorkout();
 
@@ -915,7 +946,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().setId).toBeNull();
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
 
-    await waitFor(() => expect(useRepPacer.getState().setId).toBe(first.id), { timeout: 2_000 });
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(first.id), PACE_ARMED);
     expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
@@ -944,15 +975,14 @@ describe('WorkoutScreen — effort et fatigue', () => {
       performedAt: Date.now(),
     });
 
+    slowClock();
     const user = userEvent.setup();
     renderWorkout();
 
     await screen.findByText('Tirage horizontal');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '12');
 
-    await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id), {
-      timeout: 2_000,
-    });
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id), PACE_ARMED);
     expect(useRepPacer.getState().reps).toBe(12);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
   });
@@ -975,6 +1005,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
       throw new Error('séries de séance absentes');
     }
 
+    slowClock();
     const user = userEvent.setup();
     renderWorkout();
 
@@ -1005,7 +1036,10 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     act(() => useRestTimer.getState().start(firstExerciseSet.id, 0.05));
 
-    await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id));
+    await waitFor(
+      () => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id),
+      PACE_ARMED,
+    );
     expect(useRestTimer.getState().setId).toBeNull();
     expect(useRepPacer.getState().reps).toBe(12);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
@@ -1034,7 +1068,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     // secondes du vrai repos jouent 3–2–1 avant ce même passage de relais.
     act(() => useRestTimer.getState().start(first.id, 0.05));
 
-    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id));
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id), PACE_ARMED);
     expect(useRestTimer.getState().setId).toBeNull();
     expect(screen.getByText(/Cadence · 1\/10/)).toBeVisible();
   });
@@ -1045,6 +1079,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     const [first, second] = detail?.exercises[0]?.sets ?? [];
     if (first === undefined || second === undefined) throw new Error('séries absentes');
 
+    slowClock();
     const user = userEvent.setup();
     renderWorkout();
 
@@ -1058,7 +1093,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().setId).toBeNull();
 
     await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '10');
-    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id), { timeout: 2_000 });
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id), PACE_ARMED);
     expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();

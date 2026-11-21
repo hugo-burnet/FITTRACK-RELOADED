@@ -3,6 +3,7 @@ import { t } from '@/i18n/fr';
 import { Button, Card, EmptyState } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '@/ui/Skeleton';
 
 interface Props {
   page: HistoryPage | undefined;
@@ -52,7 +53,7 @@ function WorkoutRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <h3 className="truncate text-base font-semibold text-[var(--text-1)]">
+              <h3 className="line-clamp-2 [overflow-wrap:anywhere] text-base font-semibold text-[var(--text-1)]">
                 {summary.name}
               </h3>
               <p className="mt-1 text-sm capitalize text-[var(--text-2)]">
@@ -107,9 +108,9 @@ export function HistoryJournal({
 }: Props) {
   if (page === undefined) {
     return (
-      <div aria-hidden="true" className="space-y-3">
-        <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-        <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+      <div aria-busy="true" className="space-y-3">
+        <Skeleton height="h-28" />
+        <Skeleton height="h-28" />
       </div>
     );
   }

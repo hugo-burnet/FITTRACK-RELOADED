@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
 import { ProgrammingGuideEntry } from './ProgrammingGuideEntry';
 import { Screen } from '@/app/Screen';
+import { ChevronRightIcon } from '@/ui/icons';
 
 /**
  * Le Guide : la famille « Programmer l'entraînement » du wiki, en lecture seule.
@@ -18,17 +18,15 @@ import { Screen } from '@/app/Screen';
  * vérifié par un humain. Aucune transformation de format ne retire ce statut.
  */
 export function WikiProgrammingScreen() {
-  const navigate = useAppNavigate();
   const guide = listArticleFamilies().find((family) => family.id === 'programming');
   const articles = guide?.articles ?? [];
   const unreviewed = articles.some((article) => article.reviewState === 'pending_human_review');
 
   return (
     <Screen
-      title={t('knowledge.programming.title')}
-      onBack={() => void navigate('/knowledge')}
+      title={t('planning.guide')}
       action={
-        <span className="record-figure text-sm text-[var(--text-2)]">
+        <span className="tabular text-sm text-[var(--text-2)]">
           {t(
             articles.length === 1
               ? 'knowledge.article.articleCountOne'
@@ -38,7 +36,7 @@ export function WikiProgrammingScreen() {
         </span>
       }
     >
-      <div className="space-y-5">
+      <div className="space-y-7">
         <PlanningTabs />
 
         <section className="rounded-2xl bg-[var(--accent-soft)] p-5">
@@ -72,9 +70,7 @@ export function WikiProgrammingScreen() {
               {t('learn.entryHint')}
             </span>
           </span>
-          <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
-            →
-          </span>
+          <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]"><ChevronRightIcon /></span>
         </Link>
 
         <ProgrammingGuideEntry />
@@ -90,9 +86,7 @@ export function WikiProgrammingScreen() {
                   bg-[var(--surface-1)] px-4 py-2 text-sm leading-6 text-[var(--text-1)]"
               >
                 <span>{article.title}</span>
-                <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]">
-                  →
-                </span>
+                <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]"><ChevronRightIcon /></span>
               </Link>
             </li>
           ))}

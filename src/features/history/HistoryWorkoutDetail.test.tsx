@@ -17,6 +17,13 @@ function render(ui: ReactElement) {
   return renderBare(ui, { wrapper: MemoryRouter });
 }
 
+/** La tuile d'un total, retrouvée par son libellé. */
+const tile = (label: string): HTMLElement => {
+  const element = screen.getByText(label).closest<HTMLElement>('[data-part="tile"]');
+  if (element === null) throw new Error(`aucune tuile « ${label} »`);
+  return element;
+};
+
 /**
  * The screen reads the row's snapshot, never today's library. Every fixture here
  * therefore makes the two disagree on purpose: a test where they match cannot
@@ -128,6 +135,23 @@ describe('HistoryWorkoutDetail — le nom affiché', () => {
   });
 });
 
+describe('HistoryWorkoutDetail — le lien vers la fiche', () => {
+  const snapshot = row({ exerciseName: 'Développé couché', exerciseMeasurementType: 'weight_reps' });
+
+  it('ouvre la fiche d’un exercice vivant', () => {
+    render(<HistoryWorkoutDetail detail={detail({ row: snapshot })} />);
+
+    expect(screen.getByRole('button', { name: 'Développé couché' })).toBeInTheDocument();
+  });
+
+  it('ne mène pas à « Cet exercice n’existe plus » : un exercice supprimé garde son nom, sans lien', () => {
+    render(<HistoryWorkoutDetail detail={detail({ row: snapshot, exercise: undefined })} />);
+
+    expect(screen.getByRole('heading', { name: 'Développé couché' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Développé couché' })).toBeNull();
+  });
+});
+
 describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
   /**
    * The point of the milestone. `exerciseMeasurementType` decides which stored
@@ -163,7 +187,7 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
       />,
     );
 
-    expect(screen.getByText('800 kg')).toBeInTheDocument();
+    expect(tile('Tonnage')).toHaveTextContent('800 kg');
   });
 
   it('compte le poids du corps effectif dans le tonnage archivé', () => {
@@ -188,7 +212,7 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
       />,
     );
 
-    expect(screen.getByText('448 kg')).toBeInTheDocument();
+    expect(tile('Tonnage')).toHaveTextContent('448 kg');
   });
 
   it("garde le tonnage d'une ancienne ligne dont l'exercice est supprimé", () => {
@@ -210,61 +234,25 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
       />,
     );
 
-    expect(screen.getByText('448 kg')).toBeInTheDocument();
+    expect(tile('Tonnage')).toHaveTextContent('448 kg');
   });
 
   /**
-   * The tile used to read the stored seconds and nothing else: an hour and a
-   * half of squats totalled zero, and a stray duration left by an import or a
-   * re-typed exercise totalled minutes nobody could locate on the screen.
+   * « Temps » était une estimation (reps × cadence) qui se confondait avec la durée de la séance : retirée
+   * des totaux, validé sur la maquette. La durée de l'horloge reste.
    */
-  it('compte le temps de travail des séries en répétitions à la cadence de l’exercice', () => {
+  it('ne montre plus de « Temps » estimé, seulement la durée de la séance', () => {
     render(
       <HistoryWorkoutDetail
         detail={detail({
           row: row({ exerciseName: 'Squat', exerciseMeasurementType: 'weight_reps' }),
-          sets: [
-            set({ id: 'set-1', order: 0, weight: 100, reps: 10 }),
-            set({ id: 'set-2', order: 1, weight: 100, reps: 8 }),
-          ],
+          sets: [set({ weight: 100, reps: 10 })],
         })}
       />,
     );
 
-    // 18 répétitions à 3 s, la cadence par défaut.
-    expect(screen.getByText('54 s')).toBeInTheDocument();
-  });
-
-  it('garde la durée réelle d’un exercice chronométré', () => {
-    render(
-      <HistoryWorkoutDetail
-        detail={detail({
-          row: row({ exerciseName: 'Gainage', exerciseMeasurementType: 'time_only' }),
-          sets: [
-            set({ id: 'set-1', order: 0, durationSeconds: 60 }),
-            set({ id: 'set-2', order: 1, durationSeconds: 45 }),
-          ],
-        })}
-      />,
-    );
-
-    expect(screen.getByText('1:45 min')).toBeInTheDocument();
-  });
-
-  it('ne compte pas les secondes qu’une série en répétitions traîne encore', () => {
-    render(
-      <HistoryWorkoutDetail
-        detail={detail({
-          row: row({ exerciseName: 'Squat', exerciseMeasurementType: 'weight_reps' }),
-          // 45 s héritées d'un import ou d'un exercice re-typé : la ligne de
-          // série ne les montre pas, le total ne les compte pas non plus.
-          sets: [set({ weight: 100, reps: 10, durationSeconds: 45 })],
-        })}
-      />,
-    );
-
-    expect(screen.getByText('30 s')).toBeInTheDocument();
-    expect(screen.queryByText('1:15 min')).toBeNull();
+    expect(screen.queryByText('Temps')).toBeNull();
+    expect(tile('Durée')).toHaveTextContent('1 h');
   });
 
   it('conserve toutes les figures stockées quand le type de mesure est perdu', () => {

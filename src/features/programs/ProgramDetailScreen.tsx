@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
@@ -8,53 +8,26 @@ import {
   activateProgram,
   completeProgram,
   deleteProgram,
-  getProgramDetail,
   replaceActiveProgram,
   shiftProgram,
 } from '@/data/repositories/programs';
-import type { ProgramDetail } from '@/data/repositories/programs';
-import { listCompletedWorkouts } from '@/data/repositories/history';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
-import { getRoutineDetail } from '@/data/repositories/routines';
-import { getActiveWorkout } from '@/data/repositories/workouts';
-import type { Program, ProgramWeek } from '@/data/types';
+import type { Program } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import {
-  cycleLength,
-  cyclePosition,
-  pickProgramSession,
-  programPosition,
-  resolveRevision,
-  resolveSchedule,
-} from '@/lib/programs';
-import type { ProgramPosition } from '@/lib/programs';
+import { pickProgramSession } from '@/lib/programs';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
 import { ProgramBenchmarkCard } from '@/features/benchmark/ProgramBenchmarkCard';
 import { MissingRoutineReplacementSheet } from './MissingRoutineReplacementSheet';
+import { ProgramIntention } from './ProgramIntention';
+import { ProgramPastWeeks } from './ProgramPastWeeks';
+import { ProgramProgressTiles } from './ProgramProgressTiles';
 import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
-import { phaseEvidenceFor } from './phaseEvidence';
-import { loadRuleReading, weekLine } from './weekReading';
-
-interface DetailProjection {
-  detail: ProgramDetail;
-  position: ProgramPosition;
-  week: ProgramWeek | null;
-  sessions: ProgramSessionReading[];
-  activeWorkoutExists: boolean;
-  /** A draft is only activable once it has a split to run and a week for each. */
-  draftReady: boolean;
-  displayWeekIndex: number;
-  /** Où en est le cycle du split, quand il dure plus d'une semaine ; `null` sinon. */
-  cycle: { length: number; position: number } | null;
-}
-
-type DetailQuery =
-  { status: 'ready'; value: DetailProjection } | { status: 'not_found' } | { status: 'error' };
+import { readProjection } from './readProgramDetail';
 
 const STATUS_KEYS: Record<Program['status'], TranslationKey> = {
   draft: 'program.statusDraft',
@@ -62,184 +35,11 @@ const STATUS_KEYS: Record<Program['status'], TranslationKey> = {
   completed: 'program.statusCompleted',
 };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+const startFormatter = new Intl.DateTimeFormat('fr-FR', {
+  weekday: 'long',
   day: 'numeric',
-  month: 'long',
-  year: 'numeric',
+  month: 'short',
 });
-
-function ProgramProgressReading({
-  program,
-  position,
-}: {
-  program: Program;
-  position: ProgramPosition;
-}) {
-  return (
-    <section className="px-1 pt-1">
-      <p className="label-xs font-semibold text-[var(--text-2)]">
-        {t(STATUS_KEYS[program.status])}
-      </p>
-      {position.phase === 'active' ? (
-        <p className="metric mt-2 text-4xl leading-none font-semibold tracking-tight text-[var(--text-1)]">
-          {t('program.progressWeek', {
-            current: position.weekIndex + 1,
-            total: program.durationWeeks,
-          })}
-        </p>
-      ) : (
-        <p className="mt-2 text-xl font-semibold leading-snug text-[var(--text-1)]">
-          {position.phase === 'before'
-            ? t('program.progressBefore', { date: dateFormatter.format(program.startsAt) })
-            : t('program.progressAfter', { count: program.durationWeeks })}
-        </p>
-      )}
-    </section>
-  );
-}
-
-function CurrentIntention({ week }: { week: ProgramWeek }) {
-  const intention = loadRuleReading(week);
-  const evidence = phaseEvidenceFor(week.phase);
-  return (
-    <section className="border-y border-[var(--border)] py-4">
-      <p className="label-xs font-semibold text-[var(--text-2)]">{t('program.intentionTitle')}</p>
-      <p
-        className={`mt-2 text-xl font-semibold ${
-          week.phase === 'deload' ? 'text-[var(--accent-ink)]' : 'text-[var(--text-1)]'
-        }`}
-      >
-        {weekLine(week)}
-      </p>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{intention}</p>
-      {week.notes && <p className="mt-2 text-sm text-[var(--text-2)]">{week.notes}</p>}
-      {/* Ce que la littérature dit de la phase traversée. L'app savait planifier
-          une décharge, le corpus savait ce qu'on en sait — sans qu'aucun des
-          deux ne mentionne l'autre. Le lien n'apparaît que si une section traite
-          vraiment la phase : en proposer une vaguement voisine apprendrait au
-          lecteur que le lien ment. */}
-      {evidence !== null && (
-        <Link
-          viewTransition
-          to={evidence.href}
-          className="mt-4 flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-1)] px-4 py-2"
-        >
-          <span className="min-w-0">
-            <span className="block text-sm font-semibold text-[var(--accent-ink)]">
-              {t('program.evidenceLink')}
-            </span>
-            <span className="mt-0.5 block text-xs leading-5 text-[var(--text-2)]">
-              {t(
-                evidence.count === 1 ? 'program.evidenceCountOne' : 'program.evidenceCountMany',
-                { count: evidence.count, section: evidence.title },
-              )}
-            </span>
-          </span>
-          <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
-            →
-          </span>
-        </Link>
-      )}
-    </section>
-  );
-}
-
-async function readProjection(programId: string): Promise<DetailQuery> {
-  try {
-    const detail = await getProgramDetail(programId);
-    if (detail === null) return { status: 'not_found' };
-
-    const now = Date.now();
-    const position = programPosition(detail.program.startsAt, detail.program.durationWeeks, now);
-    const weekIndex =
-      position.phase === 'active'
-        ? position.weekIndex
-        : position.phase === 'before'
-          ? 0
-          : detail.program.durationWeeks - 1;
-    const entries = resolveSchedule(
-      detail.revisions.map(({ revision }) => revision),
-      detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
-      weekIndex,
-    );
-    const [completedWorkouts, activeWorkout, routines] = await Promise.all([
-      listCompletedWorkouts(),
-      getActiveWorkout(),
-      Promise.all(entries.map((entry) => getRoutineDetail(entry.routineId))),
-    ]);
-    const completedEntries = new Set(
-      completedWorkouts
-        .filter(
-          (workout) =>
-            workout.programId === detail.program.id &&
-            workout.programWeekIndex === weekIndex &&
-            workout.programScheduleEntryId !== undefined,
-        )
-        .map((workout) => workout.programScheduleEntryId),
-    );
-    const currentDay = position.phase === 'active' ? position.dayOfWeek : 0;
-    const hasWorkoutInDisplayedWeek = [
-      ...completedWorkouts,
-      ...(activeWorkout ? [activeWorkout] : []),
-    ].some(
-      (workout) =>
-        workout.programId === detail.program.id && workout.programWeekIndex === weekIndex,
-    );
-    const repairUnavailableReason =
-      detail.program.status === 'completed' || position.phase === 'after'
-        ? ('completed' as const)
-        : detail.program.status === 'active' && hasWorkoutInDisplayedWeek
-          ? ('locked' as const)
-          : null;
-    const sessions: ProgramSessionReading[] = entries.map((entry, index) => ({
-      entryId: entry.id,
-      routineId: entry.routineId,
-      routineName: routines[index]?.routine.name ?? null,
-      dayOfWeek: entry.dayOfWeek,
-      order: entry.order,
-      state: completedEntries.has(entry.id)
-        ? 'completed'
-        : currentDay === entry.dayOfWeek
-          ? 'today'
-          : currentDay > entry.dayOfWeek
-            ? 'missed'
-            : 'upcoming',
-      repairUnavailableReason,
-    }));
-
-    // Le brouillon se juge sur la révision par laquelle le bloc démarrera, quelle
-    // que soit la date du jour, et sur **tout** son cycle : une semaine de repos
-    // en tête n'en fait pas un bloc sans séance.
-    const revisions = detail.revisions.map(({ revision }) => revision);
-    const allEntries = detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries);
-    const initialSchedule = resolveRevision(revisions, allEntries, 0)?.entries ?? [];
-    const displayed = resolveRevision(revisions, allEntries, weekIndex);
-    const cycle =
-      displayed !== null && cycleLength(displayed.revision) > 1
-        ? {
-            length: cycleLength(displayed.revision),
-            position: cyclePosition(displayed.revision, weekIndex),
-          }
-        : null;
-
-    return {
-      status: 'ready',
-      value: {
-        detail,
-        position,
-        week: detail.weeks.find((candidate) => candidate.weekIndex === weekIndex) ?? null,
-        sessions,
-        activeWorkoutExists: activeWorkout !== undefined,
-        draftReady:
-          initialSchedule.length > 0 && detail.weeks.length === detail.program.durationWeeks,
-        displayWeekIndex: weekIndex,
-        cycle,
-      },
-    };
-  } catch {
-    return { status: 'error' };
-  }
-}
 
 export function ProgramDetailScreen() {
   const { id = '' } = useParams();
@@ -292,6 +92,11 @@ export function ProgramDetailScreen() {
     draftReady,
     displayWeekIndex,
     cycle,
+    nextWeek,
+    adherence,
+    weeklyTonnage,
+    hasWorkouts,
+    pastWeeks,
   } = query.value;
   const isDraft = detail.program.status === 'draft';
   const candidates = sessions
@@ -321,6 +126,8 @@ export function ProgramDetailScreen() {
   // fois en grand au-dessus, une fois en tête de la liste.
   const currentWeekIndex = week?.weekIndex ?? -1;
   const upcomingWeeks = detail.weeks.filter((candidate) => candidate.weekIndex > currentWeekIndex);
+
+  const openWorkout = (workoutId: string) => void navigate(`/history/${workoutId}`);
 
   const runAction = async (action: () => Promise<void>) => {
     setActionErrorKey(null);
@@ -386,7 +193,7 @@ export function ProgramDetailScreen() {
       action={
         // Même un bloc terminé garde son menu : il reste à supprimer.
         <HeaderAction
-          label={t('program.actionsLabel')}
+          label={t('program.detailActionsLabel')}
           onClick={() => {
             setActionsOpen(true);
           }}
@@ -412,8 +219,24 @@ export function ProgramDetailScreen() {
       }
     >
       <div className="flex flex-col gap-7">
-        <ProgramProgressReading program={detail.program} position={position} />
-        {week !== null && <CurrentIntention week={week} />}
+        <p className="text-sm text-[var(--text-2)]">
+          {t('program.detailStatusLine', {
+            status: t(STATUS_KEYS[detail.program.status]),
+            count: detail.program.durationWeeks,
+            date: startFormatter.format(detail.program.startsAt),
+          })}
+        </p>
+        <ProgramProgressTiles
+          program={detail.program}
+          position={position}
+          week={week}
+          nextWeek={nextWeek}
+          adherence={adherence}
+          weeklyTonnage={weeklyTonnage}
+          displayWeekIndex={displayWeekIndex}
+          hasWorkouts={hasWorkouts}
+        />
+        {week !== null && <ProgramIntention week={week} nextWeek={nextWeek} />}
         {activeWorkoutExists && detail.program.status === 'active' && (
           <p className="text-sm font-semibold text-[var(--text-2)]">
             {t('program.activeWorkoutCollision')}
@@ -444,6 +267,8 @@ export function ProgramDetailScreen() {
             }
             selectedEntryId={effectiveSelected?.entryId ?? null}
             startDisabled={activeWorkoutExists || detail.program.status !== 'active'}
+            todayDayOfWeek={position.phase === 'active' ? position.dayOfWeek : null}
+            onOpenWorkout={openWorkout}
             onSelect={(entryId) => {
               setSelectedEntryId(entryId);
             }}
@@ -455,6 +280,7 @@ export function ProgramDetailScreen() {
         {detail.program.status !== 'completed' && (
           <ProgramBenchmarkCard sessions={sessions} busy={activeWorkoutExists} />
         )}
+        <ProgramPastWeeks weeks={pastWeeks} onOpenWorkout={openWorkout} />
         <UpcomingWeeks weeks={upcomingWeeks} />
       </div>
 

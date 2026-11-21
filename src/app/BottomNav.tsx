@@ -63,6 +63,9 @@ export function BottomNav() {
                       ${isActive ? 'scale-x-100' : 'scale-x-0'}`}
                 />
                 <Icon />
+                {/* En pixels exprès, comme les cibles d'en-tête : cinq onglets tiennent dans 390 px
+                    seulement si leur libellé ne grandit pas avec la police du système (à 200 %,
+                    « Progression » en `text-xs` sort de l'écran — mise-en-page.spec.ts). */}
                 <span className="text-[11px] leading-none font-medium">{t(labelKey)}</span>
               </Link>
             </li>

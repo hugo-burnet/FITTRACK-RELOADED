@@ -91,6 +91,7 @@
   --accent-data: #00aa00; /* ANSI 2 : barres de graphique ordinaires */
   --axis: #878787;
   --danger-ink: #ff5555; /* ANSI 9 */
+  --warn-ink: #ffff55; /* ANSI 11 */
 
   --scrim: rgb(0 0 0 / 0.72);
 
@@ -229,10 +230,24 @@
   margin-block-end: 0;
 }
 
+/* Une tuile `G` qui ouvre un groupe titré : le titre (« ── Cette semaine ─── ») et la légende de la tuile
+   (« ┌ Tonnage ─ ») étaient deux filets à vingt pixels l'un de l'autre, lus comme deux cadres emboîtés.
+   Un cran de plus entre eux, et la légende redevient celle de sa tuile. Seule la première tuile d'un
+   groupe titré : plus bas, l'espace de la grille suffit. */
+:root[data-theme='tty1'] h2 + ul > li:first-child:has([data-part='tile'][data-size='G']) {
+  margin-top: 12px;
+}
+
 /* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
    composant (`border-b`, retiré sur la dernière) : seul son style change. */
 :root[data-theme='tty1'] [data-part='row'] {
   border-bottom-style: dotted;
+}
+/* Le filet entre deux chiffres empilés dans une tuile suit la même règle : pointillé. La légende d'une
+   tuile `G` (`data-part='legend'`) n'a rien à ajouter ici : la tuile porte `rounded-2xl`, la règle
+   `:has([data-part='legend'])` ci-dessus la pose déjà sur le filet du haut. */
+:root[data-theme='tty1'] [data-part='tile-split'] {
+  border-top-style: dotted;
 }
 
 /* `SectionTitle` : « ── Titre ───── ». Le titre de l'historique récent partage sa ligne avec un lien,
@@ -413,21 +428,20 @@
 }
 
 /* Les sélecteurs segmentés : un cadre à filets, l'option choisie en bloc de l'accent. Une option est
-   un bouton, ou le lien d'une `li` (les onglets de Planifier). */
+   un bouton radio : le segmenté ne marque que des valeurs. */
 :root[data-theme='tty1'] [data-part='segmented'] {
   gap: 1px;
   padding: 0;
   background: var(--border);
   border: 1px solid var(--border);
 }
-:root[data-theme='tty1'] [data-part='segmented'] > *,
-:root[data-theme='tty1'] [data-part='segmented'] > li > a {
+:root[data-theme='tty1'] [data-part='segmented'] > * {
   background: var(--surface-1);
   color: var(--text-2);
 }
 :root[data-theme='tty1']
   [data-part='segmented']
-  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  [aria-checked='true'] {
   background: var(--accent-fill);
   color: var(--accent-on-fill);
 }
@@ -567,14 +581,20 @@
   box-shadow: none;
 }
 
-/* Les onglets Journal et Calendrier : le choisi s'encadre de crochets, sans le trait du dessous. */
-:root[data-theme='tty1'] [data-part='tabs'] > button > span[aria-hidden='true'] {
+/* Les onglets (Journal / Calendrier, Suivi / Documentation, Planifier) : le choisi s'encadre de
+   crochets, sans le trait du dessous. Un onglet est un bouton (`aria-selected`) ou un lien de
+   navigation (`aria-current`). */
+:root[data-theme='tty1'] [data-part='tabs'] > :is(button, a) > span[aria-hidden='true'] {
   display: none;
 }
-:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::before {
+:root[data-theme='tty1']
+  [data-part='tabs']
+  > :is(button[aria-selected='true'], a[aria-current='page'])::before {
   content: '[ ';
 }
-:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::after {
+:root[data-theme='tty1']
+  [data-part='tabs']
+  > :is(button[aria-selected='true'], a[aria-current='page'])::after {
   content: ' ]';
 }
 

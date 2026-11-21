@@ -4,6 +4,7 @@ import { buildMonthGrid } from '@/lib/history';
 import { Card } from '@/ui';
 import { ArrowLeftIcon } from '@/ui/icons';
 import { HistoryWorkoutSummaryList } from './HistoryJournal';
+import { Skeleton } from '@/ui/Skeleton';
 
 interface Props {
   visibleMonth: number;
@@ -86,6 +87,7 @@ export function HistoryCalendar({
         <div
           aria-label={t('history.calendarGrid', { month: monthLabel })}
           aria-busy={completedWorkoutTimestamps === undefined}
+          data-part="calendar"
           className="overflow-x-auto rounded-2xl"
         >
           <div
@@ -158,10 +160,9 @@ export function HistoryCalendar({
           </h2>
 
           {selectedDayWorkouts === undefined ? (
-            <div
-              aria-hidden="true"
-              className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]"
-            />
+            <div aria-busy="true">
+              <Skeleton height="h-28" />
+            </div>
           ) : selectedDayWorkouts.length === 0 ? (
             <Card padded>
               <p className="text-sm leading-relaxed text-[var(--text-2)]">

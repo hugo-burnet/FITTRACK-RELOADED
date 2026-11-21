@@ -34,6 +34,18 @@ type Props = {
   statusLabel?: string;
   /** Optional date line for the journal. */
   dateLabel?: string;
+  /**
+   * Sans le mot « Coach » : sous un `SectionTitle` qui le dit déjà (fin de séance), le répéter
+   * donne deux « Coach » de suite.
+   */
+  hideRole?: boolean;
+  /**
+   * Ouvre la séance dont la recommandation est sortie (le journal d'un exercice).
+   * Un bouton à part et non la carte entière : une `<article>` ne peut pas
+   * être l'intérieur d'un `<button>`.
+   */
+  onOpen?: () => void;
+  openLabel?: string;
 };
 
 /**
@@ -55,6 +67,9 @@ export function CoachCard({
   variant = 'row',
   statusLabel,
   dateLabel,
+  hideRole = false,
+  onOpen,
+  openLabel,
 }: Props) {
   const hasLoad = signal.nextLoadKg !== undefined;
   // Nothing to apply without a load: an observation (plateau, long rest) has no
@@ -98,8 +113,11 @@ export function CoachCard({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>
+          <div
+            className={`flex flex-wrap items-baseline gap-x-2 gap-y-1
+              ${hideRole && dateLabel === undefined && statusLabel === undefined ? 'hidden' : ''}`}
+          >
+            {!hideRole && <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>}
             {dateLabel !== undefined && <p className="text-sm text-[var(--text-2)]">{dateLabel}</p>}
             {statusLabel !== undefined && (
               <p className="label-xs font-semibold text-[var(--text-2)]">{statusLabel}</p>
@@ -153,14 +171,23 @@ export function CoachCard({
               fullWidth={!applicable}
               disabled={applying}
               onClick={onDismiss}
-              className={
-                applicable ? 'min-[23rem]:shrink-0' : 'border border-[var(--border)]'
-              }
+              className={applicable ? 'min-[23rem]:shrink-0' : 'border border-[var(--border)]'}
             >
               {t(hasLoad ? 'coach.dismiss' : 'coach.hideObservation')}
             </Button>
           )}
         </div>
+      )}
+
+      {onOpen !== undefined && (
+        <Button
+          variant="ghost"
+          fullWidth
+          onClick={onOpen}
+          className="mt-3 border border-[var(--border)]"
+        >
+          {openLabel ?? t('exercise.seeWorkout')}
+        </Button>
       )}
     </article>
   );

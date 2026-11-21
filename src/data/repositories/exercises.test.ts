@@ -8,6 +8,7 @@ import {
   deleteExercise,
   getExercise,
   listExercises,
+  liveExerciseIds,
   normalizeSearch,
   updateExercise,
 } from './exercises';
@@ -161,6 +162,21 @@ describe('countExercises', () => {
     await deleteExercise(created.id);
 
     expect(await countExercises()).toBe(before - 1);
+  });
+});
+
+describe('liveExerciseIds', () => {
+  beforeEach(resetDb);
+
+  it('liste les exercices vivants et pas les supprimés, sans lire une ligne par exercice', async () => {
+    const kept = await createCustomExercise(custom('Gardé'));
+    const gone = await createCustomExercise(custom('Supprimé'));
+    await deleteExercise(gone.id);
+
+    const ids = await liveExerciseIds();
+
+    expect(ids.has(kept.id)).toBe(true);
+    expect(ids.has(gone.id)).toBe(false);
   });
 });
 

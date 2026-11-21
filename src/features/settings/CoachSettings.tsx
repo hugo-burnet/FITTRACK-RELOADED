@@ -1,7 +1,6 @@
 import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
-import { ListRow, SectionTitle } from '@/ui';
-import { ChevronRightIcon } from '@/ui/icons';
+import { Card, ListRow, SectionTitle } from '@/ui';
 import { DefaultLoadStepRow } from './DefaultLoadStepRow';
 
 /**
@@ -17,15 +16,14 @@ export function CoachSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.coachSection')}</SectionTitle>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.volumeLink')}
           subtitle={t('settings.volumeHint')}
-          trailing={<ChevronRightIcon />}
           onClick={() => void navigate('/settings/volume')}
         />
         <DefaultLoadStepRow />
-      </div>
+      </Card>
     </section>
   );
 }

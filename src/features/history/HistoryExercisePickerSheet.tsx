@@ -8,6 +8,7 @@ import {
   newHistoryExerciseDraft,
   type HistoryExerciseDraft,
 } from './historyDraft';
+import { Skeleton } from '@/ui/Skeleton';
 
 type Props = {
   open: boolean;
@@ -38,13 +39,9 @@ export function HistoryExercisePickerSheet({ open, onClose, onSelect }: Props) {
 
         <div className="-mx-5 border-t border-[var(--border)]">
           {exercises === undefined ? (
-            <div aria-hidden="true" className="space-y-px">
+            <div aria-busy="true" className="space-y-px">
               {[0, 1, 2, 3].map((row) => (
-                <div
-                  key={row}
-                  className="h-14 animate-pulse border-b border-[var(--border)]
-                    bg-[var(--surface-2)]"
-                />
+                <Skeleton key={row} height="h-14" shape="row" />
               ))}
             </div>
           ) : exercises.length === 0 ? (

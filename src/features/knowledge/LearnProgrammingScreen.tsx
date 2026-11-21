@@ -5,6 +5,7 @@ import { t } from '@/i18n/fr';
 import { articleHref } from './articleCatalogue';
 import { Screen } from '@/app/Screen';
 import { loadReadSteps, resolveLearningPath, saveReadSteps } from './learningPath';
+import { ChevronRightIcon } from '@/ui/icons';
 
 /**
  * Le parcours « Apprendre à programmer ».
@@ -72,7 +73,7 @@ export function LearnProgrammingScreen() {
                       text-[var(--accent-ink)]"
                   >
                     {t('learn.readStep')}
-                    <span aria-hidden="true">→</span>
+                    <span aria-hidden="true"><ChevronRightIcon /></span>
                   </Link>
                   <button
                     type="button"

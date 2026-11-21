@@ -29,6 +29,7 @@ import {
   timestampFromHistoryInputs,
   type HistoryWorkoutDraft,
 } from './historyDraft';
+import { Skeleton } from '@/ui/Skeleton';
 
 type EditValues = {
   draft: HistoryWorkoutDraft;
@@ -164,9 +165,9 @@ export function HistoryEditScreen() {
   if (detail === undefined || detail === null || editor === null) {
     return (
       <Screen title="" onBack={goBack}>
-        <div aria-hidden="true" className="space-y-4">
-          <div className="h-64 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-          <div className="h-80 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+        <div aria-busy="true" className="space-y-4">
+          <Skeleton height="h-64" />
+          <Skeleton height="h-80" />
         </div>
       </Screen>
     );
