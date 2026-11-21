@@ -1764,6 +1764,13 @@ const fr = {
     /** « 4 séries : 6 · 5 · 5 · 5 reps, lun. 16 nov. » — la charge est dans le chiffre. */
     lastTimeUniform: '{sets} : {reps} reps, {date}',
     lastTimePlain: '{sets}, {date}',
+    /** Exercice assisté : la charge est une aide, pas un poids soulevé. */
+    lastTimeAssistUnit: 'kg d’assistance',
+    lastTimeAssistSuffix: 'd’assistance',
+    /** Sous le titre d'une ligne « Séances » : la série écrite à droite est celle-ci, pas le record. */
+    sessionSubtitle: '{sets} · {best}',
+    topSetHeaviest: 'la plus lourde',
+    topSetLeastAssisted: 'la moins assistée',
     /** Écrite poids × reps (« 80 kg × 8 ») ; le détail dit ce que le record mesure, en tonnage. */
     bestSet: 'Meilleure série',
     bestSetDetail: 'Le plus de poids × reps en une série : {volume}, {date}',

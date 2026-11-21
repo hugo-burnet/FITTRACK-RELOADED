@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { HistoricalSet, HistoricalWorkout } from '@/lib/historyProjection';
-import { exerciseSessions, lastTimeSummary, progressTrend, splitReading } from './exerciseTracking';
+import {
+  exerciseSessions,
+  lastTimeSession,
+  lastTimeSummary,
+  progressTrend,
+  splitReading,
+} from './exerciseTracking';
 
 const set = (
   weight: number,
@@ -42,6 +48,25 @@ describe('exerciseSessions', () => {
 
   it('ignore une séance sans aucune série', () => {
     expect(exerciseSessions([workout('w', 1_000, [[]])])).toEqual([]);
+  });
+});
+
+describe('lastTimeSession', () => {
+  const sessions = exerciseSessions([
+    workout('old', 1_000, [[set(75, 8)]]),
+    workout('test', 2_000, [[set(90, 14)]]),
+  ]);
+
+  it('prend la séance la plus récente', () => {
+    expect(lastTimeSession(sessions, new Set())?.workoutId).toBe('test');
+  });
+
+  it('saute les séances test, comme la colonne « précédent » de la séance en direct', () => {
+    expect(lastTimeSession(sessions, new Set(['test']))?.workoutId).toBe('old');
+  });
+
+  it('rien quand il ne reste que des séances test', () => {
+    expect(lastTimeSession(sessions, new Set(['old', 'test']))).toBeUndefined();
   });
 });
 

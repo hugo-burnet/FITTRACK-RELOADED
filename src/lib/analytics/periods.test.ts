@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { PERIOD_KEYS, periodBounds } from './periods';
+import { PERIOD_KEYS, periodBounds, periodCovering } from './periods';
+
+describe('periodCovering', () => {
+  const now = new Date(2026, 6, 27, 14, 0, 0).getTime();
+  const weeksAgo = (weeks: number) => now - weeks * 7 * 86_400_000;
+
+  it('prend la plus courte période qui contient l’instant', () => {
+    expect(periodCovering(weeksAgo(0), now)).toBe('4w');
+    expect(periodCovering(weeksAgo(3), now)).toBe('4w');
+    expect(periodCovering(weeksAgo(8), now)).toBe('12w');
+    expect(periodCovering(weeksAgo(20), now)).toBe('26w');
+    expect(periodCovering(weeksAgo(40), now)).toBe('52w');
+  });
+
+  it('retombe sur « tout » quand aucune période finie ne contient l’instant', () => {
+    expect(periodCovering(weeksAgo(80), now)).toBe('all');
+  });
+});
 
 /** Lundi 27 juillet 2026, 14 h locale. */
 const monday = new Date(2026, 6, 27, 14, 0, 0).getTime();

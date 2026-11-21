@@ -36,6 +36,20 @@ export function exerciseSessions(workouts: readonly HistoricalWorkout[]): Exerci
     .sort((a, b) => b.startedAt - a.startedAt);
 }
 
+/**
+ * La séance que dit « La dernière fois » : la plus récente **hors séances test**.
+ *
+ * Même règle que la colonne « précédent » de la séance en direct
+ * (`getLastPerformance`) : une série menée à l'échec n'est pas ce qu'on a fait
+ * « la dernière fois ». La courbe et la liste, elles, gardent les séances test.
+ */
+export function lastTimeSession(
+  sessions: readonly ExerciseSessionSummary[],
+  benchmarkIds: ReadonlySet<string>,
+): ExerciseSessionSummary | undefined {
+  return sessions.find((session) => !benchmarkIds.has(session.workoutId));
+}
+
 export interface LastTimeSummary {
   /** Séries de travail (sans échauffement). */
   setCount: number;
