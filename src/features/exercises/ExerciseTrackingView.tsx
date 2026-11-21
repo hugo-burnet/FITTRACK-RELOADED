@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useAppNavigate } from '@/app/navigation';
 import { listRecommendationsForExercise } from '@/data/repositories/coachRecommendations';
@@ -68,6 +69,8 @@ function coachStatusLabel(status: CoachRecommendation['status']): string {
  */
 export function ExerciseTrackingView({ exercise }: { exercise: Exercise }) {
   const navigate = useAppNavigate();
+  // Lu une fois : la période d'ouverture de la vue plein écran ne glisse pas sous le doigt.
+  const [openedAt] = useState(() => Date.now());
   const reading = useLiveQuery(async () => {
     const workouts = await listHistoricalWorkouts({ kind: 'exercise', exerciseId: exercise.id });
     // Les séances test servent la courbe et la liste, pas « La dernière fois ».
@@ -111,7 +114,7 @@ export function ExerciseTrackingView({ exercise }: { exercise: Exercise }) {
   // Les lignes disent laquelle, pour ne pas se contredire en silence.
   const openFullScreen = () => {
     const first = trend?.window[0];
-    const period = first === undefined ? undefined : periodCovering(first.timestamp, Date.now());
+    const period = first === undefined ? undefined : periodCovering(first.timestamp, openedAt);
     void navigate(
       `/analytics/exercises/${exercise.id}${period === undefined ? '' : `?periode=${period}`}`,
     );
