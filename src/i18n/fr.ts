@@ -2664,11 +2664,46 @@ const fr = {
     /** La vue plein écran renvoie à la fiche : on y arrive de Progression, on en repart vers l'exercice. */
     exerciseSheetLink: 'Voir la fiche de l’exercice',
     pickExercise: 'Choisis un exercice pour voir sa progression.',
-    empty: 'Aucun exercice pratiqué pour l’instant. La première séance ouvrira cet écran.',
 
-    /** Les deux sections de l'écran d'accueil des analyses. */
-    overviewSection: 'Vue d’ensemble',
-    exercisesSection: 'Exercices',
+    /** Les groupes de tuiles de l'écran Progression, puis la ligne des bilans. */
+    weekSection: 'Cette semaine',
+    recordsSection: 'Records',
+    bodySection: 'Corps et muscles',
+    reviewsSection: 'Bilans',
+
+    /** « Cette semaine » : le tonnage (la seule G), les séances, le programme. */
+    tonnageLabel: 'Tonnage · 8 semaines',
+    tonnageDetail: 'Semaine en cours. Moyenne sur 12 semaines : {average}.',
+    tonnageHint: 'Voir le volume semaine par semaine',
+    sessionsLabel: 'Séances',
+    sessionsCaption: 'cette semaine',
+    sessionsSpoken: '{done} sur {goal} cette semaine',
+    streakOne: 'semaine tenue',
+    streakMany: 'semaines tenues',
+    sessionsHint: 'Voir le rythme semaine par semaine',
+    programLabel: 'Programme en cours',
+    programValue: '{current} / {total}',
+    programDetail: '{name} — {phase}, {level} %. Fin le {date}.',
+    programDetailNoWeek: '{name}. Fin le {date}.',
+    programHint: 'Ouvrir le programme',
+
+    /** « Records » : le dernier, puis les deux comptes. */
+    latestRecordLabel: 'Dernier record',
+    latestRecordLine: '{exercise} · {type}, {gain} le {date}',
+    latestRecordLineFirst: '{exercise} · {type} le {date}',
+    latestRecordHint: 'Ouvrir l’exercice',
+    recordsCountLabel: 'Records battus',
+    recordsCountHint: 'Voir tous les records',
+    milestonesLabel: 'Paliers',
+    milestonesHint: 'Voir les paliers',
+
+    /** « Corps et muscles » : les muscles sous leur plancher, le poids. */
+    floorLabel: 'Sous le plancher',
+    floorMany: 'À regarder : {muscles}.',
+    floorHint: 'Voir les séries par muscle',
+    weightLabel: 'Poids de corps',
+    weightDetail: '{change} depuis la pesée précédente ({previous}).',
+    weightHint: 'Voir les mensurations',
 
     exportImage: 'Exporter en image',
     exportImageFooter: 'FitTrack · exporté le {date}',

@@ -7,10 +7,10 @@ import { isoDaysAgo, openApp } from './support';
  * dessine » — dit ce que la personne fait ; ce fichier le fait dans un vrai navigateur à 390 px.
  */
 
-/** Progression › Mensurations, par les écrans et non par l'adresse : c'est la porte d'entrée. */
+/** Progression › tuile Poids de corps › Mensurations, par les écrans et non par l'adresse : c'est la porte d'entrée. */
 async function openMeasurements(page: Page): Promise<void> {
   await page.getByRole('link', { name: 'Progression' }).click();
-  await page.getByRole('button', { name: /^Mensurations/ }).click();
+  await page.getByRole('button', { name: /^Poids de corps/ }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Mensurations' })).toBeVisible();
 }
 
