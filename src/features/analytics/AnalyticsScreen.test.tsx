@@ -22,7 +22,8 @@ import { seedExercise, seedRoutine } from '@/test/routineSeed';
 import { AnalyticsScreen } from './AnalyticsScreen';
 
 function Where() {
-  return <output data-testid="where">{useLocation().pathname}</output>;
+  const location = useLocation();
+  return <output data-testid="where">{`${location.pathname}${location.search}`}</output>;
 }
 
 const renderScreen = () =>
@@ -122,7 +123,8 @@ describe('AnalyticsScreen', () => {
       ['Séances', '/analytics/weekly'],
       ['Programme en cours', `/programs/${programId}`],
       ['Dernier record', `/exercises/${bench.id}`],
-      ['Records battus', '/analytics/records'],
+      // Le nombre compte toute la chronologie : la page s'ouvre sur la chronologie, où il se retrouve.
+      ['Records battus', '/analytics/records?vue=chronologie'],
       ['Paliers', '/analytics/milestones'],
       ['Sous le plancher', '/settings/volume'],
       ['Poids de corps', '/analytics/measurements'],

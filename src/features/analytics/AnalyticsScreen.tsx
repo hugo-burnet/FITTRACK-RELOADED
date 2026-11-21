@@ -250,7 +250,7 @@ export function AnalyticsScreen() {
             label={t('analytics.recordsCountLabel')}
             value={timeline === undefined ? undefined : { value: String(timeline.length) }}
             hint={t('analytics.recordsCountHint')}
-            onClick={() => void navigate('/analytics/records')}
+            onClick={() => void navigate('/analytics/records?vue=chronologie')}
           />
           <Tile
             key="milestones"
