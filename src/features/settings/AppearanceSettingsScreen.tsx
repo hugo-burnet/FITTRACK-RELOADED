@@ -6,6 +6,7 @@ import { t } from '@/i18n/fr';
 import { isTty1Unlocked } from '@/stores/skinUnlock';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
+import { Card } from '@/ui';
 import { LockIcon } from '@/ui/icons';
 import { THEME_HINT, THEME_OPTIONS } from './themeOptions';
 
@@ -27,7 +28,7 @@ export function AppearanceSettingsScreen() {
 
   return (
     <Screen title={t('settings.appearanceSection')} onBack={() => void navigate('/settings')}>
-      <div className="rounded-2xl bg-[var(--surface-1)] p-4">
+      <Card padded>
         <div
           role="radiogroup"
           aria-label={t('settings.theme')}
@@ -72,7 +73,7 @@ export function AppearanceSettingsScreen() {
             {t('settings.themeTty1Locked')}
           </p>
         )}
-      </div>
+      </Card>
     </Screen>
   );
 }

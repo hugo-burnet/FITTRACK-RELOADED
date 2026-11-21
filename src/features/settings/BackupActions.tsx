@@ -2,14 +2,9 @@ import { useRef, useState } from 'react';
 import { getBootStorage } from '@/app/bootEasterEgg';
 import { restoreBackup } from '@/data/repositories/backup';
 import { t, type TranslationKey } from '@/i18n/fr';
-import {
-  parseBackup,
-  type BackupCounts,
-  type BackupFile,
-  type BackupProblem,
-} from '@/lib/backup';
+import { parseBackup, type BackupCounts, type BackupFile, type BackupProblem } from '@/lib/backup';
 import { rememberBackup } from '@/stores/backupMemory';
-import { ConfirmSheet, LearnMore, ListRow } from '@/ui';
+import { Card, ConfirmSheet, LearnMore, ListRow } from '@/ui';
 import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
 import { backupStatusLine } from './backupText';
 import { exportBackup } from './exportBackup';
@@ -145,7 +140,7 @@ export function BackupActions({
       <p className="mb-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
         {backupStatusLine({ lastBackupAt, workoutsSince, now })}
       </p>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.backupExportLink')}
           subtitle={t('settings.backupExportShort')}
@@ -158,7 +153,7 @@ export function BackupActions({
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         />
-      </div>
+      </Card>
       <LearnMore>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.backupExportHint')}

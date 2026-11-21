@@ -10,11 +10,7 @@ import {
   muscleSetsReading,
   type MonthlyUnit,
 } from '@/i18n/labels';
-import {
-  monthlyDelta,
-  monthlyReports,
-  type MonthlyReport,
-} from '@/lib/analytics/monthlyReport';
+import { monthlyDelta, monthlyReports, type MonthlyReport } from '@/lib/analytics/monthlyReport';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
 import { useHistoricalPeriod } from './useHistoricalPeriod';
 
@@ -111,7 +107,7 @@ export function MonthlyReportScreen() {
 
             <section>
               <SectionTitle>{t('monthly.summarySection')}</SectionTitle>
-              <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+              <Card>
                 {LINES.map((line) => {
                   const value = line.read(current);
                   const change = deltaOf(line, delta);
@@ -135,7 +131,7 @@ export function MonthlyReportScreen() {
                     />
                   );
                 })}
-              </div>
+              </Card>
               <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
                 {previous === undefined
                   ? t('monthly.noPrevious')

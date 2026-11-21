@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { rebuildAllRecords, isRecordProjectionCurrent } from '@/data/repositories/personalRecords';
 import { t } from '@/i18n/fr';
-import { Button, ConfirmSheet, SectionTitle } from '@/ui';
+import { Button, Card, ConfirmSheet, SectionTitle } from '@/ui';
 
 export function RecordRepairAction() {
   const projectionCurrent = useLiveQuery(isRecordProjectionCurrent, []);
@@ -39,7 +39,7 @@ export function RecordRepairAction() {
   return (
     <section>
       <SectionTitle>{t('settings.recordsSection')}</SectionTitle>
-      <div className="rounded-2xl bg-[var(--surface-1)] p-4">
+      <Card padded>
         <div className="flex items-center justify-between gap-3">
           <p className="text-base text-[var(--text-1)]">{t('settings.recordRepairTitle')}</p>
           {projectionCurrent !== undefined && (
@@ -64,7 +64,7 @@ export function RecordRepairAction() {
         >
           {t(busy ? 'settings.recordRepairWorking' : 'settings.recordRepairAction')}
         </Button>
-      </div>
+      </Card>
       {report !== undefined && (
         <p
           role={failed ? 'alert' : 'status'}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { t } from '@/i18n/fr';
 import { applyEffortPrompt, loadEffortPrompt } from '@/stores/effortPrompt';
-import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { Card, LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
 
 /**
  * The two things fatigue changes in the app, said in one place.
@@ -23,7 +23,7 @@ export function EffortPromptSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.effortSection')}</SectionTitle>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.effortPromptRowTitle')}
           subtitle={t('settings.effortPromptRowSubtitle')}
@@ -36,7 +36,7 @@ export function EffortPromptSettings() {
             />
           }
         />
-      </div>
+      </Card>
       <LearnMore>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.effortPromptHint')}

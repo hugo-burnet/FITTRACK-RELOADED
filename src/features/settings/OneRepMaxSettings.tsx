@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getOneRepMaxFormula, setOneRepMaxFormula } from '@/data/repositories/settings';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
-import { ListRow, OptionSheet, SectionTitle, type Option } from '@/ui';
+import { Card, ListRow, OptionSheet, SectionTitle, type Option } from '@/ui';
 
 const FORMULAS: readonly {
   value: OneRepMaxFormula;
@@ -83,14 +83,14 @@ export function OneRepMaxSettings() {
   return (
     <section>
       <SectionTitle>{t('settings.trainingSection')}</SectionTitle>
-      <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+      <Card>
         <ListRow
           title={t('settings.oneRepMaxTitle')}
           subtitle={subtitle}
           disabled={formula === undefined || saving}
           onClick={() => setOpen(true)}
         />
-      </div>
+      </Card>
       {failed && (
         <p role="alert" className="mt-3 px-1 text-sm leading-relaxed text-[var(--danger-ink)]">
           {t('settings.oneRepMaxFailed')}
