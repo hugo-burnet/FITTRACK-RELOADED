@@ -23,7 +23,7 @@ export function VolumeScreen() {
   const [editing, setEditing] = useState<MuscleGroup>();
 
   return (
-    <Screen title={t('muscleVolume.title')} onBack={() => void navigate(-1)}>
+    <Screen title={t('muscleVolume.title')} onBack={() => void navigate('/settings/coach')}>
       <div className="space-y-6" aria-busy={rows === undefined}>
         <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">{t('muscleVolume.intro')}</p>
 

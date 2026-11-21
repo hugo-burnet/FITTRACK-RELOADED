@@ -36,6 +36,8 @@ const fr = {
     lockExerciseOrder: 'Verrouiller l’ordre des exercices',
     unlockRoutineOrder: 'Déverrouiller l’ordre des routines',
     lockRoutineOrder: 'Verrouiller l’ordre des routines',
+    /** Le repli du texte d'aide long : un seul libellé pour tous les écrans. */
+    learnMore: 'En savoir plus',
   },
 
   nav: {
@@ -1939,6 +1941,22 @@ const fr = {
     title: 'Réglages',
 
     /**
+     * Le sommaire : cinq lignes, chacune avec son état en sous-titre, et le bandeau de sauvegarde
+     * au-dessus. Les titres des pages reprennent ceux des lignes.
+     */
+    sessionTitle: 'Séance',
+    backupTitle: 'Sauvegarde',
+    summaryBackupBanner: 'Dernière sauvegarde : {ago}',
+    summaryBackupNone: 'Aucune sauvegarde sur cet appareil',
+    summaryBackupShort: 'Dernière : {ago}',
+    summaryStepValue: '{value} kg',
+    summaryStepNone: 'Selon le matériel',
+    summaryOfflineReady: 'Prête hors-ligne',
+    summaryOfflinePending: 'Hors-ligne en préparation',
+    /** La section qui regroupe les deux exports lisibles, sous la sauvegarde complète. */
+    exportSection: 'Exporter',
+
+    /**
      * La section « Application » — l'installation sur l'écran d'accueil et
      * l'état du cache hors-ligne.
      *
@@ -2106,7 +2124,6 @@ const fr = {
      * journal du coach, réglages, préférences — dans un format que seule
      * FitTrack relit.
      */
-    backupSection: 'Sauvegarde complète',
     backupExportLink: 'Exporter tout le compte (JSON)',
     backupExportHint:
       'Séances, routines, programmes, records, réglages et préférences : tout ce que contient l’app, dans un fichier qu’elle sait relire.',

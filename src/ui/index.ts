@@ -11,6 +11,7 @@ export { EmptyState } from './EmptyState';
 export { FilterChip } from './FilterChip';
 export { HeaderAction } from './HeaderAction';
 export { Input } from './Input';
+export { LearnMore } from './LearnMore';
 export { ListRow } from './ListRow';
 export { MultiOptionSheet } from './MultiOptionSheet';
 export { NumberInput } from './NumberInput';

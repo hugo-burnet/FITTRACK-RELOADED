@@ -3,24 +3,18 @@ import { previewAnnouncer } from '@/audio/announce';
 import type { AnnouncerMode } from '@/audio/announcer';
 import { allClips } from '@/audio/cues';
 import { probeVoicePack } from '@/audio/voicePack';
-import { t, type TranslationKey } from '@/i18n/fr';
+import { t } from '@/i18n/fr';
 import {
   applyAnnouncerEcho,
   applyAnnouncerMode,
   loadAnnouncerEcho,
   loadAnnouncerMode,
 } from '@/stores/announcer';
-import { ListRow, SectionTitle, Toggle } from '@/ui';
+import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { ANNOUNCER_MODES } from './announcerModes';
 
 /** One clip answers for the folder — the pack is written in one run. */
 const [PROBE_CLIP] = allClips();
-
-const MODES: { value: AnnouncerMode; labelKey: TranslationKey }[] = [
-  { value: 'silence', labelKey: 'settings.announcerSilence' },
-  { value: 'sounds', labelKey: 'settings.announcerSounds' },
-  { value: 'voice', labelKey: 'settings.announcerVoice' },
-  { value: 'voice-only', labelKey: 'settings.announcerVoiceOnly' },
-];
 
 /**
  * How loud the app is, and the one place where you can hear the answer.
@@ -90,7 +84,7 @@ export function AnnouncerSettings() {
           data-part="segmented"
           className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
         >
-          {MODES.map(({ value, labelKey }) => (
+          {ANNOUNCER_MODES.map(({ value, labelKey }) => (
             <button
               key={value}
               type="button"
@@ -112,14 +106,17 @@ export function AnnouncerSettings() {
         <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.announcerHint')}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('settings.announcerMusicHint')}
-        </p>
-        {mode === 'voice-only' && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-            {t('settings.announcerVoiceOnlyHint')}
+        {/* Une phrase d'aide visible ; la musique et le mode « Voix uniquement » se déplient. */}
+        <LearnMore>
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerMusicHint')}
           </p>
-        )}
+          {mode === 'voice-only' && (
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">
+              {t('settings.announcerVoiceOnlyHint')}
+            </p>
+          )}
+        </LearnMore>
         {/* Le pack manquant concerne les deux modes qui parlent. */}
         {(mode === 'voice' || mode === 'voice-only') && (
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>

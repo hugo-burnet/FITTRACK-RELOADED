@@ -20,7 +20,7 @@ export function CreditsScreen() {
   const navigate = useAppNavigate();
 
   return (
-    <Screen title={t('credits.title')} onBack={() => void navigate('/settings')}>
+    <Screen title={t('credits.title')} onBack={() => void navigate('/settings/app')}>
       <div className="flex flex-col gap-9">
         {/* La signature, en une ligne, sur le seul écran qui répond à « c'est
             quoi, cette app ». L'ouverture la joue en trois temps ; ici elle se

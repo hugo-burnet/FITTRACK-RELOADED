@@ -13,7 +13,7 @@ import {
   REMINDER_WEEK_ORDER,
   reminderClockValue,
 } from '@/lib/reminders';
-import { Input, ListRow, SectionTitle, Toggle } from '@/ui';
+import { Input, LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
 
 /**
  * RF-53 — the three notifications, each with its own switch.
@@ -156,9 +156,11 @@ export function NotificationSettings() {
         </div>
       )}
 
-      <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
-        {t('settings.notificationsAndroidHint')}
-      </p>
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.notificationsAndroidHint')}
+        </p>
+      </LearnMore>
     </section>
   );
 }

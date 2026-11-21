@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { t } from '@/i18n/fr';
 import { applyEffortPrompt, loadEffortPrompt } from '@/stores/effortPrompt';
-import { ListRow, SectionTitle, Toggle } from '@/ui';
+import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
 
 /**
  * The two things fatigue changes in the app, said in one place.
@@ -37,9 +37,11 @@ export function EffortPromptSettings() {
           }
         />
       </div>
-      <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
-        {t('settings.effortTempoHint')}
-      </p>
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.effortTempoHint')}
+        </p>
+      </LearnMore>
     </section>
   );
 }

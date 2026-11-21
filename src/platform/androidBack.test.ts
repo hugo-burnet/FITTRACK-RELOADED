@@ -24,8 +24,14 @@ describe('androidBackDecision', () => {
     ['/exercises/new', '/exercises'],
     ['/exercises/exercise-1/edit', '/exercises'],
     ['/exercises/exercise-1', '/exercises'],
-    ['/settings/debug', '/settings'],
-    ['/settings/volume', '/settings'],
+    ['/settings/appearance', '/settings'],
+    ['/settings/session', '/settings'],
+    ['/settings/coach', '/settings'],
+    ['/settings/backup', '/settings'],
+    ['/settings/app', '/settings'],
+    ['/settings/debug', '/settings/app'],
+    ['/settings/about', '/settings/app'],
+    ['/settings/volume', '/settings/coach'],
     ['/settings', '/'],
   ])('navigates from %s to %s without history', (pathname, to) => {
     expect(androidBackDecision(pathname, false)).toEqual({ kind: 'navigate', to });

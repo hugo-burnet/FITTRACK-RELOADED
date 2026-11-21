@@ -9,7 +9,7 @@ import {
   type BackupProblem,
 } from '@/lib/backup';
 import { rememberBackup } from '@/stores/backupMemory';
-import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
+import { ConfirmSheet, ListRow } from '@/ui';
 import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
 import { backupStatusLine } from './backupText';
 import { exportBackup } from './exportBackup';
@@ -141,7 +141,10 @@ export function BackupActions({
 
   return (
     <section>
-      <SectionTitle>{t('settings.backupSection')}</SectionTitle>
+      {/* L'état d'abord : c'est la question qu'on vient poser à cette page, avant les gestes. */}
+      <p className="mb-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
+        {backupStatusLine({ lastBackupAt, workoutsSince, now })}
+      </p>
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
           title={t('settings.backupExportLink')}
@@ -156,10 +159,6 @@ export function BackupActions({
           onClick={() => inputRef.current?.click()}
         />
       </div>
-
-      <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
-        {backupStatusLine({ lastBackupAt, workoutsSince, now })}
-      </p>
 
       <input
         ref={inputRef}
