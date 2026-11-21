@@ -7,6 +7,22 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-21 — Fondations de la v3.0 (branche, non publiée)
+
+- **Choix de l'agent à relire** : la tuile `S` étirée sur toute une rangée quand elle est seule devant un groupe
+  plein (`S S S S` à 3 colonnes donne `3 1 1 1`) — c'est la règle « la première tuile prend le vide », appliquée
+  telle quelle. Si une tuile seule et large paraît creuse sur le téléphone, c'est la règle 4 de `placeTiles` à revoir,
+  pas le CSS.
+- **Le nom accessible d'une tuile est sa valeur** (« poids du jour 82,4 kg ») ; l'action est en description. Un test
+  ou un parcours qui cherchait le bouton par l'action (« Renseigner le poids du jour ») le cherche désormais par le
+  libellé (`e2e/mensurations.spec.ts`).
+- **Piège : des arbres isolés partagent les références git.** Deux agents ont nommé leur branche `work` ; l'un a
+  commité sur la tête de l'autre avec un index périmé (revert silencieux), un troisième a remis `work` à zéro. Aucun
+  travail perdu, rattrapé par des branches nommées. Règle : un nom de branche par agent, donné dans la consigne.
+- **Piège : une taille en pixels peut être voulue.** L'écart 7 a passé les libellés de `BottomNav` de `text-[11px]` à
+  `text-xs` ; en `rem`, ils doublent à 200 % et la barre déborde de 156 px. Rétabli en pixels, commenté sur place.
+  Même famille que les cibles d'en-tête en `size-[48px]`.
+
 ### 2026-11-21 — v2.19.0 : RPE 8,5, Réglages en sommaire, tuto supprimé, sept correctifs
 
 **Demandes.** « La montée ne se fait qu'à partir d'un RPE max de 8 », puis « max 8,5 » ; « enlève tout ce qui touche au

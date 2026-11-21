@@ -35,6 +35,23 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > Entre parenthèses : la version où le point est apparu, pour retrouver sa section dans
 > `docs/journal/`.
 
+## Fondations de la v3.0 *(branche `claude/fittrack-v3-foundations-ntgpcx`, pas encore publiée)*
+
+- [ ] **Accueil, l'îlot.** La semaine (« 2 / 4 ») et le poids du jour sont deux plaques séparées, plus une bande
+      coupée d'un filet. Taper le poids ouvre sa saisie ; taper la semaine ouvre les séances par semaine. Police du
+      téléphone au plus grand : les deux plaques passent l'une sous l'autre, rien n'est coupé.
+- [ ] **Accueil, le corps.** Sous la carte du corps, les trois analyses sont trois lignes empilées (plus trois cases
+      côte à côte) ; chacune mène au même écran qu'avant.
+- [ ] **Onglets soulignés.** Planifier (Routines / Programmes / Guide), la fiche d'un exercice (Suivi /
+      Documentation) et l'Historique (Journal / Calendrier) marquent l'onglet courant d'un soulignement orange, plus
+      d'un aplat. Le thème (Réglages › Apparence), l'annonceur et le type de série gardent l'aplat : c'est un choix.
+- [ ] **Alerte en jaune.** Réglages, sans sauvegarde : « Aucune sauvegarde sur cet appareil » est jaune (Sombre),
+      brun (Clair), orange (Cyber) — plus rouge. Un échec d'écriture reste rouge.
+- [ ] **Plus de clignotement.** À l'ouverture de l'accueil, de l'historique ou des records, la place réservée ne
+      pulse plus : elle est posée, immobile, puis le contenu arrive.
+- [ ] **Petites unités.** En séance, les unités sous les valeurs (« kg », « min ») sont un cran plus lisibles
+      (12 px au lieu de 11) ; la barre d'onglets du bas n'a pas changé, police au plus grand comprise.
+
 ## 0. Installation (2 min)
 
 - [ ] Installer l'APK par-dessus : l'en-tête de l'accueil dit la bonne version, les séances et
@@ -51,7 +68,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
       trois séances, l'accueil porte « Sauvegarde ton historique » **sous** la séance à lancer, avec
       « Exporter » et « Plus tard ». « Plus tard » le fait taire une semaine. *(cette session)*
 - [ ] **Réglages en sommaire.** Réglages montre le bandeau de sauvegarde (« Dernière sauvegarde : il y a N
-      jours », ou « Aucune sauvegarde sur cet appareil » en rouge) puis cinq lignes : Apparence, Séance,
+      jours », ou « Aucune sauvegarde sur cet appareil » en couleur d'alerte — jaune en Sombre depuis la v3.0) puis cinq lignes : Apparence, Séance,
       Coach, Sauvegarde, Application. Ouvrir une page, puis le retour Android : il ramène au sommaire (depuis
       Volume par muscle, à Coach ; depuis Dépannage ou À propos, à Application). « En savoir plus » déplie le
       texte d'aide sur place et le replie ; aucun titre de ligne n'est coupé. *(v2.19.0)*

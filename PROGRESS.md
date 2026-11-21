@@ -5,14 +5,23 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-21 — **v2.19.0 publiée** (RPE 8,5, Réglages en sommaire, tuto supprimé, sept correctifs). [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.19.0).
+**Dernière mise à jour :** 2026-11-21 — **v3.0, fondations** sur `claude/fittrack-v3-foundations-ntgpcx` (non fusionnée) : grille modulaire, `Tile`, `Segmented`, `Tabs`, `Skeleton`, `--warn-ink`, maquettes validées. Publié : v2.19.0.
 
 ## Où on en est
 
 - **Publié : v2.19.0** ([journal](docs/journal/2026-11-21-versions-v2-19-0.md)) : coach sans hausse au-dessus de RPE 8,5,
   tutoriel supprimé, Réglages en sommaire, repos épinglé, série du dessus en gris, retour Android, recherche à plusieurs
   mots, et les correctifs de l'audit et de la cartographie. **Dû** : recette, lignes *(v2.19.0)*.
-- **Suite : la v3.0, refonte par objets.** Prompt de reprise : `docs/design/plans/2026-11-21-reprise-v3.md`. Audit et
+- **En cours : la v3.0, refonte par objets.** Branche `claude/fittrack-v3-foundations-ntgpcx` (non fusionnée,
+  rien vers `master`). **Fait** : temps 1 et 2 du plan de reprise. `DESIGN.md` gagne la grille modulaire (tailles S/L/G,
+  colonnes par requête de conteneur en rem, `placeTiles` testé contre un oracle) ; les 12 écarts traités ou laissés
+  exprès (tableau d'état dans `DESIGN.md`) ; `ui/Tile`, `TileGrid`, `Segmented`, `Tabs`, `Skeleton` ; jeton `--warn-ink`.
+  Maquettes validées le 21/11 : https://claude.ai/artifact/9iMqMxpTg7KgAZc9kMuDVh (Progression en tuiles dont la G =
+  tonnage de la semaine, page Exercice, détail de séance, détail de bloc). **Reste** : le temps 3, le code page par
+  page dans l'ordre de `cartographie.md` §7 (liens → détail de séance → page Exercice → Muscle → Semaine), puis les
+  constats 4, 5, 6, 9, 10 de l'audit. **Dû** : recette « Fondations de la v3.0 ». Piège consigné : deux agents en
+  arbres isolés partagent les références git — jamais deux fois le même nom de branche (`work`).
+- **Avant, le plan :** Prompt de reprise : `docs/design/plans/2026-11-21-reprise-v3.md`. Audit et
   cartographie : `docs/design/audits/2026-11-21/`. Décisions en attente : la définition du volume par muscle, le lot F du
   coach (signaler une gêne). La branche de synchro attend toujours Caddy.
 
