@@ -31,6 +31,11 @@ export function setReading(
     .join(' × ');
 }
 
+/** « 2 séries · dernière : 6 reps · 30 kg » — « 1 série » au singulier, jamais « série(s) ». */
+export function finishSetSummary(count: number, reading: string): string {
+  return t(count === 1 ? 'finish.setSummaryOne' : 'finish.setSummary', { count, reading });
+}
+
 /**
  * « 2 séries sur 7 » — où j'en suis, en un coup d'œil.
  *

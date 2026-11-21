@@ -58,6 +58,13 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
+/** La tuile « Tonnage » : son chiffre et son unité sont deux éléments, on lit la tuile entière. */
+function tonnageTile(): HTMLElement {
+  const tile = screen.getByText('Tonnage').closest('[data-part="tile"]');
+  if (!(tile instanceof HTMLElement)) throw new Error('tuile Tonnage absente');
+  return tile;
+}
+
 describe('WorkoutFinishScreen', () => {
   it('does not save an empty workout', async () => {
     const workout = await startWorkout('', 'Empty');
@@ -84,8 +91,8 @@ describe('WorkoutFinishScreen', () => {
     await completeSet(first.id, { weight: 20, reps: 8 });
     await completeSet(second.id, { weight: 30, reps: 6 });
     renderFinishScreen();
-    expect(await screen.findByText('2 série(s) · dernière : 6 reps · 30 kg')).toBeVisible();
-    expect(screen.getByText('340 kg')).toBeVisible();
+    expect(await screen.findByText('2 séries · dernière : 6 reps · 30 kg')).toBeVisible();
+    expect(tonnageTile()).toHaveTextContent('340 kg');
   });
 
   beforeEach(async () => {
@@ -212,7 +219,31 @@ describe('WorkoutFinishScreen', () => {
 
     renderFinishScreen();
 
-    expect(await screen.findByText('448 kg')).toBeInTheDocument();
+    await screen.findByText('Tonnage');
+    expect(tonnageTile()).toHaveTextContent('448 kg');
+  });
+
+  it('groupe les milliers du tonnage et écrit la série au singulier', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Lourd',
+      primaryMuscle: 'quadriceps',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Lourd');
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 1087.2, reps: 10 });
+    renderFinishScreen();
+
+    await screen.findByText('Tonnage');
+    expect(tonnageTile().textContent).toMatch(/10[\u00a0\u202f]872\s?kg/);
+    expect(screen.getByText(/^1 série · dernière : 10 reps/)).toBeVisible();
+    // Un seul « Coach » et un seul titre de notes : ni le mot répété, ni un libellé de champ à part.
+    expect(screen.getByText('Série de travail')).toBeVisible();
+    expect(screen.getByRole('textbox', { name: 'Notes de la séance' })).toBeVisible();
   });
 
   it("attend le calcul du coach avant d'annoncer le récapitulatif", async () => {

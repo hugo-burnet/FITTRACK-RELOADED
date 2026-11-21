@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -21,27 +20,17 @@ import { nativeNotifications } from '@/platform/nativeNotifications';
 import { useRestTimer } from '@/stores/restTimer';
 import type { BenchmarkLocationState } from '@/features/benchmark/BenchmarkScreen';
 import { t } from '@/i18n/fr';
-import { exerciseDisplayName, partReading, unitLabel } from '@/i18n/labels';
+import { exerciseDisplayName, groupedNumber, partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
-import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
+import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea, Tile, TileGrid } from '@/ui';
 import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
-import { formatNumber } from '@/ui/numberField';
 import { CoachCard } from './CoachCard';
-import { ElapsedTime } from './ElapsedTime';
+import { useElapsedReading } from './useElapsedReading';
+import { finishSetSummary } from './summary';
 import { claimWorkoutRecap, speakWorkoutRecap } from './workoutRecapVoice';
-
-/** One figure and what it counts. The reading register of Lot 1. */
-function Reading({ value, label }: { value: ReactNode; label: string }) {
-  return (
-    <div className="flex min-w-0 flex-1 flex-col items-center gap-1">
-      <span className="metric truncate text-2xl font-semibold text-[var(--text-1)]">{value}</span>
-      <span className="label-xs font-semibold text-[var(--text-2)]">{label}</span>
-    </div>
-  );
-}
 
 /**
  * What the session produced, before it is written down for good.
@@ -85,6 +74,10 @@ export function WorkoutFinishScreen() {
     // to hear the session read out a second time.
     if (claimWorkoutRecap(workoutId)) void speakWorkoutRecap(coachSignals);
   }, [coachSignals, detail?.workout.id, detail?.workout.kind]);
+
+  // Toujours en marche : la séance n'est close qu'au moment où on l'enregistre, et c'est cet
+  // instant-là que `finishWorkout` retient.
+  const elapsed = useElapsedReading(detail?.workout.startedAt);
 
   const [draft, setDraft] = useState<{ id: string; notes: string } | null>(null);
   if (detail != null && draft?.id !== detail.workout.id) {
@@ -213,7 +206,7 @@ export function WorkoutFinishScreen() {
         />
       }
     >
-      <div className="flex flex-col gap-6">
+      <div className="space-y-7">
         {saveFailed && (
           <p role="alert" className="text-sm text-[var(--danger-ink)]">
             {t('finish.saveFailed')}
@@ -224,30 +217,35 @@ export function WorkoutFinishScreen() {
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('benchmark.finishNote')}</p>
           </Card>
         )}
-        <Card padded>
-          <div className="flex items-start gap-2">
-            {/* Toujours en marche : la séance n'est close qu'au moment où on
-                l'enregistre, et c'est cet instant-là que `finishWorkout` retient. */}
-            <Reading
-              value={<ElapsedTime startedAt={workout.startedAt} />}
-              label={t('finish.duration')}
-            />
-            <Reading value={String(totals.workingSets)} label={t('finish.sets')} />
-            {totals.tonnage > 0 ? (
-              <Reading
-                value={`${formatNumber(totals.tonnage)} ${unitLabel('kg')}`}
+        {/* Les mêmes totaux, dans le même ordre et sous les mêmes mots que le détail de la séance :
+            ce qu'on lit ici est ce qu'on retrouvera dans l'historique. */}
+        <div className="space-y-3">
+          <TileGrid title={t('history.detailTotals')}>
+            <Tile size="S" label={t('finish.duration')} value={{ value: elapsed }} />
+            {totals.tonnage > 0 && (
+              <Tile
+                size="S"
                 label={t('finish.tonnage')}
+                value={{ value: groupedNumber(totals.tonnage), unit: unitLabel('kg') }}
               />
-            ) : (
-              <Reading value={String(totals.totalReps)} label={t('finish.reps')} />
             )}
-          </div>
+            <Tile
+              size="S"
+              label={t(totals.workingSets === 1 ? 'finish.setsOne' : 'finish.sets')}
+              value={{ value: String(totals.workingSets) }}
+            />
+            <Tile
+              size="S"
+              label={t(totals.totalReps === 1 ? 'finish.repsOne' : 'finish.reps')}
+              value={{ value: String(totals.totalReps) }}
+            />
+          </TileGrid>
           {totals.tonnage > 0 && (
-            <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
+            <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">
               {t('finish.tonnageHint')}
             </p>
           )}
-        </Card>
+        </div>
 
         {coachSignals !== undefined && coachSignals.length > 0 && (
           <section>
@@ -269,6 +267,7 @@ export function WorkoutFinishScreen() {
                     signal={signal}
                     exerciseName={name}
                     variant="row"
+                    hideRole
                   />
                 );
               })}
@@ -281,7 +280,7 @@ export function WorkoutFinishScreen() {
             {t('finish.nothingDone')}
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
+          <section>
             <SectionTitle>{t('routine.emptyUnit')}</SectionTitle>
             <Card>
               {exercises
@@ -311,13 +310,13 @@ export function WorkoutFinishScreen() {
                           : exerciseDisplayName(identity.name, identity.isUnilateral)}
                       </span>
                       <span className="shrink-0 text-right text-sm text-[var(--text-2)]">
-                        {t('finish.setSummary', { count: done.length, reading })}
+                        {finishSetSummary(done.length, reading)}
                       </span>
                     </div>
                   );
                 })}
             </Card>
-          </div>
+          </section>
         )}
 
         {/* Nothing to draw before the first set is recorded — and nothing to
@@ -333,15 +332,19 @@ export function WorkoutFinishScreen() {
           </details>
         )}
 
-        <Textarea
-          label={t('workout.workoutNotesLabel')}
-          placeholder={t('workout.notesPlaceholder')}
-          value={draft.notes}
-          onChange={(event) => {
-            setDraft({ ...draft, notes: event.target.value });
-            void updateWorkout(workout.id, { notes: event.target.value });
-          }}
-        />
+        <section>
+          <SectionTitle>{t('workout.workoutNotesLabel')}</SectionTitle>
+          <Textarea
+            label={t('workout.workoutNotesLabel')}
+            labelHidden
+            placeholder={t('workout.notesPlaceholder')}
+            value={draft.notes}
+            onChange={(event) => {
+              setDraft({ ...draft, notes: event.target.value });
+              void updateWorkout(workout.id, { notes: event.target.value });
+            }}
+          />
+        </section>
 
         <Button variant="danger" size="lg" fullWidth onClick={() => setConfirming(true)}>
           {t('finish.discard')}
