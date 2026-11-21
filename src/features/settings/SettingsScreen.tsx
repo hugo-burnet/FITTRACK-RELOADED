@@ -40,7 +40,7 @@ export function SettingsScreen() {
   const announcerLabel = ANNOUNCER_MODES.find(({ value }) => value === announcer)?.labelKey;
 
   return (
-    <Screen title={t('settings.title')}>
+    <Screen title={t('settings.title')} onBack={() => void navigate('/')}>
       <div className="flex flex-col gap-7">
         <Card>
           <button
@@ -69,13 +69,11 @@ export function SettingsScreen() {
           <ListRow
             title={t('settings.appearanceSection')}
             subtitle={themeLabel === undefined ? undefined : t(themeLabel)}
-            trailing={<ChevronRightIcon />}
             onClick={go('appearance')}
           />
           <ListRow
             title={t('settings.sessionTitle')}
             subtitle={announcerLabel === undefined ? undefined : t(announcerLabel)}
-            trailing={<ChevronRightIcon />}
             onClick={go('session')}
           />
           <ListRow
@@ -87,19 +85,16 @@ export function SettingsScreen() {
                   ? t('settings.summaryStepValue', { value: formatNumber(step) })
                   : t('settings.summaryStepNone')
             }
-            trailing={<ChevronRightIcon />}
             onClick={go('coach')}
           />
           <ListRow
             title={t('settings.backupTitle')}
             subtitle={t('settings.summaryBackupContent')}
-            trailing={<ChevronRightIcon />}
             onClick={go('backup')}
           />
           <ListRow
             title={t('settings.appSection')}
             subtitle={t(offlineReady ? 'settings.summaryOfflineReady' : 'settings.summaryOfflinePending')}
-            trailing={<ChevronRightIcon />}
             onClick={go('app')}
           />
         </Card>
