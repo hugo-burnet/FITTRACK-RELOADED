@@ -353,6 +353,8 @@ describe('listSessionsForExercise', () => {
     // Développé couché en début puis en fin de séance : deux blocs, pas un seul
     // dont les `order` se marcheraient dessus.
     const workout = await startWorkout('', 'Séance libre');
+    // Terminée : la fiche ne lit plus que les séances closes.
+    await db.workouts.update(workout.id, { status: 'completed' });
     for (const weight of [100, 60]) {
       const we = await addExercise(workout.id, 'bench');
       await db.workoutSets.add(
@@ -390,6 +392,19 @@ describe('listSessionsForExercise', () => {
     await addSet(we.id, { weight: 999, reps: 1 });
 
     expect(await listSessionsForExercise('bench')).toEqual([]);
+  });
+
+  it('ignore la séance en cours, même avec une série validée (comme la courbe)', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+    const live = await startWorkout('', 'Séance en cours');
+    const we = await addExercise(live.id, 'bench');
+    const set = await addSet(we.id);
+    await completeSet(set.id, { weight: 120, reps: 3 });
+
+    const sessions = await listSessionsForExercise('bench');
+
+    expect(sessions).toHaveLength(1);
+    expect(at(sessions, 0).sets[0]!.weight).toBe(100);
   });
 
   it('rend un tableau vide pour un exercice jamais fait', async () => {

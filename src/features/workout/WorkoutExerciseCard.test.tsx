@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import type { Exercise, PersonalRecord, WorkoutExercise, WorkoutSet } from '@/data/types';
@@ -63,13 +63,13 @@ function renderCard(
   reorderEnabled: boolean,
   currentLine = line,
   records: Map<string, WorkoutRecordNotice> = new Map(),
-  rest: React.ComponentProps<typeof WorkoutExerciseCard>['rest'] = null,
+  resting = false,
   hold: React.ComponentProps<typeof WorkoutExerciseCard>['hold'] = null,
 ) {
   render(
     <WorkoutExerciseCard
       line={currentLine}
-      rest={rest}
+      resting={resting}
       pace={null}
       hold={hold}
       sideStageOf={() => null}
@@ -134,7 +134,7 @@ describe('WorkoutExerciseCard', () => {
       previous: [],
     };
 
-    renderCard(false, timedLine, new Map(), null, {
+    renderCard(false, timedLine, new Map(), false, {
       setId: timedSet.id,
       rowId: row.id,
       startedAt: 100_000 - 3_000,
@@ -170,7 +170,7 @@ describe('WorkoutExerciseCard', () => {
       previous: [],
     };
 
-    renderCard(false, rowerLine, new Map(), null, {
+    renderCard(false, rowerLine, new Map(), false, {
       setId: rowerSet.id,
       rowId: row.id,
       startedAt: 100_000 - 3_000,
@@ -194,23 +194,7 @@ describe('WorkoutExerciseCard', () => {
     expect(screen.getByRole('button', { name: `Chrono de ${NAME}` })).toBeInTheDocument();
   });
 
-  it('transmet la suspension audio du repos au rail', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
-    announce.mockClear();
-    const rest = {
-      setId: 'set-resting',
-      startedAt: 0,
-      endsAt: 15_000,
-      audioSuppressed: true,
-      onDone: vi.fn(() => false),
-    };
-
-    renderCard(false, line, new Map(), rest);
-    act(() => vi.advanceTimersByTime(15_000));
-
-    expect(announce).not.toHaveBeenCalled();
-  });
+  // « transmet la suspension audio du repos au rail » : parti avec la barre dans RestDock.test.tsx.
 
   const completedSet: WorkoutSet = {
     ...stamps,
@@ -341,7 +325,7 @@ describe('échauffement reproposé', () => {
       render(
         <WorkoutExerciseCard
           line={{ row, exercise, sets, previous: yesterday }}
-          rest={null}
+          resting={false}
           pace={null}
           hold={null}
           sideStageOf={() => null}

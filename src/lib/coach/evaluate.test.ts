@@ -1539,7 +1539,8 @@ describe('effort de séance (R1)', () => {
     });
 
   it('monte quand le plafond est atteint avec de la marge', () => {
-    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [8, 8.5, 9]));
+    // Règle du 2026-11-21 : 8 · 8,5 · 9 ne monte plus (max 9 > 8,5) ; on monte à 8 · 8 · 8.
+    const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [8, 8, 8]));
     const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
     expect(ceiling?.nextLoadKg).toBe(102.5);
     expect(ev.allowedActions).toContain('increase_load');
@@ -1556,11 +1557,13 @@ describe('effort de séance (R1)', () => {
     expect(ev.allowedActions).not.toContain('add_set');
   });
 
-  it('se tait sur l’effort quand moins de la moitié des séries porte un RPE', () => {
+  it('ne lit plus la moyenne : un seul RPE 10 saisi suffit à bloquer, sans RPE moyen', () => {
+    // Règle du 2026-11-21 : on lit le maximum, plus la moyenne ; la moyenne (une série sur trois) reste absente.
     const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [10, undefined, undefined]));
     const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
-    expect(ceiling?.nextLoadKg).toBe(102.5);
-    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('ceiling_grinding');
+    expect(ceiling?.nextLoadKg).toBeUndefined();
+    expect(ceiling?.evidence).toContainEqual({ label: 'max_rpe', value: 10 });
+    expect(ceiling?.evidence.map((e) => e.label)).not.toContain('session_rpe');
   });
 
   it('ne compte pas la série à l’échec dans l’effort', () => {
@@ -2401,5 +2404,124 @@ describe('fiabilisation du moteur (lot E)', () => {
         true,
       );
     });
+  });
+});
+
+describe('on ne monte qu’à RPE 8,5 au plus (spec 2026-11-21)', () => {
+  /** Barre, 100 kg, fourchette 8 – 12, plafond atteint ; RPE et type par série. */
+  const rated = (
+    rpe: (number | undefined)[],
+    setTypes: ('normal' | 'failure' | 'warmup')[] = [],
+    reps: number[] = [12, 12, 12],
+  ) =>
+    evaluatePerformance(
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: reps.map((value, order) =>
+          set({
+            order,
+            reps: value,
+            weight: 100,
+            rpe: rpe[order],
+            setType: setTypes[order] ?? 'normal',
+          }),
+        ),
+      }),
+    );
+  const ceilingOf = (ev: ReturnType<typeof rated>) =>
+    ev.signals.find((s) => s.code === 'range_ceiling_reached');
+
+  it('monte quand chaque série reste à RPE 8 : 8 · 8 · 8', () => {
+    const ev = rated([8, 8, 8]);
+    expect(ceilingOf(ev)?.nextLoadKg).toBe(102.5);
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('ne monte pas dès qu’une série dépasse 8 : 7 · 8 · 9', () => {
+    const ev = rated([7, 8, 9]);
+    const ceiling = ceilingOf(ev);
+    expect(ceiling).toBeDefined();
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'max_rpe', value: 9 },
+        { label: 'increase_max_rpe', value: 8.5 },
+        { label: 'session_rpe', value: 8 },
+      ]),
+    );
+    expect(ev.allowedActions).not.toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('add_set');
+  });
+
+  it('monte à RPE 8,5 : 8 · 8,5 · 8,5 (seuil porté à 8,5 le même jour)', () => {
+    const ev = rated([8, 8.5, 8.5]);
+    expect(ceilingOf(ev)?.nextLoadKg).toBe(102.5);
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('ne monte pas dès qu’une série passe 8,5 : 8 · 8,5 · 9', () => {
+    const ceiling = ceilingOf(rated([8, 8.5, 9]));
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'max_rpe', value: 9 },
+        { label: 'increase_max_rpe', value: 8.5 },
+      ]),
+    );
+  });
+
+  it('lit le maximum des RPE saisis quand une série n’en porte pas : 8 · 9 · —', () => {
+    const ceiling = ceilingOf(rated([8, 9, undefined]));
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toContainEqual({ label: 'max_rpe', value: 9 });
+  });
+
+  it('sans aucun RPE saisi, la hausse se propose comme avant', () => {
+    const ceiling = ceilingOf(rated([undefined, undefined, undefined]));
+    expect(ceiling!.nextLoadKg).toBe(102.5);
+    expect(ceiling!.evidence.map((e) => e.label)).not.toContain('ceiling_grinding');
+  });
+
+  it('la série à l’échec ne compte pas : 8 · 8 · 8 puis 12 reps à RPE 10', () => {
+    const ev = evaluatePerformance(
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [8, 8, 8, 10].map((rpe, order) =>
+          set({ order, reps: 12, weight: 100, rpe, setType: order === 3 ? 'failure' : 'normal' }),
+        ),
+      }),
+    );
+    expect(ceilingOf(ev)?.nextLoadKg).toBe(102.5);
+  });
+
+  it('un plafond très dépassé avec un RPE 9 ne propose aucune charge', () => {
+    const ev = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [30, 28, 26].map((value, order) =>
+          set({ order, reps: value, weight: 40, targetReps: 15, targetRepsMax: 20, rpe: order === 0 ? 9 : 7 }),
+        ),
+      }),
+    ]);
+    expect(ev[0]).toMatchObject({ code: 'range_ceiling_reached' });
+    expect(ev[0]!.nextLoadKg).toBeUndefined();
+    expect(ev[0]!.evidence.map((e) => e.label)).not.toContain('ceiling_rebalanced');
+  });
+
+  it('un échauffement à RPE 9 ne bloque pas', () => {
+    const ev = evaluatePerformance(
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [9, 8, 8, 8].map((rpe, order) =>
+          set({ order, reps: 12, weight: 100, rpe, setType: order === 0 ? 'warmup' : 'normal' }),
+        ),
+      }),
+    );
+    expect(ceilingOf(ev)?.nextLoadKg).toBe(102.5);
   });
 });

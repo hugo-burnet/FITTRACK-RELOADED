@@ -79,6 +79,13 @@ volontairement plus légère — exactement le cas de R4.
 
 ### R1 — L'effort qualifie la progression
 
+> **Amendement du 2026-11-21.** Le seuil « RPE moyen >= 9,5 » est remplacé : le plafond atteint ne propose plus
+> de hausse dès qu'une série jugée a été saisie au-dessus de RPE 8 (maximum, échec exclu ; sans RPE, rien ne change).
+> Voir `2026-11-21-coach-rpe-max-8-design.md`.
+>
+> Seuil porté de 8 à 8,5 le même jour, à la demande de l'utilisateur (8 aurait bloqué 75 % de ses hausses passées) :
+> une série à 8,5 n'empêche plus de monter, une série à 9 l'empêche.
+
 **Constat.** `70 × 12 × 3 @8 / 9 / 9,5` et `70 × 12 × 3 @8,5 / 8,5 / 9` sont la même séance pour le
 moteur. Pour le pratiquant, la seconde est un progrès : même travail, moins d'effort.
 

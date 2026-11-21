@@ -13,8 +13,6 @@ import {
 } from '@/data/repositories/workouts';
 import * as workoutsRepository from '@/data/repositories/workouts';
 import type { WorkoutDetail } from '@/data/repositories/workouts';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
-import type { TutorialControls } from '@/features/tutorial/tutorialContext';
 import { resetDb } from '@/test/resetDb';
 import { ActiveWorkoutBar } from './ActiveWorkoutBar';
 import { STALE_WORKOUT_MS, isWorkoutStale } from './staleWorkout';
@@ -39,25 +37,13 @@ function LocationProbe() {
   return createElement('output', { 'data-testid': 'location-probe' }, useLocation().pathname);
 }
 
-function renderBar({
-  report = vi.fn<TutorialControls['report']>(),
-  offerMission = vi.fn<TutorialControls['offerMission']>(),
-  initialEntry = '/',
-}: {
-  report?: TutorialControls['report'];
-  offerMission?: TutorialControls['offerMission'];
-  initialEntry?: string;
-} = {}) {
+function renderBar({ initialEntry = '/' }: { initialEntry?: string } = {}) {
   render(
     createElement(
-      TutorialContext.Provider,
-      { value: { openHelp: vi.fn(), startMission: vi.fn(), offerMission, report } },
-      createElement(
-        MemoryRouter,
-        { initialEntries: [initialEntry] },
-        createElement(ActiveWorkoutBar),
-        createElement(LocationProbe),
-      ),
+      MemoryRouter,
+      { initialEntries: [initialEntry] },
+      createElement(ActiveWorkoutBar),
+      createElement(LocationProbe),
     ),
   );
 }
@@ -117,11 +103,9 @@ describe('ActiveWorkoutBar recovery', () => {
     const actualDetail = await getWorkoutDetail(workout.id);
     const pending = deferred<WorkoutDetail | null>();
     vi.spyOn(workoutsRepository, 'getWorkoutDetail').mockReturnValue(pending.promise);
-    const offerMission = vi.fn();
-    renderBar({ offerMission });
+    renderBar();
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
-    expect(offerMission).toHaveBeenCalledWith('TUT-REC-01');
     expect(screen.getByRole('button', { name: 'Abandonner la séance' })).toBeDisabled();
     expect(screen.queryByText(/0 série/)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reprendre la séance' })).toBeEnabled();
@@ -191,46 +175,36 @@ describe('ActiveWorkoutBar recovery', () => {
   });
 
   it.each([
-    ['Reprendre la séance', 'resume', '/workout'],
-    ['Voir le bilan et terminer', 'finish', '/workout/finish'],
-  ] as const)('reports %s and navigates explicitly', async (label, choice, destination) => {
-    const workout = await createActiveWorkout(true);
-    const report = vi.fn();
-    renderBar({ report });
+    ['Reprendre la séance', '/workout'],
+    ['Voir le bilan et terminer', '/workout/finish'],
+  ] as const)('%s navigates explicitly', async (label, destination) => {
+    await createActiveWorkout(true);
+    renderBar();
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
     await userEvent.click(screen.getByRole('button', { name: label }));
 
-    expect(report).toHaveBeenCalledWith({
-      type: 'stale-workout-choice',
-      workoutId: workout.id,
-      choice,
-    });
     expect(screen.getByTestId('location-probe')).toHaveTextContent(destination);
   });
 
-  it('does not report, close, or navigate when durable discard rejects', async () => {
+  it('does not close or navigate when durable discard rejects', async () => {
     await createActiveWorkout(true);
-    const report = vi.fn();
     const discard = vi
       .spyOn(workoutsRepository, 'discardWorkout')
       .mockRejectedValueOnce(new Error('IndexedDB unavailable'));
-    renderBar({ report, initialEntry: '/settings' });
+    renderBar({ initialEntry: '/settings' });
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Abandonner la séance' }));
     await userEvent.click(screen.getByRole('button', { name: 'Confirmer l’abandon' }));
     await waitFor(() => expect(discard).toHaveBeenCalledOnce());
 
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'stale-workout-choice', choice: 'discard' }),
-    );
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/settings');
     expect(screen.getByTestId('location-probe')).not.toHaveTextContent(/^\/$/);
     expect(screen.getByRole('button', { name: 'Reprendre la séance' })).toBeInTheDocument();
   });
 
-  it('reports discard only after the confirmed repository write succeeds', async () => {
+  it('closes the sheet only after the confirmed repository write succeeds', async () => {
     const workout = await createActiveWorkout(true);
     const gate = deferred<void>();
     const realDiscard = workoutsRepository.discardWorkout;
@@ -238,8 +212,7 @@ describe('ActiveWorkoutBar recovery', () => {
       await gate.promise;
       return realDiscard(workoutId);
     });
-    const report = vi.fn();
-    renderBar({ report });
+    renderBar();
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
     const discard = screen.getByRole('button', { name: 'Abandonner la séance' });
@@ -247,18 +220,12 @@ describe('ActiveWorkoutBar recovery', () => {
     await userEvent.click(discard);
     await userEvent.click(screen.getByRole('button', { name: 'Confirmer l’abandon' }));
 
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'stale-workout-choice', choice: 'discard' }),
-    );
     expect((await db.workouts.get(workout.id))?.deletedAt).toBe(0);
+    expect(screen.getByTestId('location-probe')).toHaveTextContent(/^\/$/);
 
     gate.resolve();
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'stale-workout-choice',
-        workoutId: workout.id,
-        choice: 'discard',
-      }),
+    await waitFor(async () =>
+      expect((await db.workouts.get(workout.id))?.deletedAt).toBeGreaterThan(0),
     );
     expect((await db.workouts.get(workout.id))?.deletedAt).toBeGreaterThan(0);
   });

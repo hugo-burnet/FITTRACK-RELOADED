@@ -118,7 +118,46 @@ describe('WorkoutSetRow — à l’échec : les répétitions sont le résultat,
 
     await userEvent.click(screen.getByRole('button', { name: 'Précédent' }));
 
-    expect(onWrite).toHaveBeenCalledWith({ weight: 70, reps: 12 }, true);
+    expect(onWrite).toHaveBeenCalledWith({ weight: 70, reps: 12 });
+  });
+});
+
+describe('WorkoutSetRow — la série du dessus en grisé', () => {
+  const second: WorkoutSet = {
+    ...set,
+    id: 'set-2',
+    order: 1,
+    weight: undefined,
+    reps: undefined,
+    unilateralSecondSideStartsAt: undefined,
+  };
+  const first: WorkoutSet = { ...second, id: 'set-1', order: 0, weight: 60, reps: 8, isCompleted: 1 };
+
+  it('montre les chiffres de la série validée au-dessus, et la coche les propose tels quels', async () => {
+    const onComplete = vi.fn();
+    const onWrite = vi.fn();
+    render(
+      <WorkoutSetRow
+        set={second}
+        number={2}
+        columns={entryColumns('weight_reps')}
+        previous={undefined}
+        above={first}
+        onWrite={onWrite}
+        onComplete={onComplete}
+        onUncomplete={vi.fn()}
+        onMenu={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('textbox', { name: /Série 2 — kg/ })).toHaveAttribute('placeholder', '60');
+    expect(screen.getByRole('textbox', { name: /Série 2 — reps/ })).toHaveAttribute('placeholder', '8');
+    // Rien n'est écrit tant qu'on ne valide pas.
+    expect(onWrite).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Valider la série 2' }));
+
+    expect(onComplete).toHaveBeenCalledWith({ weight: 60, reps: 8 });
   });
 });
 

@@ -11,7 +11,6 @@ import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachRecommendation } from '@/data/repositories/coachApply';
 import { bannerReading } from '@/features/benchmark/benchmarkText';
 import { dismissRecommendation } from '@/data/repositories/coachRecommendations';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { DELOAD_PERCENT } from '@/lib/deload';
 import { platesConfigFor } from '@/lib/plateLoading';
@@ -33,6 +32,7 @@ import {
 } from '@/ui';
 import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
+import { RestDock } from './RestDock';
 import { announce } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { useWorkoutPace } from './useWorkoutPace';
@@ -52,7 +52,6 @@ const EMPTY_LINES: WorkoutExerciseDetail[] = [];
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
@@ -137,6 +136,13 @@ export function WorkoutScreen() {
     0,
   );
 
+  // L'exercice dont une série se repose : sa cadence prend la relève à la fin du repos.
+  const restSetId = rest.setId ?? '';
+  const restLine =
+    rest.setId === null
+      ? undefined
+      : exercises.find((line) => line.sets.some((set) => set.id === rest.setId));
+
   return (
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
@@ -150,10 +156,8 @@ export function WorkoutScreen() {
           />
           <HeaderAction
             label={t('workout.workoutMenu')}
-            tutorialId="workout-menu"
             onClick={() => {
               setSheet({ kind: 'workout' });
-              tutorial?.report({ type: 'workout-menu-opened', workoutId: workout.id });
             }}
           >
             <MoreIcon />
@@ -218,15 +222,44 @@ export function WorkoutScreen() {
         </>
       }
       footer={
-        <ActionBand
-          label={t('workout.finish')}
-          tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
-          tutorialId="workout-finish"
-          onClick={() => {
-            tutorial?.report({ type: 'workout-finish-opened', workoutId: workout.id });
-            void navigate('/workout/finish');
-          }}
-        />
+        <>
+          {/* Le repos, hors de la zone qui défile : il reste sous les yeux quand on passe à
+              l'exercice suivant (audit v2.19, constat 3). Monté tant que la série qui se repose est
+              dans la séance, comme l'était sa barre dans la carte. */}
+          {restLine !== undefined && rest.setId !== null && (
+            <RestDock
+              key={rest.setId}
+              startedAt={rest.startedAt}
+              endsAt={rest.endsAt}
+              audioSuppressed={effortSetId === rest.setId}
+              onShift={(seconds) => rest.shift(restSetId, seconds)}
+              onSkip={() => rest.skip(restSetId)}
+              onDone={(audioAllowed) => {
+                // The wall clock is authoritative even while the effort strip is open. At its
+                // deadline the rest still ends, but the unanswered RPE must not start a cadence
+                // behind the user's question.
+                if (!audioAllowed) {
+                  rest.stop(restSetId);
+                  return false;
+                }
+                // The rest's 3–2–1 is the preparation: at zero, its next working set owns the
+                // audio clock.
+                const paced = pace.startFor(restLine, restSetId);
+                if (paced) return true;
+                const advanced = pace.startFollowing(restLine);
+                if (!advanced) rest.stop();
+                return advanced;
+              }}
+            />
+          )}
+          <ActionBand
+            label={t('workout.finish')}
+            tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
+            onClick={() => {
+              void navigate('/workout/finish');
+            }}
+          />
+        </>
       }
     >
       <div className="flex flex-col gap-2">
@@ -261,7 +294,7 @@ export function WorkoutScreen() {
               keyOf={(line) => line.row.id}
               disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
-              renderItem={(line, index, state) => {
+              renderItem={(line, _index, state) => {
                 const config = line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
                 const loads = config !== null ? workoutExerciseLoads(line) : [];
                 const activeRestSetId =
@@ -277,7 +310,6 @@ export function WorkoutScreen() {
                       exercises.find((item) => item.sets.some((set) => set.isCompleted === 0))?.row
                         .id
                     }
-                    tutorial={index === 0}
                     superset={places.get(line.row.id)}
                     pace={
                       pacer.setId !== null && pacer.rowId === line.row.id
@@ -303,45 +335,10 @@ export function WorkoutScreen() {
                     onStopPace={
                       (pacer.rowId === line.row.id && pacer.setId !== null) ||
                       (hold.rowId === line.row.id && hold.setId !== null)
-                        ? () => {
-                            const stopping = pacer.setId;
-                            pace.stop();
-                            tutorial?.report({ type: 'pace-stopped', setId: stopping });
-                          }
+                        ? () => pace.stop()
                         : undefined
                     }
-                    rest={
-                      activeRestSetId !== null
-                        ? {
-                            setId: activeRestSetId,
-                            startedAt: rest.startedAt,
-                            endsAt: rest.endsAt,
-                            audioSuppressed: effortSetId === activeRestSetId,
-                            onShift: (seconds) => rest.shift(activeRestSetId, seconds),
-                            onDone: (audioAllowed) => {
-                              tutorial?.report({
-                                type: 'rest-finished',
-                                setId: activeRestSetId,
-                              });
-                              // The wall clock is authoritative even while the
-                              // effort strip is open. At its deadline the rest
-                              // still ends, but the unanswered RPE must not
-                              // start a cadence behind the user's question.
-                              if (!audioAllowed) {
-                                rest.stop(activeRestSetId);
-                                return false;
-                              }
-                              // The rest's 3–2–1 is the preparation: at zero,
-                              // its next working set owns the audio clock.
-                              const paced = pace.startFor(line, activeRestSetId);
-                              if (paced) return true;
-                              const advanced = pace.startFollowing(line);
-                              if (!advanced) rest.stop();
-                              return advanced;
-                            },
-                          }
-                        : null
-                    }
+                    resting={activeRestSetId !== null}
                     effort={
                       effortSetId !== null && line.sets.some((set) => set.id === effortSetId)
                         ? {
@@ -352,11 +349,6 @@ export function WorkoutScreen() {
                               ),
                             onAnswer: (rpe) => {
                               void updateSetValues(effortSetId, { rpe });
-                              tutorial?.report({
-                                type: 'workout-rpe-updated',
-                                setId: effortSetId,
-                                rpe,
-                              });
                               const bonus = restBonusSecondsFor(rpe);
                               // Only when the rest being extended is this set’s:
                               // a superset round and a set followed by a drop
@@ -377,14 +369,9 @@ export function WorkoutScreen() {
                     foldCommand={foldCommand}
                     onMenu={() => {
                       setSheet({ kind: 'exercise', rowId: line.row.id, openedAt: Date.now() });
-                      tutorial?.report({
-                        type: 'workout-exercise-menu-opened',
-                        rowId: line.row.id,
-                      });
                     }}
                     onPace={() => {
                       setSheet({ kind: 'pace', rowId: line.row.id });
-                      tutorial?.report({ type: 'pace-sheet-opened', rowId: line.row.id });
                     }}
                     onPlates={
                       config !== null && loads.length > 0
@@ -401,16 +388,14 @@ export function WorkoutScreen() {
                               loading: config.loading,
                             });
                             setSheet({ kind: 'plates' });
-                            tutorial?.report({ type: 'plate-sheet-opened', rowId: line.row.id });
                           }
                         : undefined
                     }
                     onSetMenu={(set, number) => {
                       setSheet({ kind: 'set', setId: set.id, number });
-                      tutorial?.report({ type: 'workout-set-menu-opened', setId: set.id });
                     }}
-                    onWrite={(setId, values, recordable) =>
-                      onWrite(line, setId, values, recordable)
+                    onWrite={(setId, values) =>
+                      onWrite(line, setId, values)
                     }
                     onComplete={(setId, proposed, set) => onComplete(line, setId, proposed, set)}
                     onUncomplete={onUncomplete}
@@ -426,7 +411,6 @@ export function WorkoutScreen() {
                       // pas sur la rampe générique : on corrige une montée, on
                       // n'en ressaisit pas une.
                       setSheet({ kind: 'warmup', rowId: line.row.id, steps: offer.steps });
-                      tutorial?.report({ type: 'warmup-sheet-opened', rowId: line.row.id });
                     }}
                     coachObjective={coachByExercise.get(line.row.exerciseId)}
                     onDismissCoach={
@@ -467,9 +451,7 @@ export function WorkoutScreen() {
         <Card>
           <AddRow
             label={t('workout.addExercise')}
-            tutorialId="workout-add-exercise"
             onClick={() => {
-              tutorial?.report({ type: 'workout-exercise-picker-opened' });
               void navigate('/workout/add');
             }}
           />

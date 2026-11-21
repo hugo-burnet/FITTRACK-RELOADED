@@ -4,7 +4,7 @@ import { t } from '@/i18n/fr';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
 import { ProgrammingGuideEntry } from './ProgrammingGuideEntry';
-import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
+import { Screen } from '@/app/Screen';
 
 /**
  * Le Guide : la famille « Programmer l'entraînement » du wiki, en lecture seule.
@@ -24,7 +24,7 @@ export function WikiProgrammingScreen() {
   const unreviewed = articles.some((article) => article.reviewState === 'pending_human_review');
 
   return (
-    <KnowledgeScreenFrame
+    <Screen
       title={t('knowledge.programming.title')}
       onBack={() => void navigate('/knowledge')}
       action={
@@ -98,6 +98,6 @@ export function WikiProgrammingScreen() {
           ))}
         </ul>
       </div>
-    </KnowledgeScreenFrame>
+    </Screen>
   );
 }

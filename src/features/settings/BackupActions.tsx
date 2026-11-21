@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { getBootStorage } from '@/app/bootEasterEgg';
 import { restoreBackup } from '@/data/repositories/backup';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import {
   parseBackup,
@@ -10,7 +9,7 @@ import {
   type BackupProblem,
 } from '@/lib/backup';
 import { rememberBackup } from '@/stores/backupMemory';
-import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
+import { ConfirmSheet, LearnMore, ListRow } from '@/ui';
 import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
 import { backupStatusLine } from './backupText';
 import { exportBackup } from './exportBackup';
@@ -54,7 +53,6 @@ export function BackupActions({
 }: {
   reload?: () => void;
 } = {}) {
-  const tutorial = useTutorialControls();
   const { lastBackupAt, workoutsSince, now } = useBackupStatus();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -79,7 +77,6 @@ export function BackupActions({
       const outcome = await exportBackup();
       if (outcome === 'failed') fail('settings.backupExportFailed');
       else if (outcome === 'shared' || outcome === 'downloaded') {
-        tutorial?.report({ type: 'backup-exported', outcome });
         if (outcome === 'downloaded') {
           setNotice({ text: t('settings.backupExportDownloaded'), failed: false });
         }
@@ -118,7 +115,6 @@ export function BackupActions({
       total: parsed.total,
       orphans: backupOrphanMessage(parsed.orphans),
     });
-    tutorial?.report({ type: 'restore-confirmation-opened' });
   };
 
   const confirm = () => {
@@ -145,27 +141,32 @@ export function BackupActions({
 
   return (
     <section>
-      <SectionTitle>{t('settings.backupSection')}</SectionTitle>
+      {/* L'état d'abord : c'est la question qu'on vient poser à cette page, avant les gestes. */}
+      <p className="mb-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
+        {backupStatusLine({ lastBackupAt, workoutsSince, now })}
+      </p>
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
-          tutorialId="backup-export"
           title={t('settings.backupExportLink')}
-          subtitle={t('settings.backupExportHint')}
+          subtitle={t('settings.backupExportShort')}
           disabled={busy}
           onClick={() => void save()}
         />
         <ListRow
-          tutorialId="backup-restore"
           title={t('settings.backupImportLink')}
-          subtitle={t('settings.backupImportHint')}
+          subtitle={t('settings.backupImportShort')}
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         />
       </div>
-
-      <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
-        {backupStatusLine({ lastBackupAt, workoutsSince, now })}
-      </p>
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.backupExportHint')}
+        </p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.backupImportHint')}
+        </p>
+      </LearnMore>
 
       <input
         ref={inputRef}

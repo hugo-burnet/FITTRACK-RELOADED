@@ -1,394 +1,75 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { db } from '@/data/db';
-import { newEntity } from '@/data/repositories/base';
-import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { getBootStorage } from '@/app/bootEasterEgg';
+import { setDefaultLoadStepKg } from '@/data/repositories/settings';
 import { resetDb } from '@/test/resetDb';
-import { t } from '@/i18n/fr';
-import { watchInstall } from '@/platform/install';
-import * as saveFile from '@/platform/saveFile';
-import { TTY1_UNLOCK_KEY } from '@/stores/skinUnlock';
+import { rememberBackup } from '@/stores/backupMemory';
+import { ANNOUNCER_STORAGE_KEY } from '@/stores/announcer';
 import { THEME_STORAGE_KEY } from '@/stores/theme';
 import { SettingsScreen } from './SettingsScreen';
 
-async function seedCompletedWorkout(name: string, startedAt: number): Promise<void> {
-  const exercise = newEntity<Exercise>({
-    name: 'Développé couché',
-    primaryMuscle: 'chest',
-    secondaryMuscles: [],
-    equipment: 'barbell',
-    measurementType: 'weight_reps',
-    isCustom: 0,
-    isUnilateral: 0,
-  });
-  const workout = newEntity<Workout>({
-    routineId: '',
-    name,
-    status: 'completed',
-    startedAt,
-    endedAt: startedAt + 3_600_000,
-    durationSeconds: 3600,
-    startedTimezoneOffsetMinutes: 120,
-  });
-  const row = newEntity<WorkoutExercise>({
-    workoutId: workout.id,
-    exerciseId: exercise.id,
-    order: 0,
-    supersetGroup: 0,
-    restSeconds: 120,
-    exerciseName: exercise.name,
-    exerciseMeasurementType: exercise.measurementType,
-    exercisePrimaryMuscle: exercise.primaryMuscle,
-    exerciseEquipment: exercise.equipment,
-  });
-  const set = newEntity<WorkoutSet>({
-    workoutExerciseId: row.id,
-    exerciseId: exercise.id,
-    workoutId: workout.id,
-    order: 0,
-    setType: 'normal',
-    side: 'both',
-    weight: 80,
-    reps: 10,
-    isCompleted: 1,
-    performedAt: startedAt + 60_000,
-  });
+const DAY = 86_400_000;
 
-  await db.transaction(
-    'rw',
-    db.exercises,
-    db.workouts,
-    db.workoutExercises,
-    db.workoutSets,
-    async () => {
-      await db.exercises.add(exercise);
-      await db.workouts.add(workout);
-      await db.workoutExercises.add(row);
-      await db.workoutSets.add(set);
-    },
-  );
-}
-
-function installShare(world: { share?: unknown; clipboard?: unknown }) {
-  Object.defineProperty(navigator, 'share', {
-    value: world.share,
-    configurable: true,
-    writable: true,
-  });
-  Object.defineProperty(navigator, 'clipboard', {
-    value: world.clipboard,
-    configurable: true,
-    writable: true,
-  });
-}
-
-function renderSettings() {
-  render(
-    <MemoryRouter>
-      <SettingsScreen />
+function renderSummary() {
+  return render(
+    <MemoryRouter initialEntries={['/settings']}>
+      <Routes>
+        <Route path="/settings" element={<SettingsScreen />} />
+        <Route path="/settings/:page" element={<p>page ouverte</p>} />
+      </Routes>
     </MemoryRouter>,
   );
 }
 
-const exportAction = () => screen.findByRole('button', { name: /Exporter tout l’historique/ });
+const row = (name: RegExp) => screen.getByRole('button', { name });
 
-describe('SettingsScreen — export de l’historique', () => {
-  beforeEach(resetDb);
-  afterEach(() => installShare({ share: undefined, clipboard: undefined }));
-
-  it('shares every completed workout in one Markdown document', async () => {
-    const share = vi.fn().mockResolvedValue(undefined);
-    installShare({ share, clipboard: { writeText: vi.fn() } });
-    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
-    await seedCompletedWorkout('Lower B', Date.UTC(2026, 6, 29, 16));
-    renderSettings();
-
-    const action = await exportAction();
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
-
-    await waitFor(() => expect(share).toHaveBeenCalledTimes(1));
-    const payload = share.mock.calls[0]?.[0] as { title: string; text: string };
-    expect(payload.title).toBe('FitTrack — historique complet');
-    expect(payload.text).toContain('Périmètre : tout l’historique');
-    expect(payload.text).toContain('Upper A');
-    expect(payload.text).toContain('Lower B');
-  });
-
-  it('disables the action when history is empty', async () => {
-    renderSettings();
-
-    expect(await exportAction()).toBeDisabled();
-  });
-
-  it('confirms the clipboard fallback with history-specific copy', async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    installShare({ share: undefined, clipboard: { writeText } });
-    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
-    renderSettings();
-
-    const action = await exportAction();
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
-
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'Historique copié dans le presse-papiers.',
-    );
-    expect(writeText).toHaveBeenCalledTimes(1);
-  });
-
-  it('announces when sharing and copying are both unavailable', async () => {
-    installShare({ share: undefined, clipboard: undefined });
-    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
-    renderSettings();
-
-    const action = await exportAction();
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
-
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'L’historique n’a pas pu être partagé ni copié.',
-    );
-  });
-});
-
-const csvAction = () => screen.findByRole('button', { name: /Sauvegarder l’historique \(CSV\)/ });
-
-describe('SettingsScreen — sauvegarde CSV', () => {
-  beforeEach(resetDb);
-  afterEach(() => vi.restoreAllMocks());
-
-  it('enregistre le fichier quand il y a au moins une séance terminée', async () => {
-    const save = vi.spyOn(saveFile, 'saveTextFile').mockResolvedValue('downloaded');
-    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
-    renderSettings();
-
-    const action = await csvAction();
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
-
-    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
-    const payload = save.mock.calls[0]?.[0];
-    expect(payload?.name).toMatch(/^fittrack-\d{4}-\d{2}-\d{2}\.csv$/);
-    expect(payload?.text).toContain('Upper A');
-    expect(await screen.findByRole('status')).toHaveTextContent('Sauvegarde téléchargée.');
-  });
-
-  it('désactive l’action quand l’historique est vide', async () => {
-    renderSettings();
-
-    expect(await csvAction()).toBeDisabled();
-  });
-
-  it('annonce l’échec si l’écriture du fichier est refusée', async () => {
-    vi.spyOn(saveFile, 'saveTextFile').mockResolvedValue('failed');
-    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
-    renderSettings();
-
-    const action = await csvAction();
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
-
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'La sauvegarde n’a pas pu être enregistrée.',
-    );
-  });
-});
-
-describe('SettingsScreen — installation', () => {
-  beforeEach(resetDb);
-  // Le module garde l'événement différé dans son état de module. Le vider entre
-  // deux tests par le vrai chemin — celui qu'emprunte une installation faite
-  // depuis le menu du navigateur — plutôt qu'en tripotant un verrou privé.
-  afterEach(() => window.dispatchEvent(new Event('appinstalled')));
-
-  const installAction = () =>
-    screen.findByRole('button', { name: /Installer sur l’écran d’accueil/ });
-
-  /** Rejoue ce que Chrome envoie quand il juge l'app installable. */
-  function offerInstall(outcome: 'accepted' | 'dismissed') {
-    watchInstall();
-    const event = new Event('beforeinstallprompt', { cancelable: true });
-    Object.assign(event, {
-      prompt: vi.fn().mockResolvedValue(undefined),
-      userChoice: Promise.resolve({ outcome }),
-    });
-    window.dispatchEvent(event);
-  }
-
-  it('explique le geste à faire quand le navigateur ne propose aucune invite', async () => {
-    renderSettings();
-
-    await userEvent.click(await installAction());
-
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'Déjà installée, ou à ajouter depuis le menu du navigateur.',
-    );
-  });
-
-  it('confirme une installation acceptée', async () => {
-    offerInstall('accepted');
-    renderSettings();
-
-    await userEvent.click(await installAction());
-
-    expect(await screen.findByRole('status')).toHaveTextContent('FitTrack est installée.');
-  });
-
-  it('ne traite pas un refus comme une panne', async () => {
-    offerInstall('dismissed');
-    renderSettings();
-
-    await userEvent.click(await installAction());
-
-    expect(await screen.findByRole('status')).toHaveTextContent('Installation annulée.');
-  });
-
-  it('annonce que la copie hors-ligne n’est pas encore prête', async () => {
-    // jsdom n'a pas de service worker, donc `isOfflineReady` est faux : c'est
-    // l'état d'un tout premier chargement, avant que le précache soit rempli.
-    renderSettings();
-
-    expect(await screen.findByText('Copie hors-ligne en cours de préparation.')).toBeVisible();
-  });
-});
-
-describe('SettingsScreen — records personnels', () => {
-  beforeEach(resetDb);
-
-  it('garde les actions de dépannage hors des réglages ordinaires', async () => {
-    renderSettings();
-
-    expect(await screen.findByRole('heading', { name: 'Entraînement' })).toBeVisible();
-    expect(await screen.findByRole('button', { name: /Estimation du 1RM.*Epley/ })).toBeVisible();
-    expect(screen.queryByRole('button', { name: /Recalculer tous les records/ })).toBeNull();
-    expect(
-      screen.queryByRole('button', { name: /Mettre à jour les anciennes séances/ }),
-    ).toBeNull();
-    expect(screen.getByRole('button', { name: /Dépannage et données/ })).toBeVisible();
-  });
-});
-
-describe('SettingsScreen — thème', () => {
+describe('SettingsScreen — le sommaire', () => {
   beforeEach(async () => {
-    await resetDb();
     localStorage.clear();
     document.documentElement.removeAttribute('data-theme');
+    await resetDb();
   });
 
-  const themeGroup = () => screen.getByRole('radiogroup', { name: t('settings.theme') });
-  const tty1Option = () =>
-    within(themeGroup()).getByRole('radio', { name: t('settings.themeTty1') });
+  it('rend ses cinq lignes, chacune avec son état', async () => {
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
+    localStorage.setItem(ANNOUNCER_STORAGE_KEY, 'voice');
+    await setDefaultLoadStepKg(1.125);
+    renderSummary();
 
-  describe('quand TTY1 est débloqué', () => {
-    beforeEach(() => localStorage.setItem(TTY1_UNLOCK_KEY, '1'));
-
-    it('offers the four themes and applies TTY1 at once', async () => {
-      renderSettings();
-
-      expect(
-        within(themeGroup())
-          .getAllByRole('radio')
-          .map((option) => option.textContent),
-      ).toEqual([
-        t('settings.themeDark'),
-        t('settings.themeLight'),
-        t('settings.themeTty1'),
-        t('settings.themeCyber'),
-      ]);
-
-      await userEvent.click(tty1Option());
-
-      expect(document.documentElement.getAttribute('data-theme')).toBe('tty1');
-      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('tty1');
-      expect(screen.getByText(t('settings.themeTty1Hint'))).toBeInTheDocument();
-    });
-
-    it('keeps the dark theme hint until TTY1 is chosen', () => {
-      renderSettings();
-
-      expect(screen.getByText(t('settings.themeHint'))).toBeInTheDocument();
-      expect(screen.queryByText(t('settings.themeTty1Hint'))).toBeNull();
-    });
-
-    it('shows no lock and no riddle', () => {
-      renderSettings();
-
-      expect(tty1Option()).not.toHaveAttribute('aria-disabled');
-      expect(tty1Option().querySelector('svg')).toBeNull();
-      expect(screen.queryByText(t('settings.themeTty1Locked'))).toBeNull();
-    });
+    expect(screen.getByRole('heading', { level: 1, name: 'Réglages' })).toBeVisible();
+    expect(row(/^Apparence/)).toHaveTextContent('Clair');
+    expect(row(/^Séance/)).toHaveTextContent('Sons + voix');
+    await waitFor(() => expect(row(/^Coach/)).toHaveTextContent('1,125 kg'));
+    // L'état de la sauvegarde vit dans le bandeau seul ; la ligne dit ce que la page contient.
+    expect(row(/^Sauvegarde/)).toHaveTextContent('Compte complet · restaurer · exports');
+    expect(row(/^Application/)).toHaveTextContent('Hors-ligne en préparation');
   });
 
-  describe('Cyber', () => {
-    const cyberOption = () =>
-      within(themeGroup()).getByRole('radio', { name: t('settings.themeCyber') });
+  it('dit « Selon le matériel » tant qu’aucun pas n’est posé', async () => {
+    renderSummary();
 
-    it('is open from the start, with nothing to unlock', () => {
-      renderSettings();
-
-      expect(cyberOption()).not.toHaveAttribute('aria-disabled');
-    });
-
-    it('applies at once and says what it is', async () => {
-      renderSettings();
-
-      await userEvent.click(cyberOption());
-
-      expect(document.documentElement.getAttribute('data-theme')).toBe('cyber');
-      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('cyber');
-      expect(screen.getByText(t('settings.themeCyberHint'))).toBeInTheDocument();
-    });
+    await waitFor(() => expect(row(/^Coach/)).toHaveTextContent('Selon le matériel'));
   });
 
-  describe('tant que TTY1 est verrouillé', () => {
-    it('keeps the option in the list, dimmed and marked as unavailable', () => {
-      renderSettings();
+  it('alerte, sans sauvegarde, dans un bandeau qui ouvre la page Sauvegarde', async () => {
+    const user = userEvent.setup();
+    renderSummary();
 
-      expect(
-        within(themeGroup())
-          .getAllByRole('radio')
-          .map((option) => option.textContent),
-      ).toEqual([
-        t('settings.themeDark'),
-        t('settings.themeLight'),
-        t('settings.themeTty1'),
-        t('settings.themeCyber'),
-      ]);
-      expect(tty1Option()).toHaveAttribute('aria-disabled', 'true');
-      expect(tty1Option()).toHaveAttribute('aria-checked', 'false');
-      expect(tty1Option().querySelector('svg')).not.toBeNull();
+    const banner = screen.getByRole('button', {
+      name: 'Aucune sauvegarde sur cet appareil',
     });
+    expect(within(banner).getByText('Aucune sauvegarde sur cet appareil')).toBeVisible();
+    await user.click(banner);
+    expect(screen.getByText('page ouverte')).toBeVisible();
+  });
 
-    it('does not say how to unlock it, only that something is to be found', () => {
-      renderSettings();
+  it('dit l’ancienneté de la dernière sauvegarde, dans le bandeau et sur la ligne', async () => {
+    rememberBackup(getBootStorage(), Date.now() - 3 * DAY);
+    renderSummary();
 
-      const riddle = screen.getByText(t('settings.themeTty1Locked'));
-      expect(riddle).toBeInTheDocument();
-      expect(tty1Option()).toHaveAttribute('aria-describedby', riddle.id);
-    });
-
-    it('ignores a tap on it', async () => {
-      renderSettings();
-
-      await userEvent.click(tty1Option());
-
-      expect(document.documentElement.getAttribute('data-theme')).toBeNull();
-      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
-      expect(screen.queryByText(t('settings.themeTty1Hint'))).toBeNull();
-    });
-
-    it('still lets the two other themes be chosen', async () => {
-      renderSettings();
-
-      await userEvent.click(
-        within(themeGroup()).getByRole('radio', { name: t('settings.themeLight') }),
-      );
-
-      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
-    });
+    expect(screen.getByText('Dernière sauvegarde : il y a 3 jours')).toBeVisible();
+    expect(screen.queryByText(/^Dernière : /)).toBeNull();
   });
 });

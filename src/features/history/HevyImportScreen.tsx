@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import {
   hasExistingHistory,
   importHevyWorkouts,
@@ -114,7 +113,6 @@ function DetectedCounts({ data }: { data: HevyImportData }) {
 }
 
 export function HevyImportScreen() {
-  const tutorial = useTutorialControls();
   const navigate = useAppNavigate();
   const [state, setState] = useState<ImportState>({
     step: 'file',
@@ -164,13 +162,10 @@ export function HevyImportScreen() {
         preparation,
         draft: createHevyImportDraft(result.data, preparation),
       };
-      const workoutCount = result.data.workouts.length;
-      tutorial?.report({ type: 'hevy-file-parsed', workoutCount });
       const straightToReview = ready.draft.rows.length === 0;
       // Un fichier dont tous les exercices sont reconnus saute l'association :
       // la revue est alors atteinte par le même geste, et l'étape suivante ne
       // doit pas attendre un « Continuer » qui n'apparaîtra jamais.
-      if (straightToReview) tutorial?.report({ type: 'hevy-review-opened', workoutCount });
       setState(
         straightToReview
           ? { step: 'review', failed: false, ...ready }
@@ -246,13 +241,8 @@ export function HevyImportScreen() {
     state.step === 'mapping' ? (
       <ActionBand
         label={t('history.importContinue')}
-        tutorialId="hevy-continue"
         disabled={unresolvedHevySources(state.draft).length > 0}
         onClick={() => {
-          tutorial?.report({
-            type: 'hevy-review-opened',
-            workoutCount: state.data.workouts.length,
-          });
           setState({
             step: 'review',
             failed: false,
@@ -263,7 +253,6 @@ export function HevyImportScreen() {
     ) : state.step === 'review' ? (
       <ActionBand
         label={t('history.importSubmit')}
-        tutorialId="hevy-submit"
         onClick={() => void runImport(state)}
       />
     ) : state.step === 'importing' ? (

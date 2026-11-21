@@ -33,28 +33,28 @@ export function ActiveWorkoutRecoverySheet({
     validatedSetCount === null
       ? ''
       : validatedSetCount === 0
-        ? t('tutorial.recovery.discardBodyNone')
+        ? t('recovery.discardBodyNone')
         : validatedSetCount === 1
-          ? t('tutorial.recovery.discardBodyOne')
-          : t('tutorial.recovery.discardBody', { count: validatedSetCount });
+          ? t('recovery.discardBodyOne')
+          : t('recovery.discardBody', { count: validatedSetCount });
 
   return (
     <>
       <Sheet
         open={open && !confirmingDiscard}
         onClose={onClose}
-        title={t('tutorial.recovery.title')}
+        title={t('recovery.title')}
       >
         <p className="text-base font-semibold text-[var(--text-1)]">{workoutName}</p>
         <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('tutorial.recovery.body')}
+          {t('recovery.body')}
         </p>
         <div className="mt-5 flex flex-col gap-2">
           <Button variant="primary" size="lg" fullWidth onClick={onResume}>
-            {t('tutorial.recovery.resume')}
+            {t('recovery.resume')}
           </Button>
           <Button size="lg" fullWidth onClick={onFinish}>
-            {t('tutorial.recovery.finish')}
+            {t('recovery.finish')}
           </Button>
           <Button
             variant="danger"
@@ -65,7 +65,7 @@ export function ActiveWorkoutRecoverySheet({
               if (validatedSetCount !== null) setConfirmingDiscard(true);
             }}
           >
-            {t('tutorial.recovery.discard')}
+            {t('recovery.discard')}
           </Button>
         </div>
       </Sheet>
@@ -73,9 +73,9 @@ export function ActiveWorkoutRecoverySheet({
       <ConfirmSheet
         open={open && confirmingDiscard && validatedSetCount !== null}
         onClose={() => setConfirmingDiscard(false)}
-        title={t('tutorial.recovery.discardTitle')}
+        title={t('recovery.discardTitle')}
         body={discardBody}
-        confirmLabel={t('tutorial.recovery.discardConfirm')}
+        confirmLabel={t('recovery.discardConfirm')}
         danger
         onConfirm={() => {
           setConfirmingDiscard(false);

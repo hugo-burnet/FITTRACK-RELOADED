@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { findWikiSection, type WikiPassage } from './wikiIndex';
-import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
+import { Screen } from '@/app/Screen';
 
 function PassageCard({ passage, rank }: { passage: WikiPassage; rank: number }) {
   return (
@@ -34,7 +34,7 @@ export function WikiSectionScreen() {
 
   if (section === undefined) {
     return (
-      <KnowledgeScreenFrame
+      <Screen
         title={t('knowledge.wiki.notFoundTitle')}
         onBack={() => void navigate('/knowledge')}
       >
@@ -43,14 +43,14 @@ export function WikiSectionScreen() {
             {t('knowledge.wiki.notFoundBody')}
           </p>
         </div>
-      </KnowledgeScreenFrame>
+      </Screen>
     );
   }
 
   const count = section.passages.length;
 
   return (
-    <KnowledgeScreenFrame
+    <Screen
       title={section.title}
       onBack={() => void navigate('/knowledge')}
       // Le document et les titres AU-DESSUS de celui-ci, jamais lui-même : une
@@ -74,6 +74,6 @@ export function WikiSectionScreen() {
           <PassageCard key={passage.claimIds[0]} passage={passage} rank={index + 1} />
         ))}
       </div>
-    </KnowledgeScreenFrame>
+    </Screen>
   );
 }

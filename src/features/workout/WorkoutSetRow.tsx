@@ -13,6 +13,7 @@ import { SetCheckFx } from './SetCheckFx';
 import { setImpactTag } from './setImpact';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
+import { FIELD_KEY, suggestedNumber } from './setSuggestion';
 
 /** Non-normal sets replace their rank with a distinct, non-color-only mark. */
 const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>> = {
@@ -20,20 +21,6 @@ const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>
   dropset: DropsetIcon,
   failure: BoltIcon,
 };
-
-const FIELD_KEY = {
-  weight: 'weight',
-  reps: 'reps',
-  duration: 'durationSeconds',
-  distance: 'distanceMeters',
-} as const satisfies Record<TargetField, keyof SetValues>;
-
-const TARGET_KEY = {
-  weight: 'targetWeight',
-  reps: 'targetReps',
-  duration: 'targetDurationSeconds',
-  distance: 'targetDistanceMeters',
-} as const satisfies Record<TargetField, keyof WorkoutSet>;
 
 /** Fixed widths preserve numeric entry at the 375 px minimum viewport. */
 const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
@@ -45,13 +32,10 @@ type Props = {
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
   /**
-   * Le rang de cette ligne pour le tutoriel, quand il en désigne une.
-   *
-   * Deux rangs suffisent : la campagne fait valider une première série, puis
-   * une seconde, et une consigne qui vise « la série » sans dire laquelle
-   * encadrerait la mauvaise dès qu'il y en a deux.
+   * La série de travail validée juste au-dessus dans cette séance (`suggestionAbove`). Elle passe
+   * devant `previous` pour le grisé et la coche — jamais pour « Précédent », qui dit la dernière fois.
    */
-  tutorialRank?: 'first' | 'second';
+  above?: WorkoutSet;
   /**
    * Vrai tant que le chrono tourne sur cette série. La coche est alors le geste
    * qui l'arrête : la désactiver parce qu'aucune durée n'est encore tapée
@@ -74,7 +58,7 @@ type Props = {
    * enregistrait comme le maximum de la personne sans qu'elle ait rien tapé.
    */
   amrap?: boolean;
-  onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
+  onWrite: (values: Partial<SetValues>) => void;
   /**
    * La coche, avec les chiffres qu'elle **propose** — la cible, la séance d'avant — et jamais ce
    * qui est déjà saisi : cette ligne lit la base avec un temps de retard, et ce qu'elle croirait
@@ -92,7 +76,7 @@ export function WorkoutSetRow({
   number,
   columns,
   previous,
-  tutorialRank,
+  above,
   holding = false,
   unilateral = false,
   amrap = false,
@@ -135,23 +119,17 @@ export function WorkoutSetRow({
         ? t('workout.completeSecondSide', { number })
         : t('workout.complete', { number });
 
-  // Never borrow another rank: proposed values may be recorded with one tap.
+  // « Précédent » : le même rang de la séance d'avant, jamais un autre — la coche l'enregistre d'un tap.
   const previousValue = (field: TargetField): number | undefined => previous?.[FIELD_KEY[field]];
 
   const valueOf = (field: TargetField): number | undefined => set[FIELD_KEY[field]];
 
-  // Today's prescription takes precedence over the previous session.
-  const ghostOf = (field: TargetField): number | undefined =>
-    set[TARGET_KEY[field]] ?? previousValue(field);
-
   const targetOf = (field: TargetField): string | undefined =>
     field === 'reps' && isRepRange(set) ? repsReading(set)?.value : undefined;
 
-  // A range is guidance, not a recordable value; reuse the previous count.
-  const ghostNumberOf = (field: TargetField): number | undefined => {
-    if (amrap && field === 'reps') return undefined;
-    return targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
-  };
+  // Prescription du jour, puis la série du dessus, puis la séance d'avant (`suggestedNumber`).
+  const ghostNumberOf = (field: TargetField): number | undefined =>
+    suggestedNumber(set, field, { above, previous, amrap });
 
   const resolved: ResolvedValues = {};
   for (const column of columns) {
@@ -233,12 +211,11 @@ export function WorkoutSetRow({
     apply('reps', 'reps');
     apply('duration', 'durationSeconds');
     apply('distance', 'distanceMeters');
-    onWrite(values, isSetRecordable(columns, next));
+    onWrite(values);
   };
 
   return (
     <div
-      data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
       ref={rowRef}
       data-part="set-row"
       data-done={done || undefined}
@@ -254,9 +231,6 @@ export function WorkoutSetRow({
           Mark === undefined
             ? t('workout.setNumber', { number })
             : `${t('workout.setNumber', { number })} — ${setTypeLabel(set.setType)}`
-        }
-        data-tutorial-id={
-          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-menu`
         }
         onClick={onMenu}
         className="flex size-12 shrink-0 items-center justify-center rounded-lg text-sm
@@ -307,9 +281,6 @@ export function WorkoutSetRow({
       <button
         type="button"
         data-part="set-check"
-        data-tutorial-id={
-          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-complete`
-        }
         aria-pressed={done}
         // Pendant la transition, la coche n'a rien à fermer : le premier côté est
         // fini et le second n'a pas commencé.

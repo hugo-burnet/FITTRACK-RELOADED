@@ -73,7 +73,7 @@ export function DebugScreen() {
   };
 
   return (
-    <Screen title={t('debug.title')} onBack={() => void navigate('/settings')}>
+    <Screen title={t('debug.title')} onBack={() => void navigate('/settings/app')}>
       <div className="flex flex-col gap-9">
         <RecordRepairAction />
 

@@ -68,9 +68,10 @@ export interface BackupFile {
   app: { name: string; schemaVersion: number };
   /**
    * The preferences that live in `localStorage` rather than in Dexie — theme,
-   * announcer, effort strip, tutorial. Captured by namespace (`fittrack:`)
-   * rather than by a list, so a preference added later is backed up without
-   * anyone having to remember this file.
+   * announcer, effort strip (and, in older backups, the retired tutorial's
+   * progress, which restores and is then ignored). Captured by namespace
+   * (`fittrack:`) rather than by a list, so a preference added later is backed
+   * up without anyone having to remember this file.
    */
   preferences: Record<string, string>;
   tables: Record<BackupTable, BackupRow[]>;

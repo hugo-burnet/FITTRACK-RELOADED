@@ -19,7 +19,16 @@ import {
   ProgramEditorRoute,
   ProgramListRoute,
 } from './features/programs/routes';
-import { CreditsRoute, DebugRoute, VolumeRoute } from './features/settings/routes';
+import {
+  AppearanceRoute,
+  AppRoute,
+  BackupRoute,
+  CoachSettingsRoute,
+  CreditsRoute,
+  DebugRoute,
+  SessionRoute,
+  VolumeRoute,
+} from './features/settings/routes';
 import { ExerciseDetailRoute, ExerciseFormRoute } from './features/exercises/routes';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
@@ -109,6 +118,11 @@ export const router = createHashRouter([
       { path: 'knowledge/programmation/:articleId', element: <WikiArticleRoute /> },
       { path: 'knowledge/a/:articleId', element: <WikiArticleRoute /> },
       { path: 'knowledge/s/:sectionId', element: <WikiSectionRoute /> },
+      { path: 'settings/appearance', element: <AppearanceRoute /> },
+      { path: 'settings/session', element: <SessionRoute /> },
+      { path: 'settings/coach', element: <CoachSettingsRoute /> },
+      { path: 'settings/backup', element: <BackupRoute /> },
+      { path: 'settings/app', element: <AppRoute /> },
       { path: 'settings/debug', element: <DebugRoute /> },
       { path: 'settings/volume', element: <VolumeRoute /> },
       { path: 'settings/about', element: <CreditsRoute /> },

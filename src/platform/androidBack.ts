@@ -1,5 +1,8 @@
 export type BackDecision =
-  { kind: 'history' } | { kind: 'navigate'; to: string } | { kind: 'exit' };
+  | { kind: 'close-sheet' }
+  | { kind: 'history' }
+  | { kind: 'navigate'; to: string }
+  | { kind: 'exit' };
 
 const EXACT_PARENTS = new Map<string, string>([
   ['/workout/add', '/workout'],
@@ -7,14 +10,26 @@ const EXACT_PARENTS = new Map<string, string>([
   ['/workout', '/'],
   ['/history/import', '/history'],
   ['/exercises/new', '/exercises'],
-  ['/settings/debug', '/settings'],
-  ['/settings/volume', '/settings'],
+  ['/settings/appearance', '/settings'],
+  ['/settings/session', '/settings'],
+  ['/settings/coach', '/settings'],
+  ['/settings/backup', '/settings'],
+  ['/settings/app', '/settings'],
+  ['/settings/debug', '/settings/app'],
+  ['/settings/about', '/settings/app'],
+  ['/settings/volume', '/settings/coach'],
   ['/settings', '/'],
 ]);
 
 const ROOT_ROUTES = new Set(['/', '/routines', '/history', '/analytics', '/exercises']);
 
-export function androidBackDecision(pathname: string, canGoBack: boolean): BackDecision {
+export function androidBackDecision(
+  pathname: string,
+  canGoBack: boolean,
+  sheetOpen = false,
+): BackDecision {
+  // Une feuille, une confirmation ou un menu ouvert prend le retour, et rien d'autre.
+  if (sheetOpen) return { kind: 'close-sheet' };
   if (canGoBack) return { kind: 'history' };
 
   const exactParent = EXACT_PARENTS.get(pathname);

@@ -3,25 +3,18 @@ import { previewAnnouncer } from '@/audio/announce';
 import type { AnnouncerMode } from '@/audio/announcer';
 import { allClips } from '@/audio/cues';
 import { probeVoicePack } from '@/audio/voicePack';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
-import { t, type TranslationKey } from '@/i18n/fr';
+import { t } from '@/i18n/fr';
 import {
   applyAnnouncerEcho,
   applyAnnouncerMode,
   loadAnnouncerEcho,
   loadAnnouncerMode,
 } from '@/stores/announcer';
-import { ListRow, SectionTitle, Toggle } from '@/ui';
+import { LearnMore, ListRow, SectionTitle, Toggle } from '@/ui';
+import { ANNOUNCER_MODES } from './announcerModes';
 
 /** One clip answers for the folder — the pack is written in one run. */
 const [PROBE_CLIP] = allClips();
-
-const MODES: { value: AnnouncerMode; labelKey: TranslationKey }[] = [
-  { value: 'silence', labelKey: 'settings.announcerSilence' },
-  { value: 'sounds', labelKey: 'settings.announcerSounds' },
-  { value: 'voice', labelKey: 'settings.announcerVoice' },
-  { value: 'voice-only', labelKey: 'settings.announcerVoiceOnly' },
-];
 
 /**
  * How loud the app is, and the one place where you can hear the answer.
@@ -37,7 +30,6 @@ const MODES: { value: AnnouncerMode; labelKey: TranslationKey }[] = [
  * exactly like "Sons".
  */
 export function AnnouncerSettings() {
-  const tutorial = useTutorialControls();
   const [mode, setMode] = useState<AnnouncerMode>(loadAnnouncerMode);
   /** `undefined` while the answer is unknown — never rendered as "missing". */
   const [installed, setInstalled] = useState<boolean | undefined>(
@@ -60,7 +52,6 @@ export function AnnouncerSettings() {
   const choose = (next: AnnouncerMode) => {
     setMode(next);
     applyAnnouncerMode(next);
-    tutorial?.report({ type: 'announcer-mode-changed', mode: next });
     if (next !== 'silence') void previewAnnouncer('rest-over');
   };
 
@@ -68,7 +59,6 @@ export function AnnouncerSettings() {
     const next = !echo;
     setEcho(next);
     applyAnnouncerEcho(next);
-    tutorial?.report({ type: 'announcer-echo-changed', enabled: next });
     // Heard immediately, and on the phrase the switch is about: the difference
     // between a voice memo and an announcement is not describable in a label.
     if (mode !== 'silence') void previewAnnouncer('rest-over');
@@ -88,14 +78,13 @@ export function AnnouncerSettings() {
         <div
           role="radiogroup"
           aria-label={t('settings.announcer')}
-          data-tutorial-id="announcer-modes"
           /* Deux colonnes depuis qu'il y a quatre modes : « Voix uniquement »
              ne tient pas sur un quart de 375 px, et une rangée qui tronque ses
              propres libellés ne se choisit pas. */
           data-part="segmented"
           className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
         >
-          {MODES.map(({ value, labelKey }) => (
+          {ANNOUNCER_MODES.map(({ value, labelKey }) => (
             <button
               key={value}
               type="button"
@@ -114,29 +103,12 @@ export function AnnouncerSettings() {
             </button>
           ))}
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('settings.announcerHint')}
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('settings.announcerMusicHint')}
-        </p>
-        {mode === 'voice-only' && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-            {t('settings.announcerVoiceOnlyHint')}
-          </p>
-        )}
-        {/* Le pack manquant concerne les deux modes qui parlent. */}
-        {(mode === 'voice' || mode === 'voice-only') && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
-        )}
       </div>
 
       {mode !== 'silence' && (
         <div className="mt-3 overflow-hidden rounded-2xl bg-[var(--surface-1)]">
           <ListRow
             title={t('settings.announcerEcho')}
-            subtitle={t('settings.announcerEchoHint')}
-            tutorialId="announcer-echo"
             trailing={
               <Toggle
                 label={t('settings.announcerEcho')}
@@ -148,6 +120,28 @@ export function AnnouncerSettings() {
           />
         </div>
       )}
+
+      {/* Aucune phrase d'aide visible : le groupe tient en ses boutons, et tout ce qu'il dit se déplie. */}
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('settings.announcerHint')}</p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.announcerMusicHint')}
+        </p>
+        {mode === 'voice-only' && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerVoiceOnlyHint')}
+          </p>
+        )}
+        {/* Le pack manquant concerne les deux modes qui parlent. */}
+        {(mode === 'voice' || mode === 'voice-only') && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
+        )}
+        {mode !== 'silence' && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerEchoHint')}
+          </p>
+        )}
+      </LearnMore>
     </section>
   );
 }

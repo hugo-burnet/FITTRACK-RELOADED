@@ -51,7 +51,6 @@ export function BottomNav() {
               <Link
                 viewTransition
                 to={to}
-                data-tutorial-nav={to}
                 aria-current={isActive ? 'page' : undefined}
                 className={`relative flex min-h-14 flex-col items-center justify-center gap-1 pt-1
                  ${isActive ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`}

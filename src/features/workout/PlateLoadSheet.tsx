@@ -142,7 +142,6 @@ export function PlateLoadSheet({
 
         <details
           className="group mb-6 border-b border-[var(--border)] pb-6"
-          data-tutorial-id="workout-plates-available"
         >
           <summary
             data-part="fold"

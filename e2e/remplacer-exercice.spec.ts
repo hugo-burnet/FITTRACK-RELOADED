@@ -45,6 +45,24 @@ test.describe('remplacer l’exercice en séance', () => {
     );
   });
 
+  test('la liste s’ouvre sur les exercices du même muscle, sans l’exercice remplacé', async ({
+    page,
+  }) => {
+    await startFiveByFive(page);
+    await openReplaceFor(page, 'Squat (barre, nuque)');
+
+    const heading = page.getByRole('heading', { name: 'Même muscle' });
+    await expect(heading).toBeVisible();
+    const section = page.getByRole('region', { name: 'Même muscle' });
+    await expect(section.getByRole('button', { name: /^Presse à cuisses/ })).toBeVisible();
+    await expect(section.getByRole('button', { name: /^Squat \(barre, nuque\)/ })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Tous les exercices' })).toBeVisible();
+
+    // Une recherche s'applique à toute la liste : la section s'efface.
+    await page.getByRole('searchbox').or(page.getByRole('textbox')).first().fill('tirage');
+    await expect(heading).toHaveCount(0);
+  });
+
   test('des séries validées : elles restent, l’autre exercice reprend derrière', async ({
     page,
   }) => {

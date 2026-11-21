@@ -11,7 +11,13 @@ export const MISSED_SESSIONS = 2;
  * Effort thresholds (spec coach v2, R1). Product policy, not physiology: the
  * corpus has no source for them, and the card says « règle de l'app ».
  */
-export const CEILING_GRINDING_RPE = 9.5;
+/**
+ * On ne monte que si aucune série jugée n'a dépassé ce RPE (demande de l'utilisateur, 2026-11-21).
+ * Remplace l'ancien seuil « RPE moyen >= 9,5 », sous lequel `8 · 9 · 10` montait encore. Posé d'abord à 8,
+ * puis porté à 8,5 le même jour à sa demande : rejoué sur son historique, 8 aurait bloqué 75 % de ses hausses
+ * passées. Une série à 8,5 n'empêche pas de monter ; une série à 9 l'empêche.
+ */
+export const INCREASE_MAX_RPE = 8.5;
 export const CONSOLIDATION_RPE_DROP = 0.5;
 export const AT_FAILURE_RPE = 9.5;
 /** RPE comes by halves; a mean can land a hair under a threshold in floats. */

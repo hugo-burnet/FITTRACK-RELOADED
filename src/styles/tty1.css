@@ -198,8 +198,8 @@
   ry: 0;
 }
 
-/* Le rayon 2xl est, dans l'app, celui des blocs : sans fond distinct, ils prennent un contour. Le
-   cadre de mise en évidence du tutoriel porte déjà son anneau. */
+/* Le rayon 2xl est, dans l'app, celui des blocs : sans fond distinct, ils prennent un contour. Un
+   bloc qui porte déjà son anneau (`ring-2`) n'en a pas besoin. */
 :root[data-theme='tty1'] .rounded-2xl:not(.ring-2) {
   border: 1px solid var(--border);
 }

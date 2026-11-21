@@ -7,6 +7,30 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-21 — v2.19.0 : RPE 8,5, Réglages en sommaire, tuto supprimé, sept correctifs
+
+**Demandes.** « La montée ne se fait qu'à partir d'un RPE max de 8 », puis « max 8,5 » ; « enlève tout ce qui touche au
+tuto » ; « le menu des paramètres fait un peu bricolage » (piste A choisie parmi trois maquettes) ; et, sur l'audit
+d'ergonomie et la cartographie, les correctifs qui ne dépendent pas de la refonte.
+
+- **RPE 8,5** (`INCREASE_MAX_RPE`) : le maximum des RPE saisis sur les séries jugées, échec exclu ; sans RPE, rien ne
+  change. Posé à 8 puis porté à 8,5 : rejouée sur l'historique, la valeur 8 aurait bloqué 75 % des hausses passées. Rejoué
+  sur la sauvegarde du 2026-11-21 : 133 plafonds, 57 hausses, 52 bloquées par le RPE ; aucune proposition absurde.
+- **Le yo-yo de charges ne vient pas du coach** (9 propositions à ± 10 % ou plus, sur des petites charges) : l'utilisateur
+  adapte l'entraînement à une gêne ulnaire et préfère le 15 – 20. Piste ouverte pour le lot F : signaler une gêne.
+- **Réglages** : des lignes, pas des tuiles (un état fait de mots tient en sous-titre) ; le bandeau de sauvegarde de la
+  piste C en tête ; la Base de preuves reste dans Application (seul accès de l'appli). Choix de l'agent : le bandeau « Aucune
+  sauvegarde » emprunte `--danger-ink`, faute de jeton d'alerte thémé (écart consigné dans `DESIGN.md`).
+- **Série du dessus en gris** (option A) : rien n'est écrit avant la coche. Choix de l'agent : la cible du jour (routine,
+  coach) passe devant la série du dessus — une routine à 100 kg propose 100 en série 2 même après 95 en série 1.
+- **Repos épinglé en bas** de la séance, barre existante réutilisée ; « Passer » sonne comme un repos écoulé.
+- **Retour Android** : une pile des feuilles (`src/ui/sheetStack.ts`) alimentée par `Sheet`. Non testable en E2E (le bouton
+  natif n'arrive pas dans le navigateur de test) : tests unitaires et recette.
+
+**Piège.** Les sous-agents en arbre git isolé partent du `master` du dépôt distant, pas de la branche de session : le lot B,
+parti d'avant la suppression du tutoriel, l'a réintroduit dans trois fichiers à la fusion. Vérifier `git merge-base` avant
+de fusionner un arbre isolé.
+
 ### 2026-11-20 — Fiabilisation du coach (v2.18.0)
 
 **Demande.** « Audite mon coach, et les fonctionnalités autour. J'aimerais le fiabiliser », puis, à la question de ce

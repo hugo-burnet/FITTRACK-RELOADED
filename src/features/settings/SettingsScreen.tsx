@@ -1,326 +1,108 @@
-import { useState, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { getBootStorage } from '@/app/bootEasterEgg';
 import { useAppNavigate } from '@/app/navigation';
-import { ChevronRightIcon, LockIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
-import { countCompletedWorkouts } from '@/data/repositories/history';
-import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
-import { t, type TranslationKey } from '@/i18n/fr';
-import { projectCoachExport } from '@/lib/export/projectCoachExport';
-import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
-import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
-import { shareText, type ShareOutcome } from '@/platform/share';
-import { saveTextFile } from '@/platform/saveFile';
+import { getDefaultLoadStepKg } from '@/data/repositories/settings';
+import { t } from '@/i18n/fr';
 import { isOfflineReady, subscribeAppUpdate } from '@/platform/appUpdate';
-import {
-  isInstallAvailable,
-  isInstalled,
-  promptInstall,
-  subscribeInstall,
-  type InstallOutcome,
-} from '@/platform/install';
-import { buildCsvExport, csvExportFileName } from '@/data/repositories/csvExport';
-import { isTty1Unlocked } from '@/stores/skinUnlock';
-import { applyTheme, loadTheme } from '@/stores/theme';
-import type { Theme } from '@/stores/theme';
-import { ListRow, SectionTitle } from '@/ui';
-import { AnnouncerSettings } from './AnnouncerSettings';
-import { BackupActions } from './BackupActions';
-import { EffortPromptSettings } from './EffortPromptSettings';
-import { NotificationSettings } from './NotificationSettings';
-import { CoachSettings } from './CoachSettings';
-import { OneRepMaxSettings } from './OneRepMaxSettings';
+import { loadAnnouncerMode } from '@/stores/announcer';
+import { loadTheme } from '@/stores/theme';
+import { Card, ListRow } from '@/ui';
+import { ChevronRightIcon } from '@/ui/icons';
+import { formatNumber } from '@/ui/numberField';
+import { ANNOUNCER_MODES } from './announcerModes';
+import { backupAgoLabel } from './backupText';
+import { THEME_OPTIONS } from './themeOptions';
+import { useBackupStatus } from './useBackupStatus';
 
-const THEME_OPTIONS: {
-  value: Theme;
-  labelKey: 'settings.themeDark' | 'settings.themeLight' | 'settings.themeTty1' | 'settings.themeCyber';
-}[] = [
-  { value: 'dark', labelKey: 'settings.themeDark' },
-  { value: 'light', labelKey: 'settings.themeLight' },
-  { value: 'tty1', labelKey: 'settings.themeTty1' },
-  { value: 'cyber', labelKey: 'settings.themeCyber' },
-];
-
-const THEME_HINT = {
-  dark: 'settings.themeHint',
-  light: 'settings.themeHint',
-  tty1: 'settings.themeTty1Hint',
-  cyber: 'settings.themeCyberHint',
-} as const satisfies Record<Theme, TranslationKey>;
-
-/** La phrase sous le sélecteur : ce qui décrit l'option TTY1 tant qu'elle est verrouillée. */
-const TTY1_LOCKED_ID = 'theme-tty1-locked';
-
-/** Every answer the browser can give to "install this", each with its sentence. */
-const INSTALL_MESSAGE = {
-  installed: 'settings.installDone',
-  dismissed: 'settings.installDismissed',
-  unavailable: 'settings.installUnavailable',
-  failed: 'settings.installFailed',
-} as const satisfies Record<InstallOutcome, TranslationKey>;
-
+/**
+ * Le sommaire des Réglages : le bandeau de sauvegarde, puis cinq lignes qui disent leur état et
+ * ouvrent chacune leur page. Rien ne se règle ici.
+ *
+ * Des lignes et non des tuiles (`DESIGN.md`) : un état fait de mots tient en sous-titre.
+ */
 export function SettingsScreen() {
   const navigate = useAppNavigate();
-  const [theme, setTheme] = useState<Theme>(loadTheme);
-  // Lu une fois : TTY1 ne se débloque qu'au démarrage (console rare, ancienneté), jamais pendant
-  // qu'on regarde Réglages.
-  const [tty1Unlocked] = useState(() => isTty1Unlocked(getBootStorage()));
-  const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
-  /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */
-  const [csvMessage, setCsvMessage] = useState<string>();
-  const [csvFailed, setCsvFailed] = useState(false);
-  const [csvBusy, setCsvBusy] = useState(false);
-  /** Ce que l'invite d'installation a donné. */
-  const [installOutcome, setInstallOutcome] = useState<InstallOutcome | null>(null);
-  const installAvailable = useSyncExternalStore(subscribeInstall, isInstallAvailable, () => false);
+  const { lastBackupAt, now } = useBackupStatus();
   const offlineReady = useSyncExternalStore(subscribeAppUpdate, isOfflineReady, () => false);
-  // Lu une fois : le mode d'affichage ne change pas en cours de session, et
-  // `matchMedia` n'existe pas sous jsdom.
-  const [standalone] = useState(isInstalled);
-  const historyMarkdown = useLiveQuery(async () => {
-    const scope = { kind: 'all-history' } as const;
-    const sources = await listHistoricalWorkouts(scope);
-    if (sources.length === 0) return '';
+  // `null` : aucun pas posé ; `undefined` : pas encore lu.
+  const step = useLiveQuery(async () => (await getDefaultLoadStepKg()) ?? null, []);
+  // Lus au montage : le sommaire est remonté à chaque retour d'une page, et c'est là qu'un
+  // changement de thème ou d'annonce doit se voir.
+  const theme = loadTheme();
+  const announcer = loadAnnouncerMode();
 
-    return serializeMarkdown(
-      projectCoachExport(scope, sources, DEFAULT_EXPORT_OPTIONS, Date.now()),
-    );
-  }, []);
+  const noBackup = lastBackupAt === undefined;
+  const ago = noBackup ? '' : backupAgoLabel(lastBackupAt, now);
+  const go = (page: string) => () => void navigate(`/settings/${page}`);
 
-  /** Le compte des séances terminées : rien à sauvegarder, rien à cliquer. */
-  const workoutCount = useLiveQuery(countCompletedWorkouts, [], 0);
-
-  const chooseTheme = (next: Theme) => {
-    setTheme(next);
-    applyTheme(next);
-  };
-
-  /**
-   * L'invite d'installation. Le bouton reste cliquable même quand le navigateur
-   * n'a rien à proposer : une ligne grisée n'explique pas pourquoi, et la
-   * réponse « déjà installée, ou à ajouter depuis le menu » est justement ce que
-   * l'utilisateur a besoin de lire à ce moment-là.
-   */
-  const install = async () => {
-    setInstallOutcome(await promptInstall());
-  };
-
-  /**
-   * Chrome décide seul du moment où il fire `beforeinstallprompt`, et il peut le
-   * faire après que l'utilisateur a tapé la ligne. « Déjà installée, ou à
-   * ajouter depuis le menu » deviendrait alors faux sous les yeux de quelqu'un
-   * qui a maintenant une vraie invite disponible. Le message se retire de
-   * lui-même plutôt que de survivre à sa raison d'être.
-   */
-  const shownOutcome = installOutcome === 'unavailable' && installAvailable ? null : installOutcome;
-
-  /**
-   * La sauvegarde réimportable. Le fichier est fabriqué au clic et pas tenu à
-   * jour en permanence : un `useLiveQuery` sur tout l'historique reconstruirait
-   * le CSV entier à chaque série validée, pour un bouton qu'on touche deux fois
-   * par mois.
-   */
-  const saveCsv = async () => {
-    if (csvBusy) return;
-    setCsvBusy(true);
-    setCsvMessage(undefined);
-    setCsvFailed(false);
-    try {
-      const csv = await buildCsvExport();
-      const outcome = await saveTextFile({
-        name: csvExportFileName(Date.now()),
-        text: csv,
-        type: 'text/csv;charset=utf-8',
-        title: t('settings.exportCsvTitle'),
-        // Le seul fichier de l'app qui part avec un BOM, et la seule raison
-        // valable d'en mettre un : sans lui, Excel lit « Développé couché » en
-        // mojibake. Le JSON de sauvegarde n'en veut surtout pas (cf. saveFile).
-        bom: true,
-      });
-      if (outcome === 'failed') {
-        setCsvFailed(true);
-        setCsvMessage(t('settings.exportCsvFailed'));
-      } else if (outcome === 'downloaded') {
-        setCsvMessage(t('settings.exportCsvDownloaded'));
-      }
-    } catch {
-      setCsvFailed(true);
-      setCsvMessage(t('settings.exportCsvFailed'));
-    } finally {
-      setCsvBusy(false);
-    }
-  };
-
-  const shareHistory = () => {
-    setHistoryShareOutcome(null);
-    void shareText({
-      title: t('settings.exportHistoryTitle'),
-      text: historyMarkdown ?? '',
-    }).then((outcome) => {
-      setHistoryShareOutcome(outcome === 'copied' || outcome === 'failed' ? outcome : null);
-    });
-  };
+  const themeLabel = THEME_OPTIONS.find(({ value }) => value === theme)?.labelKey;
+  const announcerLabel = ANNOUNCER_MODES.find(({ value }) => value === announcer)?.labelKey;
 
   return (
     <Screen title={t('settings.title')}>
-      <div className="flex flex-col gap-9">
-        <section>
-          <SectionTitle>{t('settings.appSection')}</SectionTitle>
-          <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
-            <ListRow
-              title={t('settings.installLink')}
-              subtitle={t('settings.installHint')}
-              disabled={standalone}
-              onClick={() => void install()}
-            />
-            <ListRow
-              title={t('settings.knowledgeLink')}
-              subtitle={t('settings.knowledgeHint')}
-              trailing={<ChevronRightIcon />}
-              onClick={() => void navigate('/knowledge')}
-            />
-          </div>
-          {shownOutcome !== null && (
-            <p
-              role="status"
-              className={`mt-3 px-1 text-sm leading-relaxed ${
-                shownOutcome === 'failed' ? 'text-[var(--danger-ink)]' : 'text-[var(--text-2)]'
+      <div className="flex flex-col gap-7">
+        <Card>
+          <button
+            type="button"
+            onClick={go('backup')}
+            data-part="row"
+            className="flex min-h-14 w-full items-center gap-3 px-4 py-3 text-left
+              transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+          >
+            <span
+              className={`min-w-0 flex-1 text-base font-semibold ${
+                noBackup ? 'text-[var(--danger-ink)]' : 'text-[var(--text-1)]'
               }`}
             >
-              {t(INSTALL_MESSAGE[shownOutcome])}
-            </p>
-          )}
-          {/*
-            L'état hors-ligne se lit, il ne se règle pas : c'est la réponse à
-            « est-ce que ça marchera au sous-sol ? », la seule question que la
-            règle n°2 pose vraiment. Il vit sous la ligne d'installation parce
-            que c'est l'installation qui le déclenche.
-          */}
-          <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">
-            {t(offlineReady ? 'settings.offlineReady' : 'settings.offlinePending')}
-          </p>
-        </section>
+              {noBackup
+                ? t('settings.summaryBackupNone')
+                : t('settings.summaryBackupBanner', { ago })}
+            </span>
+            <span className="shrink-0 text-[var(--text-2)]">
+              <ChevronRightIcon />
+            </span>
+          </button>
+        </Card>
 
-        <section>
-          <SectionTitle>{t('settings.appearanceSection')}</SectionTitle>
-          <div className="rounded-2xl bg-[var(--surface-1)] p-4">
-            <div
-              role="radiogroup"
-              aria-label={t('settings.theme')}
-              data-part="segmented"
-              // Deux lignes de deux : quatre boutons sur une ligne débordent à 200 % de taille de police.
-              className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
-            >
-              {THEME_OPTIONS.map(({ value, labelKey }) => {
-                const locked = value === 'tty1' && !tty1Unlocked;
-
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    role="radio"
-                    aria-checked={theme === value}
-                    // `aria-disabled` et non `disabled` : le bouton garde le focus, et sa phrase
-                    // (`aria-describedby`) est lue à qui le touche au lieu de se taire.
-                    aria-disabled={locked || undefined}
-                    aria-describedby={locked ? TTY1_LOCKED_ID : undefined}
-                    onClick={() => {
-                      if (!locked) chooseTheme(value);
-                    }}
-                    className={`min-h-12 min-w-0 rounded-lg text-base font-semibold [overflow-wrap:anywhere]
-                      transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                      ${
-                        theme === value
-                          ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                          : 'text-[var(--text-2)]'
-                      }
-                      ${locked ? 'flex items-center justify-center gap-1.5 opacity-60' : ''}`}
-                  >
-                    {locked && <LockIcon width={16} height={16} />}
-                    {t(labelKey)}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
-              {t(THEME_HINT[theme])}
-            </p>
-            {!tty1Unlocked && (
-              <p id={TTY1_LOCKED_ID} className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
-                {t('settings.themeTty1Locked')}
-              </p>
-            )}
-          </div>
-        </section>
-
-        <AnnouncerSettings />
-
-        <OneRepMaxSettings />
-
-        <CoachSettings />
-
-        <EffortPromptSettings />
-
-        <NotificationSettings />
-
-        <section>
-          <SectionTitle>{t('settings.dataSection')}</SectionTitle>
-          <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
-            <ListRow
-              title={t('settings.exportHistoryLink')}
-              subtitle={t('settings.exportHistoryHint')}
-              disabled={historyMarkdown === undefined || historyMarkdown === ''}
-              onClick={shareHistory}
-            />
-            <ListRow
-              title={t('settings.exportCsvLink')}
-              subtitle={t('settings.exportCsvHint')}
-              disabled={csvBusy || workoutCount === 0}
-              onClick={() => void saveCsv()}
-            />
-            <ListRow
-              title={t('settings.debugLink')}
-              subtitle={t('settings.debugHint')}
-              trailing={<ChevronRightIcon />}
-              onClick={() => void navigate('/settings/debug')}
-            />
-            <ListRow
-              title={t('settings.creditsLink')}
-              subtitle={t('settings.creditsHint')}
-              trailing={<ChevronRightIcon />}
-              onClick={() => void navigate('/settings/about')}
-            />
-          </div>
-          {csvMessage !== undefined && (
-            <p
-              role="status"
-              className={`mt-3 px-1 text-sm leading-relaxed ${
-                csvFailed ? 'text-[var(--danger-ink)]' : 'text-[var(--text-2)]'
-              }`}
-            >
-              {csvMessage}
-            </p>
-          )}
-          {historyShareOutcome !== null && (
-            <p
-              role="status"
-              className={`mt-3 px-1 text-sm leading-relaxed ${
-                historyShareOutcome === 'failed'
-                  ? 'text-[var(--danger-ink)]'
-                  : 'text-[var(--text-2)]'
-              }`}
-            >
-              {t(
-                historyShareOutcome === 'failed'
-                  ? 'settings.exportHistoryFailed'
-                  : 'settings.exportHistoryCopied',
-              )}
-            </p>
-          )}
-        </section>
-
-        <BackupActions />
+        <Card>
+          <ListRow
+            title={t('settings.appearanceSection')}
+            subtitle={themeLabel === undefined ? undefined : t(themeLabel)}
+            trailing={<ChevronRightIcon />}
+            onClick={go('appearance')}
+          />
+          <ListRow
+            title={t('settings.sessionTitle')}
+            subtitle={announcerLabel === undefined ? undefined : t(announcerLabel)}
+            trailing={<ChevronRightIcon />}
+            onClick={go('session')}
+          />
+          <ListRow
+            title={t('settings.coachSection')}
+            subtitle={
+              step === undefined
+                ? undefined
+                : typeof step === 'number'
+                  ? t('settings.summaryStepValue', { value: formatNumber(step) })
+                  : t('settings.summaryStepNone')
+            }
+            trailing={<ChevronRightIcon />}
+            onClick={go('coach')}
+          />
+          <ListRow
+            title={t('settings.backupTitle')}
+            subtitle={t('settings.summaryBackupContent')}
+            trailing={<ChevronRightIcon />}
+            onClick={go('backup')}
+          />
+          <ListRow
+            title={t('settings.appSection')}
+            subtitle={t(offlineReady ? 'settings.summaryOfflineReady' : 'settings.summaryOfflinePending')}
+            trailing={<ChevronRightIcon />}
+            onClick={go('app')}
+          />
+        </Card>
       </div>
     </Screen>
   );

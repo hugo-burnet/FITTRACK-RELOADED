@@ -9,7 +9,6 @@ import { ProgramHeroCard } from './ProgramHeroCard';
 import type { ProgramStatus } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { Button, EmptyState, HeaderAction, ListRow } from '@/ui';
 import { ChevronRightIcon, PlusIcon } from '@/ui/icons';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
@@ -42,7 +41,6 @@ function otherPrograms(query: Extract<ProgramsQuery, { status: 'ready' }>) {
 
 export function ProgramListScreen() {
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const query = useLiveQuery<ProgramsQuery>(async () => {
     try {
       const [programs, hero, active] = await Promise.all([
@@ -71,9 +69,7 @@ export function ProgramListScreen() {
       action={
         <HeaderAction
           label={t('program.listCreate')}
-          tutorialId="program-create"
           onClick={() => {
-            tutorial?.report({ type: 'program-create-opened' });
             void navigate('/programs/new');
           }}
         >

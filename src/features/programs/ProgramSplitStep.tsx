@@ -131,8 +131,7 @@ export function ProgramSplitStep({
               onCreateRoutine={onCreateRoutine === undefined ? undefined : () => openCreate(index)}
             />
           ))}
-          {/* Seule la première semaine porte l'ancre du tutoriel. */}
-          <div className="p-2" data-tutorial-id={week === 0 ? 'program-split-add' : undefined}>
+          <div className="p-2">
             <Button
               type="button"
               variant="ghost"
@@ -175,7 +174,6 @@ export function ProgramSplitStep({
         <div
           role="group"
           aria-label={t('program.cycleLabel')}
-          data-tutorial-id="program-split-cycle"
           className="grid grid-cols-2 gap-2"
         >
           {CYCLE_LENGTHS.map((length) => (

@@ -44,9 +44,9 @@ export const useRepPacer = create<RepPacerStore>((set) => ({
   start: (rowId, setId, reps, repSeconds, leadSeconds = 0) => {
     // Refusé à la source plutôt que rendu muet plus loin. Un métronome armé
     // sans son reste un compteur qui tourne : la carte afficherait une
-    // répétition en cours, et le chrono de maintien se croirait occupé — cf.
-    // `workoutAudioBusy`. En « Voix uniquement », il n'y a pas de cadence du
-    // tout, pas une cadence silencieuse.
+    // répétition en cours, et le chrono de maintien se croirait occupé. En
+    // « Voix uniquement », il n'y a pas de cadence du tout, pas une cadence
+    // silencieuse.
     if (!guidancePolicy(loadAnnouncerMode()).repPacing) return;
     set({
       rowId,

@@ -20,7 +20,6 @@ import { announce } from '@/audio/announce';
 import { nativeNotifications } from '@/platform/nativeNotifications';
 import { useRestTimer } from '@/stores/restTimer';
 import type { BenchmarkLocationState } from '@/features/benchmark/BenchmarkScreen';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName, partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
@@ -54,7 +53,6 @@ function Reading({ value, label }: { value: ReactNode; label: string }) {
  */
 export function WorkoutFinishScreen() {
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
@@ -164,7 +162,6 @@ export function WorkoutFinishScreen() {
       .then(() => {
         useRestTimer.getState().stop();
         announce('workout-finished');
-        tutorial?.report({ type: 'workout-saved', workoutId: workout.id });
         return finalizeCoachForWorkout(workout.id).catch(() => undefined);
       })
       // Les paliers après le coach, et jamais avant `finishWorkout` : le moteur
@@ -212,7 +209,6 @@ export function WorkoutFinishScreen() {
         <ActionBand
           label={t(saving ? 'finish.saving' : 'finish.save')}
           disabled={saving || validated === 0}
-          tutorialId="workout-save"
           onClick={save}
         />
       }

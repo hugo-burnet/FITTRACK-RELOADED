@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useBlocker, useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import {
   getArchivedWorkoutDetail,
   saveArchivedWorkout,
@@ -57,7 +56,6 @@ export function HistoryEditScreen() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [saveFailed, setSaveFailed] = useState(false);
-  const tutorial = useTutorialControls();
   const [saving, setSaving] = useState(false);
   const [savedWorkoutId, setSavedWorkoutId] = useState<string | null>(null);
   const proceedingRef = useRef(false);
@@ -156,7 +154,6 @@ export function HistoryEditScreen() {
       });
       // Après l'écrasement, jamais avant : c'est cette écriture-là que la
       // mission fait pratiquer, avec ce qu'elle supprime au passage.
-      tutorial?.report({ type: 'history-edit-saved', workoutId: editor.workoutId });
       setSavedWorkoutId(editor.workoutId);
     } catch {
       setSaveFailed(true);
@@ -186,7 +183,6 @@ export function HistoryEditScreen() {
       footer={
         <ActionBand
           label={t('history.editSave')}
-          tutorialId="history-edit-save"
           disabled={saving}
           onClick={() => void save()}
         />

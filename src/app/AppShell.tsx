@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import { NativeRuntimeBridge } from '@/platform/NativeRuntimeBridge';
-import { TutorialProvider } from '@/features/tutorial/TutorialProvider';
 import { ActiveWorkoutBar } from './ActiveWorkoutBar';
 import { BottomNav } from './BottomNav';
 import { CyberGlitch } from './CyberGlitch';
@@ -15,19 +14,17 @@ import { CyberGlitch } from './CyberGlitch';
  */
 export function AppShell() {
   return (
-    <TutorialProvider>
-      <div data-part="shell" className="flex h-full flex-col bg-[var(--surface-0)]">
-        <NativeRuntimeBridge />
-        <CyberGlitch />
-        {/* Le défilement est descendu dans `Screen`, entre son en-tête et sa barre
-            d'action : c'est ce qui permet à cette barre d'être un frère flex comme
-            la navigation, au lieu d'une superposition qui tranche le contenu. */}
-        <main className="safe-top flex min-h-0 flex-1 flex-col">
-          <Outlet />
-        </main>
-        <ActiveWorkoutBar />
-        <BottomNav />
-      </div>
-    </TutorialProvider>
+    <div data-part="shell" className="flex h-full flex-col bg-[var(--surface-0)]">
+      <NativeRuntimeBridge />
+      <CyberGlitch />
+      {/* Le défilement est descendu dans `Screen`, entre son en-tête et sa barre
+          d'action : c'est ce qui permet à cette barre d'être un frère flex comme
+          la navigation, au lieu d'une superposition qui tranche le contenu. */}
+      <main className="safe-top flex min-h-0 flex-1 flex-col">
+        <Outlet />
+      </main>
+      <ActiveWorkoutBar />
+      <BottomNav />
+    </div>
   );
 }

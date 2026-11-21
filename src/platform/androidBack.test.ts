@@ -24,8 +24,14 @@ describe('androidBackDecision', () => {
     ['/exercises/new', '/exercises'],
     ['/exercises/exercise-1/edit', '/exercises'],
     ['/exercises/exercise-1', '/exercises'],
-    ['/settings/debug', '/settings'],
-    ['/settings/volume', '/settings'],
+    ['/settings/appearance', '/settings'],
+    ['/settings/session', '/settings'],
+    ['/settings/coach', '/settings'],
+    ['/settings/backup', '/settings'],
+    ['/settings/app', '/settings'],
+    ['/settings/debug', '/settings/app'],
+    ['/settings/about', '/settings/app'],
+    ['/settings/volume', '/settings/coach'],
     ['/settings', '/'],
   ])('navigates from %s to %s without history', (pathname, to) => {
     expect(androidBackDecision(pathname, false)).toEqual({ kind: 'navigate', to });
@@ -48,5 +54,19 @@ describe('androidBackDecision', () => {
 
   it('exits from an unknown root route', () => {
     expect(androidBackDecision('/unknown', false)).toEqual({ kind: 'exit' });
+  });
+
+  // Une feuille ouverte absorbe le retour : rien d'autre ne doit bouger.
+  it.each(['/workout', '/', '/workout/add', '/routines/r1'])(
+    'closes the open sheet on %s and does nothing else',
+    (pathname) => {
+      expect(androidBackDecision(pathname, true, true)).toEqual({ kind: 'close-sheet' });
+      expect(androidBackDecision(pathname, false, true)).toEqual({ kind: 'close-sheet' });
+    },
+  );
+
+  it('keeps the old behaviour when no sheet is open', () => {
+    expect(androidBackDecision('/workout', false, false)).toEqual({ kind: 'navigate', to: '/' });
+    expect(androidBackDecision('/workout', true)).toEqual({ kind: 'history' });
   });
 });

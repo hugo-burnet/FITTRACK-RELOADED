@@ -32,6 +32,11 @@ const ROUTES = [
   '/settings',
   '/programs',
   '/workout',
+  '/settings/appearance',
+  '/settings/session',
+  '/settings/coach',
+  '/settings/backup',
+  '/settings/app',
   '/settings/volume',
   '/analytics/measurements',
   '/analytics/measurements/waist',
@@ -103,3 +108,60 @@ for (const { theme, scale } of CASES) {
     expect(failures, failures.join('\n')).toEqual([]);
   });
 }
+
+/**
+ * Le sommaire des Réglages et ses cinq pages : toute commande qu'on touche fait au moins 48 px
+ * (règle n° 5). Les sélecteurs et les interrupteurs sont inclus : c'est là qu'une cible se glisse
+ * sous le seuil sans qu'une ligne entière le fasse voir.
+ */
+test('Réglages : chaque commande des six écrans fait au moins 48 px', async ({ page }) => {
+  await openApp(page);
+  const failures: string[] = [];
+  for (const route of [
+    '/settings',
+    '/settings/appearance',
+    '/settings/session',
+    '/settings/coach',
+    '/settings/backup',
+    '/settings/app',
+  ]) {
+    await page.evaluate((hash) => {
+      window.location.hash = `#${hash}`;
+    }, route);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await settleLayout(page);
+    const boxes = await page
+      .locator('button, [role="radio"], [role="checkbox"], [role="switch"], a')
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => {
+            const style = getComputedStyle(element);
+            return style.visibility !== 'hidden' && style.display !== 'none';
+          })
+          .map((element) => {
+            const box = element.getBoundingClientRect();
+            return {
+              height: box.height,
+              width: box.width,
+              name: (element.getAttribute('aria-label') ?? element.textContent ?? '')
+                .trim()
+                .replace(/\s+/g, ' ')
+                .slice(0, 40),
+            };
+          })
+          .filter((box) => box.height > 0 && box.width > 0),
+      );
+    // Un titre de ligne tronqué (`truncate`) est un titre qu'on ne lit pas.
+    for (const clipped of await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('[data-part="row"] .truncate')]
+        .filter((element) => element.scrollWidth > element.clientWidth + 1)
+        .map((element) => (element.textContent ?? '').trim().slice(0, 40)),
+    )) {
+      failures.push(`${route} — titre tronqué : « ${clipped} »`);
+    }
+    for (const box of boxes) {
+      if (box.height < 47.5) failures.push(`${route} — « ${box.name} » : ${box.height} px`);
+    }
+  }
+  expect(failures, failures.join('\n')).toEqual([]);
+});

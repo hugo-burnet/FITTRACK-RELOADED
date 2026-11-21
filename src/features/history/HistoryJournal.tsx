@@ -1,5 +1,4 @@
 import type { HistoryPage, HistoryWorkoutSummary } from '@/data/repositories/history';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { Button, Card, EmptyState } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
@@ -39,23 +38,14 @@ function countLabel(
 
 function WorkoutRow({
   summary,
-  first = false,
 }: {
   summary: HistoryWorkoutSummary;
-  first?: boolean;
 }) {
-  const tutorial = useTutorialControls();
   return (
     <article data-part="row" className="border-b border-[var(--border)] last:border-b-0">
       <Link
         viewTransition
         to={`/history/${summary.workoutId}`}
-        /* La première ligne seulement : une consigne qui dit « ouvre la
-           séance » doit en désigner une, pas la liste entière. */
-        data-tutorial-id={first ? 'history-first-workout' : undefined}
-        onClick={() =>
-          tutorial?.report({ type: 'history-workout-opened', workoutId: summary.workoutId })
-        }
         className="flex min-h-12 w-full items-center gap-3 px-4 py-4 text-left
           transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
       >
@@ -102,8 +92,8 @@ export function HistoryWorkoutSummaryList({
 }) {
   return (
     <Card>
-      {items.map((summary, index) => (
-        <WorkoutRow key={summary.workoutId} summary={summary} first={index === 0} />
+      {items.map((summary) => (
+        <WorkoutRow key={summary.workoutId} summary={summary} />
       ))}
     </Card>
   );

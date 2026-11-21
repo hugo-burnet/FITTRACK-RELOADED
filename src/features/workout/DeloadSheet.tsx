@@ -51,7 +51,6 @@ export function DeloadSheet({
         <Button
           variant="primary"
           size="lg"
-          tutorialId="workout-deload-confirm"
           disabled={submitting}
           onClick={() => void apply()}
           fullWidth

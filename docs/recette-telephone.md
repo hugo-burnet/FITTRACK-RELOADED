@@ -20,7 +20,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > d'environ 20 minutes, en salle ou à défaut à bout de bras.
 >
 > **Ce que cette liste ne contient plus.** Les parcours E2E (`npm run test:e2e`) vérifient déjà,
-> dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
+> dans un navigateur à 390 px : le premier lancement sans feuille, une séance de bout en bout, la
 > série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les quatre
 > thèmes à 100, 130 et 200 % (TTY1 : 130 %), −15 s / +15 s sur un vrai repos, l'app qui démarre sans réseau, la sauvegarde, le
 > remplacement d'un exercice, les mensurations (hors sélecteur de date natif), le benchmark de bout en bout et le pas de charge de l'appli (posé, relu après un rechargement, lu sur la fiche d'un exercice).
@@ -50,6 +50,11 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 - [ ] **Rappel de sauvegarde.** Sur une installation qui n'a jamais été sauvegardée et qui a au moins
       trois séances, l'accueil porte « Sauvegarde ton historique » **sous** la séance à lancer, avec
       « Exporter » et « Plus tard ». « Plus tard » le fait taire une semaine. *(cette session)*
+- [ ] **Réglages en sommaire.** Réglages montre le bandeau de sauvegarde (« Dernière sauvegarde : il y a N
+      jours », ou « Aucune sauvegarde sur cet appareil » en rouge) puis cinq lignes : Apparence, Séance,
+      Coach, Sauvegarde, Application. Ouvrir une page, puis le retour Android : il ramène au sommaire (depuis
+      Volume par muscle, à Coach ; depuis Dépannage ou À propos, à Application). « En savoir plus » déplie le
+      texte d'aide sur place et le replie ; aucun titre de ligne n'est coupé. *(v2.19.0)*
 - [ ] « Exporter » ouvre la feuille de partage d'Android ; choisir Drive ou un dossier : le
       rappel disparaît, et Réglages › Sauvegarde complète dit « Dernière sauvegarde : aujourd'hui. À jour. »
       Fermer la feuille sans choisir ne retient rien. *(cette session)*
@@ -64,7 +69,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 - [ ] Repasser en Sombre : rien n'a changé, sinon le numéro de version en haut à droite de chaque
       écran. *(v2.8.0)*
 - [ ] **Taille de police du système au maximum** (Android › Affichage) : l'en-tête de la séance garde
-      son bouton d'aide à l'écran, rien ne défile de côté. *(cette session)*
+      ses boutons (retour, options) à l'écran, rien ne défile de côté. *(cette session)*
 
 ## 2. En séance (8 min)
 
@@ -85,6 +90,12 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Bilan de fin** d'une séance à deux charges différentes (20 × 8 puis 30 × 6) : la ligne de
       l'exercice dit « 2 série(s) · dernière : 6 reps · 30 kg » et non « 2 × 6 reps · 30 kg ».
       *(v2.5.0)*
+- [ ] **Remplacer : même muscle d'abord.** Dans la liste de « Remplacer l'exercice », une section
+      « Même muscle » ouvre la liste (l'exercice remplacé n'y est pas), puis « Tous les exercices ».
+      Taper une recherche : la section disparaît, la recherche porte sur tout. *(v2.19.0)*
+- [ ] **Retour d'Android et feuilles.** En séance, ouvrir une feuille (menu ⋮ d'un exercice, type de
+      série, confirmation de fin) puis le bouton retour d'Android : la feuille se ferme, on reste sur
+      la séance. Un second retour remonte alors d'un cran, comme avant. *(v2.19.0)*
 - [ ] **Remplacer l'exercice.** Menu ⋮ d'un exercice dont aucune série n'est validée › « Remplacer
       l'exercice » › toucher un autre exercice : la carte prend son nom sur place, même rang, séries vides.
       Avec une série **déjà validée** : elle reste sous l'ancien nom, une carte du nouvel exercice
@@ -127,6 +138,15 @@ Une séance de deux exercices au moins, dont un en barre.
       *(v2.18.0)*
 - [ ] **Coach, une erreur ne bloque rien.** Terminer une séance : l'écran de fin s'affiche toujours et
       la séance s'enregistre (rien à provoquer : à noter seulement si un écran d'erreur apparaît). *(v2.18.0)*
+- [ ] **Le repos reste à l'écran.** Valider une série, puis ouvrir l'exercice suivant et faire défiler :
+      « Repos 1:59 » reste en bas, en gros, juste au-dessus de « Terminer la séance », avec −15 s, +15 s
+      et « Passer » sous le pouce. Le lire téléphone posé sur le banc, à bout de bras. « Passer » termine
+      le repos tout de suite (même son qu'un repos écoulé, la cadence prend le relais si elle est réglée).
+      Refaire en Cyber : la barre de vie et ses dégâts sur −15 s sont là, en bas. *(v2.19.0)*
+- [ ] **La série du dessus en grisé.** Sur un exercice jamais fait (ou une première séance) : saisir et
+      valider la série 1 à 60 × 8 ; la série 2 montre 60 et 8 **en gris**, cases vides ; la coche seule
+      l'enregistre à 60 × 8. Après un échauffement validé, la série de travail suivante ne montre **pas**
+      ses chiffres. *(v2.19.0)*
 - [ ] Série validée en thème **TTY1** : `[x]`, le repos qui clignote, la jauge d'effort ; la feuille
       des plaques ; l'historique. Police lisible à bout de bras. *(v2.8.0)*
 
@@ -156,6 +176,13 @@ Une séance de deux exercices au moins, dont un en barre.
       rien. *(v2.10.0)*
 - [ ] **Corpus d'un programme.** Ouvrir un bloc actif puis « Ce qu'en dit le corpus » : l'article du
       Guide correspondant à la phase s'ouvre, sans page d'erreur. *(30 août)*
+- [ ] **Recherche à plusieurs mots.** Bibliothèque (et sélecteur d'exercices d'une routine) : taper « squat barre »
+      trouve « Squat (barre) » ; « couché haltères » trouve « Développé couché (haltères) » ; l'ordre des mots
+      n'importe pas ; un mot absent ne rend rien. *(v2.19.0)*
+- [ ] **Meilleure série d'un exercice assisté.** Fiche des tractions assistées, historique : chaque séance affiche
+      la série la **moins** assistée (20 kg × 6 plutôt que 40 kg × 8). *(v2.19.0)*
+- [ ] **La fiche ignore la séance en cours.** Séance démarrée, une série validée sur un exercice : sa fiche
+      n'affiche pas encore cette séance dans l'historique ; elle apparaît une fois la séance terminée. *(v2.19.0)*
 
 ## 3 bis. Mensurations (3 min)
 
@@ -241,7 +268,7 @@ Une séance de deux exercices au moins, dont un en barre.
       la carte propose **plusieurs crans de moins** (40 → 32,5 kg) et dit « 3 crans de moins plutôt qu'un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps) ».
       Quand on est à une répétition du bas (14 · 13 · 13), un seul cran, comme avant. Jamais plus de 30 % de moins. *(v2.16.0)*
 
-## 4. Guide, paliers, tutoriel (3 min)
+## 4. Guide, paliers, premier lancement (3 min)
 
 - [ ] **Documentation d'un exercice.** Adduction à la machine › Documentation : taper un titre de
       l'encadré du haut ouvre l'article nommé. Étirements : le cadre général est proposé, l'accueil
@@ -252,8 +279,10 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Première séance et DOMS** (installation neuve ou IndexedDB réinitialisé) : enregistrer une
       première séance, voir le Malphite-Chad « Rock solid. » sur l'accueil ; 48 h plus tard la
       notification « Tes premières DOMS », puis la porte au toucher. *(31 août)*
-- [ ] **Tutoriel.** Le sélecteur de guidage à quatre modes, une série unilatérale menée jusqu'au bout ;
-      « Passer » ne rouvre rien d'autre. *(v2.5.0)*
+- [ ] **Premier lancement** (installation neuve ou données effacées) : l'app s'ouvre directement sur
+      l'accueil, sans feuille ni visite guidée, et aucun « ? » n'est dans l'en-tête des écrans. Le mode
+      d'annonce est « Sons + voix » d'emblée ; Réglages › Annonces propose toujours les quatre modes
+      (Silence, Sons, Sons + voix, Voix uniquement) et le choix survit à un redémarrage.
 - [ ] **Ouverture normale.** Fermer l'app, la relancer à froid : plaques, deux phrases, accueil.
       *(30 août)*
 

@@ -68,6 +68,17 @@ describe('workoutRecapCues', () => {
     ]);
   });
 
+  it('ne dit rien d’un plafond tenu au-dessus de RPE 8 (preuve max_rpe)', () => {
+    const aboveMax: CoachSignal = {
+      ...signal('range_ceiling_reached'),
+      evidence: [
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'max_rpe', value: 9 },
+      ],
+    };
+    expect(workoutRecapCues([aboveMax])).toEqual(['workout-recap-start', 'coach-recap-steady']);
+  });
+
   it('ne mêle pas « plan inchangé » à une phrase d’ajustement', () => {
     const grinding: CoachSignal = {
       ...signal('range_ceiling_reached'),

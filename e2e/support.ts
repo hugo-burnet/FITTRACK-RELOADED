@@ -3,20 +3,19 @@ import { expect, type Page } from '@playwright/test';
 export type ThemeName = 'dark' | 'light' | 'tty1' | 'cyber';
 
 /**
- * Le premier lancement, tel que la personne le passe : « Passer », sans son.
+ * Ouvre l'app (une route en hash, ou l'accueil), en mode d'annonce « silence ».
  *
- * Par l'interface et non en écrivant l'état du tutoriel dans `localStorage` : le format de cet état
- * change (v3 aujourd'hui), le bouton, lui, est ce que l'utilisateur touche.
+ * Le mode par défaut est « voix » : sans ce réglage, chaque parcours jouerait le son et la voix de
+ * l'app dans un navigateur sans haut-parleur. Il n'est posé qu'à l'absence de choix (`=== null`),
+ * pour qu'un test qui change le mode puis recharge garde le sien.
  */
-export async function skipFirstRun(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Passer' }).click();
-  await expect(page.getByRole('dialog', { name: 'Avant le premier son' })).toBeHidden();
-}
-
-/** Ouvre l'app (une route en hash, ou l'accueil) et passe le premier lancement. */
 export async function openApp(page: Page, hash = ''): Promise<void> {
+  await page.addInitScript(() => {
+    if (localStorage.getItem('fittrack:announcer') === null) {
+      localStorage.setItem('fittrack:announcer', 'silence');
+    }
+  });
   await page.goto(hash);
-  await skipFirstRun(page);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 }
 

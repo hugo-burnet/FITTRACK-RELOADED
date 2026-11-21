@@ -111,7 +111,7 @@ export interface ExerciseSession {
   sets: WorkoutSet[];
 }
 
-/** RF-10 — the whole history of one exercise, most recent first. */
+/** RF-10 — the finished history of one exercise, most recent first. */
 export async function listSessionsForExercise(exerciseId: string): Promise<ExerciseSession[]> {
   const sets = await db.workoutSets
     .where('[exerciseId+performedAt]')
@@ -119,9 +119,20 @@ export async function listSessionsForExercise(exerciseId: string): Promise<Exerc
     .filter((set) => set.deletedAt === 0 && set.isCompleted === 1)
     .toArray();
 
+  // Only finished sessions, like the progress curve (`isArchived` in
+  // historicalWorkouts): the sheet and the curve must tell the same story, and a
+  // session in progress is not yet a result.
+  const workouts = await db.workouts.bulkGet([...new Set(sets.map((set) => set.workoutId))]);
+  const finished = new Set(
+    workouts
+      .filter((w) => w !== undefined && w.deletedAt === 0 && w.status === 'completed')
+      .map((w) => w!.id),
+  );
+
   const blocks = new Map<string, ExerciseSession>();
 
   for (const set of sets) {
+    if (!finished.has(set.workoutId)) continue;
     const block = blocks.get(set.workoutExerciseId);
     if (block === undefined) {
       blocks.set(set.workoutExerciseId, {

@@ -36,6 +36,8 @@ const fr = {
     lockExerciseOrder: 'Verrouiller l’ordre des exercices',
     unlockRoutineOrder: 'Déverrouiller l’ordre des routines',
     lockRoutineOrder: 'Verrouiller l’ordre des routines',
+    /** Le repli du texte d'aide long : un seul libellé pour tous les écrans. */
+    learnMore: 'En savoir plus',
   },
 
   nav: {
@@ -347,6 +349,9 @@ const fr = {
     setTonnage: '+{value} kg',
     setPlusOne: '+1 série',
     restLengthen: 'Ajouter 15 secondes au repos',
+    /** v2.19 — « Passer » dans la barre de repos, en bas de la séance : le repos se termine maintenant. */
+    restSkip: 'Passer le repos',
+    restSkipShort: 'Passer',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',
@@ -650,6 +655,8 @@ const fr = {
       'Même charge ({weight} kg), au moins autant de répétitions, et un RPE moyen passé de {before} à {after} : la charge se consolide.',
     ceilingGrinding:
       '{sets} × {reps} a atteint le haut de la fourchette, mais à l’échec (RPE moyen {rpe}) : on refait cette charge plus facilement avant de monter.',
+    ceilingAboveRpeMax:
+      'Plafond tenu, mais à RPE {rpe} : on monte quand chaque série reste à {max} ou moins. Garde la charge.',
     plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     returning: 'Reprise après {days} jours sans cet exercice : on consolide avant de monter.',
     /**
@@ -1634,6 +1641,8 @@ const fr = {
     searchLabel: 'Chercher un exercice',
     searchPlaceholder: 'Développé, squat, tirage…',
     clearSearch: 'Effacer la recherche',
+    sameMuscle: 'Même muscle',
+    allExercises: 'Tous les exercices',
 
     filterMuscle: 'Muscle',
     filterEquipment: 'Matériel',
@@ -1937,6 +1946,21 @@ const fr = {
     title: 'Réglages',
 
     /**
+     * Le sommaire : cinq lignes, chacune avec son état en sous-titre, et le bandeau de sauvegarde
+     * au-dessus. Les titres des pages reprennent ceux des lignes.
+     */
+    sessionTitle: 'Séance',
+    backupTitle: 'Sauvegarde',
+    summaryBackupBanner: 'Dernière sauvegarde : {ago}',
+    summaryBackupNone: 'Aucune sauvegarde sur cet appareil',
+    summaryStepValue: '{value} kg',
+    summaryStepNone: 'Selon le matériel',
+    summaryOfflineReady: 'Prête hors-ligne',
+    summaryOfflinePending: 'Hors-ligne en préparation',
+    /** La section qui regroupe les deux exports lisibles, sous la sauvegarde complète. */
+    exportSection: 'Exporter',
+
+    /**
      * La section « Application » — l'installation sur l'écran d'accueil et
      * l'état du cache hors-ligne.
      *
@@ -2026,6 +2050,7 @@ const fr = {
       'Écrit le record dans les notifications, sans un bruit : la séance l’a déjà annoncé.',
     notificationsReminders: 'Rappels d’entraînement',
     notificationsRemindersHint: 'Aux jours et à l’heure que tu choisis.',
+    notificationsRecordsShort: 'Dans les notifications, sans bruit',
     notificationsOn: 'Oui',
     notificationsOff: 'Non',
     notificationsDays: 'Jours de rappel',
@@ -2041,6 +2066,9 @@ const fr = {
     effortPromptHint:
       'Une bande de quatre touches sous la série validée. Elle allonge le repos quand ça ' +
       'a été dur — 15, 30 ou 45 secondes de plus. L’ignorer ne coûte rien : elle s’efface seule.',
+    /** La ligne : le titre court tient sur une ligne à 390 px ; la phrase entière (au-dessus) reste le nom de l'interrupteur. */
+    effortPromptRowTitle: 'Demander l’effort',
+    effortPromptRowSubtitle: 'Après chaque série',
     effortPromptOn: 'Oui',
     effortPromptOff: 'Non',
     effortTempoHint:
@@ -2104,7 +2132,6 @@ const fr = {
      * journal du coach, réglages, préférences — dans un format que seule
      * FitTrack relit.
      */
-    backupSection: 'Sauvegarde complète',
     backupExportLink: 'Exporter tout le compte (JSON)',
     backupExportHint:
       'Séances, routines, programmes, records, réglages et préférences : tout ce que contient l’app, dans un fichier qu’elle sait relire.',
@@ -2129,6 +2156,11 @@ const fr = {
     backupAgoYesterday: 'hier',
     backupAgoDays: 'il y a {count} jours',
     backupAgoDate: 'le {date}',
+    /** Les sous-titres courts des lignes ; les phrases entières (…Hint) se déplient dessous. */
+    backupExportShort: 'Tout le contenu, dans un seul fichier',
+    backupImportShort: 'Remplace le contenu de l’app',
+    exportCsvShort: 'Réimportable, lisible dans un tableur',
+    summaryBackupContent: 'Compte complet · restaurer · exports',
     backupImportLink: 'Restaurer une sauvegarde',
     backupImportHint:
       'Remplace tout le contenu de l’app par celui du fichier. À faire sur un téléphone neuf, ou après une perte.',
@@ -3055,686 +3087,17 @@ const fr = {
     reload: 'Recharger',
   },
 
-  tutorial: {
-    pageHelp: 'Aide sur cette page',
-    tourLabel: 'Visite guidée',
-    helpTitle: 'Aide',
-    stepCounter: 'Visite · {index} / {count}',
-    introTitle: 'Prise en main',
-    readText: 'Lire le texte',
-    collapseText: 'Réduire',
-    skip: 'Passer',
-    previous: 'Précédent',
-    next: 'Suivant',
-    finish: 'Terminer',
-    start: 'Commencer',
-    promptBody:
-      'FitTrack peut te parler pour guider ta séance. Choisis avant le premier son : une visite avec voix, une visite à lire, ou un accès direct et silencieux à l’app.',
-    audioWelcomeTitle: 'Avant le premier son',
-    startWithVoice: 'Découvrir avec la voix',
-    startWithoutVoice: 'Découvrir sans son',
-    audioChoiceBody:
-      'Choisis le guidage pour tes séances. Le mode sans voix conserve les indications visuelles. Ce choix reste modifiable dans les réglages.',
-    promptReplay:
-      'Vous pourrez la relancer à tout moment avec le point d’interrogation dans l’en-tête.',
-    explainPage: 'Expliquer cette page · {topic}',
-    explainDuration: 'Environ vingt secondes.',
-    restartFull: 'Recommencer la visite complète',
-    fullDuration: 'Moins de deux minutes trente.',
-    busyHint: 'Disponible dès la fin du décompte en cours.',
-    voiceChoiceTitle: 'Guidage vocal',
-    currentMode: 'Mode actuel : {mode}',
-    modeVoice: 'Voix et sons',
-    modeVoiceHint: 'Guidage complet pendant la séance.',
-    modeSounds: 'Sons uniquement',
-    modeSoundsHint: 'Impacts, cadence et validations, sans parole.',
-    modeVoiceOnly: 'Voix uniquement',
-    modeVoiceOnlyHint: 'Les annonces utiles, sans le battement des répétitions.',
-    modeSilence: 'Silence',
-    modeSilenceHint: 'Aucun son produit par FitTrack.',
-    offScreenNotice:
-      'Cet écran n’existe que pendant une séance : la visite le décrit sans l’ouvrir.',
-
-    hud: {
-      counter: '{index} / {count}',
-      continue: 'Continuer',
-      readDetail: 'Lire le détail',
-      hideDetail: 'Masquer le détail',
-      quit: 'Quitter le guide',
-      retry: 'Réessayer',
-      loadingTarget: 'Recherche de la commande sur cet écran…',
-      stuck: 'La commande n’est pas apparue sur cet écran.',
-    },
-
-    history: {
-      find: { title: 'Retrouver une séance' },
-      edit: { title: 'Corriger une séance' },
-      share: { title: 'Sortir une séance de l’app' },
-      import: { title: 'Reprendre un historique Hevy' },
-      calendarView: {
-        instruction: 'Passe en vue Calendrier.',
-        detail: 'Le Journal liste les séances, le Calendrier les situe.',
-      },
-      pickDay: {
-        instruction: 'Touche un jour où il y a eu une séance.',
-        detail: 'Les jours d’entraînement sont marqués.',
-      },
-      filterExercise: {
-        instruction: 'Filtre par exercice.',
-        detail: 'Le filtre s’applique au Journal comme au Calendrier.',
-      },
-      openWorkout: {
-        instruction: 'Ouvre la séance.',
-        detail: 'Elle s’ouvre en lecture : rien n’est modifié.',
-      },
-      openActions: {
-        instruction: 'Ouvre le menu Actions de la séance.',
-        detail: 'Tu y trouves Modifier, Partager et Supprimer.',
-      },
-      openEdit: {
-        instruction: 'Ouvre Modifier.',
-        detail: 'Un brouillon s’ouvre : la séance enregistrée ne bouge pas encore.',
-      },
-      saveEdit: {
-        instruction: 'Enregistre la séance avec Enregistrer.',
-        detail:
-          'Enregistrer écrase la séance. Les séries retirées du brouillon sont supprimées, et les records sont recalculés.',
-      },
-      shareActions: {
-        instruction: 'Rouvre le menu Actions de la séance.',
-        detail: 'Partager et Supprimer y vivent.',
-      },
-      shareAction: {
-        instruction: 'Choisis Partager.',
-        detail:
-          'Il produit un texte lisible de la séance. Rien ne quitte le téléphone tant que tu n’as pas choisi où l’envoyer.',
-      },
-      deleteLivesHere: {
-        instruction: 'La même feuille porte Supprimer.',
-        detail:
-          'Il efface la séance de l’historique et des records. Le guide te montre où il vit et n’y touche pas.',
-      },
-      openImport: {
-        instruction: 'Ouvre Importer depuis Hevy.',
-        detail: 'Le parcours s’ouvre, sans lire de fichier.',
-      },
-      chooseFile: {
-        instruction: 'Choisis le CSV.',
-        detail:
-          'Le fichier attendu est workout_data.csv, l’export Hevy. Rien n’est écrit à la lecture.',
-      },
-      review: {
-        instruction: 'Passe à la revue avec Continuer.',
-        detail: 'Les exercices que FitTrack ne reconnaît pas doivent d’abord être associés.',
-      },
-      yoursToPress: {
-        instruction: 'Importer écrit toutes les séances d’un coup.',
-        detail:
-          'Une seule transaction — tout ou rien. C’est le geste le plus lourd de l’app, et il t’appartient.',
-      },
-    },
-
-    workout: {
-      compose: { title: 'Allonger la séance en cours' },
-      setType: { title: 'Dire ce qu’est une série' },
-      effort: { title: 'Noter l’effort d’une série' },
-      plates: { title: 'Ce qu’il faut mettre sur la barre' },
-      warmup: { title: 'Monter en charge avant la série' },
-      pace: { title: 'Lancer et arrêter la cadence' },
-      holdSides: { title: 'Deux côtés, une série' },
-      deload: { title: 'Alléger une séance qui ne passe pas' },
-      addSet: {
-        instruction: 'Ajoute une série au pied de la carte.',
-        detail:
-          'Elle reprend les valeurs de la précédente. Aucune limite de nombre, ici comme partout.',
-      },
-      addExercise: {
-        instruction: 'Ouvre Ajouter un exercice, sous la liste.',
-        detail:
-          'Le sélecteur s’ouvre sur son propre écran ; la séance en cours n’est pas quittée et rien n’est ajouté tant que tu n’as pas confirmé.',
-      },
-      setMenu: {
-        instruction: 'Touche le numéro de la première série.',
-        detail: 'Le numéro est un bouton : il ouvre le menu de cette série-là.',
-      },
-      chooseType: {
-        instruction: 'Ouvre Type de série et choisis autre chose que Normale.',
-        detail:
-          'Le type décide si la série compte dans le volume et dans les records. Un échauffement ne compte ni dans l’un ni dans l’autre.',
-      },
-      completeSet: {
-        instruction: 'Valide la première série.',
-        detail: 'Elle est écrite en base immédiatement, pas à la fin de la séance.',
-      },
-      rpe: {
-        instruction: 'Réponds à la bande Effort perçu.',
-        detail:
-          'Elle allonge le repos quand ça a été dur. L’ignorer ne coûte rien : elle s’efface seule.',
-      },
-      openPlates: {
-        instruction: 'Ouvre Plaques à charger dans le bandeau de la carte.',
-        detail:
-          'Elle n’apparaît que sur un exercice à barre ou à disques, et seulement quand une charge est saisie.',
-      },
-      availablePlates: {
-        instruction: 'Déplie Plaques disponibles et retire celles que tu n’as pas.',
-        detail:
-          'Le calcul ne propose plus que ce qui existe dans ta salle. Ce réglage est global, il ne touche pas cette série.',
-      },
-      exerciseMenu: {
-        instruction: 'Ouvre le menu de l’exercice, à droite de son nom.',
-        detail: 'Il porte ce qui ne tient pas sur la carte : cadence, échauffement, notes.',
-      },
-      openWarmup: {
-        instruction: 'Choisis Calculer l’échauffement.',
-        detail:
-          'L’action n’existe que sur un exercice à charge : sans charge de travail, il n’y a pas de pourcentage à calculer.',
-      },
-      insertWarmup: {
-        instruction: 'Appuie sur Insérer les séries.',
-        detail:
-          'Elles sont ajoutées avant tes séries de travail, marquées Échauffement, donc hors volume et hors records.',
-      },
-      openPace: {
-        instruction: 'Ouvre Cadence dans le bandeau de la carte.',
-        detail: 'La feuille montre le tempo en vigueur et ce qu’il donne sur la prochaine série.',
-      },
-      startPace: {
-        instruction: 'Appuie sur Lancer la cadence.',
-        detail:
-          'Dix secondes pour te mettre en place, puis un battement par répétition et le décompte des trois dernières.',
-      },
-      stopPace: {
-        instruction: 'Arrête la cadence.',
-        detail:
-          'Le carré du bandeau l’arrête sans ouvrir la feuille. Valider la série l’arrête aussi.',
-      },
-      openHold: {
-        instruction: 'Ouvre Chrono dans le bandeau de la carte.',
-        detail:
-          'Sur un exercice mesuré en durée, l’horloge n’est pas un tempo : c’est elle qui écrit la valeur de la série.',
-      },
-      startHold: {
-        instruction: 'Appuie sur Démarrer le chrono.',
-        detail:
-          'Dix secondes pour te mettre en position. Elles ne sont pas comptées dans la durée tenue.',
-      },
-      firstSide: {
-        instruction: 'Premier côté fini : appuie sur la coche.',
-        detail:
-          'Sur un exercice unilatéral, saisis les répétitions d’un côté, puis fais ce côté. La coche mémorise le premier côté et affiche dix secondes pour changer de côté. Le repos entre séries ne démarre pas encore. Ces indications restent visibles sans voix ni cadence.',
-      },
-      secondSide: {
-        instruction: 'Fais le second côté, puis valide la série.',
-        detail:
-          'Quand « Côté 2 sur 2 » apparaît, fais tes répétitions de l’autre côté. Appuie ensuite sur la coche : les deux côtés sont terminés, la série est enregistrée et le repos peut commencer. Une ligne représente toujours les deux côtés.',
-      },
-      openWorkoutMenu: {
-        instruction: 'Ouvre le menu de la séance, en haut à droite.',
-        detail:
-          'Il rassemble ce qu’on ne fait pas à chaque série : alléger la séance, déverrouiller l’ordre des exercices, renommer, écrire une note.',
-      },
-      openDeload: {
-        instruction: 'Choisis « Deload à 80 % ».',
-        detail:
-          'Il ne s’active pas seul : la feuille demande confirmation avant de toucher quoi que ce soit.',
-      },
-      applyDeload: {
-        instruction: 'Appliquer réécrit les séries restantes.',
-        detail:
-          'Toutes passent à 80 %, arrondies à 2,5 kg sauf pour les petites charges. Le guide te montre où vit ce geste et n’y touche pas.',
-      },
-    },
-
-    settings: {
-      announcer: { title: 'Choisir le mode de guidage' },
-      echoTune: { title: 'Régler l’écho de la voix' },
-      notifications: { title: 'Quand l’app a le droit de parler' },
-      mode: {
-        instruction: 'Choisis un mode de guidage.',
-        /*
-         * Silence est une réponse, pas un échec. L'ancienne consigne refusait
-         * d'avancer dessus : celui qui venait précisément couper le son restait
-         * bloqué sur une étape qui lui redemandait de le rallumer.
-         */
-        detail:
-          'Les modes sonores se font entendre aussitôt. Silence est un choix comme un autre : la leçon s’arrête là, et le reste de l’app ne change pas.',
-      },
-      echo: {
-        instruction: 'Règle l’écho.',
-        detail:
-          'Il donne à la voix le grain d’une annonce de salle. Au casque à six heures du matin, l’éteindre change tout. La ligne n’existe qu’avec un mode qui parle ou qui sonne.',
-      },
-      reminders: {
-        instruction: 'Allume Rappels d’entraînement.',
-        detail:
-          'C’est la seule des trois qui sonne un jour où tu n’as pas ouvert l’app. Le même interrupteur l’éteint.',
-      },
-      days: {
-        instruction: 'Choisis les jours du rappel.',
-        detail:
-          'La semaine et l’heure n’apparaissent qu’une fois les rappels allumés. Il n’y a rien à enregistrer : chaque réglage est écrit au moment où tu le touches.',
-      },
-    },
-
-    home: {
-      body: { title: 'Le corps que l’Accueil dessine' },
-      weight: { title: 'Ta pesée du jour' },
-      muscleMap: {
-        instruction: 'Touche un muscle sur le dessin.',
-        detail:
-          'Il montre ce que tu as travaillé sur les douze dernières semaines. Ce n’est pas une image : chaque muscle est une question posée au catalogue.',
-      },
-      muscleSheet: {
-        instruction: 'La feuille liste les exercices de ce muscle.',
-        detail:
-          'Voir dans le catalogue ouvre la bibliothèque déjà filtrée sur lui. Rien n’est modifié en passant par ici.',
-      },
-      openWeight: {
-        instruction: 'Ouvre la tuile poids du jour.',
-        detail: 'Elle affiche ta dernière pesée, et un tiret tant qu’il n’y en a aucune.',
-      },
-      saveWeight: {
-        instruction: 'Enregistrer écrit la pesée du jour.',
-        detail:
-          'Le guide ne la remplit pas à ta place : un poids de corps est une mesure réelle, pas une démonstration.',
-      },
-    },
-
-    knowledge: {
-      search: { title: 'Chercher dans les preuves' },
-      learn: { title: 'Apprendre à programmer' },
-      query: {
-        instruction: 'Pose une question, puis lance Chercher dans les preuves.',
-        detail:
-          'La recherche est lexicale et tourne sur l’appareil : elle ne rend que les passages qui portent tes mots, et affiche un refus quand il n’y en a aucun.',
-      },
-      openResult: {
-        instruction: 'Ouvre la première preuve avec Lire dans sa section.',
-        detail:
-          'Un extrait seul ne dit pas ce qu’il y avait autour. Le lien remet le passage dans son texte d’origine.',
-      },
-      openPath: {
-        instruction: 'Ouvre Apprendre à programmer.',
-        detail:
-          'Quatorze articles du Guide, rangés dans l’ordre où ils s’éclairent. Le parcours explique ; il n’écrit aucun programme.',
-      },
-      markRead: {
-        instruction: 'Le bouton À lire sert à suivre ta progression.',
-        detail:
-          'C’est toi qui déclares avoir lu, et le guide n’y touche pas. Le suivi reste sur cet appareil et se décoche aussi bien qu’il se coche.',
-      },
-      openStep: {
-        instruction: 'Ouvre la première étape avec Lire cette étape.',
-        detail:
-          'Progression et autorégulation : le seul paramètre dont l’absence annule les autres.',
-      },
-      sources: {
-        instruction: 'Déplie Sources sous un passage.',
-        detail:
-          'Chaque affirmation porte de quoi la vérifier. Il y a un bloc Sources par affirmation, pas un seul pour l’article.',
-      },
-    },
-
-    analytics: {
-      read: { title: 'Lire tes analyses' },
-      share: { title: 'Sortir un graphique de l’app' },
-      openWeekly: {
-        instruction: 'Ouvre Séances par semaine.',
-        detail:
-          'Les analyses ne se remplissent qu’avec des séances terminées : sans historique, cette ligne n’est même pas là.',
-      },
-      period: {
-        instruction: 'Ouvre le filtre de période et choisis-en une autre.',
-        detail:
-          'Douze semaines par défaut, et rien ne le dit à l’écran. Le filtre ne change que l’affichage : aucune séance n’est touchée.',
-      },
-      openWeeklyForShare: {
-        instruction: 'Ouvre Séances par semaine.',
-        detail:
-          'Exporter en image n’apparaît que sous un graphique tracé. Sans séance sur la période, il n’y a rien à sortir.',
-      },
-      exportImage: {
-        instruction: 'Appuie sur Exporter en image.',
-        detail:
-          'L’image est fabriquée sur l’appareil. Selon le téléphone, elle part ensuite dans le partage du système ou dans les téléchargements.',
-      },
-    },
-
-    exercises: {
-      find: { title: 'Trouver le bon exercice' },
-      create: { title: 'Créer un exercice à toi' },
-      search: {
-        instruction: 'Cherche un exercice par son nom.',
-        detail: 'Les accents et la casse sont ignorés : « developpe » trouve Développé couché.',
-      },
-      filterMuscle: {
-        instruction: 'Ouvre Muscle et choisis un groupe.',
-        detail:
-          'Le filtre s’ajoute à la recherche au lieu de la remplacer. Le compteur au-dessus de la liste dit combien de lignes restent.',
-      },
-      filterEquipment: {
-        instruction: 'Ouvre Matériel et choisis un équipement.',
-        detail:
-          'Les trois critères se cumulent. Quand plus rien ne correspond, Retirer les filtres enlève les deux et garde la recherche.',
-      },
-      openForm: {
-        instruction: 'Ouvre Nouvel exercice, le + en haut.',
-        detail:
-          'Rien n’est créé à l’ouverture : le formulaire reste un brouillon tant que tu n’enregistres pas.',
-      },
-      name: {
-        instruction: 'Donne-lui un nom.',
-        detail:
-          'C’est le seul champ obligatoire : Créer l’exercice reste éteint tant qu’il est vide.',
-      },
-      measurement: {
-        instruction: 'Ouvre Ce que tu saisis et choisis la mesure.',
-        detail:
-          'Elle décide des champs de saisie pendant la séance : poids et répétitions, durée seule, distance et durée.',
-      },
-      unilateral: {
-        instruction: 'Réponds à Unilatéral.',
-        detail:
-          'Oui quand le mouvement se fait un côté à la fois. L’une ou l’autre réponse convient : le guide te montre où la question se pose.',
-      },
-      save: {
-        instruction: 'Appuie sur Créer l’exercice.',
-        detail:
-          'Il rejoint le catalogue avec les autres, sans limite de nombre, et s’ouvre aussitôt sur sa fiche.',
-      },
-    },
-
-    program: {
-      title: 'Construire et suivre un programme',
-      whatIsABlock: {
-        instruction: 'Une routine décrit une séance.',
-        detail: 'Un programme organise plusieurs routines dans le temps, en semaines.',
-      },
-      openWizard: {
-        instruction: 'Ouvre l’assistant par le +.',
-        detail: 'Il se déroule en trois étapes : Cadre, Split, Semaines.',
-      },
-      nameBlock: {
-        instruction: 'Saisis le Nom du bloc.',
-        detail: 'Rien n’est encore enregistré à ce stade.',
-      },
-      startDate: {
-        instruction: 'Choisis le Lundi de départ.',
-        detail: 'Les semaines se comptent du lundi au dimanche : c’est pour ça que c’est un lundi.',
-      },
-      duration: {
-        instruction: 'Choisis la Durée.',
-        detail: 'Elle va de 4 à 12 semaines, et se modifie tant que le bloc est un brouillon.',
-      },
-      saveBasics: {
-        instruction: 'Enregistre le cadre avec Continuer.',
-        detail: 'Le brouillon existe alors vraiment : tu peux le quitter et y revenir.',
-      },
-      splitDay: {
-        instruction: 'Choisis le Jour de la séance 1.',
-        detail: 'Le split se répète chaque semaine du bloc.',
-      },
-      splitRoutine: {
-        instruction: 'Choisis la Routine de la séance 1.',
-        detail: 'La liste reprend les routines déjà créées.',
-      },
-      splitMore: {
-        instruction: 'Ajouter une séance permet d’en poser d’autres.',
-        detail: 'Une seule suffit pour comprendre : un bloc à une séance par semaine est valide.',
-      },
-      saveSplit: {
-        instruction: 'Enregistre le split avec Continuer.',
-        detail: 'Les séances de la semaine sont écrites dans le brouillon.',
-      },
-      recipe: {
-        instruction: 'Applique une recette : Hypertrophie, Force ou Reprise.',
-        detail: 'Elle pose une intention par semaine, plutôt que de les régler une à une.',
-      },
-      weekSheet: {
-        instruction: 'Ouvre la première semaine.',
-        detail: 'Tu y lis et règles sa phase et son niveau de charge.',
-      },
-      activate: {
-        instruction: 'Active le bloc.',
-        detail: 'Les semaines sont écrites. Un seul bloc est actif à la fois.',
-      },
-      readWeek: {
-        instruction: 'L’Intention de la semaine décrit la semaine en cours.',
-        detail: 'Elle porte la phase, le niveau, et ce que ça change aux charges.',
-      },
-      pickSession: {
-        instruction: 'Sélectionne une séance dans La semaine.',
-        detail: 'C’est cette séance que Démarrer lance.',
-      },
-      upcoming: {
-        instruction: 'Les Semaines suivantes, repliées, montrent l’arc du bloc.',
-        detail: 'Tu y vois la montée, puis la décharge.',
-      },
-      actionsMenu: {
-        instruction: 'Ouvre le menu Options du bloc.',
-        detail: 'Tu y trouves Modifier à partir de…, Décaler le bloc et Terminer le bloc.',
-      },
-      beforeStart: {
-        instruction: 'Démarrer lance une vraie séance.',
-        detail:
-          'Les charges sont projetées par le niveau de la semaine. Le guide s’arrête ici et laisse ce geste.',
-      },
-    },
-
-    campaign: {
-      title: 'Ma première séance guidée',
-      body: 'FitTrack ouvre chaque écran et attend ton geste. Rien n’est créé, rempli ni validé à ta place.',
-      start: 'Commencer la découverte',
-      later: 'Plus tard',
-
-      prepare: { title: 'Préparer la séance découverte' },
-      workout: { title: 'Ta première séance' },
-
-      openCreate: {
-        instruction: 'Ouvre le menu de création.',
-        detail: 'Une routine est une séance que tu prépares une fois et que tu relances ensuite.',
-      },
-      createBlank: {
-        instruction: 'Choisis Routine vide.',
-        detail:
-          'Elle est créée immédiatement : le nom et chaque modification sont enregistrés au fur et à mesure.',
-      },
-      name: {
-        instruction: 'Nomme-la Séance découverte.',
-        detail: 'Le nom sert à la retrouver dans ta liste. Tu peux le changer quand tu veux.',
-      },
-      openPicker: {
-        instruction: 'Ouvre le catalogue d’exercices.',
-        detail: 'Il contient les exercices fournis et ceux que tu créeras toi-même.',
-      },
-      search: {
-        instruction: 'Cherche « curl ».',
-        detail: 'La recherche filtre les 168 exercices sur le nom, sans distinguer les accents.',
-      },
-      curl: {
-        instruction: 'Sélectionne Curl haltères.',
-        detail:
-          'Tu feras les répétitions avec les deux bras ensemble : une seule ligne et une seule validation.',
-      },
-      add: {
-        instruction: 'Ajoute-le à la routine.',
-        detail: 'La barre du bas n’apparaît qu’une fois quelque chose de sélectionné.',
-      },
-      secondSet: {
-        instruction: 'Ajoute une deuxième série.',
-        detail: 'Deux séries suffisent à voir ce qui se passe entre deux efforts : le repos.',
-      },
-      target: {
-        instruction: 'Ouvre la première série et donne-lui une cible de répétitions.',
-        detail:
-          'La cible est une intention, pas une contrainte : pendant la séance tu saisiras ce que tu as réellement fait.',
-      },
-      rest: {
-        instruction: 'Ouvre le menu de l’exercice et règle un repos.',
-        detail:
-          'Il démarre tout seul à chaque série validée, et reste ajustable pendant la séance.',
-      },
-      ready: {
-        instruction: 'La routine est prête, et déjà enregistrée.',
-        detail:
-          'Le guide s’arrête ici. Il reprendra tout seul quand tu appuieras sur Démarrer — c’est à toi de choisir le moment.',
-      },
-
-      write: {
-        instruction: 'Saisis la charge et les répétitions de la première série.',
-        detail: 'Rien n’est encore enregistré comme fait : la saisie prépare la validation.',
-      },
-      validate: {
-        instruction: 'Valide la série avec la coche.',
-        detail:
-          'C’est la coche qui écrit en base. Une séance interrompue à cet instant garderait cette série.',
-      },
-      restRail: {
-        instruction: 'Le repos a démarré tout seul. Laisse-le finir.',
-        detail:
-          'Il tourne sur l’horloge du téléphone : il continue écran éteint, et même application fermée.',
-      },
-      secondEffort: {
-        instruction: 'Fais la deuxième série, puis valide-la.',
-        detail: 'Même geste que la première : saisir ce qui a été fait, puis la coche.',
-      },
-      finish: {
-        instruction: 'Ouvre le bilan de la séance.',
-        detail:
-          'Rien n’est perdu : la séance existe déjà, le bilan sert à la relire avant de la ranger.',
-      },
-      save: {
-        instruction: 'Enregistre la séance.',
-        detail: 'Elle rejoint ton historique, et alimente records et progression.',
-      },
-      done: {
-        instruction: 'C’est fini : tu as une séance derrière toi.',
-        detail:
-          'Historique garde ce que tu as fait, Progression ce que ça donne dans le temps. Le point d’interrogation ouvre l’aide de chaque écran.',
-      },
-    },
-
-    recovery: {
-      title: 'Séance toujours en cours',
-      body: 'Cette séance a commencé il y a plus de douze heures. Choisis ce que tu veux en faire.',
-      resume: 'Reprendre la séance',
-      finish: 'Voir le bilan et terminer',
-      discard: 'Abandonner la séance',
-      discardTitle: 'Abandonner cette séance ?',
-      discardBodyNone: 'Aucune série validée ne sera conservée.',
-      discardBodyOne: 'La série validée ne sera pas conservée.',
-      discardBody: '{count} séries validées ne seront pas conservées.',
-      discardConfirm: 'Confirmer l’abandon',
-    },
-
-    mission: {
-      label: 'Mission guidée',
-      counter: 'Étape {index} sur {count}',
-      dismiss: 'Passer cette mission',
-      campaign: {
-        title: 'Créer la séance découverte',
-        instruction: 'Ouvre le menu de création, puis choisis Routine vide.',
-        detail: 'Le nom et chaque modification sont enregistrés immédiatement.',
-      },
-      recovery: {
-        title: 'Résoudre la séance en attente',
-        instruction: 'Ouvre la séance en attente et choisis consciemment sa suite.',
-        detail: 'FitTrack ne supprimera jamais cette séance automatiquement.',
-      },
-      routineCreate: {
-        title: 'Créer une première routine',
-        instruction: 'Ouvre le menu de création, puis choisis Nouvelle routine.',
-        detail: 'Le nom et chaque modification sont enregistrés immédiatement.',
-      },
-      routineExercise: {
-        title: 'Ajouter un exercice',
-        instruction: 'Ajoute au moins un exercice à cette routine.',
-        detail: 'Choisis un exercice que tu peux réellement effectuer maintenant.',
-      },
-      routineSet: {
-        title: 'Préparer plusieurs séries',
-        instruction: 'Ajoute une deuxième série au premier exercice.',
-        detail: 'Elle permettra de voir le repos entre deux efforts.',
-      },
-      routineTargets: {
-        title: 'Définir la série',
-        instruction: 'Ouvre la première série et renseigne sa cible.',
-        detail: 'Les champs proposés dépendent du type de mesure de l’exercice.',
-      },
-      routineRest: {
-        title: 'Définir le repos',
-        instruction: 'Ouvre les options de l’exercice et choisis un temps de repos.',
-        detail: 'Ce repos démarrera après chaque série de travail compatible.',
-      },
-      routineStart: {
-        title: 'Démarrer la routine',
-        instruction: 'Démarre la séance depuis la barre d’action.',
-        detail: 'Une seule séance peut être active à la fois.',
-      },
-      setInput: {
-        title: 'Renseigner la première série',
-        instruction: 'Renseigne les valeurs de la première série.',
-        detail: 'S’il existe, touche le résultat précédent pour le reprendre en un geste.',
-      },
-      setValidate: {
-        title: 'Valider la série',
-        instruction: 'Touche la coche de la première série.',
-        detail: 'La validation est écrite immédiatement sur cet appareil.',
-      },
-      rest: {
-        title: 'Lire le repos',
-        instruction: 'Laisse le minuteur atteindre la fin du repos.',
-        detail: 'Le décompte reste fiable si tu quittes momentanément cet écran.',
-      },
-      workoutFinish: {
-        title: 'Ouvrir le bilan',
-        instruction: 'Quand ta séance est terminée, ouvre le bilan.',
-        detail: 'Les séries non validées ne seront pas comptées.',
-      },
-      workoutSave: {
-        title: 'Enregistrer la séance',
-        instruction: 'Relis le bilan, puis enregistre la séance.',
-        detail: 'Elle rejoindra immédiatement ton historique et tes analyses.',
-      },
-      backupExport: {
-        title: 'Exporter une sauvegarde complète',
-        instruction: 'Exporte une sauvegarde complète de FitTrack.',
-        detail:
-          'Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.',
-      },
-      backupRestore: {
-        title: 'Comprendre une restauration',
-        instruction: 'Choisis un fichier de sauvegarde pour ouvrir sa confirmation.',
-        detail:
-          'Tu peux fermer la confirmation : cette mission ne demande pas de restaurer le fichier.',
-      },
-    },
-
-    topic: {
-      home: 'Accueil',
-      routines: 'Routines',
-      programs: 'Blocs',
-      workout: 'Séance',
-      coach: 'Coach',
-      history: 'Historique',
-      analytics: 'Progression',
-      exercises: 'Exercices',
-      settings: 'Réglages',
-    },
-
-    step: {
-      intro: 'Un tour rapide des écrans essentiels avant ta première séance.',
-      home: 'L’accueil te montre quoi lancer et où tu en es.',
-      routines: 'Prépare tes séances, puis organise-les en blocs de plusieurs semaines.',
-      programs: 'Un bloc étale tes routines sur plusieurs semaines, avec une intention.',
-      workout: 'Renseigne charge et répétitions : la voix cadence, compte et relance.',
-      coach: 'Le coach résume la séance et explique la prochaine progression.',
-      history: 'Chaque séance terminée reste consultable et modifiable.',
-      analytics: 'Suis tes records, ton volume, ta régularité et tes muscles.',
-      exercises: 'Chaque exercice rassemble son historique et ses performances.',
-      settings: 'Adapte la voix, les sons et le comportement de FitTrack.',
-    },
+  recovery: {
+    title: 'Séance toujours en cours',
+    body: 'Cette séance a commencé il y a plus de douze heures. Choisis ce que tu veux en faire.',
+    resume: 'Reprendre la séance',
+    finish: 'Voir le bilan et terminer',
+    discard: 'Abandonner la séance',
+    discardTitle: 'Abandonner cette séance ?',
+    discardBodyNone: 'Aucune série validée ne sera conservée.',
+    discardBodyOne: 'La série validée ne sera pas conservée.',
+    discardBody: '{count} séries validées ne seront pas conservées.',
+    discardConfirm: 'Confirmer l’abandon',
   },
 } satisfies Dictionary;
 

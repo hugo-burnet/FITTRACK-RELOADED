@@ -83,6 +83,21 @@ export function sessionEffort(line: CoachExerciseLine): number | undefined {
   return rated.reduce((sum, rpe) => sum + rpe, 0) / rated.length;
 }
 
+/**
+ * Highest RPE entered on the judged sets (failure sets excluded: they are at 10 by design, and
+ * counting them would forbid any increase to someone who finishes at failure). Unlike
+ * `sessionEffort`, one rated set is enough: a single set at 9 is a set at 9. Undefined when
+ * none carries an RPE — a forgotten RPE must not block an increase.
+ */
+export function maxRatedEffort(line: CoachExerciseLine): number | undefined {
+  let max: number | undefined;
+  for (const set of judgedSets(line)) {
+    if (typeof set.rpe !== 'number' || !Number.isFinite(set.rpe)) continue;
+    if (max === undefined || set.rpe > max) max = set.rpe;
+  }
+  return max;
+}
+
 export function roundRpe(value: number): number {
   return Math.round(value * 10) / 10;
 }

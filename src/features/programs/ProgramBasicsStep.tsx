@@ -1,7 +1,5 @@
 import { t } from '@/i18n/fr';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { Card, Input } from '@/ui';
-import { parseLocalDate } from './programEditorModel';
 
 export interface ProgramBasicsDraft {
   name: string;
@@ -18,7 +16,6 @@ interface Props {
 }
 
 export function ProgramBasicsStep({ value, dateValue, locked = false, onChange, onDateChange }: Props) {
-  const tutorial = useTutorialControls();
 
   return (
     <div className="flex flex-col gap-5">
@@ -28,31 +25,21 @@ export function ProgramBasicsStep({ value, dateValue, locked = false, onChange, 
           <Input
             label={t('program.nameLabel')}
             placeholder={t('program.namePlaceholder')}
-            tutorialId="program-name"
             value={value.name}
             disabled={locked}
             enterKeyHint="done"
             onChange={(event) => {
               onChange({ ...value, name: event.target.value });
-              tutorial?.report({ type: 'program-basics-named', name: event.target.value });
             }}
           />
           <div className="flex flex-col gap-2">
             <Input
               label={t('program.startsAtLabel')}
               type="date"
-              tutorialId="program-start-date"
               value={dateValue}
               disabled={locked}
               onChange={(event) => {
                 onDateChange(event.target.value);
-                const parsed = parseLocalDate(event.target.value);
-                // Une date incomplète n'est pas une date choisie : le champ en
-                // produit à chaque frappe, et `parseLocalDate` rend 0 tant
-                // qu'elle n'est pas une vraie date.
-                if (parsed > 0) {
-                  tutorial?.report({ type: 'program-basics-dated', startsAt: parsed });
-                }
               }}
             />
             {/* La contrainte est écrite là où elle s'applique. Le champ accepte
@@ -70,13 +57,11 @@ export function ProgramBasicsStep({ value, dateValue, locked = false, onChange, 
             </span>
             <select
               aria-label={t('program.durationLabel')}
-              data-tutorial-id="program-duration"
               value={value.durationWeeks}
               disabled={locked}
               onChange={(event) => {
                 const durationWeeks = Number(event.target.value);
                 onChange({ ...value, durationWeeks });
-                tutorial?.report({ type: 'program-basics-duration-set', weeks: durationWeeks });
               }}
               className="min-h-12 rounded-lg bg-[var(--surface-2)] px-4 text-base
                 text-[var(--text-1)] outline-none focus:ring-2 focus:ring-[var(--accent-ink)]

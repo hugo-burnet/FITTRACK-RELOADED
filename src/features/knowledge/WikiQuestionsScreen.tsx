@@ -3,7 +3,7 @@ import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import questionsDocument from './wiki-questions.json';
 import { findSectionIdForClaim, findWikiSection } from './wikiIndex';
-import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
+import { Screen } from '@/app/Screen';
 
 type CoveredQuestion = { questionId: string; text: string; claimIds: string[] };
 type UncoveredQuestion = { questionId: string; text: string; missing: string };
@@ -78,7 +78,7 @@ export function WikiQuestionsScreen() {
   const navigate = useAppNavigate();
 
   return (
-    <KnowledgeScreenFrame
+    <Screen
       title={t('knowledge.wiki.questionsTitle')}
       onBack={() => void navigate('/knowledge')}
     >
@@ -117,6 +117,6 @@ export function WikiQuestionsScreen() {
           ))}
         </section>
       </div>
-    </KnowledgeScreenFrame>
+    </Screen>
   );
 }
