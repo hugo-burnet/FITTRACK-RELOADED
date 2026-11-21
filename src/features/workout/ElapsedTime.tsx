@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { formatElapsed } from './elapsed';
+import { useElapsedReading } from './useElapsedReading';
 
 /**
  * How long the session has been running, ticking every second.
@@ -27,14 +26,7 @@ export function ElapsedTime({
    */
   label?: (time: string) => string;
 }) {
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const time = formatElapsed((now - startedAt) / 1000);
+  const time = useElapsedReading(startedAt);
 
   return (
     <span className={`metric tabular ${className}`} aria-label={label?.(time)}>

@@ -8,6 +8,7 @@ import { t } from '@/i18n/fr';
 import {
   exerciseDisplayName,
   formatDuration,
+  groupedNumber,
   partReading,
   setTypeLabel,
   unitLabel,
@@ -148,11 +149,19 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
           <Tile
             size="S"
             label={t('history.detailTonnage')}
-            value={{ value: formatNumber(totals.tonnage), unit: unitLabel('kg') }}
+            value={{ value: groupedNumber(totals.tonnage), unit: unitLabel('kg') }}
           />
         )}
-        <Tile size="S" label={t('history.detailSets')} value={{ value: String(totals.workingSets) }} />
-        <Tile size="S" label={t('history.detailReps')} value={{ value: String(totals.totalReps) }} />
+        <Tile
+          size="S"
+          label={t(totals.workingSets === 1 ? 'history.detailSetsOne' : 'history.detailSets')}
+          value={{ value: String(totals.workingSets) }}
+        />
+        <Tile
+          size="S"
+          label={t(totals.totalReps === 1 ? 'history.detailRepsOne' : 'history.detailReps')}
+          value={{ value: String(totals.totalReps) }}
+        />
         {totals.distanceMeters > 0 && distancePart !== undefined && (
           <Tile
             size="S"
