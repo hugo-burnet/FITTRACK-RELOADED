@@ -1,4 +1,4 @@
-import { normalizeSearch } from '@/data/repositories/exercises';
+import { matchesSearch } from '@/data/repositories/exercises';
 import type { Equipment, Exercise, MuscleGroup } from '@/data/types';
 import { rankHevyExerciseCandidates } from '@/lib/hevyExerciseMatch';
 import type { HevyMappingDraftRow } from './hevyImportDraft';
@@ -20,12 +20,11 @@ export function filterHevyMappingExercises(
   equipment?: Equipment,
 ): Exercise[] {
   if (row === null) return [];
-  const needle = normalizeSearch(search);
   const compatible = exercises.filter(
     (exercise) =>
       exercise.deletedAt === 0 &&
       exercise.measurementType === row.source.measurementType &&
-      normalizeSearch(exercise.name).includes(needle) &&
+      matchesSearch(exercise.name, search) &&
       (muscle === undefined || exercise.primaryMuscle === muscle) &&
       (equipment === undefined || exercise.equipment === equipment),
   );

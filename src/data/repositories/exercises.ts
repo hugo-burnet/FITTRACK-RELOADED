@@ -32,6 +32,20 @@ export function normalizeSearch(input: string): string {
 }
 
 /**
+ * Whether a name answers a search, word by word: every word of the search must
+ * appear in the name, in any order. Matching the whole phrase meant "squat
+ * barre" never found "Squat (barre)" — the parentheses the catalogue puts around
+ * the equipment broke a phrase nobody types verbatim between two sets. An empty
+ * search matches everything.
+ */
+export function matchesSearch(name: string, search: string): boolean {
+  const words = normalizeSearch(search).split(/[^\p{L}\p{N}]+/u).filter((word) => word !== '');
+  if (words.length === 0) return true;
+  const haystack = normalizeSearch(name);
+  return words.every((word) => haystack.includes(word));
+}
+
+/**
  * The library screen's only read. Sorted by name in French collation, so "Épaulé"
  * lands with the E's rather than after Z.
  */
@@ -50,8 +64,7 @@ export async function listExercises(filter: ExerciseFilter = {}): Promise<Exerci
     rows = rows.filter((row) => row.equipment === equipment);
   }
 
-  const needle = search === undefined ? '' : normalizeSearch(search);
-  if (needle !== '') rows = rows.filter((row) => normalizeSearch(row.name).includes(needle));
+  if (search !== undefined) rows = rows.filter((row) => matchesSearch(row.name, search));
 
   return rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 }
