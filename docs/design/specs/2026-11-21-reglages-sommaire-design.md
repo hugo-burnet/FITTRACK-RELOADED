@@ -21,6 +21,12 @@ option, la sauvegarde coupée en deux sections, « Dépannage » et « À propos
 | Sauvegarde | « Dernière : il y a N jours » ou « Aucune sauvegarde sur cet appareil » | `/settings/backup` | l'état en tête, Exporter tout le compte (JSON), Restaurer, puis « Exporter » : historique lisible, CSV |
 | Application | « Prête hors-ligne » ou « Hors-ligne en préparation » | `/settings/app` | Installer, l'état hors-ligne, Base de preuves, Dépannage et données, À propos et crédits |
 
+- **En tête du sommaire, le bandeau de sauvegarde** (repris de la piste C, sur décision de l'utilisateur) : une carte
+  pleine largeur, au-dessus des cinq lignes, qui dit « Dernière sauvegarde : il y a N jours » (ou « Aucune sauvegarde
+  sur cet appareil », en ton d'alerte) et ouvre `/settings/backup`. Il lit `useBackupStatus`, comme la carte de
+  l'accueil. C'est le seul état qui demande une action ; le reste du sommaire reste en lignes.
+- **Lignes, pas tuiles** (décision du 2026-11-21) : un état fait de mots tient en sous-titre ; les tuiles sont réservées
+  aux entrées qui portent un chiffre (`DESIGN.md`, règle « tuile ou ligne »).
 - Le numéro de version reste où il est. Chaque page a la flèche de retour à gauche (`Screen` `onBack`) vers
   `/settings` ; le retour d'Android y revient aussi (routeur à hash, comme les autres sous-écrans).
 - **Une phrase d'aide au plus par groupe.** Les paragraphes actuels ne sont pas supprimés : ils passent derrière
