@@ -8,7 +8,7 @@ import {
   newHistoryExerciseDraft,
   type HistoryExerciseDraft,
 } from './historyDraft';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 type Props = {
   open: boolean;

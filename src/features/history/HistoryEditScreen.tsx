@@ -29,7 +29,7 @@ import {
   timestampFromHistoryInputs,
   type HistoryWorkoutDraft,
 } from './historyDraft';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 type EditValues = {
   draft: HistoryWorkoutDraft;

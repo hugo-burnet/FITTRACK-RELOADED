@@ -16,7 +16,7 @@ import { copyText, shareText, type ShareOutcome } from '@/platform/share';
 import { ActionSheet, Button, Card, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { HistoryWorkoutDetail } from './HistoryWorkoutDetail';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',

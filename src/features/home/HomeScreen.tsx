@@ -15,7 +15,7 @@ import { HomeStatsIsland } from './HomeStatsIsland';
 import { HomeVolumeCard } from './HomeVolumeCard';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
 import { useHomeDashboard } from './useHomeDashboard';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 /**
  * Où une séance préparée commence.

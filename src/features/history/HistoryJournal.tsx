@@ -3,7 +3,7 @@ import { t } from '@/i18n/fr';
 import { Button, Card, EmptyState } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Link } from 'react-router-dom';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 interface Props {
   page: HistoryPage | undefined;

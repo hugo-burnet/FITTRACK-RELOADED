@@ -9,7 +9,7 @@ import type { BenchmarkLine } from '@/lib/benchmark';
 import { ActionBand, Card } from '@/ui';
 import { BenchmarkLineCard } from './BenchmarkLineCard';
 import { appliedReading } from './benchmarkText';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 /** Posé par l'écran de fin de séance : on arrive d'une séance qui vient d'être close, pas de l'historique. */
 export interface BenchmarkLocationState {

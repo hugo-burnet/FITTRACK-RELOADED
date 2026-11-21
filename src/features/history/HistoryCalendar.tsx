@@ -4,7 +4,7 @@ import { buildMonthGrid } from '@/lib/history';
 import { Card } from '@/ui';
 import { ArrowLeftIcon } from '@/ui/icons';
 import { HistoryWorkoutSummaryList } from './HistoryJournal';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 interface Props {
   visibleMonth: number;

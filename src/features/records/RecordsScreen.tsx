@@ -13,7 +13,7 @@ import { t } from '@/i18n/fr';
 import { exerciseDisplayName, recordLabel } from '@/i18n/labels';
 import { Button, EmptyState, FilterChip, OptionSheet, type Option } from '@/ui';
 import { RecordRail } from './RecordRail';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 const ALL = '';
 

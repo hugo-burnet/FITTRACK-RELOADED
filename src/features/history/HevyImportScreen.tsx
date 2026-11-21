@@ -28,7 +28,7 @@ import {
   type HevyImportDraft,
   type HevyMappingDraftRow,
 } from './hevyImportDraft';
-import { Skeleton } from '../../ui/Skeleton';
+import { Skeleton } from '@/ui/Skeleton';
 
 type ReadyState = {
   data: HevyImportData;
