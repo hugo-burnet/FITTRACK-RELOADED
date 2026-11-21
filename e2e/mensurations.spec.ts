@@ -73,7 +73,11 @@ test.describe('les mensurations', () => {
 
   test('corriger puis supprimer une mesure refait la courbe', async ({ page }) => {
     await openMeasurements(page);
-    await addMeasurement(page, { measure: 'Tour de taille', value: '84', date: await isoDaysAgo(page, 20) });
+    await addMeasurement(page, {
+      measure: 'Tour de taille',
+      value: '84',
+      date: await isoDaysAgo(page, 20),
+    });
     await addMeasurement(page, { measure: 'Tour de taille', value: '82,5' });
     await page.getByRole('button', { name: /Tour de taille/ }).click();
     const history = page.getByRole('heading', { name: 'Historique' }).locator('..');
@@ -100,7 +104,7 @@ test.describe('les mensurations', () => {
   });
 
   test('le poids de l’accueil et celui des mensurations sont la même mesure', async ({ page }) => {
-    await page.getByRole('button', { name: 'Renseigner le poids du jour' }).click();
+    await page.getByRole('button', { name: /^poids du jour/ }).click();
     const home = page.getByRole('dialog', { name: 'Poids du jour' });
     await home.getByLabel('Poids du corps').fill('82,4');
     await home.getByRole('button', { name: 'Enregistrer' }).click();
@@ -121,22 +125,22 @@ test.describe('les mensurations', () => {
 
     // Et l'accueil n'a pas bougé : sa tuile lit toujours la dernière pesée.
     await page.getByRole('link', { name: 'Accueil' }).click();
-    await expect(page.getByRole('button', { name: 'Renseigner le poids du jour' })).toContainText(
-      '82,4',
-    );
+    await expect(page.getByRole('button', { name: /^poids du jour/ })).toContainText('82,4');
   });
 
   test('la feuille du poids, à l’accueil, mène à sa courbe', async ({ page }) => {
-    await page.getByRole('button', { name: 'Renseigner le poids du jour' }).click();
+    await page.getByRole('button', { name: /^poids du jour/ }).click();
     const sheet = page.getByRole('dialog', { name: 'Poids du jour' });
     // Pas de pesée, pas de courbe à proposer : le lien ouvrirait une page vide.
-    await expect(sheet.getByRole('button', { name: 'Voir la courbe et l’historique' })).toHaveCount(0);
+    await expect(sheet.getByRole('button', { name: 'Voir la courbe et l’historique' })).toHaveCount(
+      0,
+    );
 
     await sheet.getByLabel('Poids du corps').fill('82,4');
     await sheet.getByRole('button', { name: 'Enregistrer' }).click();
     await expect(sheet).toBeHidden();
 
-    await page.getByRole('button', { name: 'Renseigner le poids du jour' }).click();
+    await page.getByRole('button', { name: /^poids du jour/ }).click();
     await sheet.getByRole('button', { name: 'Voir la courbe et l’historique' }).click();
 
     await expect(page.getByRole('heading', { level: 1, name: 'Poids de corps' })).toBeVisible();
