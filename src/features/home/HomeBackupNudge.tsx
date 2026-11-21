@@ -75,7 +75,7 @@ export function HomeBackupNudge() {
           )}
           {/* Une grille qui se replie, pas deux `flex-1` : « Exporter » gardait sa largeur et « Plus tard »
               sortait de la carte à 200 %. Les boutons s'empilent d'eux-mêmes quand la police grossit. */}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-3">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(9rem,100%),1fr))] gap-3">
             <Button variant="primary" disabled={busy} onClick={() => void save()}>
               {t('home.backupAction')}
             </Button>

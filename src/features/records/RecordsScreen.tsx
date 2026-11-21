@@ -143,7 +143,9 @@ export function RecordsScreen() {
         {/* Rien à filtrer dans une collection vide : les puces ne s'affichent pas (sauf si un filtre
             d'adresse est déjà posé, qu'il faut alors pouvoir lever). */}
         {(hasFilters || allEntries === undefined || allEntries.length > 0) && (
-          <div className="flex shrink-0 gap-2 pb-1">
+          /* Une grille qui se replie : deux `flex-1` serrés à 200 % ne laissent à chaque puce que « Ex… » et
+              « Ty… ». Sous 10 rem par puce, elles s'empilent. */
+          <div className="grid shrink-0 grid-cols-[repeat(auto-fit,minmax(min(10rem,100%),1fr))] gap-2 pb-1">
             <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
               <FilterChip
                 label={
