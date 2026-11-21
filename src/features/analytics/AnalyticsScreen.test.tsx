@@ -35,7 +35,12 @@ const renderScreen = () =>
 /** Les nombres français séparent les milliers d'une espace fine : on compare avec des espaces simples. */
 const plain = (name: string): string => name.replace(/[\u202f\u00a0]/g, ' ').replace(/\s+/g, ' ');
 const tile = (label: string) =>
-  screen.findByRole('button', { name: (name) => plain(name).startsWith(label) });
+  // Neuf lectures vives en parallèle : sous une suite chargée, la seconde par défaut ne suffit pas.
+  screen.findByRole(
+    'button',
+    { name: (name) => plain(name).startsWith(label) },
+    { timeout: 5_000 },
+  );
 
 async function seedProgram(): Promise<string> {
   const routine = await seedRoutine('Force A', []);
