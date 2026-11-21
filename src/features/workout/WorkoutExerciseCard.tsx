@@ -37,6 +37,7 @@ import { RestShift } from './RestShift';
 import { WarmupOfferRow } from './WarmupOfferRow';
 import { warmupOfferFor, type WarmupOffer } from './warmupOffer';
 import { WorkoutSetRow } from './WorkoutSetRow';
+import { suggestionAbove } from './setSuggestion';
 import type { WorkoutFoldCommand } from './workoutFold';
 import { setReading } from './summary';
 
@@ -518,6 +519,7 @@ export function WorkoutExerciseCard({
                       number={index + 1}
                       columns={columns}
                       previous={matchedPrevious[index]}
+                      above={suggestionAbove(sets, index)}
                       tutorialRank={
                         tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
                       }

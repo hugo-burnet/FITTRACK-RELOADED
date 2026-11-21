@@ -13,6 +13,7 @@ import { SetCheckFx } from './SetCheckFx';
 import { setImpactTag } from './setImpact';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
+import { FIELD_KEY, suggestedNumber } from './setSuggestion';
 
 /** Non-normal sets replace their rank with a distinct, non-color-only mark. */
 const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>> = {
@@ -20,20 +21,6 @@ const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>
   dropset: DropsetIcon,
   failure: BoltIcon,
 };
-
-const FIELD_KEY = {
-  weight: 'weight',
-  reps: 'reps',
-  duration: 'durationSeconds',
-  distance: 'distanceMeters',
-} as const satisfies Record<TargetField, keyof SetValues>;
-
-const TARGET_KEY = {
-  weight: 'targetWeight',
-  reps: 'targetReps',
-  duration: 'targetDurationSeconds',
-  distance: 'targetDistanceMeters',
-} as const satisfies Record<TargetField, keyof WorkoutSet>;
 
 /** Fixed widths preserve numeric entry at the 375 px minimum viewport. */
 const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
@@ -44,6 +31,11 @@ type Props = {
   columns: EntryColumn[];
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
+  /**
+   * La série de travail validée juste au-dessus dans cette séance (`suggestionAbove`). Elle passe
+   * devant `previous` pour le grisé et la coche — jamais pour « Précédent », qui dit la dernière fois.
+   */
+  above?: WorkoutSet;
   /**
    * Le rang de cette ligne pour le tutoriel, quand il en désigne une.
    *
@@ -92,6 +84,7 @@ export function WorkoutSetRow({
   number,
   columns,
   previous,
+  above,
   tutorialRank,
   holding = false,
   unilateral = false,
@@ -135,23 +128,17 @@ export function WorkoutSetRow({
         ? t('workout.completeSecondSide', { number })
         : t('workout.complete', { number });
 
-  // Never borrow another rank: proposed values may be recorded with one tap.
+  // « Précédent » : le même rang de la séance d'avant, jamais un autre — la coche l'enregistre d'un tap.
   const previousValue = (field: TargetField): number | undefined => previous?.[FIELD_KEY[field]];
 
   const valueOf = (field: TargetField): number | undefined => set[FIELD_KEY[field]];
 
-  // Today's prescription takes precedence over the previous session.
-  const ghostOf = (field: TargetField): number | undefined =>
-    set[TARGET_KEY[field]] ?? previousValue(field);
-
   const targetOf = (field: TargetField): string | undefined =>
     field === 'reps' && isRepRange(set) ? repsReading(set)?.value : undefined;
 
-  // A range is guidance, not a recordable value; reuse the previous count.
-  const ghostNumberOf = (field: TargetField): number | undefined => {
-    if (amrap && field === 'reps') return undefined;
-    return targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
-  };
+  // Prescription du jour, puis la série du dessus, puis la séance d'avant (`suggestedNumber`).
+  const ghostNumberOf = (field: TargetField): number | undefined =>
+    suggestedNumber(set, field, { above, previous, amrap });
 
   const resolved: ResolvedValues = {};
   for (const column of columns) {
