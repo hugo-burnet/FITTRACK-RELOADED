@@ -73,7 +73,9 @@ export function AnalyticsScreen() {
 
   // Sans plancher réglé, « 0 » laisserait croire que tout va bien : il n'y a rien qu'on surveille.
   const floorsSet =
-    bounds === undefined ? undefined : Object.values(bounds).some((entry) => entry.floor !== undefined);
+    bounds === undefined
+      ? undefined
+      : Object.values(bounds).some((entry) => entry.floor !== undefined);
 
   const data = history.data;
   const hasHistory = data === undefined ? undefined : data.workouts.length > 0;
@@ -128,10 +130,15 @@ export function AnalyticsScreen() {
                 detail={
                   tonnage
                     ? // Le nombre réel de semaines : trois semaines d'historique, une moyenne sur trois.
-                      t(tonnage.averageWeeks === 1 ? 'analytics.tonnageDetailOne' : 'analytics.tonnageDetail', {
-                        weeks: tonnage.averageWeeks,
-                        average: weeklyVolumeReading(tonnage.average, 'tonnage'),
-                      })
+                      t(
+                        tonnage.averageWeeks === 1
+                          ? 'analytics.tonnageDetailOne'
+                          : 'analytics.tonnageDetail',
+                        {
+                          weeks: tonnage.averageWeeks,
+                          average: weeklyVolumeReading(tonnage.average, 'tonnage'),
+                        },
+                      )
                     : undefined
                 }
                 hint={t('analytics.tonnageHint')}
@@ -144,7 +151,9 @@ export function AnalyticsScreen() {
             {hasHistory !== false && (
               <Tile
                 key="sessions"
-                size="S"
+                // Toujours `L` : une `S` seule sur sa rangée (G, S, puis le programme en `L`) s'étirerait
+                // sur deux colonnes pour un seul chiffre. Le `detail` dit ce que le chiffre ne dit pas.
+                size="L"
                 label={t('analytics.sessionsLabel')}
                 value={
                   sessions === undefined
@@ -153,25 +162,32 @@ export function AnalyticsScreen() {
                       ? null
                       : sessions.goal === null
                         ? { value: String(sessions.done), caption: t('analytics.sessionsCaption') }
-                        : [
-                            {
-                              value: `${sessions.done} / ${sessions.goal}`,
-                              caption: t('analytics.sessionsCaption'),
-                              spoken: t('analytics.sessionsSpoken', {
-                                done: sessions.done,
-                                goal: sessions.goal,
-                              }),
-                            },
-                            {
-                              value: String(sessions.streak),
-                              caption: t(
-                                sessions.streak === 1
-                                  ? 'analytics.streakOne'
-                                  : 'analytics.streakMany',
-                              ),
-                            },
-                          ]
+                        : {
+                            value: `${sessions.done} / ${sessions.goal}`,
+                            caption: t('analytics.sessionsCaption'),
+                            spoken: t('analytics.sessionsSpoken', {
+                              done: sessions.done,
+                              goal: sessions.goal,
+                            }),
+                          }
                 }
+                {...(sessions === undefined || sessions === null
+                  ? {}
+                  : {
+                      detail:
+                        sessions.goal === null
+                          ? t('analytics.sessionsNoGoal')
+                          : sessions.streak === 0
+                            ? t('analytics.streakNone')
+                            : t(
+                                sessions.streak === 1
+                                  ? 'analytics.streakLineOne'
+                                  : 'analytics.streakLineMany',
+                                {
+                                  weeks: sessions.streak,
+                                },
+                              ),
+                    })}
                 hint={t('analytics.sessionsHint')}
                 onClick={() => void navigate('/analytics/weekly')}
               />
@@ -277,16 +293,18 @@ export function AnalyticsScreen() {
               }
               {...(floorsSet === false
                 ? { detail: t('analytics.floorUnset') }
-                : lows === undefined || lows.length === 0
+                : lows === undefined
                   ? {}
-                  : {
-                      detail:
-                        lows.length === 1
-                          ? volumeLowLine(lows[0]!)
-                          : t('analytics.floorMany', {
-                              muscles: lows.map((low) => muscleLabel(low.muscle)).join(', '),
-                            }),
-                    })}
+                  : lows.length === 0
+                    ? { detail: t('analytics.floorClear') }
+                    : {
+                        detail:
+                          lows.length === 1
+                            ? volumeLowLine(lows[0]!)
+                            : t('analytics.floorMany', {
+                                muscles: lows.map((low) => muscleLabel(low.muscle)).join(', '),
+                              }),
+                      })}
               hint={floorsSet === false ? t('analytics.floorUnsetHint') : t('analytics.floorHint')}
               // Les planchers se règlent et se lisent dans Volume par muscle ; la répartition par
               // muscle (`/analytics/muscles`) ne parle pas de plancher.

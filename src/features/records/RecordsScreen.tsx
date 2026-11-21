@@ -140,25 +140,32 @@ export function RecordsScreen() {
   return (
     <Screen title={t('records.title')} onBack={goBack}>
       <div className="flex min-h-full flex-col">
-        <div className="flex shrink-0 gap-2 pb-1">
-          <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
-            <FilterChip
-              label={
-                selectedExercise?.label ??
-                (exerciseId === ALL ? t('records.allExercises') : t('records.unknownExercise'))
-              }
-              active={exerciseId !== ALL}
-              onClick={() => setExerciseOpen(true)}
-            />
+        {/* Rien à filtrer dans une collection vide : les puces ne s'affichent pas (sauf si un filtre
+            d'adresse est déjà posé, qu'il faut alors pouvoir lever). */}
+        {(hasFilters || allEntries === undefined || allEntries.length > 0) && (
+          /* Une grille qui se replie : deux `flex-1` serrés à 200 % ne laissent à chaque puce que « Ex… » et
+              « Ty… ». Sous 10 rem par puce, elles s'empilent. */
+          <div className="grid shrink-0 grid-cols-[repeat(auto-fit,minmax(min(10rem,100%),1fr))] gap-2 pb-1">
+            <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
+              <FilterChip
+                label={
+                  exerciseId === ALL
+                    ? t('records.exerciseFilter')
+                    : (selectedExercise?.label ?? t('records.unknownExercise'))
+                }
+                active={exerciseId !== ALL}
+                onClick={() => setExerciseOpen(true)}
+              />
+            </div>
+            <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
+              <FilterChip
+                label={type === ALL ? t('records.typeFilter') : recordLabel(type)}
+                active={type !== ALL}
+                onClick={() => setTypeOpen(true)}
+              />
+            </div>
           </div>
-          <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
-            <FilterChip
-              label={type === ALL ? t('records.allTypes') : recordLabel(type)}
-              active={type !== ALL}
-              onClick={() => setTypeOpen(true)}
-            />
-          </div>
-        </div>
+        )}
 
         {projectionCurrent === undefined || allEntries === undefined || entries === undefined ? (
           <div aria-busy="true" aria-label={t('records.loading')} className="mt-7 space-y-4">

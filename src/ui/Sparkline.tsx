@@ -16,7 +16,7 @@ type Props = {
  * police. Série en `--accent-ink`, base en `--axis`.
  */
 export function Sparkline({ values, partialLast = false }: Props) {
-  const points = sparklinePoints(values, WIDTH, HEIGHT);
+  const points = sparklinePoints(values, WIDTH, HEIGHT, { partialLast });
   if (points.length < 2) return null;
 
   const toText = (list: typeof points) => list.map(({ x, y }) => `${x},${y}`).join(' ');
