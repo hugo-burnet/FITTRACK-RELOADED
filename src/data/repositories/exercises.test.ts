@@ -45,6 +45,38 @@ describe('listExercises', () => {
     expect(results.some((e) => e.name.includes('Développé couché'))).toBe(true);
   });
 
+  describe('recherche à plusieurs mots', () => {
+    beforeEach(async () => {
+      await createCustomExercise(custom('Squat (barre)'));
+      await createCustomExercise(custom('Développé couché (haltères)'));
+      await createCustomExercise(custom('Squat bulgare'));
+    });
+
+    it('trouve « Squat (barre) » avec « squat barre »', async () => {
+      const names = (await listExercises({ search: 'squat barre' })).map((e) => e.name);
+      expect(names).toEqual(['Squat (barre)']);
+    });
+
+    it('trouve « Développé couché (haltères) » avec « couché haltères »', async () => {
+      const names = (await listExercises({ search: 'couché haltères' })).map((e) => e.name);
+      expect(names).toEqual(['Développé couché (haltères)']);
+    });
+
+    it("ne dépend pas de l'ordre des mots", async () => {
+      const names = (await listExercises({ search: 'barre squat' })).map((e) => e.name);
+      expect(names).toEqual(['Squat (barre)']);
+    });
+
+    it('garde le comportement d’un mot seul', async () => {
+      const names = (await listExercises({ search: 'squat' })).map((e) => e.name);
+      expect(names).toEqual(['Squat (barre)', 'Squat bulgare']);
+    });
+
+    it('ne trouve rien si un mot est absent', async () => {
+      expect(await listExercises({ search: 'squat haltères' })).toEqual([]);
+    });
+  });
+
   it('ignore la casse', async () => {
     await seedDatabase();
     expect(await listExercises({ search: 'SQUAT' })).not.toHaveLength(0);

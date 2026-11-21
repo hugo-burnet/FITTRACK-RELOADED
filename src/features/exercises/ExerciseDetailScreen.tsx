@@ -8,7 +8,7 @@ import { deleteExercise, getExercise, updateExercise } from '@/data/repositories
 import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecords';
 import { getDefaultLoadStepKg } from '@/data/repositories/settings';
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
-import type { CoachRecommendation, WorkoutSet } from '@/data/types';
+import type { CoachRecommendation } from '@/data/types';
 import { t } from '@/i18n/fr';
 import {
   exerciseDisplayName,
@@ -37,12 +37,11 @@ import { recommendationAsSignal } from '@/features/workout/coachCopy';
 import { ExerciseDocumentationView } from './ExerciseDocumentationView';
 import { ExerciseLoadCard } from './ExerciseLoadCard';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
+import { topSetLabel } from './topSet';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
 const longDate = (epochMs: number): string =>
   new Date(epochMs).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-const decimal = (value: number): string => value.toLocaleString('fr-FR');
 
 function coachStatusLabel(status: CoachRecommendation['status']): string {
   switch (status) {
@@ -55,35 +54,6 @@ function coachStatusLabel(status: CoachRecommendation['status']): string {
     case 'superseded':
       return t('coach.statusSuperseded');
   }
-}
-
-/**
- * The best set of a run, in one line. Falls back from load to repetitions, so a
- * pull-up reads "14 reps" instead of a blank — all six measurement types are
- * covered without naming any of them.
- */
-function topSetLabel(sets: WorkoutSet[]): string | undefined {
-  const workingSets = sets.filter(isWorkingSet);
-  const heaviest = workingSets.reduce<WorkoutSet | undefined>((best, candidate) => {
-    if (candidate.weight === undefined || candidate.weight <= 0) return best;
-    return best === undefined || candidate.weight > best.weight! ? candidate : best;
-  }, undefined);
-  const mostReps = workingSets.reduce<WorkoutSet | undefined>((best, candidate) => {
-    if (candidate.reps === undefined || candidate.reps <= 0) return best;
-    return best === undefined || candidate.reps > best.reps! ? candidate : best;
-  }, undefined);
-
-  if (heaviest?.weight !== undefined) {
-    return heaviest.reps === undefined
-      ? t('exercise.recordWeight', { weight: decimal(heaviest.weight) })
-      : t('exercise.recordWeightReps', {
-          weight: decimal(heaviest.weight),
-          reps: heaviest.reps,
-        });
-  }
-
-  if (mostReps?.reps !== undefined) return t('exercise.recordReps', { reps: mostReps.reps });
-  return undefined;
 }
 
 /** Engraved label, tabular figure — the readout shape of the diagnostic screen. */
@@ -324,7 +294,7 @@ export function ExerciseDetailScreen() {
                       // Tabular and right-aligned, so progress reads straight
                       // down the column instead of set by set.
                       <span className="metric text-base font-semibold text-[var(--text-1)]">
-                        {topSetLabel(session.sets)}
+                        {topSetLabel(session.sets, exercise.measurementType)}
                       </span>
                     }
                   />
