@@ -22,6 +22,7 @@ via Capacitor. Usage strictement personnel, mono-utilisateur, **local-first**.
 | `docs/journal/` | Les versions livrées et closes, détachées de `PROGRESS.md`. En lecture seule. Une version publiée y part. |
 | `docs/progress/decisions-et-pieges.md` | Décisions, pièges et **dette technique assumée**. |
 | `docs/recette-telephone.md` | La liste unique des checkpoints à vérifier sur le téléphone. |
+| `DESIGN.md` | Langue visuelle : jetons, composants, règle tuile ou ligne. |
 
 ## Règles non négociables
 
