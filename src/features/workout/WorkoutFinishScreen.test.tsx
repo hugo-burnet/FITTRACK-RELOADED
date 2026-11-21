@@ -226,7 +226,7 @@ describe('WorkoutFinishScreen', () => {
   it('groupe les milliers du tonnage et écrit la série au singulier', async () => {
     const exercise = await createCustomExercise({
       name: 'Lourd',
-      primaryMuscle: 'quadriceps',
+      primaryMuscle: 'quads',
       secondaryMuscles: [],
       equipment: 'barbell',
       measurementType: 'weight_reps',
