@@ -42,6 +42,11 @@ describe('weekTonnage', () => {
     expect(reading?.series).toEqual([100, 300]);
     expect(reading?.average).toBe(200);
   });
+
+  it('dit le nombre de semaines que la moyenne porte, pas toujours douze', () => {
+    expect(weekTonnage(tonnages([100, 300, 200]))?.averageWeeks).toBe(3);
+    expect(weekTonnage(tonnages(Array.from({ length: 30 }, () => 100)))?.averageWeeks).toBe(12);
+  });
 });
 
 describe('heldWeeksStreak', () => {

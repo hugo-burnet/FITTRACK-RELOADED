@@ -122,7 +122,9 @@ export function AnalyticsScreen() {
                 }
                 detail={
                   tonnage
-                    ? t('analytics.tonnageDetail', {
+                    ? // Le nombre réel de semaines : trois semaines d'historique, une moyenne sur trois.
+                      t(tonnage.averageWeeks === 1 ? 'analytics.tonnageDetailOne' : 'analytics.tonnageDetail', {
+                        weeks: tonnage.averageWeeks,
                         average: weeklyVolumeReading(tonnage.average, 'tonnage'),
                       })
                     : undefined

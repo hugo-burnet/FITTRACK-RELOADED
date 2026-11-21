@@ -2689,7 +2689,8 @@ const fr = {
 
     /** « Cette semaine » : le tonnage (la seule G), les séances, le programme. */
     tonnageLabel: 'Tonnage · 8 semaines',
-    tonnageDetail: 'Semaine en cours. Moyenne sur 12 semaines : {average}.',
+    tonnageDetail: 'Semaine en cours. Moyenne sur {weeks} semaines : {average}.',
+    tonnageDetailOne: 'Semaine en cours. Moyenne sur 1 semaine : {average}.',
     tonnageHint: 'Voir le volume semaine par semaine',
     sessionsLabel: 'Séances',
     sessionsCaption: 'cette semaine',
