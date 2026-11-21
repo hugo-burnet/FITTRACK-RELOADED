@@ -5,7 +5,7 @@ import { t } from '@/i18n/fr';
 import { setTypeLabel } from '@/i18n/labels';
 import { measurementShape } from '@/lib/measurement';
 import type { WeightRole } from '@/lib/measurement';
-import { Button, NumberInput, Sheet } from '@/ui';
+import { Button, NumberInput, Segmented, Sheet } from '@/ui';
 
 /**
  * Lot 4 plans two kinds of set. Dropsets and sets to failure belong to Lot 6,
@@ -112,31 +112,12 @@ export function RoutineSetSheet({
     <Sheet open={open} onClose={onClose} title={t('routine.setSheetTitle', { number })}>
       <div className="flex flex-col gap-6 pb-2">
         <Field label={t('routine.setTypeLabel')}>
-          <div
-            role="radiogroup"
-            aria-label={t('routine.setTypeLabel')}
-            data-part="segmented"
-            className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
-          >
-            {PLANNABLE_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                role="radio"
-                aria-checked={draft.setType === type}
-                onClick={() => write({ setType: type })}
-                className={`min-h-12 flex-1 rounded-lg text-base font-semibold
-                  transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                  ${
-                    draft.setType === type
-                      ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                      : 'text-[var(--text-2)]'
-                  }`}
-              >
-                {setTypeLabel(type)}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label={t('routine.setTypeLabel')}
+            value={draft.setType ?? 'normal'}
+            onChange={(setType) => write({ setType })}
+            options={PLANNABLE_TYPES.map((type) => ({ value: type, label: setTypeLabel(type) }))}
+          />
         </Field>
 
         {shape.fields.includes('reps') && (

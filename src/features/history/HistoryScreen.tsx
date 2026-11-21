@@ -15,7 +15,7 @@ import {
 } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { calculateWeeklyRegularity } from '@/lib/history';
-import { Card, HeaderAction } from '@/ui';
+import { Card, HeaderAction, Tabs } from '@/ui';
 import { ImportIcon, TrendIcon } from '@/ui/icons';
 import { HistoryCalendar } from './HistoryCalendar';
 import { HistoryExerciseFilter } from './HistoryExerciseFilter';
@@ -150,80 +150,49 @@ export function HistoryScreen() {
 
         <HistorySummaryCard regularity={regularity} onEditGoal={openGoal} />
 
-        <div className="space-y-3">
-          <div
-            role="group"
-            data-part="tabs"
-            aria-label={t('history.viewSelector')}
-            className="grid grid-cols-2"
-          >
-            {(['journal', 'calendar'] as const).map((option) => {
-              const active = view === option;
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setView(option);
-                  }}
-                  className={`relative min-h-12 px-3 text-base font-semibold
-                    transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                    active:opacity-70 ${
-                      active
-                        ? 'text-[var(--accent-ink)]'
-                        : 'text-[var(--text-2)]'
-                    }`}
-                >
-                  {t(
-                    option === 'journal'
-                      ? 'history.journal'
-                      : 'history.calendar',
-                  )}
-                  <span
-                    aria-hidden="true"
-                    className={`absolute bottom-0 left-1/2 h-[3px] w-5 -translate-x-1/2
-                      rounded-t-full bg-[var(--accent-ink)] transition-transform
-                      duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                      ${active ? 'scale-x-100' : 'scale-x-0'}`}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
-          <HistoryExerciseFilter
-            options={exerciseOptions}
-            value={exerciseId}
-            onChange={changeExercise}
-          />
-        </div>
-
-        {view === 'journal' ? (
-          <section aria-labelledby="history-journal-title">
-            <h2
-              id="history-journal-title"
-              className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]"
-            >
-              {t('history.journal')}
-            </h2>
-            <HistoryJournal
-              page={page}
-              filterExerciseName={selectedExerciseName}
-              onClearExercise={() => changeExercise(undefined)}
-              onShowMore={() => setPageSize((current) => current + 20)}
+        <Tabs
+          label={t('history.viewSelector')}
+          value={view}
+          onChange={setView}
+          items={[
+            { value: 'journal', label: t('history.journal') },
+            { value: 'calendar', label: t('history.calendar') },
+          ]}
+        >
+          <div className="mt-3 space-y-7">
+            <HistoryExerciseFilter
+              options={exerciseOptions}
+              value={exerciseId}
+              onChange={changeExercise}
             />
-          </section>
-        ) : (
-          <HistoryCalendar
-            visibleMonth={visibleMonth}
-            completedWorkoutTimestamps={filteredTimestamps}
-            selectedDay={selectedDay}
-            selectedDayWorkouts={selectedDayWorkouts}
-            onChangeMonth={changeMonth}
-            onSelectDay={setSelectedDay}
-          />
-        )}
+
+            {view === 'journal' ? (
+              <section aria-labelledby="history-journal-title">
+                <h2
+                  id="history-journal-title"
+                  className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]"
+                >
+                  {t('history.journal')}
+                </h2>
+                <HistoryJournal
+                  page={page}
+                  filterExerciseName={selectedExerciseName}
+                  onClearExercise={() => changeExercise(undefined)}
+                  onShowMore={() => setPageSize((current) => current + 20)}
+                />
+              </section>
+            ) : (
+              <HistoryCalendar
+                visibleMonth={visibleMonth}
+                completedWorkoutTimestamps={filteredTimestamps}
+                selectedDay={selectedDay}
+                selectedDayWorkouts={selectedDayWorkouts}
+                onChangeMonth={changeMonth}
+                onSelectDay={setSelectedDay}
+              />
+            )}
+          </div>
+        </Tabs>
       </div>
 
       <WeeklyGoalSheet

@@ -28,6 +28,7 @@ import {
   NumberInput,
   RestPicker,
   SectionTitle,
+  Tabs,
   Textarea,
 } from '@/ui';
 import { hasDrawableMuscles } from '@/ui/muscleMap';
@@ -198,30 +199,16 @@ export function ExerciseDetailScreen() {
         {/* Deux vues nommées, pas un accordéon : « Suivi » est ce qu'on ouvre en
             salle, « Documentation » ce qu'on lit à froid. Les mélanger sur un
             seul écran ferait descendre les records sous quinze paragraphes. */}
-        <div role="tablist" data-part="segmented" aria-label={t('exercise.viewsLabel')} className="flex gap-1
-          rounded-xl bg-[var(--surface-2)] p-1">
-          {(['tracking', 'documentation'] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={view === value}
-              onClick={() => setView(value)}
-              className={`min-h-12 flex-1 rounded-lg text-base font-semibold
-                transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                ${
-                  view === value
-                    ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                    : 'text-[var(--text-2)]'
-                }`}
-            >
-              {value === 'tracking'
-                ? t('exerciseDoc.tabTracking')
-                : t('exerciseDoc.tabDocumentation')}
-            </button>
-          ))}
-        </div>
-
+        <Tabs
+          label={t('exercise.viewsLabel')}
+          value={view}
+          onChange={setView}
+          items={[
+            { value: 'tracking', label: t('exerciseDoc.tabTracking') },
+            { value: 'documentation', label: t('exerciseDoc.tabDocumentation') },
+          ]}
+        >
+          <div className="mt-9 flex flex-col gap-9">
         {view === 'documentation' ? (
           <ExerciseDocumentationView exercise={exercise} />
         ) : sessions === undefined || records === undefined || coachHistory === undefined ? (
@@ -408,6 +395,8 @@ export function ExerciseDetailScreen() {
         )}
           </>
         )}
+          </div>
+        </Tabs>
       </div>
     </Screen>
   );

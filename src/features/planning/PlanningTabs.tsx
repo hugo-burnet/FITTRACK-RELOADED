@@ -1,6 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
+import { Tabs } from '@/ui';
 
 /**
  * La navigation partagée de Planifier.
@@ -17,34 +17,12 @@ const SPACES: { to: string; labelKey: TranslationKey }[] = [
 ];
 
 export function PlanningTabs() {
-  const { pathname } = useLocation();
-
   return (
-    <nav aria-label={t('planning.tabsLabel')} className="-mt-2">
-      <ul data-part="segmented" className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
-        {SPACES.map(({ to, labelKey }) => {
-          const isActive = pathname === to || pathname.startsWith(`${to}/`);
-          return (
-            <li key={to} className="flex-1">
-              {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
-              <Link
-                viewTransition
-                to={to}
-                aria-current={isActive ? 'page' : undefined}
-                className={`flex min-h-12 items-center justify-center rounded-lg px-2 text-sm
-                  font-semibold transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                  ${
-                    isActive
-                      ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                      : 'text-[var(--text-2)]'
-                  }`}
-              >
-                {t(labelKey)}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <div className="-mt-2">
+      <Tabs
+        label={t('planning.tabsLabel')}
+        items={SPACES.map(({ to, labelKey }) => ({ to, label: t(labelKey) }))}
+      />
+    </div>
   );
 }

@@ -420,21 +420,20 @@
 }
 
 /* Les sélecteurs segmentés : un cadre à filets, l'option choisie en bloc de l'accent. Une option est
-   un bouton, ou le lien d'une `li` (les onglets de Planifier). */
+   un bouton radio : le segmenté ne marque que des valeurs. */
 :root[data-theme='tty1'] [data-part='segmented'] {
   gap: 1px;
   padding: 0;
   background: var(--border);
   border: 1px solid var(--border);
 }
-:root[data-theme='tty1'] [data-part='segmented'] > *,
-:root[data-theme='tty1'] [data-part='segmented'] > li > a {
+:root[data-theme='tty1'] [data-part='segmented'] > * {
   background: var(--surface-1);
   color: var(--text-2);
 }
 :root[data-theme='tty1']
   [data-part='segmented']
-  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  [aria-checked='true'] {
   background: var(--accent-fill);
   color: var(--accent-on-fill);
 }
@@ -574,14 +573,20 @@
   box-shadow: none;
 }
 
-/* Les onglets Journal et Calendrier : le choisi s'encadre de crochets, sans le trait du dessous. */
-:root[data-theme='tty1'] [data-part='tabs'] > button > span[aria-hidden='true'] {
+/* Les onglets (Journal / Calendrier, Suivi / Documentation, Planifier) : le choisi s'encadre de
+   crochets, sans le trait du dessous. Un onglet est un bouton (`aria-selected`) ou un lien de
+   navigation (`aria-current`). */
+:root[data-theme='tty1'] [data-part='tabs'] > :is(button, a) > span[aria-hidden='true'] {
   display: none;
 }
-:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::before {
+:root[data-theme='tty1']
+  [data-part='tabs']
+  > :is(button[aria-selected='true'], a[aria-current='page'])::before {
   content: '[ ';
 }
-:root[data-theme='tty1'] [data-part='tabs'] > button[aria-pressed='true']::after {
+:root[data-theme='tty1']
+  [data-part='tabs']
+  > :is(button[aria-selected='true'], a[aria-current='page'])::after {
   content: ' ]';
 }
 
