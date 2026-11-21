@@ -5,11 +5,18 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-20 — **v2.18.0 publiée**, le coach fiabilisé. [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.18.0).
+**Dernière mise à jour :** 2026-11-21 — **v2.19.0 publiée** (RPE 8,5, Réglages en sommaire, tuto supprimé, sept correctifs). [Release et APK](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v2.19.0).
 
 ## Où on en est
 
-- **Publié : v2.18.0**, le coach fiabilisé ([journal](docs/journal/2026-11-20-versions-v2-18-0.md)). Audit en trois passes, puis une
+- **Publié : v2.19.0** ([journal](docs/journal/2026-11-21-versions-v2-19-0.md)) : coach sans hausse au-dessus de RPE 8,5,
+  tutoriel supprimé, Réglages en sommaire, repos épinglé, série du dessus en gris, retour Android, recherche à plusieurs
+  mots, et les correctifs de l'audit et de la cartographie. **Dû** : recette, lignes *(v2.19.0)*.
+- **Suite : la v3.0, refonte par objets.** Prompt de reprise : `docs/design/plans/2026-11-21-reprise-v3.md`. Audit et
+  cartographie : `docs/design/audits/2026-11-21/`. Décisions en attente : la définition du volume par muscle, le lot F du
+  coach (signaler une gêne). La branche de synchro attend toujours Caddy.
+
+- **Avant : v2.18.0**, le coach fiabilisé ([journal](docs/journal/2026-11-20-versions-v2-18-0.md)). Audit en trois passes, puis une
   trentaine de défauts corrigés test d'abord : fin de séance qui ne casse plus et s'enregistre d'un bloc, « Appliquer » qui n'écrit que
   les séries de travail, refus de 14 jours, plus de carte fausse après une séance allégée, abandonnée, supprimée ou corrigée, série
   ajoutée et double progression lues juste, reprise en jours civils. Choix de l'agent à relire : `decisions-et-pieges.md` (2026-11-20).
