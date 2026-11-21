@@ -3,25 +3,13 @@ import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
-import { listRecommendationsForExercise } from '@/data/repositories/coachRecommendations';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
-import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecords';
 import { getDefaultLoadStepKg } from '@/data/repositories/settings';
-import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
-import type { CoachRecommendation } from '@/data/types';
 import { t } from '@/i18n/fr';
-import {
-  exerciseDisplayName,
-  exerciseSubtitle,
-  recordContext,
-  recordLabel,
-  recordValue,
-} from '@/i18n/labels';
+import { exerciseDisplayName, exerciseSubtitle } from '@/i18n/labels';
 import { defaultLoadIncrementKg, LOAD_STEP_MAX_KG, LOAD_STEP_MIN_KG } from '@/lib/loadIncrement';
-import { isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
-  ActionBand,
   Card,
   ConfirmAction,
   ListRow,
@@ -32,47 +20,10 @@ import {
   Textarea,
 } from '@/ui';
 import { hasDrawableMuscles } from '@/ui/muscleMap';
-import { ChevronRightIcon } from '@/ui/icons';
-import { CoachCard } from '@/features/workout/CoachCard';
-import { recommendationAsSignal } from '@/features/workout/coachCopy';
 import { ExerciseDocumentationView } from './ExerciseDocumentationView';
 import { ExerciseLoadCard } from './ExerciseLoadCard';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
-import { topSetLabel } from './topSet';
-
-/** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
-const longDate = (epochMs: number): string =>
-  new Date(epochMs).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-function coachStatusLabel(status: CoachRecommendation['status']): string {
-  switch (status) {
-    case 'pending':
-      return t('coach.statusPending');
-    case 'followed':
-      return t('coach.statusFollowed');
-    case 'dismissed':
-      return t('coach.statusDismissed');
-    case 'superseded':
-      return t('coach.statusSuperseded');
-  }
-}
-
-/** Engraved label, tabular figure — the readout shape of the diagnostic screen. */
-function Reading({ label, value, context }: { label: string; value: string; context?: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] p-4 last:border-b-0">
-      <span className="label-xs font-semibold text-[var(--text-2)]">{label}</span>
-      <span className="min-w-0 text-right">
-        <span className="metric block text-2xl leading-none font-semibold text-[var(--text-1)]">
-          {value}
-        </span>
-        {context && (
-          <span className="mt-1.5 block text-sm leading-snug text-[var(--text-2)]">{context}</span>
-        )}
-      </span>
-    </div>
-  );
-}
+import { ExerciseTrackingView } from './ExerciseTrackingView';
 
 export function ExerciseDetailScreen() {
   const { id = '' } = useParams();
@@ -81,9 +32,6 @@ export function ExerciseDetailScreen() {
   // `null` is "gone", `undefined` is "not answered yet" — without the
   // distinction a freshly opened screen flashes "cet exercice n'existe plus".
   const exercise = useLiveQuery(async () => (await getExercise(id)) ?? null, [id]);
-  const sessions = useLiveQuery(() => listSessionsForExercise(id), [id]);
-  const records = useLiveQuery(() => listCurrentRecordsForExercise(id), [id]);
-  const coachHistory = useLiveQuery(() => listRecommendationsForExercise(id), [id]);
   // Le pas de toute l'appli : `undefined` tant qu'il n'est pas lu, `null` quand les Réglages n'en ont aucun.
   const appLoadStep = useLiveQuery(async () => (await getDefaultLoadStepKg()) ?? null, []);
 
@@ -165,22 +113,18 @@ export function ExerciseDetailScreen() {
   const emptyIncrementReading = emptyIncrement.toLocaleString('fr-FR');
   const loadIncrementHint =
     exercise.measurementType === 'assisted_weight_reps'
-      ? t(fromSettings ? 'exercise.loadIncrementAssistHintApp' : 'exercise.loadIncrementAssistHint', {
-          value: emptyIncrementReading,
-        })
+      ? t(
+          fromSettings ? 'exercise.loadIncrementAssistHintApp' : 'exercise.loadIncrementAssistHint',
+          {
+            value: emptyIncrementReading,
+          },
+        )
       : t(fromSettings ? 'exercise.loadIncrementHintApp' : 'exercise.loadIncrementHint', {
           value: emptyIncrementReading,
         });
 
   return (
-    <Screen
-      title={exerciseDisplayName(exercise.name, exercise.isUnilateral)}
-      onBack={goBack}
-      /* Le seul « Terminé » qui reste, et il a un travail : au Lot 3 cette fiche
-         n'avait aucune sortie et c'est le défaut que l'utilisateur a remonté.
-         Sur l'éditeur de routine il n'en avait pas, il doublait la flèche. */
-      footer={<ActionBand label={t('exercise.done')} onClick={goBack} />}
-    >
+    <Screen title={exerciseDisplayName(exercise.name, exercise.isUnilateral)} onBack={goBack}>
       <div className="flex flex-col gap-9">
         <p className="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-[var(--text-2)]">
           {exerciseSubtitle(exercise)}
@@ -209,192 +153,98 @@ export function ExerciseDetailScreen() {
           ]}
         >
           <div className="mt-9 flex flex-col gap-9">
-        {view === 'documentation' ? (
-          <ExerciseDocumentationView exercise={exercise} />
-        ) : sessions === undefined || records === undefined || coachHistory === undefined ? (
-          <span />
-        ) : (
-          <>
-        {/* Nothing at all for a stretching routine: a mute grey body would be
-            worse than no body, and it is the roadmap's own checkpoint here. */}
-        {hasDrawableMuscles(exercise) && <ExerciseMusclesCard exercise={exercise} />}
-
-        {/* No records section at all rather than a column of em-dashes: an
-            exercise you have never done has nothing to report. */}
-        {records.length > 0 ? (
-          <section>
-            <SectionTitle>{t('exercise.recordsSection')}</SectionTitle>
-            <Card>
-              {records.map(({ record }) => (
-                <Reading
-                  key={record.id}
-                  label={recordLabel(record.type)}
-                  value={recordValue(record)}
-                  context={recordContext(record)}
-                />
-              ))}
-              <ListRow
-                title={t('exercise.recordsLink')}
-                onClick={() =>
-                  void navigate(`/analytics/records?exerciseId=${encodeURIComponent(exercise.id)}`)
-                }
-                trailing={<ChevronRightIcon />}
-              />
-            </Card>
-          </section>
-        ) : null}
-
-        {/* Rien à tracer sans séance : la ligne n'existe pas plutôt que de
-            mener à une carte vide. C'est le premier des trois états vides. */}
-        {sessions.length > 0 && (
-          <Card>
-            <ListRow
-              title={t('analytics.exerciseLink')}
-              onClick={() => void navigate(`/analytics/exercises/${exercise.id}`)}
-              trailing={<ChevronRightIcon />}
-            />
-          </Card>
-        )}
-
-        <section>
-          <SectionTitle>{t('exercise.historySection')}</SectionTitle>
-          <Card>
-            {sessions.length === 0 ? (
-              <p className="p-4 text-sm leading-relaxed text-[var(--text-2)]">
-                {t('exercise.historyEmpty')}
-              </p>
+            {view === 'documentation' ? (
+              <>
+                {/* Nothing at all for a stretching routine: a mute grey body would be
+                worse than no body, and it is the roadmap's own checkpoint here.
+                La carte vit ici, pas dans le Suivi : on la lit à froid. */}
+                {hasDrawableMuscles(exercise) && <ExerciseMusclesCard exercise={exercise} />}
+                <ExerciseDocumentationView exercise={exercise} />
+              </>
             ) : (
-              sessions.map((session) => {
-                // Working sets only, so this number and the figure beside it
-                // describe the same sets.
-                const count = session.sets.filter(isWorkingSet).length;
-                return (
-                  <ListRow
-                    key={session.workoutExerciseId}
-                    title={longDate(session.performedAt)}
-                    subtitle={
-                      count === 1
-                        ? t('exercise.historySetCountOne')
-                        : t('exercise.historySetCount', { count })
-                    }
-                    trailing={
-                      // Tabular and right-aligned, so progress reads straight
-                      // down the column instead of set by set.
-                      <span className="metric text-base font-semibold text-[var(--text-1)]">
-                        {topSetLabel(session.sets, exercise.measurementType)}
-                      </span>
-                    }
-                  />
-                );
-              })
-            )}
-          </Card>
-        </section>
+              <>
+                <ExerciseTrackingView exercise={exercise} />
 
-        {/* No empty state: an exercise the coach has never spoken about should
-            not carry a permanently blank card while the engine warms up. */}
-        {coachHistory.length > 0 && (
-          <section>
-            <SectionTitle>{t('coach.historySection')}</SectionTitle>
-            <Card>
-              {coachHistory.map((row) => (
-                <CoachCard
-                  key={row.id}
-                  signal={recommendationAsSignal(row)}
-                  tone={
-                    row.status === 'pending' && row.nextLoadKg !== undefined
-                      ? 'objective'
-                      : 'signal'
-                  }
-                  variant="row"
-                  dateLabel={longDate(row.recommendedAt)}
-                  statusLabel={coachStatusLabel(row.status)}
-                />
-              ))}
-            </Card>
-          </section>
-        )}
+                <section>
+                  <SectionTitle>{t('exercise.yoursSection')}</SectionTitle>
+                  <Card padded>
+                    <Textarea
+                      label={t('exercise.notesLabel')}
+                      hint={t('exercise.notesHint')}
+                      placeholder={t('exercise.notesPlaceholder')}
+                      value={draft.notes}
+                      onChange={(event) => writeNotes(event.target.value)}
+                    />
 
-        <section>
-          <SectionTitle>{t('exercise.yoursSection')}</SectionTitle>
-          <Card padded>
-            <Textarea
-              label={t('exercise.notesLabel')}
-              hint={t('exercise.notesHint')}
-              placeholder={t('exercise.notesPlaceholder')}
-              value={draft.notes}
-              onChange={(event) => writeNotes(event.target.value)}
-            />
+                    <div className="mt-6">
+                      <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
+                        {t('exercise.restLabel')}
+                      </p>
+                      <RestPicker
+                        value={draft.rest}
+                        onChange={writeRest}
+                        baseWhenEmpty={DEFAULT_REST_SECONDS}
+                        emptyReading={t('rest.none')}
+                        clearLabel={t('rest.none')}
+                        aria-label={t('exercise.restLabel')}
+                      />
+                      <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+                        {t('exercise.restHint')}
+                      </p>
+                    </div>
 
-            <div className="mt-6">
-              <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
-                {t('exercise.restLabel')}
-              </p>
-              <RestPicker
-                value={draft.rest}
-                onChange={writeRest}
-                baseWhenEmpty={DEFAULT_REST_SECONDS}
-                emptyReading={t('rest.none')}
-                clearLabel={t('rest.none')}
-                aria-label={t('exercise.restLabel')}
-              />
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
-                {t('exercise.restHint')}
-              </p>
-            </div>
+                    <div className="mt-6">
+                      <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
+                        {t('exercise.loadIncrementLabel')}
+                      </p>
+                      <NumberInput
+                        aria-label={t('exercise.loadIncrementLabel')}
+                        value={draft.loadIncrementKg}
+                        onChange={writeLoadIncrement}
+                        step={0.25}
+                        min={LOAD_STEP_MIN_KG}
+                        max={LOAD_STEP_MAX_KG}
+                        suffix={t('units.kg')}
+                        placeholder={emptyIncrementReading}
+                      />
+                      <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+                        {loadIncrementHint}
+                      </p>
+                    </div>
+                  </Card>
+                </section>
 
-            <div className="mt-6">
-              <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
-                {t('exercise.loadIncrementLabel')}
-              </p>
-              <NumberInput
-                aria-label={t('exercise.loadIncrementLabel')}
-                value={draft.loadIncrementKg}
-                onChange={writeLoadIncrement}
-                step={0.25}
-                min={LOAD_STEP_MIN_KG}
-                max={LOAD_STEP_MAX_KG}
-                suffix={t('units.kg')}
-                placeholder={emptyIncrementReading}
-              />
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
-                {loadIncrementHint}
-              </p>
-            </div>
-          </Card>
-        </section>
-
-        {/* Sa propre section, sous « Tes réglages » : le coefficient et le
+                {/* Sa propre section, sous « Tes réglages » : le coefficient et le
             chargement ne sont pas des préférences de confort mais ce avec quoi
             l'app compte — le tonnage d'un côté, les disques à empiler de
             l'autre. Ils valent pour un exercice du catalogue comme pour un
             exercice fait maison, ce que le formulaire de création ne pouvait
             pas offrir : il ne s'ouvre que sur les seconds. */}
-        <ExerciseLoadCard exercise={exercise} />
+                <ExerciseLoadCard exercise={exercise} />
 
-        {exercise.isCustom === 1 ? (
-          <Card>
-            <ListRow
-              title={t('exercise.edit')}
-              onClick={() => void navigate(`/exercises/${exercise.id}/edit`)}
-            />
-            <ConfirmAction
-              label={t('exercise.delete')}
-              hint={t('exercise.deleteHint')}
-              confirmLabel={t('exercise.deleteConfirm')}
-              danger
-              onConfirm={() => {
-                void deleteExercise(exercise.id).then(() => navigate('/exercises'));
-              }}
-            />
-          </Card>
-        ) : (
-          <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">
-            {t('exercise.catalogueNote')}
-          </p>
-        )}
-          </>
-        )}
+                {exercise.isCustom === 1 ? (
+                  <Card>
+                    <ListRow
+                      title={t('exercise.edit')}
+                      onClick={() => void navigate(`/exercises/${exercise.id}/edit`)}
+                    />
+                    <ConfirmAction
+                      label={t('exercise.delete')}
+                      hint={t('exercise.deleteHint')}
+                      confirmLabel={t('exercise.deleteConfirm')}
+                      danger
+                      onConfirm={() => {
+                        void deleteExercise(exercise.id).then(() => navigate('/exercises'));
+                      }}
+                    />
+                  </Card>
+                ) : (
+                  <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">
+                    {t('exercise.catalogueNote')}
+                  </p>
+                )}
+              </>
+            )}
           </div>
         </Tabs>
       </div>

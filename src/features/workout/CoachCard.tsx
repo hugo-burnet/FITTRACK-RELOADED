@@ -34,6 +34,13 @@ type Props = {
   statusLabel?: string;
   /** Optional date line for the journal. */
   dateLabel?: string;
+  /**
+   * Ouvre la séance dont la recommandation est sortie (le journal d'un exercice).
+   * Un bouton à part et non la carte entière : une `<article>` ne peut pas
+   * être l'intérieur d'un `<button>`.
+   */
+  onOpen?: () => void;
+  openLabel?: string;
 };
 
 /**
@@ -55,6 +62,8 @@ export function CoachCard({
   variant = 'row',
   statusLabel,
   dateLabel,
+  onOpen,
+  openLabel,
 }: Props) {
   const hasLoad = signal.nextLoadKg !== undefined;
   // Nothing to apply without a load: an observation (plateau, long rest) has no
@@ -153,14 +162,23 @@ export function CoachCard({
               fullWidth={!applicable}
               disabled={applying}
               onClick={onDismiss}
-              className={
-                applicable ? 'min-[23rem]:shrink-0' : 'border border-[var(--border)]'
-              }
+              className={applicable ? 'min-[23rem]:shrink-0' : 'border border-[var(--border)]'}
             >
               {t(hasLoad ? 'coach.dismiss' : 'coach.hideObservation')}
             </Button>
           )}
         </div>
+      )}
+
+      {onOpen !== undefined && (
+        <Button
+          variant="ghost"
+          fullWidth
+          onClick={onOpen}
+          className="mt-3 border border-[var(--border)]"
+        >
+          {openLabel ?? t('exercise.seeWorkout')}
+        </Button>
       )}
     </article>
   );
