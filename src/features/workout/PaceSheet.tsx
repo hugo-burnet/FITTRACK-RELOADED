@@ -34,7 +34,11 @@ type Props = {
   onChange: (repSeconds: number) => void;
   /** Makes this tempo the one every exercise without a choice of its own takes. */
   onSetDefault: (repSeconds: number) => void;
-  onStart: () => void;
+  /**
+   * Receives the tempo the sheet shows, not the one the caller last read back:
+   * see the comment on the button.
+   */
+  onStart: (repSeconds: number) => void;
   onStop: () => void;
 };
 
@@ -170,7 +174,11 @@ export function PaceSheet({ open, onClose, view, onChange, onSetDefault, onStart
             onClick={() => {
               onClose();
               if (view.running) onStop();
-              else onStart();
+              // The draft, not `view.repSeconds`: a preset tap writes to the
+              // database, and the live query behind `view` may not have re-read
+              // the row by the time "Lancer" is tapped. Starting from the view
+              // beat the old tempo while the sheet displayed the new one.
+              else onStart(repSeconds);
             }}
           >
             {view.kind === 'hold'
