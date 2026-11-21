@@ -44,3 +44,9 @@ export {
   type ProgramRecipeId,
   type ProgramRecipeWeek,
 } from './recipes';
+export {
+  programAdherence,
+  programWeeklyTonnage,
+  type ProgramAdherence,
+  type ProgramAdherenceInput,
+} from './progress';
