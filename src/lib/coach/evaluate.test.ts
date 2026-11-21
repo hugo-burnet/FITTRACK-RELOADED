@@ -1539,7 +1539,7 @@ describe('effort de séance (R1)', () => {
     });
 
   it('monte quand le plafond est atteint avec de la marge', () => {
-    // Règle du 2026-11-21 : 8 · 8,5 · 9 ne monte plus (max 9 > 8) ; on monte à 8 · 8 · 8.
+    // Règle du 2026-11-21 : 8 · 8,5 · 9 ne monte plus (max 9 > 8,5) ; on monte à 8 · 8 · 8.
     const ev = evaluatePerformance(effortSession('w1', 0, [12, 12, 12], [8, 8, 8]));
     const ceiling = ev.signals.find((s) => s.code === 'range_ceiling_reached');
     expect(ceiling?.nextLoadKg).toBe(102.5);
@@ -2407,7 +2407,7 @@ describe('fiabilisation du moteur (lot E)', () => {
   });
 });
 
-describe('on ne monte qu’à RPE 8 au plus (spec 2026-11-21)', () => {
+describe('on ne monte qu’à RPE 8,5 au plus (spec 2026-11-21)', () => {
   /** Barre, 100 kg, fourchette 8 – 12, plafond atteint ; RPE et type par série. */
   const rated = (
     rpe: (number | undefined)[],
@@ -2447,7 +2447,7 @@ describe('on ne monte qu’à RPE 8 au plus (spec 2026-11-21)', () => {
       expect.arrayContaining([
         { label: 'ceiling_grinding', value: 1 },
         { label: 'max_rpe', value: 9 },
-        { label: 'increase_max_rpe', value: 8 },
+        { label: 'increase_max_rpe', value: 8.5 },
         { label: 'session_rpe', value: 8 },
       ]),
     );
@@ -2455,10 +2455,27 @@ describe('on ne monte qu’à RPE 8 au plus (spec 2026-11-21)', () => {
     expect(ev.allowedActions).not.toContain('add_set');
   });
 
-  it('lit le maximum des RPE saisis quand une série n’en porte pas : 8 · 8,5 · —', () => {
-    const ceiling = ceilingOf(rated([8, 8.5, undefined]));
+  it('monte à RPE 8,5 : 8 · 8,5 · 8,5 (seuil porté à 8,5 le même jour)', () => {
+    const ev = rated([8, 8.5, 8.5]);
+    expect(ceilingOf(ev)?.nextLoadKg).toBe(102.5);
+    expect(ev.allowedActions).toContain('increase_load');
+  });
+
+  it('ne monte pas dès qu’une série passe 8,5 : 8 · 8,5 · 9', () => {
+    const ceiling = ceilingOf(rated([8, 8.5, 9]));
     expect(ceiling!.nextLoadKg).toBeUndefined();
-    expect(ceiling!.evidence).toContainEqual({ label: 'max_rpe', value: 8.5 });
+    expect(ceiling!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'max_rpe', value: 9 },
+        { label: 'increase_max_rpe', value: 8.5 },
+      ]),
+    );
+  });
+
+  it('lit le maximum des RPE saisis quand une série n’en porte pas : 8 · 9 · —', () => {
+    const ceiling = ceilingOf(rated([8, 9, undefined]));
+    expect(ceiling!.nextLoadKg).toBeUndefined();
+    expect(ceiling!.evidence).toContainEqual({ label: 'max_rpe', value: 9 });
   });
 
   it('sans aucun RPE saisi, la hausse se propose comme avant', () => {

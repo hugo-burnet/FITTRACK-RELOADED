@@ -321,7 +321,7 @@ export function rangePartitionSignal(
     { label: 'target_reps_max', value: ceilingReps },
   ];
 
-  // **On ne monte qu'à RPE 8 au plus** (demande de l'utilisateur, 2026-11-21). Plafond tenu mais une série
+  // **On ne monte qu'à RPE 8,5 au plus** (demande de l'utilisateur, 2026-11-21 ; 8 d'abord, porté à 8,5 le même jour). Plafond tenu mais une série
   // jugée au-dessus : le constat reste, sans charge ni série en plus. On lit le maximum, plus la moyenne
   // (`8 · 9 · 10` montait) ; la série à l'échec n'y compte pas (à 10 par construction). Sans aucun RPE saisi,
   // rien ne change : bloquer faute de RPE punirait un oubli. `effort` (la moyenne) ne sert plus qu'à la réserve

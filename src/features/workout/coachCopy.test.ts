@@ -338,7 +338,7 @@ describe('coachSignalMessage — effort (R1)', () => {
     expect(message).toBe(t('coach.ceilingGrinding', { sets: 3, reps: 12, rpe: '9,8' }));
   });
 
-  it('dit à quel RPE le plafond a été tenu quand une série dépasse 8', () => {
+  it('dit à quel RPE le plafond a été tenu quand une série dépasse le seuil', () => {
     const message = coachSignalMessage({
       code: 'range_ceiling_reached',
       evidence: [
@@ -352,6 +352,20 @@ describe('coachSignalMessage — effort (R1)', () => {
     expect(message).toBe(t('coach.ceilingAboveRpeMax', { rpe: '9', max: 8 }));
     expect(message).toContain('RPE 9');
     expect(message).toContain('8');
+  });
+
+  it('écrit le seuil 8,5 avec une virgule', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'ceiling_grinding', value: 1 },
+        { label: 'max_rpe', value: 9 },
+        { label: 'increase_max_rpe', value: 8.5 },
+      ],
+    });
+    expect(message).toContain('à RPE 9 : on monte quand chaque série reste à 8,5 ou moins');
   });
 
   it('garde l’ancien texte pour une ligne du journal sans max_rpe', () => {

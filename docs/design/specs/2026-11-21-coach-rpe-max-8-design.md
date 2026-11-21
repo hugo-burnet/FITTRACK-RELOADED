@@ -1,5 +1,9 @@
 # Coach — on ne monte qu'à RPE 8 au plus — design court
 
+> **Amendement du 2026-11-21 : seuil porté à 8,5 le même jour, à la demande de l'utilisateur** (`INCREASE_MAX_RPE = 8,5`).
+> Rejoué sur son historique, 8 aurait bloqué 75 % de ses hausses passées. Une série à 8,5 n'empêche plus de monter ;
+> une série à 9 l'empêche. Là où ce texte dit « 8 », lire « 8,5 ».
+
 > 2026-11-21. Demande de l'utilisateur : « j'aurais voulu perso que la montée ne se fasse qu'à partir d'un
 > RPE max de 8 », puis « go » sur la proposition ci-dessous. Premier morceau du lot F de
 > `2026-11-20-coach-fiabilisation-design.md`.
