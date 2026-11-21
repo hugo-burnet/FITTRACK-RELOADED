@@ -26,6 +26,7 @@ export { Segmented } from './Segmented';
 export type { SegmentedOption } from './Segmented';
 export { Sheet } from './Sheet';
 export { SwipeToDelete } from './SwipeToDelete';
+export { Tabs } from './Tabs';
 export { Textarea } from './Textarea';
 export { Toggle } from './Toggle';
 export { UndoRow } from './UndoRow';
