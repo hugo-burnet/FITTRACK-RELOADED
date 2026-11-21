@@ -54,7 +54,7 @@ export function InstallSettings() {
           title={t('settings.installLink')}
           subtitle={t('settings.installHint')}
           disabled={standalone}
-          onClick={() => void install()}
+          onClick={() => void install()} chevron={false}
         />
       </Card>
       {shownOutcome !== null && (

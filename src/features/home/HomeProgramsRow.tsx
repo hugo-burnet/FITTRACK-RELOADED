@@ -2,7 +2,7 @@ import { useAppNavigate } from '@/app/navigation';
 import type { HomeProgramProjection } from '@/data/repositories/home';
 import { t } from '@/i18n/fr';
 import { Card, ListRow } from '@/ui';
-import { ChevronRightIcon, ProgramIcon } from '@/ui/icons';
+import { ProgramIcon } from '@/ui/icons';
 
 interface Props {
   /** Le bloc actif tel que l'accueil le lit déjà, ou `null` quand aucun ne tourne. */
@@ -39,7 +39,6 @@ export function HomeProgramsRow({ program }: Props) {
           // ouvrir.
           subtitle={program === null ? t('home.programsNone') : undefined}
           leading={<ProgramIcon />}
-          trailing={<ChevronRightIcon />}
           onClick={() => void navigate('/programs')}
         />
       </Card>

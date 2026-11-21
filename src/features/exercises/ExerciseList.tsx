@@ -80,6 +80,7 @@ function Row({
          recherche. Un exercice personnel n'en a pas, et aucune mission ne peut
          parler de lui. */
       onClick={() => onOpen(exercise)}
+      chevron={false}
       checked={selectable ? selected : undefined}
       leading={selectable ? <SelectionBox selected={selected} /> : undefined}
       trailing={

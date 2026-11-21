@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ChevronRightIcon } from './icons';
 
 type Props = {
   title: string;
@@ -18,6 +19,14 @@ type Props = {
    * row that is not selectable must not announce a checked state.
    */
   checked?: boolean;
+  /**
+   * Le chevron « cette ligne ouvre un écran ». Par défaut il est posé dès que la
+   * ligne est cliquable et n'a ni `trailing` ni `checked` : une ligne-lien sans
+   * chevron ne dit pas qu'elle en est une (Rythme, Volume, Muscles, Rapport
+   * mensuel l'avaient oublié, quand 39 appels le passaient à la main). `false` pour
+   * une ligne qui agit au lieu d'ouvrir — exporter, installer, ouvrir une feuille.
+   */
+  chevron?: boolean;
 };
 
 /**
@@ -34,8 +43,11 @@ export function ListRow({
   disabled,
   checked,
   ariaLabel,
+  chevron,
 }: Props) {
   const Element = onClick ? 'button' : 'div';
+  const showChevron =
+    chevron ?? (onClick !== undefined && trailing === undefined && checked === undefined);
 
   return (
     <Element
@@ -52,10 +64,18 @@ export function ListRow({
     >
       {leading && <span className="shrink-0 text-[var(--text-2)]">{leading}</span>}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-base text-[var(--text-1)]">{title}</span>
+        <span className="line-clamp-2 [overflow-wrap:anywhere] text-base text-[var(--text-1)]">{title}</span>
         {subtitle && <span className="mt-0.5 block text-sm text-[var(--text-2)]">{subtitle}</span>}
       </span>
-      {trailing && <span className="shrink-0 text-[var(--text-2)]">{trailing}</span>}
+      {trailing ? (
+        <span className="shrink-0 text-[var(--text-2)]">{trailing}</span>
+      ) : (
+        showChevron && (
+          <span className="shrink-0 text-[var(--text-2)]">
+            <ChevronRightIcon />
+          </span>
+        )
+      )}
     </Element>
   );
 }

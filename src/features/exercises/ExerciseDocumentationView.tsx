@@ -10,6 +10,7 @@ import {
   type ExerciseDocumentationLimit,
 } from '@/features/knowledge/exerciseDocumentation';
 import type { WikiArticle } from '@/features/knowledge/articleTypes';
+import { ChevronRightIcon } from '@/ui/icons';
 
 const LIMIT_KEYS = {
   primary_article_missing: 'exerciseDoc.limitPrimaryMissing',
@@ -32,9 +33,7 @@ function SummaryLink({ article }: { article: WikiArticle }) {
           leading-6 text-[var(--text-1)]"
       >
         {article.title}
-        <span aria-hidden="true" className="text-[var(--accent-ink)]">
-          →
-        </span>
+        <span aria-hidden="true" className="text-[var(--accent-ink)]"><ChevronRightIcon /></span>
       </Link>
     </li>
   );
@@ -52,7 +51,7 @@ function ArticleCard({ article }: { article: WikiArticle }) {
         className="mt-3 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
       >
         {t('exerciseDoc.readArticle')}
-        <span aria-hidden="true">→</span>
+        <span aria-hidden="true"><ChevronRightIcon /></span>
       </Link>
     </article>
   );
@@ -129,7 +128,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
           className="mt-2 flex min-h-12 items-center gap-2 text-sm text-[var(--text-2)]"
         >
           {t('exerciseDoc.toSummary')}
-          <span aria-hidden="true">→</span>
+          <span aria-hidden="true"><ChevronRightIcon /></span>
         </Link>
       </section>
 
@@ -192,7 +191,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
                     text-[var(--accent-ink)]"
                 >
                   {t('exerciseDoc.readArticle')}
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true"><ChevronRightIcon /></span>
                 </Link>
               )}
             </article>

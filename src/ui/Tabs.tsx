@@ -12,10 +12,10 @@ import { Link, useLocation } from 'react-router-dom';
  */
 
 /** Colonnes égales, quel que soit le nombre d'onglets. */
-const ROW = 'grid grid-flow-col auto-cols-fr';
+const ROW = 'grid grid-flow-col auto-cols-[minmax(0,1fr)]';
 
 const tabClass = (current: boolean) =>
-  `relative flex min-h-12 items-center justify-center px-3 text-base font-semibold
+  `relative flex min-h-12 items-center justify-center px-3 text-center text-base font-semibold hyphens-auto [overflow-wrap:anywhere]
    transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] active:opacity-70
    ${current ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`;
 

@@ -83,7 +83,7 @@ export function Screen({
           son départ — que ces `animate-*` ne savaient pas faire : ils jouaient
           à chaque entrée, jamais à la sortie, donc aller et revenir se
           ressemblaient. Les superposer ferait deux mouvements pour un pas. */}
-      <header className="relative flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
+      <header className="relative flex min-h-[calc(48px+2.25rem)] shrink-0 items-center gap-2 px-4 pt-5 pb-4">
         {/* La version de l'app, dans la marge haute de l'en-tête (les 20 px de `pt-5`).
             Là, elle ne coûte pas un pixel de hauteur — ce qui compte sur la séance en
             direct — et elle ne se pose jamais à côté du titre : un second texte près
