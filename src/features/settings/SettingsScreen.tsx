@@ -52,7 +52,7 @@ export function SettingsScreen() {
           >
             <span
               className={`min-w-0 flex-1 text-base font-semibold ${
-                noBackup ? 'text-[var(--danger-ink)]' : 'text-[var(--text-1)]'
+                noBackup ? 'text-[var(--warn-ink)]' : 'text-[var(--text-1)]'
               }`}
             >
               {noBackup

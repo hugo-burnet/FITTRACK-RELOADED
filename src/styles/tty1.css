@@ -91,6 +91,7 @@
   --accent-data: #00aa00; /* ANSI 2 : barres de graphique ordinaires */
   --axis: #878787;
   --danger-ink: #ff5555; /* ANSI 9 */
+  --warn-ink: #ffff55; /* ANSI 11 */
 
   --scrim: rgb(0 0 0 / 0.72);
 

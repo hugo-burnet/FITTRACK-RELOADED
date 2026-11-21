@@ -142,7 +142,7 @@ function SessionRow({
           <span className="block text-base font-semibold text-[var(--text-1)]">
             {t('program.missingRoutine')}
           </span>
-          <span className="mt-0.5 block text-sm leading-snug text-[var(--danger-ink)]">
+          <span className="mt-0.5 block text-sm leading-snug text-[var(--warn-ink)]">
             {t('program.missingRoutineHint', { day })}
           </span>
           {blockedHint !== null && (

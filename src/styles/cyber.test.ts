@@ -59,6 +59,7 @@ describe('Cyber tokens', () => {
     ['--accent-ink', '--surface-2', 4.5],
     ['--accent-on-fill', '--accent-fill', 4.5],
     ['--danger-ink', '--surface-1', 4.5],
+    ['--warn-ink', '--surface-1', 4.5],
     ['--accent-data', '--surface-1', 3],
     ['--axis', '--surface-1', 3],
   ])('%s on %s reaches %s:1', (foreground, background, minimum) => {
