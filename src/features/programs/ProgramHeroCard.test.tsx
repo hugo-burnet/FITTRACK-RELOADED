@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as workoutsRepository from '@/data/repositories/workouts';
 import * as programWorkoutRepository from '@/data/repositories/programWorkout';
 import type { HomeProgramProjection } from '@/data/repositories/home';
 import { ProgramHeroCard } from './ProgramHeroCard';
@@ -26,11 +27,14 @@ const projection: HomeProgramProjection = {
   },
 };
 
-function renderCard(value: HomeProgramProjection = projection) {
+function renderCard(
+  value: HomeProgramProjection = projection,
+  offPlan: React.ComponentProps<typeof ProgramHeroCard>['offPlan'] = null,
+) {
   return render(
     <MemoryRouter initialEntries={['/']}>
       <Routes>
-        <Route path="/" element={<ProgramHeroCard program={value} disabled={false} />} />
+        <Route path="/" element={<ProgramHeroCard program={value} disabled={false} offPlan={offPlan} />} />
         <Route path="/workout" element={<p>Séance ouverte</p>} />
       </Routes>
     </MemoryRouter>,
@@ -39,6 +43,32 @@ function renderCard(value: HomeProgramProjection = projection) {
 
 describe('ProgramHeroCard', () => {
   afterEach(() => vi.restoreAllMocks());
+
+  const offPlan = { routineId: 'routine-9', name: 'Pull B' };
+  const waiting: HomeProgramProjection = {
+    ...projection,
+    pick: { kind: 'announcement', rule: 'starts', startsAt: new Date(2026, 10, 23).getTime(), weekIndex: 0 },
+  };
+
+  it('garde un bouton secondaire hors plan quand le bloc n’a rien à lancer', async () => {
+    const start = vi
+      .spyOn(workoutsRepository, 'startWorkoutFromRoutine')
+      .mockResolvedValue({} as Awaited<ReturnType<typeof workoutsRepository.startWorkoutFromRoutine>>);
+    const user = userEvent.setup();
+    renderCard(waiting, offPlan);
+
+    await user.click(screen.getByRole('button', { name: 'Démarrer Pull B' }));
+
+    expect(start).toHaveBeenCalledWith('routine-9');
+    expect(await screen.findByText('Séance ouverte')).toBeVisible();
+  });
+
+  it('n’ajoute pas de second bouton quand le bloc a lui-même une séance', () => {
+    renderCard(projection, offPlan);
+
+    expect(screen.queryByRole('button', { name: 'Démarrer Pull B' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Démarrer Force A' })).toBeVisible();
+  });
 
   it('démarre l’entrée persistée sans reclasser les séances dans le composant', async () => {
     const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockResolvedValue({

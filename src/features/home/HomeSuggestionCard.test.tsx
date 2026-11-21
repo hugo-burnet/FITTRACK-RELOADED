@@ -1,10 +1,16 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
 import { t } from '@/i18n/fr';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
+
+const startWorkoutMock = vi.hoisted(() => vi.fn(() => Promise.resolve({})));
+vi.mock('@/data/repositories/workouts', () => ({
+  startWorkout: startWorkoutMock,
+  startWorkoutFromRoutine: vi.fn(() => Promise.resolve({})),
+}));
 
 const suggestion: SuggestedRoutine = {
   routineId: 'push-a',
@@ -24,7 +30,6 @@ function context(
   over: Partial<HomeDashboardData['routineContext']> = {},
 ): HomeDashboardData['routineContext'] {
   return {
-    required: false,
     selected: ['folder:push'],
     options,
     ...over,
@@ -48,60 +53,27 @@ function renderCard(
 }
 
 describe('HomeSuggestionCard routine folder context', () => {
-  it('opens the required picker on first render without reopening it after dismissal', async () => {
-    const user = userEvent.setup();
-    const routineContext = context({ required: true, selected: [] });
-    const view = renderCard({ suggestion: null, routineContext });
-
-    const dialog = await screen.findByRole('dialog', { name: 'Choisir les dossiers' });
-    const closeButtons = screen.getAllByRole('button', { name: 'Fermer' });
-    await user.click(closeButtons.at(-1)!);
-    fireEvent.transitionEnd(dialog);
+  it('never opens the folder picker by itself and follows every routine', () => {
+    renderCard({ routineContext: context({ selected: [] }) });
 
     expect(screen.queryByRole('dialog', { name: 'Choisir les dossiers' })).not.toBeInTheDocument();
-
-    view.rerender(
-      <MemoryRouter>
-        <HomeSuggestionCard
-          suggestion={null}
-          routineCount={3}
-          disabled={false}
-          routineContext={routineContext}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(screen.queryByRole('dialog', { name: 'Choisir les dossiers' })).not.toBeInTheDocument();
+    expect(screen.getByText(t('home.allRoutines'))).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Démarrer Poussée A' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Changer de dossier' })).toBeVisible();
   });
 
-  it('opens the picker for a new required context after a dismissal', async () => {
+  it('offers a free workout and a routine creation on an empty home', async () => {
     const user = userEvent.setup();
-    const requiredContext = context({ required: true, selected: [] });
-    const view = renderCard({ suggestion: null, routineContext: requiredContext });
+    renderCard({
+      suggestion: null,
+      routineCount: 0,
+      routineContext: context({ selected: [], options: [] }),
+    });
 
-    const dialog = await screen.findByRole('dialog', { name: 'Choisir les dossiers' });
-    await user.click(screen.getAllByRole('button', { name: 'Fermer' }).at(-1)!);
-    fireEvent.transitionEnd(dialog);
-
-    view.rerender(
-      <MemoryRouter>
-        <HomeSuggestionCard
-          suggestion={null}
-          routineCount={3}
-          disabled={false}
-          routineContext={context({
-            required: true,
-            selected: [],
-            options: [
-              ...options,
-              { value: 'folder:pull', label: 'Bureau', routineCount: 1 },
-            ],
-          })}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(await screen.findByRole('dialog', { name: 'Choisir les dossiers' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Séance libre' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Créer une routine' })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Séance libre' }));
+    expect(startWorkoutMock).toHaveBeenCalledWith('', 'Séance libre');
   });
 
   it('shows the selected context and opens its change action', async () => {
@@ -140,7 +112,7 @@ describe('HomeSuggestionCard routine folder context', () => {
     renderCard({
       suggestion: null,
       routineCount: 0,
-      routineContext: context({ required: false, selected: [], options: [] }),
+      routineContext: context({ selected: [], options: [] }),
     });
 
     expect(screen.getByText(/Aucune routine pour l’instant/)).toBeVisible();
