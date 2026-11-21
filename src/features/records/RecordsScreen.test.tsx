@@ -91,7 +91,12 @@ function HistoryTarget() {
   return <p>{`Historique ${workoutId}`}</p>;
 }
 
-const renderRoute = (initialEntry = '/analytics/records') =>
+function ExerciseTarget() {
+  const { id } = useParams();
+  return <p>{`Fiche ${id}`}</p>;
+}
+
+const renderRoute = (initialEntry = '/analytics/records?vue=chronologie') =>
   render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <LocationProbe />
@@ -100,6 +105,7 @@ const renderRoute = (initialEntry = '/analytics/records') =>
         <Route path="/analytics" element={<p>Analyses</p>} />
         <Route path="/workout" element={<p>Séance en cours</p>} />
         <Route path="/history/:workoutId" element={<HistoryTarget />} />
+        <Route path="/exercises/:id" element={<ExerciseTarget />} />
       </Routes>
     </MemoryRouter>,
   );
@@ -139,7 +145,7 @@ describe('RecordsScreen', () => {
       ],
     });
 
-    renderRoute('/analytics/records?exerciseId=bench');
+    renderRoute('/analytics/records?exerciseId=bench&vue=chronologie');
     expect(await screen.findByText('100 kg')).toBeVisible();
     await userEvent.click(await screen.findByRole('button', { name: 'Tous les records' }));
 
@@ -211,7 +217,7 @@ describe('RecordsScreen', () => {
     });
 
     const user = userEvent.setup();
-    renderRoute('/analytics/records?exerciseId=bench');
+    renderRoute('/analytics/records?exerciseId=bench&vue=chronologie');
 
     expect(await screen.findByRole('button', { name: 'Développé couché' })).toHaveAttribute(
       'aria-pressed',
@@ -275,7 +281,7 @@ describe('RecordsScreen', () => {
     });
 
     const user = userEvent.setup();
-    renderRoute('/analytics/records?exerciseId=bench');
+    renderRoute('/analytics/records?exerciseId=bench&vue=chronologie');
     expect(await screen.findByText('100 kg')).toBeVisible();
     await user.click(await screen.findByRole('button', { name: 'Tous les records' }));
 
@@ -293,7 +299,7 @@ describe('RecordsScreen', () => {
     });
 
     const user = userEvent.setup();
-    renderRoute('/analytics/records?exerciseId=missing');
+    renderRoute('/analytics/records?exerciseId=missing&vue=chronologie');
 
     expect(await screen.findByRole('button', { name: 'Exercice indisponible' })).toHaveAttribute(
       'aria-pressed',
@@ -583,5 +589,122 @@ describe('RecordsScreen', () => {
       />,
     );
     expect(animate).not.toHaveBeenCalled();
+  });
+});
+
+describe('RecordsScreen, vue « En cours »', () => {
+  beforeEach(async () => {
+    await resetDb();
+    vi.restoreAllMocks();
+  });
+
+  const seedSquat = async () => {
+    const squat = exercise('squat', 'Squat');
+    const bench = exercise('bench', 'Développé couché');
+    const first = workout('workout-1', 'completed', day(1));
+    const second = workout('workout-2', 'completed', day(5));
+    await seedTimeline({
+      exercises: [squat, bench],
+      workouts: [first, second],
+      records: [
+        record('squat-60', squat.id, first.id, 60, day(1)),
+        record('squat-625', squat.id, second.id, 62.5, day(5)),
+        {
+          ...record('squat-set', squat.id, second.id, 500, day(5), 'max_volume_set'),
+          weight: 62.5,
+          reps: 8,
+        },
+        record('bench-80', bench.id, first.id, 80, day(2)),
+      ],
+    });
+  };
+
+  it('montre par défaut seulement les records en cours, par exercice', async () => {
+    await seedSquat();
+
+    renderRoute('/analytics/records');
+
+    expect(await screen.findByText('62,5 kg')).toBeVisible();
+    expect(screen.getByText('80 kg')).toBeVisible();
+    // Le 60 kg est battu : il n'a plus sa place ici, seulement dans la chronologie.
+    expect(screen.queryByText('60 kg')).toBeNull();
+    expect(screen.getByRole('tab', { name: 'En cours' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('écrit la meilleure série « 62,5 kg × 8 » et non son tonnage', async () => {
+    await seedSquat();
+
+    renderRoute('/analytics/records');
+
+    expect(await screen.findByText('62,5 kg × 8')).toBeVisible();
+    expect(screen.queryByText('500 kg')).toBeNull();
+  });
+
+  it('passe à la chronologie par l’onglet, qui garde les records battus', async () => {
+    await seedSquat();
+    const user = userEvent.setup();
+    renderRoute('/analytics/records');
+
+    await user.click(await screen.findByRole('tab', { name: 'Chronologie' }));
+
+    expect(await screen.findByText('60 kg')).toBeVisible();
+    expect(screen.getByLabelText('URL courante')).toHaveTextContent('vue=chronologie');
+  });
+
+  it('mène à la fiche de l’exercice et à la séance du record', async () => {
+    await seedSquat();
+    const user = userEvent.setup();
+    renderRoute('/analytics/records');
+
+    await user.click(await screen.findByRole('button', { name: 'Voir Squat' }));
+    expect(await screen.findByText('Fiche squat')).toBeVisible();
+  });
+
+  it('garde son lien vers la séance depuis une ligne de record', async () => {
+    await seedSquat();
+    const user = userEvent.setup();
+    renderRoute('/analytics/records');
+
+    await user.click(await screen.findByRole('button', { name: /Squat, Charge max, 62,5 kg/ }));
+    expect(await screen.findByText('Historique workout-2')).toBeVisible();
+  });
+
+  it('s’ouvre filtré sur un exercice', async () => {
+    await seedSquat();
+
+    renderRoute('/analytics/records?exerciseId=bench');
+
+    expect(await screen.findByText('80 kg')).toBeVisible();
+    expect(screen.queryByText('62,5 kg')).toBeNull();
+  });
+
+  it('revient en arrière dans l’historique quand il y en a un', async () => {
+    await seedSquat();
+    window.history.replaceState({ idx: 1 }, '');
+    render(
+      <MemoryRouter
+        initialEntries={['/exercises/squat', '/analytics/records']}
+        initialIndex={1}
+      >
+        <Routes>
+          <Route path="/analytics/records" element={<RecordsScreen />} />
+          <Route path="/exercises/:id" element={<ExerciseTarget />} />
+          <Route path="/analytics" element={<p>Analyses</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: /retour/i }));
+    expect(await screen.findByText('Fiche squat')).toBeVisible();
+    window.history.replaceState(null, '');
+  });
+
+  it('retombe sur les analyses sans historique', async () => {
+    await seedSquat();
+    window.history.replaceState(null, '');
+    renderRoute('/analytics/records');
+
+    await userEvent.click(await screen.findByRole('button', { name: /retour/i }));
+    expect(await screen.findByText('Analyses')).toBeVisible();
   });
 });

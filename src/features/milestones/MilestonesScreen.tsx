@@ -24,6 +24,8 @@ interface Line extends MilestoneReading {
   id: string;
   definitionId: string;
   achievedAt: number;
+  /** `''` pour un secret : le « pas de parent » du modèle. */
+  workoutId: string;
 }
 
 /**
@@ -38,7 +40,7 @@ function demoLines(): Line[] | undefined {
     const reading = milestoneReading(definition.id, definition.threshold);
     return reading === undefined
       ? []
-      : [{ ...reading, id: definition.id, definitionId: definition.id, achievedAt: now }];
+      : [{ ...reading, id: definition.id, definitionId: definition.id, achievedAt: now, workoutId: '' }];
   });
 }
 
@@ -67,7 +69,15 @@ export function MilestonesScreen() {
       // phrase : le sauter vaut mieux qu'afficher son identifiant.
       return reading === undefined
         ? []
-        : [{ ...reading, id: row.id, definitionId: row.definitionId, achievedAt: row.achievedAt }];
+        : [
+            {
+              ...reading,
+              id: row.id,
+              definitionId: row.definitionId,
+              achievedAt: row.achievedAt,
+              workoutId: row.workoutId,
+            },
+          ];
     });
   const loaded = demo !== undefined || live !== undefined;
   const peek = lines.find((line) => line.definitionId === peekId);
@@ -120,6 +130,9 @@ export function MilestonesScreen() {
         definitionId={peek?.definitionId ?? null}
         title={peek?.title ?? t('milestone.title')}
         onClose={() => setPeekId(null)}
+        {...(peek !== undefined && peek.workoutId !== ''
+          ? { onOpenWorkout: () => void navigate(`/history/${peek.workoutId}`) }
+          : {})}
       />
     </Screen>
   );

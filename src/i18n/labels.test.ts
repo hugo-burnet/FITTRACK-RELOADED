@@ -73,6 +73,19 @@ describe('personal record labels', () => {
     expect(recordContext(record('max_volume_session', 1_250))).toBe('Tonnage de la séance');
   });
 
+  it('writes the best set as weight × reps, never as a tonnage that reads like a load', () => {
+    const best = record('max_volume_set', 500, { weight: 62.5, reps: 8 });
+
+    expect(recordValue(best)).toBe('62,5 kg × 8');
+    expect(recordContext(best)).toBe('');
+    // Un gain de tonnage (« +60 kg ») se lirait comme +60 kg sur la barre.
+    expect(recordGain(best, 440)).toBeUndefined();
+  });
+
+  it('falls back to the stored tonnage when an old best set lost its weight or reps', () => {
+    expect(recordValue(record('max_volume_set', 500))).toBe('500 kg');
+  });
+
   it('does not mistake ambiguous repetition weight for added load', () => {
     expect(recordContext(record('max_reps', 12, { weight: 25, reps: 12 }))).toBe('');
   });

@@ -2,25 +2,35 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useSearchParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
+import { useGoBack } from '@/app/useGoBack';
 import { Screen } from '@/app/Screen';
+import { currentRecordsByExercise } from '@/data/repositories/currentRecords';
 import {
   isRecordProjectionCurrent,
   listRecordTimeline,
   rebuildAllRecords,
+  type RecordTimelineEntry,
 } from '@/data/repositories/personalRecords';
 import type { PersonalRecordType } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName, recordLabel } from '@/i18n/labels';
-import { Button, EmptyState, FilterChip, OptionSheet, type Option } from '@/ui';
+import { Button, EmptyState, FilterChip, OptionSheet, Tabs, type Option } from '@/ui';
+import { CurrentRecords } from './CurrentRecords';
 import { RecordRail } from './RecordRail';
 import { Skeleton } from '@/ui/Skeleton';
 
 const ALL = '';
 
+type View = 'current' | 'timeline';
+/** Dans l'URL, pour que la flèche retour d'un écran voisin retrouve la même vue. */
+const TIMELINE_PARAM = 'chronologie';
+
 export function RecordsScreen() {
   const navigate = useAppNavigate();
+  const goBack = useGoBack('/analytics');
   const [searchParams, setSearchParams] = useSearchParams();
   const exerciseId = searchParams.get('exerciseId') ?? ALL;
+  const view: View = searchParams.get('vue') === TIMELINE_PARAM ? 'timeline' : 'current';
   const [type, setType] = useState<PersonalRecordType | typeof ALL>(ALL);
   const [exerciseOpen, setExerciseOpen] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
@@ -108,13 +118,25 @@ export function RecordsScreen() {
     }
   };
 
+  const selectView = (next: View) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (next === 'timeline') nextParams.set('vue', TIMELINE_PARAM);
+    else nextParams.delete('vue');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const openRecord = (entry: RecordTimelineEntry) =>
+    void navigate(
+      entry.workoutStatus === 'active' ? '/workout' : `/history/${entry.record.workoutId}`,
+    );
+
   const clearFilters = () => {
     setType(ALL);
     selectExercise(ALL);
   };
 
   return (
-    <Screen title={t('records.title')} onBack={() => void navigate('/analytics')}>
+    <Screen title={t('records.title')} onBack={goBack}>
       <div className="flex min-h-full flex-col">
         <div className="flex shrink-0 gap-2 pb-1">
           <div className="min-w-0 flex-1 [&>button]:min-w-0 [&>button]:w-full">
@@ -179,19 +201,33 @@ export function RecordsScreen() {
               ) : (
                 <EmptyState title={t('records.emptyTitle')} body={t('records.emptyBody')} />
               ))}
-            <div className={entries.length === 0 ? 'hidden' : 'mt-7'}>
-              <RecordRail
-                entries={entries}
-                knownRecordIds={allEntries.map((entry) => entry.record.id)}
-                visibleKnownRecordIds={visibleKnownRecordIds}
-                onOpen={(entry) =>
-                  void navigate(
-                    entry.workoutStatus === 'active'
-                      ? '/workout'
-                      : `/history/${entry.record.workoutId}`,
-                  )
-                }
-              />
+            <div className={entries.length === 0 ? 'hidden' : 'mt-4'}>
+              <Tabs
+                label={t('records.viewsLabel')}
+                value={view}
+                items={[
+                  { value: 'current', label: t('records.viewCurrent') },
+                  { value: 'timeline', label: t('records.viewTimeline') },
+                ]}
+                onChange={selectView}
+              >
+                <div className="mt-5">
+                  {view === 'current' ? (
+                    <CurrentRecords
+                      groups={currentRecordsByExercise(entries)}
+                      onOpenExercise={(id) => void navigate(`/exercises/${id}`)}
+                      onOpenRecord={openRecord}
+                    />
+                  ) : (
+                    <RecordRail
+                      entries={entries}
+                      knownRecordIds={allEntries.map((entry) => entry.record.id)}
+                      visibleKnownRecordIds={visibleKnownRecordIds}
+                      onOpen={openRecord}
+                    />
+                  )}
+                </div>
+              </Tabs>
             </div>
           </>
         )}

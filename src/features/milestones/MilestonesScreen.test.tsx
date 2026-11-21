@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
@@ -23,10 +23,18 @@ async function seedMilestone(overrides: Partial<Milestone> & { definitionId: str
 
 function renderScreen() {
   return render(
-    <MemoryRouter>
-      <MilestonesScreen />
+    <MemoryRouter initialEntries={['/milestones']}>
+      <Routes>
+        <Route path="/milestones" element={<MilestonesScreen />} />
+        <Route path="/history/:workoutId" element={<HistoryTarget />} />
+      </Routes>
     </MemoryRouter>,
   );
+}
+
+function HistoryTarget() {
+  const { workoutId } = useParams();
+  return <p>{`Historique ${workoutId}`}</p>;
 }
 
 describe('l’écran des paliers — les secrets', () => {
@@ -77,5 +85,25 @@ describe('l’écran des paliers — les secrets', () => {
     await userEvent.click(await screen.findByRole('button', { name: /noclip/ }));
 
     expect(await screen.findByText(t('milestone.art.noclip'))).toBeInTheDocument();
+  });
+
+  it('mène d’un palier à la séance qui l’a franchi', async () => {
+    await seedMilestone({ definitionId: 'bench-100', value: 100, workoutId: 'w-1' });
+    renderScreen();
+
+    await userEvent.click(await screen.findByRole('button', { name: /100/ }));
+    await userEvent.click(await screen.findByRole('button', { name: t('milestone.openWorkout') }));
+
+    expect(await screen.findByText('Historique w-1')).toBeInTheDocument();
+  });
+
+  it('n’offre pas de séance à un palier secret, qui n’en a pas', async () => {
+    await seedMilestone({ definitionId: 'noclip' });
+    renderScreen();
+
+    await userEvent.click(await screen.findByRole('button', { name: /noclip/ }));
+    await screen.findByText(t('milestone.art.noclip'));
+
+    expect(screen.queryByRole('button', { name: t('milestone.openWorkout') })).toBeNull();
   });
 });
