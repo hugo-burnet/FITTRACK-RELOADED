@@ -14,7 +14,6 @@ import {
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { SET_TYPES } from '@/data/types';
 import type { PlateLoading, Workout } from '@/data/types';
 import { t } from '@/i18n/fr';
@@ -24,8 +23,6 @@ import { DELOAD_PERCENT } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import type { WarmupStep } from '@/lib/warmup';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
-import { useHoldTimer } from '@/stores/holdTimer';
-import { useRepPacer } from '@/stores/repPacer';
 import { ActionSheet, ConfirmSheet, Input, OptionSheet, Sheet, Textarea } from '@/ui';
 import { canDeloadWorkout } from './deloadAvailability';
 import { DeloadSheet } from './DeloadSheet';
@@ -109,9 +106,6 @@ export type WorkoutSheetsProps = {
  * séance elle-même — ses données, ses minuteurs, ses cartes — et cesse de mêler
  * l'écran qu'on regarde entre deux séries aux douze feuilles qu'on ouvre une
  * fois chacune.
- *
- * Le tutoriel est lu ici plutôt que reçu en propriété : c'est un contexte, et le
- * faire traverser l'écran n'aurait rien dit de plus.
  */
 export function WorkoutSheets({
   sheet,
@@ -125,10 +119,9 @@ export function WorkoutSheets({
   setPlatesView,
   availablePlateWeightsKg,
 }: WorkoutSheetsProps) {
-  const tutorial = useTutorialControls();
   const navigate = useAppNavigate();
-  // Un magasin global, lu ici comme le tutoriel : le faire descendre en
-  // propriété depuis l'écran n'aurait rien dit de plus.
+  // Un magasin global, lu ici : le faire descendre en propriété depuis l'écran
+  // n'aurait rien dit de plus.
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
   const deloadActive = workout.deloadPercent === DELOAD_PERCENT;
@@ -177,10 +170,8 @@ export function WorkoutSheets({
                 ? t('workout.deloadMenuHint')
                 : t('workout.deloadUnavailableHint'),
             disabled: deloadActive || !canDeload,
-            tutorialId: 'workout-deload',
             onSelect: () => {
               setSheet({ kind: 'deload' });
-              tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
             },
           },
           {
@@ -253,7 +244,6 @@ export function WorkoutSheets({
             onSelect: () => {
               if (sheet?.kind !== 'exercise') return;
               setSheet({ kind: 'pace', rowId: sheet.rowId });
-              tutorial?.report({ type: 'pace-sheet-opened', rowId: sheet.rowId });
             },
           },
           {
@@ -266,11 +256,9 @@ export function WorkoutSheets({
             ? [
                 {
                   label: t('workout.warmupAction'),
-                  tutorialId: 'workout-warmup',
                   onSelect: () => {
                     if (sheet?.kind !== 'exercise') return;
                     setSheet({ kind: 'warmup', rowId: sheet.rowId });
-                    tutorial?.report({ type: 'warmup-sheet-opened', rowId: sheet.rowId });
                   },
                 },
               ]
@@ -288,7 +276,6 @@ export function WorkoutSheets({
             ...(sheet?.kind === 'exercise' && hasSetsLeft(sheet.rowId)
               ? { hint: t('workout.replaceExerciseHint') }
               : { disabled: true, hint: t('workout.replaceExerciseNothingLeft') }),
-            tutorialId: 'workout-replace-exercise',
             onSelect: () => {
               if (sheet?.kind === 'exercise') void navigate(`/workout/replace/${sheet.rowId}`);
             },
@@ -314,9 +301,6 @@ export function WorkoutSheets({
           if (sheet?.kind !== 'warmup') return;
           const rowId = sheet.rowId;
           await insertWarmupSets(rowId, suggestions);
-          // Après l'écriture, et avec le compte : une feuille vidée de ses
-          // étapes insère zéro série, ce qui n'est pas insérer.
-          tutorial?.report({ type: 'warmup-inserted', rowId, count: suggestions.length });
         }}
       />
 
@@ -345,7 +329,6 @@ export function WorkoutSheets({
         actions={[
           {
             label: t('workout.setTypeAction'),
-            tutorialId: 'workout-set-type',
             // The current type, so the entry says what it is about to change
             // rather than making you open the sheet to find out.
             hint: sheet?.kind === 'set' ? setTypeLabel(typeOf(sheet.setId)) : undefined,
@@ -382,9 +365,7 @@ export function WorkoutSheets({
         onSelect={(setType) => {
           if (sheet?.kind !== 'setType') return;
           const setId = sheet.setId;
-          void updateSetType(setId, setType)
-            .then(() => tutorial?.report({ type: 'workout-set-type-updated', setId, setType }))
-            .catch(() => undefined);
+          void updateSetType(setId, setType).catch(() => undefined);
         }}
       />
 
@@ -402,21 +383,8 @@ export function WorkoutSheets({
         onStart={() => {
           if (paceSheetLine === null) return;
           if (!pace.startFor(paceSheetLine)) return;
-          // L'horloge qui vient de partir dit laquelle des deux c'était : le
-          // maintien mesure la série, la cadence la rythme, et deux missions
-          // différentes les apprennent.
-          const startedHold = useHoldTimer.getState().setId;
-          const startedPace = useRepPacer.getState().setId;
-          if (startedHold !== null) tutorial?.report({ type: 'hold-started', setId: startedHold });
-          else if (startedPace !== null) {
-            tutorial?.report({ type: 'pace-started', setId: startedPace });
-          }
         }}
-        onStop={() => {
-          const stopping = useRepPacer.getState().setId;
-          pace.stop();
-          tutorial?.report({ type: 'pace-stopped', setId: stopping });
-        }}
+        onStop={() => pace.stop()}
       />
 
       <PlateLoadSheet
@@ -429,7 +397,6 @@ export function WorkoutSheets({
         availablePlateWeightsKg={availablePlateWeightsKg ?? [...DEFAULT_PLATES_KG]}
         onAvailablePlateWeightsChange={async (weights) => {
           await setAvailablePlateWeightsKg(weights);
-          tutorial?.report({ type: 'plate-availability-changed', count: weights.length });
         }}
         onBarWeightChange={(barWeight) => {
           if (platesView === null) return;

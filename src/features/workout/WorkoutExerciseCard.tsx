@@ -109,7 +109,6 @@ type Props = {
   line: WorkoutExerciseDetail;
   /** Séance de benchmark : les répétitions de chaque série sont le résultat, jamais une proposition. */
   amrap?: boolean;
-  tutorial?: boolean;
   preferred?: boolean;
   superset?: SupersetPlace;
   rest: CardRest | null;
@@ -133,7 +132,7 @@ type Props = {
   onStopPace?: () => void;
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
-  onWrite: (setId: string, values: Partial<SetValues>, recordable: boolean) => void;
+  onWrite: (setId: string, values: Partial<SetValues>) => void;
   onComplete: (setId: string, proposed: Partial<SetValues>, set: WorkoutSet) => void;
   onUncomplete: (setId: string) => void;
   onDeleteSet: (setId: string) => void;
@@ -158,7 +157,6 @@ const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 /** Live-workout exercise card with set entry, records, rest, and supersets. */
 export function WorkoutExerciseCard({
   line,
-  tutorial = false,
   preferred = true,
   superset,
   rest,
@@ -257,7 +255,6 @@ export function WorkoutExerciseCard({
 
   return (
     <div
-      data-tutorial-id={rest !== null ? 'workout-rest' : undefined}
       className={`relative ${superset === undefined ? '' : 'pl-3'}`}
     >
       {superset !== undefined && (
@@ -385,7 +382,6 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t(hold !== null ? 'workout.holdStop' : 'workout.paceStop')}
-              data-tutorial-id={tutorial ? 'workout-pace-stop' : undefined}
               onClick={onStopPace}
               className="flex w-12 shrink-0 items-center justify-center text-[var(--accent-ink)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -396,7 +392,6 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t(timed ? 'workout.holdOpen' : 'workout.paceOpen', { name })}
-              data-tutorial-id={tutorial ? 'workout-pace' : undefined}
               onClick={onPace}
               className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -409,7 +404,6 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t('workout.plates')}
-              data-tutorial-id={tutorial ? 'workout-plates' : undefined}
               onClick={onPlates}
               className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -421,7 +415,6 @@ export function WorkoutExerciseCard({
           <button
             type="button"
             aria-label={t('workout.exerciseMenu', { name })}
-            data-tutorial-id={tutorial ? 'workout-exercise-menu' : undefined}
             onClick={onMenu}
             className="flex w-12 shrink-0 items-center justify-center text-[var(--text-2)]
               transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -518,13 +511,10 @@ export function WorkoutExerciseCard({
                       number={index + 1}
                       columns={columns}
                       previous={matchedPrevious[index]}
-                      tutorialRank={
-                        tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
-                      }
                       holding={hold?.setId === set.id}
                       unilateral={identity.isUnilateral === 1}
                       amrap={amrap}
-                      onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
+                      onWrite={(values) => onWrite(set.id, values)}
                       onComplete={(proposed) => onComplete(set.id, proposed, set)}
                       onUncomplete={() => onUncomplete(set.id)}
                       onMenu={() => onSetMenu(set, index + 1)}
@@ -542,7 +532,6 @@ export function WorkoutExerciseCard({
 
             <AddRow
               label={t('workout.addSet')}
-              tutorialId={tutorial ? 'workout-add-set' : undefined}
               onClick={onAddSet}
             />
           </>

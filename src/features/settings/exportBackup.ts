@@ -19,8 +19,7 @@ import { rememberBackup } from '@/stores/backupMemory';
  * fichier n'existe alors nulle part.
  *
  * `shared` ne prouve pas que le fichier est arrivé quelque part — Android ne dit pas ce que
- * l'utilisateur a choisi dans la feuille. C'est le meilleur signal disponible, et le même que celui
- * dont le tutoriel se contente.
+ * l'utilisateur a choisi dans la feuille. C'est le meilleur signal disponible.
  */
 export async function exportBackup(): Promise<SaveOutcome> {
   const backup = await buildBackup();

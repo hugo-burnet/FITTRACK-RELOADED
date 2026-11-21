@@ -3,7 +3,7 @@ import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { ArticleBody } from './ArticleBody';
 import { findArticle } from './articleCatalogue';
-import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
+import { Screen } from '@/app/Screen';
 
 /**
  * La page de lecture d'un article. Elle sert les deux adresses — `/knowledge/a`
@@ -19,7 +19,7 @@ export function WikiArticleScreen() {
   // sommaire, qui est la seule chose dont on est sûr qu'elle existe.
   if (article === undefined) {
     return (
-      <KnowledgeScreenFrame
+      <Screen
         title={t('knowledge.article.notFoundTitle')}
         onBack={() => void navigate('/knowledge')}
       >
@@ -28,19 +28,19 @@ export function WikiArticleScreen() {
             {t('knowledge.article.notFoundBody')}
           </p>
         </div>
-      </KnowledgeScreenFrame>
+      </Screen>
     );
   }
 
   const back = article.family === 'programming' ? '/knowledge/programmation' : '/knowledge';
 
   return (
-    <KnowledgeScreenFrame
+    <Screen
       title={article.title}
       onBack={() => void navigate(back)}
       sub={<p className="px-4 text-sm leading-6 text-[var(--text-2)]">{article.summary}</p>}
     >
       <ArticleBody article={article} />
-    </KnowledgeScreenFrame>
+    </Screen>
   );
 }

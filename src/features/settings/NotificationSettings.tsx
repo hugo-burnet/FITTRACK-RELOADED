@@ -4,7 +4,6 @@ import {
   getNotificationPreferences,
   setNotificationPreferences,
 } from '@/data/repositories/notificationSettings';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { reminderMoment, weekdayInitial, weekdayLabel } from '@/i18n/labels';
 import type { NotificationPreferences } from '@/lib/notificationPreferences';
@@ -30,7 +29,6 @@ import { Input, ListRow, SectionTitle, Toggle } from '@/ui';
  * clock under a switch that is off are seven boxes that do nothing.
  */
 export function NotificationSettings() {
-  const tutorial = useTutorialControls();
   const preferences = useLiveQuery(getNotificationPreferences);
   // Read once, like every screen that dates something: a clock re-read at each
   // render moves the sentence under the reader for no new information.
@@ -47,7 +45,6 @@ export function NotificationSettings() {
       ? preferences.schedule.days.filter((checked) => checked !== day)
       : [...preferences.schedule.days, day];
     save({ schedule: { ...preferences.schedule, days } });
-    tutorial?.report({ type: 'notification-days-changed', days: days.length });
   };
 
   const [next] = nextReminderOccurrences(preferences.schedule, openedAt, 1);
@@ -66,11 +63,6 @@ export function NotificationSettings() {
               checked={preferences.rest}
               onChange={() => {
                 save({ rest: !preferences.rest });
-                tutorial?.report({
-                  type: 'notification-preference-changed',
-                  key: 'rest',
-                  enabled: !preferences.rest,
-                });
               }}
             />
           }
@@ -87,11 +79,6 @@ export function NotificationSettings() {
               checked={preferences.records}
               onChange={() => {
                 save({ records: !preferences.records });
-                tutorial?.report({
-                  type: 'notification-preference-changed',
-                  key: 'records',
-                  enabled: !preferences.records,
-                });
               }}
             />
           }
@@ -99,7 +86,6 @@ export function NotificationSettings() {
         <ListRow
           title={t('settings.notificationsReminders')}
           subtitle={t('settings.notificationsRemindersHint')}
-          tutorialId="notification-reminders"
           trailing={
             <Toggle
               label={t('settings.notificationsReminders')}
@@ -109,11 +95,6 @@ export function NotificationSettings() {
               checked={preferences.reminders}
               onChange={() => {
                 save({ reminders: !preferences.reminders });
-                tutorial?.report({
-                  type: 'notification-preference-changed',
-                  key: 'reminders',
-                  enabled: !preferences.reminders,
-                });
               }}
             />
           }
@@ -128,7 +109,6 @@ export function NotificationSettings() {
           <div
             role="group"
             aria-label={t('settings.notificationsDays')}
-            data-tutorial-id="notification-days"
             className="flex gap-1.5"
           >
             {REMINDER_WEEK_ORDER.map((day) => {

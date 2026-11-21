@@ -82,7 +82,10 @@ describe('sauvegarde complète', () => {
     expect(localStorage.getItem('fittrack:theme')).toBe('light');
   });
 
-  it('conserve la progression namespacée du tutoriel v3 après restauration', async () => {
+  // Le tutoriel a été retiré, mais ses préférences vivent encore dans les sauvegardes déjà
+  // écrites (espace `fittrack:`) : elles doivent se restaurer sans erreur, comme n'importe quelle
+  // autre clé inconnue de l'app. Rien ne les lit plus et rien ne les efface.
+  it('restaure sans erreur la progression de l’ancien tutoriel v3', async () => {
     const tutorial = JSON.stringify({
       version: 3,
       scriptVersion: 2,

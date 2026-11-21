@@ -45,14 +45,6 @@ type Props = {
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
   /**
-   * Le rang de cette ligne pour le tutoriel, quand il en désigne une.
-   *
-   * Deux rangs suffisent : la campagne fait valider une première série, puis
-   * une seconde, et une consigne qui vise « la série » sans dire laquelle
-   * encadrerait la mauvaise dès qu'il y en a deux.
-   */
-  tutorialRank?: 'first' | 'second';
-  /**
    * Vrai tant que le chrono tourne sur cette série. La coche est alors le geste
    * qui l'arrête : la désactiver parce qu'aucune durée n'est encore tapée
    * enfermerait le chrono sans aucune sortie — la durée, justement, c'est lui
@@ -74,7 +66,7 @@ type Props = {
    * enregistrait comme le maximum de la personne sans qu'elle ait rien tapé.
    */
   amrap?: boolean;
-  onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
+  onWrite: (values: Partial<SetValues>) => void;
   /**
    * La coche, avec les chiffres qu'elle **propose** — la cible, la séance d'avant — et jamais ce
    * qui est déjà saisi : cette ligne lit la base avec un temps de retard, et ce qu'elle croirait
@@ -92,7 +84,6 @@ export function WorkoutSetRow({
   number,
   columns,
   previous,
-  tutorialRank,
   holding = false,
   unilateral = false,
   amrap = false,
@@ -233,12 +224,11 @@ export function WorkoutSetRow({
     apply('reps', 'reps');
     apply('duration', 'durationSeconds');
     apply('distance', 'distanceMeters');
-    onWrite(values, isSetRecordable(columns, next));
+    onWrite(values);
   };
 
   return (
     <div
-      data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
       ref={rowRef}
       data-part="set-row"
       data-done={done || undefined}
@@ -254,9 +244,6 @@ export function WorkoutSetRow({
           Mark === undefined
             ? t('workout.setNumber', { number })
             : `${t('workout.setNumber', { number })} — ${setTypeLabel(set.setType)}`
-        }
-        data-tutorial-id={
-          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-menu`
         }
         onClick={onMenu}
         className="flex size-12 shrink-0 items-center justify-center rounded-lg text-sm
@@ -307,9 +294,6 @@ export function WorkoutSetRow({
       <button
         type="button"
         data-part="set-check"
-        data-tutorial-id={
-          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-complete`
-        }
         aria-pressed={done}
         // Pendant la transition, la coche n'a rien à fermer : le premier côté est
         // fini et le second n'a pas commencé.

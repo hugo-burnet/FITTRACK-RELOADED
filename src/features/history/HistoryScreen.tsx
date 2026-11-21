@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import {
   listCompletedWorkoutTimestamps,
   listHistoryDay,
@@ -42,7 +41,6 @@ export function HistoryScreen() {
   const navigate = useAppNavigate();
   const [historyNotice] = useState(() => readHistoryNotice(location.state));
   const [openedAt] = useState(() => Date.now());
-  const tutorial = useTutorialControls();
   const [view, setView] = useState<HistoryView>('journal');
   const [exerciseId, setExerciseId] = useState<string>();
   const [pageSize, setPageSize] = useState(20);
@@ -107,10 +105,6 @@ export function HistoryScreen() {
   const changeExercise = (nextExerciseId: string | undefined) => {
     setExerciseId(nextExerciseId);
     setPageSize(20);
-    tutorial?.report({
-      type: 'history-exercise-filter-changed',
-      exerciseId: nextExerciseId ?? null,
-    });
   };
 
   return (
@@ -128,9 +122,7 @@ export function HistoryScreen() {
           </HeaderAction>
           <HeaderAction
             label={t('history.importAction')}
-            tutorialId="history-import"
             onClick={() => {
-              tutorial?.report({ type: 'hevy-import-opened' });
               void navigate('/history/import');
             }}
           >
@@ -172,10 +164,8 @@ export function HistoryScreen() {
                   key={option}
                   type="button"
                   aria-pressed={active}
-                  data-tutorial-id={option === 'calendar' ? 'history-view-calendar' : undefined}
                   onClick={() => {
                     setView(option);
-                    tutorial?.report({ type: 'history-view-changed', view: option });
                   }}
                   className={`relative min-h-12 px-3 text-base font-semibold
                     transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
@@ -231,12 +221,7 @@ export function HistoryScreen() {
             selectedDay={selectedDay}
             selectedDayWorkouts={selectedDayWorkouts}
             onChangeMonth={changeMonth}
-            onSelectDay={(timestamp) => {
-              setSelectedDay(timestamp);
-              if (timestamp !== undefined) {
-                tutorial?.report({ type: 'history-day-selected', timestamp });
-              }
-            }}
+            onSelectDay={setSelectedDay}
           />
         )}
       </div>

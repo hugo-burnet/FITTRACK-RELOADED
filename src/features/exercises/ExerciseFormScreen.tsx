@@ -12,7 +12,6 @@ import type {
   MovementPattern,
   MuscleGroup,
 } from '@/data/types';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import {
   equipmentLabel,
@@ -97,17 +96,14 @@ function PickerRow({
   label,
   value,
   onOpen,
-  tutorialId,
 }: {
   label: string;
   value: string;
   onOpen: () => void;
-  tutorialId?: string;
 }) {
   return (
     <ListRow
       title={label}
-      tutorialId={tutorialId}
       onClick={onOpen}
       trailing={
         <span className="flex items-center gap-1 text-base text-[var(--text-1)]">
@@ -128,7 +124,6 @@ export function ExerciseFormScreen({
   onCreated?: (exercise: Exercise) => void;
   onCancel?: () => void;
 } = {}) {
-  const tutorial = useTutorialControls();
   const { id: routeId } = useParams();
   const id = onCreated === undefined ? routeId : undefined;
   const navigate = useAppNavigate();
@@ -235,10 +230,6 @@ export function ExerciseFormScreen({
 
     void createCustomExercise({ ...withFactor, bodyweightLoadFactorIsCustom: 1 }).then(
       (created) => {
-        // Après la résolution, jamais avant : annoncer l'intention ferait
-        // terminer une mission de création sur un exercice que Dexie aurait pu
-        // refuser d'écrire.
-        tutorial?.report({ type: 'exercise-created', exerciseId: created.id });
         if (onCreated !== undefined) {
           onCreated(created);
           return;
@@ -259,14 +250,12 @@ export function ExerciseFormScreen({
         <Card padded>
           <Input
             label={t('exerciseForm.nameLabel')}
-            tutorialId="exercise-name"
             placeholder={t('exerciseForm.namePlaceholder')}
             value={draft.name}
             autoFocus={!editing}
             enterKeyHint="done"
             onChange={(event) => {
               setDraft({ ...draft, name: event.target.value });
-              tutorial?.report({ type: 'exercise-named', name: event.target.value });
             }}
           />
         </Card>
@@ -329,7 +318,6 @@ export function ExerciseFormScreen({
           />
           <PickerRow
             label={t('exerciseForm.measurementLabel')}
-            tutorialId="exercise-measurement"
             value={measurementLabel(draft.measurementType)}
             onOpen={() => setPicker('measurement')}
           />
@@ -352,7 +340,6 @@ export function ExerciseFormScreen({
           <div
             role="radiogroup"
             aria-label={t('exerciseForm.unilateralLabel')}
-            data-tutorial-id="exercise-unilateral"
             className="flex items-center gap-4"
           >
             <span className="flex-1 text-base text-[var(--text-1)]">
@@ -367,7 +354,6 @@ export function ExerciseFormScreen({
                   aria-checked={draft.isUnilateral === value}
                   onClick={() => {
                     setDraft({ ...draft, isUnilateral: value });
-                    tutorial?.report({ type: 'exercise-unilateral-set', isUnilateral: value });
                   }}
                   className={`min-h-12 w-16 rounded-lg text-base font-semibold
                     transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
@@ -392,7 +378,6 @@ export function ExerciseFormScreen({
           variant="primary"
           size="lg"
           fullWidth
-          tutorialId="exercise-save"
           disabled={name === '' || factorInvalid}
           onClick={submit}
         >
@@ -464,7 +449,6 @@ export function ExerciseFormScreen({
          */
         onSelect={(measurementType) => {
           setDraft(withBodyweightDefault({ ...draft, measurementType }));
-          tutorial?.report({ type: 'exercise-measurement-set', measurementType });
         }}
       />
     </Screen>

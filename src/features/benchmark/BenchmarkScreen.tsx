@@ -54,7 +54,7 @@ export function BenchmarkScreen() {
 
   if (report === undefined) {
     return (
-      <Screen title="" onBack={leave} showTutorialHelp={false}>
+      <Screen title="" onBack={leave}>
         <div aria-hidden="true" className="space-y-4">
           <div className="h-24 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
           <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
@@ -65,7 +65,7 @@ export function BenchmarkScreen() {
 
   if (report === null) {
     return (
-      <Screen title={t('benchmark.title')} onBack={leave} showTutorialHelp={false}>
+      <Screen title={t('benchmark.title')} onBack={leave}>
         <div role="status">
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('benchmark.notFound')}</p>
@@ -114,7 +114,6 @@ export function BenchmarkScreen() {
     <Screen
       title={t('benchmark.title')}
       onBack={leave}
-      showTutorialHelp={false}
       footer={
         <ActionBand
           label={

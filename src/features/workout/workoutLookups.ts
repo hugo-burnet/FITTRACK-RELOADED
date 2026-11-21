@@ -15,8 +15,7 @@ import { t } from '@/i18n/fr';
  * séance en cours — l'écran qu'on tient d'une main, en sueur, entre deux séries.
  *
  * Sorties de `WorkoutScreen` parce qu'elles ne lisent que la liste des
- * exercices : rien ici ne connaît l'état des feuilles, des minuteurs ou du
- * tutoriel, et c'est ce qui les rend testables sans monter un écran.
+ * exercices : rien ici ne connaît l'état des feuilles ou des minuteurs, et c'est ce qui les rend testables sans monter un écran.
  */
 
 /** La ligne, ou `null` si elle vient d'être supprimée. */

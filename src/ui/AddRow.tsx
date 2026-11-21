@@ -19,17 +19,14 @@ import { PlusIcon } from './icons';
 export function AddRow({
   label,
   onClick,
-  tutorialId,
 }: {
   label: string;
   onClick: () => void;
-  tutorialId?: string;
 }) {
   return (
     <button
       type="button"
       data-part="add-row"
-      data-tutorial-id={tutorialId}
       onClick={onClick}
       className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-base
         font-semibold text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]

@@ -2,16 +2,11 @@ import { expect, test } from '@playwright/test';
 import { createRoutineFromTemplate, openApp, startSuggestedWorkout } from './support';
 
 test.describe('une séance, du premier lancement à l’historique', () => {
-  test('le premier lancement se passe en silence', async ({ page }) => {
+  test('le premier lancement ouvre l’app directement, sans feuille', async ({ page }) => {
     await page.goto('');
-    const dialog = page.getByRole('dialog', { name: 'Avant le premier son' });
-    await expect(dialog).toBeVisible();
 
-    await page.getByRole('button', { name: 'Passer' }).click();
-
-    await expect(dialog).toBeHidden();
-    // « Passer » ouvre l'app directement, et en silence : aucun son avant que la personne l'ait voulu.
-    expect(await page.evaluate(() => localStorage.getItem('fittrack:announcer'))).toBe('silence');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeHidden();
   });
 
   test('d’un modèle 5×5 à l’historique, avec la hausse de charge proposée', async ({ page }) => {
@@ -94,7 +89,6 @@ test.describe('une séance, du premier lancement à l’historique', () => {
     const controls = [
       page.getByRole('button', { name: 'Retour' }),
       page.getByRole('button', { name: 'Options de la séance' }),
-      page.getByRole('button', { name: 'Aide sur cette page' }),
       page.getByRole('button', { name: 'Valider la série 1' }),
       page.getByRole('button', { name: 'Terminer la séance' }),
       ...['Accueil', 'Planifier', 'Historique', 'Progression', 'Exercices'].map((name) =>

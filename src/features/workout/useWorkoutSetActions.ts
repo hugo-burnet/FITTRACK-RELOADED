@@ -12,7 +12,6 @@ import {
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { announce } from '@/audio/announce';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { isRestTriggering, type restPlans } from '@/lib/rest';
 import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
@@ -27,20 +26,19 @@ import { setValidationCue } from './workoutCues';
  * Ce qui arrive à une série quand on la saisit, la valide ou la défait.
  *
  * **Sorti de l'écran parce que ce n'est pas de l'affichage.** Chaque geste tire
- * quatre fils à la fois — l'écriture en base, le minuteur, la voix, le tutoriel —
+ * plusieurs fils à la fois — l'écriture en base, le minuteur, la voix —
  * et leur ordre est le sujet. Mêlés au JSX de la carte, ces enchaînements se
  * lisaient à quatre niveaux d'indentation, entre deux attributs.
  *
- * Le tutoriel et les minuteurs sont lus ici : ce sont des contextes et des
- * magasins globaux, les faire descendre en propriétés n'aurait rien dit de plus.
+ * Les minuteurs sont lus ici : ce sont des magasins globaux, les faire
+ * descendre en propriétés n'aurait rien dit de plus.
  */
 export interface WorkoutSetActionsOptions {
   /**
    * `undefined` tant que la séance charge — le hook est monté avant les retours
    * anticipés de l'écran, comme `useWorkoutAnnouncements` et pour la même
-   * raison. Les deux gestes qui nomment la séance au tutoriel se taisent alors,
-   * ce qui ne coûte rien : aucune carte n'est encore à l'écran pour les
-   * déclencher.
+   * raison. Les gestes qui ont besoin de la séance se taisent alors, ce qui ne
+   * coûte rien : aucune carte n'est encore à l'écran pour les déclencher.
    */
   workoutId: string | undefined;
   /** Les repos par ligne, calculés une fois pour la séance entière. */
@@ -56,7 +54,6 @@ export function useWorkoutSetActions({
   pace,
   setEffortSetId,
 }: WorkoutSetActionsOptions) {
-  const tutorial = useTutorialControls();
   const rest = useRestTimer();
   const stopRest = useRestTimer((state) => state.stop);
   const hold = useHoldTimer();
@@ -86,7 +83,6 @@ export function useWorkoutSetActions({
       .then((result) => {
         if (result.kind !== 'started') return;
         announce('side-change');
-        tutorial?.report({ type: 'workout-side-turned', setId });
         pace.startSecondSide(line, setId, result.startsAt);
       })
       .catch(() => setWriteFailed(true));
@@ -113,20 +109,10 @@ export function useWorkoutSetActions({
     line: WorkoutExerciseDetail,
     setId: string,
     values: Parameters<typeof updateSetValues>[1],
-    recordable: boolean,
   ): void => {
     if (workoutId === undefined) return;
     setWriteFailed(false);
-    void updateSetValues(setId, values)
-      .then(() => {
-        tutorial?.report({
-          type: 'workout-set-written',
-          workoutId,
-          setId,
-          recordable,
-        });
-      })
-      .catch(() => setWriteFailed(true));
+    void updateSetValues(setId, values).catch(() => setWriteFailed(true));
     pace.armFromTypedReps(line, setId, values.reps);
   };
 
@@ -163,7 +149,6 @@ export function useWorkoutSetActions({
     // prime sur une durée tapée. Cf. `completeSet` pour ce que la coche relit elle-même.
     void completeSet(setId, held === undefined ? {} : { durationSeconds: held }, { proposed })
       .then(() => {
-        tutorial?.report({ type: 'workout-set-completed', workoutId, setId });
         pace.stop(setId);
         startRest(line, setId, set.setType);
         announceSetValidation(setValidationCue(line.sets, setId));
@@ -181,9 +166,7 @@ export function useWorkoutSetActions({
   };
 
   const onAddSet = (rowId: string): void => {
-    void duplicateLastSet(rowId)
-      .then(() => tutorial?.report({ type: 'workout-set-added', rowId }))
-      .catch(() => setWriteFailed(true));
+    void duplicateLastSet(rowId).catch(() => setWriteFailed(true));
   };
 
   /**
@@ -195,11 +178,7 @@ export function useWorkoutSetActions({
    */
   const onInsertWarmup = (rowId: string, suggestions: readonly WarmupSetSuggestion[]): void => {
     setWriteFailed(false);
-    void insertWarmupSets(rowId, suggestions)
-      .then(() =>
-        tutorial?.report({ type: 'warmup-inserted', rowId, count: suggestions.length }),
-      )
-      .catch(() => setWriteFailed(true));
+    void insertWarmupSets(rowId, suggestions).catch(() => setWriteFailed(true));
   };
 
   /**

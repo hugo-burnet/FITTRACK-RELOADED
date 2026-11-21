@@ -118,7 +118,7 @@ describe('WorkoutSetRow — à l’échec : les répétitions sont le résultat,
 
     await userEvent.click(screen.getByRole('button', { name: 'Précédent' }));
 
-    expect(onWrite).toHaveBeenCalledWith({ weight: 70, reps: 12 }, true);
+    expect(onWrite).toHaveBeenCalledWith({ weight: 70, reps: 12 });
   });
 });
 

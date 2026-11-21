@@ -4,7 +4,6 @@ type Props = {
   disabled?: boolean;
   /** `accent` pour le verbe de l'écran, `quiet` pour une sortie. */
   tone?: 'accent' | 'quiet';
-  tutorialId?: string;
 };
 
 /**
@@ -29,14 +28,12 @@ export function ActionBand({
   onClick,
   disabled = false,
   tone = 'accent',
-  tutorialId,
 }: Props) {
   return (
     <button
       type="button"
       data-part="action-band"
       data-tone={tone}
-      data-tutorial-id={tutorialId}
       onClick={onClick}
       disabled={disabled}
       className={`flex min-h-14 w-full shrink-0 items-center justify-center border-t

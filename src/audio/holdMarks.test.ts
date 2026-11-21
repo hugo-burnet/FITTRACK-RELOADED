@@ -57,10 +57,8 @@ describe('le cue du changement de côté', () => {
  * qui rend l'écart indétectable sans ce test.
  *
  * **Le script entier, pas `allClips()`.** Ce dernier ne rend que les lignes dont
- * le `cue` existe dans `CUES` — la narration du tutoriel porte `cue: 'tutorial'`,
- * qui n'en est pas un, et passait donc à travers le contrôle. Dix clips sur
- * quatre-vingts n'étaient pas vérifiés, et les missions guidées seraient tombées
- * dans le même angle mort.
+ * le `cue` existe dans `CUES` : une ligne dont le `cue` n'en est pas un (comme
+ * l'était la narration d'un ancien tutoriel) passerait à travers le contrôle.
  *
  * **`pending` est la seule dérogation, et elle se referme toute seule.** Le
  * texte d'une consigne se relit et se corrige à l'écran ; l'enregistrer coûte
@@ -108,7 +106,7 @@ describe('le manifeste', () => {
     expect(text.split('reprise dans dix secondes')).toHaveLength(2);
   });
 
-  it('couvre bien plus que les clips rattachés à un cue', () => {
-    expect(script.lines.length).toBeGreaterThan(allClips().length);
+  it('couvre au moins tous les clips rattachés à un cue', () => {
+    expect(script.lines.length).toBeGreaterThanOrEqual(allClips().length);
   });
 });
