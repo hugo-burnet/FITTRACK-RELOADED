@@ -13,6 +13,7 @@ import {
   resolveRevision,
   resolveSchedule,
   shiftLocalDate,
+  slotState,
 } from '@/lib/programs';
 import type { ProgramAdherence, ProgramPosition } from '@/lib/programs';
 import { buildPastWeeks } from './pastWeeks';
@@ -83,7 +84,6 @@ export async function readProjection(programId: string): Promise<DetailQuery> {
       routineRows.map(([id, routine]) => [id, routine?.routine.name ?? null]),
     );
 
-    const currentDay = position.phase === 'active' ? position.dayOfWeek : 0;
     const displayedWorkouts = programWorkouts.filter((workout) => workout.weekIndex === weekIndex);
     const hasWorkoutInDisplayedWeek =
       displayedWorkouts.length > 0 ||
@@ -103,14 +103,7 @@ export async function readProjection(programId: string): Promise<DetailQuery> {
         routineName: routineNames.get(entry.routineId) ?? null,
         dayOfWeek: entry.dayOfWeek,
         order: entry.order,
-        state:
-          played !== undefined
-            ? 'completed'
-            : currentDay === entry.dayOfWeek
-              ? 'today'
-              : currentDay > entry.dayOfWeek
-                ? 'missed'
-                : 'upcoming',
+        state: slotState(position, entry, played !== undefined),
         date:
           played?.startedAt ??
           shiftLocalDate(program.startsAt, weekIndex * 7 + entry.dayOfWeek - 1),

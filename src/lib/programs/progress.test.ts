@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { programAdherence, programWeeklyTonnage } from './progress';
+import { programAdherence, programWeeklyTonnage, slotState } from './progress';
 
 const revisions = [{ id: 'r0', effectiveFromWeekIndex: 0, createdAt: 1 }];
 // Un split lundi / mercredi / vendredi, répété chaque semaine.
@@ -100,5 +100,34 @@ describe('programWeeklyTonnage', () => {
 
   it('ignores a session outside the program weeks', () => {
     expect(programWeeklyTonnage(2, [{ weekIndex: 5, tonnage: 100 }])).toEqual([0, 0]);
+  });
+});
+
+describe('slotState', () => {
+  const slot = { dayOfWeek: 3 };
+
+  it('un créneau joué est joué, quelle que soit la phase', () => {
+    expect(slotState({ phase: 'after' }, slot, true)).toBe('completed');
+    expect(slotState({ phase: 'active', weekIndex: 0, dayOfWeek: 1 }, slot, true)).toBe('completed');
+  });
+
+  it('suit le jour dans la semaine affichée', () => {
+    expect(slotState({ phase: 'active', weekIndex: 0, dayOfWeek: 3 }, slot, false)).toBe('today');
+    expect(slotState({ phase: 'active', weekIndex: 0, dayOfWeek: 5 }, slot, false)).toBe('missed');
+    expect(slotState({ phase: 'active', weekIndex: 0, dayOfWeek: 1 }, slot, false)).toBe('upcoming');
+  });
+
+  it('avant le début, tout est à venir', () => {
+    expect(slotState({ phase: 'before' }, slot, false)).toBe('upcoming');
+  });
+
+  it('programme terminé : un créneau non joué de la dernière semaine est manqué, comme l’assiduité le compte', () => {
+    expect(slotState({ phase: 'after' }, slot, false)).toBe('missed');
+    const result = programAdherence({
+      ...base,
+      position: { phase: 'after' },
+      done: [],
+    });
+    expect(result.plannedToDate).toBe(result.plannedTotal);
   });
 });

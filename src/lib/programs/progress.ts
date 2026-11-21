@@ -82,3 +82,25 @@ export function programWeeklyTonnage(
   }
   return weeks.map((value) => Math.round(value * 100) / 100);
 }
+
+export type SlotState = 'completed' | 'today' | 'missed' | 'upcoming';
+
+/**
+ * L'état d'un créneau de la semaine affichée : la même échéance que
+ * `programAdherence`, pour que la liste et le compteur ne se contredisent pas.
+ *
+ * Programme terminé (`after`), la semaine affichée est la dernière et tout y est
+ * échu : un créneau non joué est manqué, pas « à venir » — l'assiduité le compte
+ * déjà dans les créneaux prévus à ce jour. Avant le début (`before`), rien n'est dû.
+ */
+export function slotState(
+  position: ProgramPosition,
+  slot: { dayOfWeek: number },
+  played: boolean,
+): SlotState {
+  if (played) return 'completed';
+  if (position.phase === 'after') return 'missed';
+  if (position.phase === 'before') return 'upcoming';
+  if (position.dayOfWeek === slot.dayOfWeek) return 'today';
+  return position.dayOfWeek > slot.dayOfWeek ? 'missed' : 'upcoming';
+}
