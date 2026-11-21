@@ -361,11 +361,22 @@ const weeklyDurationReading = (value: number): string => {
     : formatDuration(roundedToMinute);
 };
 
+/**
+ * « 10 872 » — a tonnage figure with its thousands grouped, one decimal at most.
+ *
+ * `formatNumber` is a field formatter (it must round-trip through an input) and writes
+ * « 10872 » : on a reading that is a figure nobody can scan. Every tonnage shown as text
+ * goes through here, so « 10 872 kg » reads the same on the finish screen, in the detail
+ * and in the charts.
+ */
+export function groupedNumber(value: number): string {
+  return (Math.round(value * 10) / 10).toLocaleString('fr-FR');
+}
+
 /** A weekly total, without second-level noise on an hour-scale chart. */
 export function weeklyVolumeReading(value: number, metric: WeeklyVolumeMetric): string {
   if (metric === 'duration') return weeklyDurationReading(value);
-  const rounded = Math.round(value * 10) / 10;
-  return `${rounded.toLocaleString('fr-FR')} ${unitLabel('kg')}`;
+  return `${groupedNumber(value)} ${unitLabel('kg')}`;
 }
 
 /** « août 2026 » — the name of a month, wherever a report names one. */

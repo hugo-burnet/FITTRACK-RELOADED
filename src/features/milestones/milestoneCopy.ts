@@ -1,4 +1,5 @@
 import { t, type TranslationKey } from '@/i18n/fr';
+import { groupedNumber } from '@/i18n/labels';
 import { milestoneById } from '@/lib/milestones/catalogue';
 import type { MilestoneDefinition, MilestoneGroup } from '@/lib/milestones/types';
 import { formatNumber } from '@/ui/numberField';
@@ -82,7 +83,7 @@ function titleOf(definition: MilestoneDefinition): string {
     case 'training_years':
       return definition.threshold === 1 ? t('milestone.yearOne') : t('milestone.years', { value });
     case 'lifetime_tonnage':
-      return t('milestone.tonnage', { value: formatNumber(value) });
+      return t('milestone.tonnage', { value: groupedNumber(value) });
     case 'secret':
       // Un titre par secret, écrit dans `fr.ts` : le sien n'est ni un nombre ni un exercice.
       return translated(`milestone.secret.${definition.id}`) ?? definition.id;

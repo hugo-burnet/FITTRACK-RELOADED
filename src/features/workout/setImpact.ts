@@ -1,8 +1,9 @@
 import type { SetType } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { groupedNumber } from '@/i18n/labels';
 import type { ResolvedValues } from '@/lib/measurement';
 import { setVolume } from '@/lib/records';
-import { formatNumber } from '@/ui/numberField';
+
 
 /**
  * L'étiquette qui monte d'une coche validée, dans le thème Cyber : ce que la série vient d'ajouter.
@@ -14,5 +15,5 @@ export function setImpactTag(values: ResolvedValues, setType: SetType): string {
   const tonnage =
     setType === 'warmup' ? 0 : setVolume({ weight: values.weight, reps: values.reps });
   if (tonnage <= 0) return t('workout.setPlusOne');
-  return t('workout.setTonnage', { value: formatNumber(Math.round(tonnage * 10) / 10) });
+  return t('workout.setTonnage', { value: groupedNumber(tonnage) });
 }

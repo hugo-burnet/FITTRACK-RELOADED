@@ -13,6 +13,7 @@ import {
   recordLabel,
   recordValue,
   weeklyVolumeMetricLabel,
+  groupedNumber,
   weeklyVolumeReading,
   weeklyVolumeScaleReading,
 } from './labels';
@@ -220,5 +221,20 @@ describe('body measurement labels', () => {
     expect(measurementChangeReading(-1.5, 'cm')).toBe('\u22121,5 cm');
     expect(measurementChangeReading(-0.25, 'kg')).toBe('\u22120,25 kg');
     expect(measurementChangeReading(0, 'cm')).toBe('inchangé');
+  });
+});
+
+describe('groupedNumber', () => {
+  it('groups thousands with a space that never breaks', () => {
+    expect(groupedNumber(10_872)).toMatch(/^10[\u00a0\u202f]872$/);
+  });
+
+  it('leaves a number under a thousand alone and keeps the decimal comma', () => {
+    expect(groupedNumber(340)).toBe('340');
+    expect(groupedNumber(712.5)).toBe('712,5');
+  });
+
+  it('rounds to one decimal, like every other tonnage', () => {
+    expect(groupedNumber(1_234.56)).toMatch(/^1[\u00a0\u202f]234,6$/);
   });
 });
