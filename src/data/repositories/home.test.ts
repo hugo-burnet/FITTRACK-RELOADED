@@ -101,7 +101,7 @@ describe('getHomeDashboard', () => {
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toEqual({ required: false, selected: [], options: [] });
+    expect(dashboard.routineContext).toEqual({ selected: [], options: [] });
     expect(dashboard.suggestedRoutine?.routineId).toBe(push.id);
   });
 
@@ -206,7 +206,6 @@ describe('getHomeDashboard', () => {
       const dashboard = await getHomeDashboard();
 
       expect(dashboard.routineContext).toMatchObject({
-        required: false,
         selected: [`folder:${ul.id}`, `folder:${ppl.id}`],
       });
     });
@@ -253,13 +252,12 @@ describe('getHomeDashboard', () => {
       const dashboard = await getHomeDashboard();
 
       expect(dashboard.routineContext).toMatchObject({
-        required: false,
         selected: [`folder:${ul.id}`],
       });
       expect(dashboard.suggestedRoutine?.routineId).toBe(upperA.id);
     });
 
-    it('asks again, without falling back, when every selected folder is gone', async () => {
+    it('follows every routine again when every selected folder is gone', async () => {
       const { ul, ppl } = await seedTwoFolders();
       await createFolder('Maison');
       await setRoutineFolderContext({ kind: 'folders', folderIds: [ul.id, ppl.id], root: false });
@@ -268,8 +266,8 @@ describe('getHomeDashboard', () => {
 
       const dashboard = await getHomeDashboard();
 
-      expect(dashboard.routineContext).toMatchObject({ required: true, selected: [] });
-      expect(dashboard.suggestedRoutine).toBeNull();
+      expect(dashboard.routineContext.selected).toEqual([]);
+      expect(dashboard.suggestedRoutine).not.toBeNull();
     });
 
     it('keeps a single saved folder working exactly as before', async () => {
@@ -283,14 +281,25 @@ describe('getHomeDashboard', () => {
     });
   });
 
-  it('requires a routine context when folders exist without a saved choice', async () => {
+  it('never blocks the suggestion when folders exist without a saved choice', async () => {
     const folder = await createFolder('Salle');
-    await createRoutine('Push salle', folder.id);
+    const routine = await createRoutine('Push salle', folder.id);
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toMatchObject({ required: true, selected: [] });
-    expect(dashboard.suggestedRoutine).toBeNull();
+    expect(dashboard.routineContext.selected).toEqual([]);
+    expect(dashboard.suggestedRoutine?.routineId).toBe(routine.id);
+  });
+
+  it('draws from routines outside any folder when nothing was chosen', async () => {
+    const folder = await createFolder('Salle');
+    await createRoutine('Push salle', folder.id);
+    await createRoutine('Libre');
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineCount).toBe(2);
+    expect(dashboard.suggestedRoutine).not.toBeNull();
   });
 
   it('does not fall back when the selected folder has no routines', async () => {
@@ -301,13 +310,12 @@ describe('getHomeDashboard', () => {
     const dashboard = await getHomeDashboard();
 
     expect(dashboard.routineContext).toMatchObject({
-      required: false,
       selected: [`folder:${emptyFolder.id}`],
     });
     expect(dashboard.suggestedRoutine).toBeNull();
   });
 
-  it('invalidates a saved context for a deleted folder when another folder remains', async () => {
+  it('follows every routine when a saved folder was deleted but another remains', async () => {
     const folder = await createFolder('Salle');
     const survivingFolder = await createFolder('Maison');
     await createRoutine('Push salle', folder.id);
@@ -317,13 +325,12 @@ describe('getHomeDashboard', () => {
     const dashboard = await getHomeDashboard();
 
     expect(dashboard.routineContext).toMatchObject({
-      required: true,
       selected: [],
       options: expect.arrayContaining([
         expect.objectContaining({ value: `folder:${survivingFolder.id}` }),
       ]),
     });
-    expect(dashboard.suggestedRoutine).toBeNull();
+    expect(dashboard.suggestedRoutine).not.toBeNull();
   });
 
   it('falls back to the global suggestion when a saved folder is the last one deleted', async () => {
@@ -334,7 +341,7 @@ describe('getHomeDashboard', () => {
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext).toEqual({ required: false, selected: [], options: [] });
+    expect(dashboard.routineContext).toEqual({ selected: [], options: [] });
     expect(dashboard.suggestedRoutine?.routineId).toBe(routine.id);
   });
 
@@ -349,13 +356,13 @@ describe('getHomeDashboard', () => {
     ]);
   });
 
-  it('keeps the active program projection while a folder context is required', async () => {
+  it('keeps the active program projection when folders exist without a saved choice', async () => {
     await createFolder('Salle');
     const { program } = await seedProgram();
 
     const dashboard = await getHomeDashboard();
 
-    expect(dashboard.routineContext.required).toBe(true);
+    expect(dashboard.routineContext.selected).toEqual([]);
     expect(dashboard.activeProgram?.programId).toBe(program.id);
   });
 

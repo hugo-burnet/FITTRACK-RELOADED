@@ -91,7 +91,6 @@ export interface HomeDashboardData {
   /** Compté même quand rien n'est suggérable, pour distinguer les deux vides. */
   routineCount: number;
   routineContext: {
-    required: boolean;
     /**
      * Les lignes cochées, dans l'ordre de la bibliothèque et non celui où elles
      * l'ont été ; vide tant que rien de valide n'est choisi.
@@ -261,7 +260,10 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
   const rankOf = ({ routine }: (typeof routines)[number]): number =>
     optionRank.get(contextValueOf(routine.folderId)) ?? Number.MAX_SAFE_INTEGER;
   const candidates = (
-    folders.length === 0
+    // Sans choix valide, on suit toutes les routines : un dossier créé (par un
+    // import, par un geste de rangement) ne doit jamais retirer « Démarrer ».
+    // Seul un choix explicite restreint la suggestion.
+    folders.length === 0 || validSelected.length === 0
       ? routines.slice()
       : routines.filter(({ routine }) => validSelected.includes(contextValueOf(routine.folderId)))
   ).sort(
@@ -293,7 +295,6 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     weeklyGoalHistory,
     routineCount: routines.length,
     routineContext: {
-      required: folders.length > 0 && validSelected.length === 0,
       selected: validSelected,
       options,
     },

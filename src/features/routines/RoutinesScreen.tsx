@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -62,7 +63,20 @@ export function RoutinesScreen() {
   const expandAll = useRoutineLibraryView((state) => state.expandAll);
   const setReorderUnlocked = useRoutineLibraryView((state) => state.setReorderUnlocked);
 
-  const [sheet, setSheet] = useState<SheetState | null>(null);
+  // « Créer une routine » de l'accueil arrive ici avec `create` : la feuille
+  // « Créer » est déjà ouverte, au lieu d'une liste vide à décoder.
+  const location = useLocation();
+  const [sheet, setSheet] = useState<SheetState | null>(() =>
+    (location.state as { create?: boolean } | null)?.create === true ? { kind: 'create' } : null,
+  );
+  // Le drapeau est consommé : sans cela, revenir de l'éditeur par la flèche
+  // rouvrirait la feuille que la personne a déjà utilisée.
+  const rawNavigate = useNavigate();
+  useEffect(() => {
+    if ((location.state as { create?: boolean } | null)?.create === true) {
+      rawNavigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, location.pathname, rawNavigate]);
   const [shareOutcome, setShareOutcome] = useState<ShareOutcome | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);

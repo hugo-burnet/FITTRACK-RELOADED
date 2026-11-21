@@ -293,6 +293,13 @@ const fr = {
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
     chooseRoutineFolder: 'Choisir les dossiers',
+    /** Aucun choix de dossier : la suggestion suit toutes les routines, et le dit. */
+    allRoutines: 'Toutes les routines',
+    /** Sans routine : le premier jour, ou un samedi hors plan. */
+    freeWorkout: 'Séance libre',
+    freeWorkoutError: 'La séance n’a pas pu démarrer. Réessaie.',
+    /** Bloc actif sans séance aujourd’hui : la routine habituelle, en bouton secondaire. */
+    offPlanStart: 'Lancer {name}',
     changeRoutineFolder: 'Changer de dossier',
     rootRoutineFolder: 'Sans dossier',
     emptyRoutineFolder: 'Aucune routine dans ce dossier.',

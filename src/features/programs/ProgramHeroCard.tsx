@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import type { HomeProgramProjection } from '@/data/repositories/home';
+import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
@@ -49,10 +50,22 @@ interface Props {
    * leads with the block — the routine still names the button either way.
    */
   leadWith?: 'session' | 'block';
+  /**
+   * La routine que l'accueil proposerait sans bloc. Quand le bloc n'a rien à
+   * lancer (il commence plus tard, la semaine est faite), elle devient un
+   * bouton **secondaire** : l'accueil ne perd jamais son verbe, et il n'y a
+   * toujours pas deux actions principales.
+   */
+  offPlan?: { routineId: string; name: string } | null;
 }
 
 /** Displays the repository's exact pick; ranking stays out of the component. */
-export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Props) {
+export function ProgramHeroCard({
+  program,
+  disabled,
+  leadWith = 'session',
+  offPlan = null,
+}: Props) {
   const navigate = useAppNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -66,6 +79,18 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
     setStarting(false);
   };
 
+  const startOffPlan = () => {
+    if (offPlan === null || startingRef.current) return;
+    startingRef.current = true;
+    setStarting(true);
+    setFailed(false);
+    void startWorkoutFromRoutine(offPlan.routineId)
+      .then(() => navigate('/workout'))
+      .catch(() => {
+        setFailed(true);
+        releaseStart();
+      });
+  };
   const start = async () => {
     if (pick.kind !== 'session' || pick.routineName === null || startingRef.current) return;
     startingRef.current = true;
@@ -173,6 +198,19 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
                 {t('program.missingRoutineLocked')}
               </p>
             )}
+
+          {offPlan !== null && pick.kind !== 'session' && (
+            <Button
+              variant="secondary"
+              size="lg"
+              fullWidth
+              disabled={disabled || starting}
+              aria-label={t('home.startRoutine', { name: offPlan.name })}
+              onClick={startOffPlan}
+            >
+              <span className="truncate">{t('home.offPlanStart', { name: offPlan.name })}</span>
+            </Button>
+          )}
 
           <p className="text-sm leading-relaxed text-[var(--text-2)]">{ruleLabel(program)}</p>
           {failed && (

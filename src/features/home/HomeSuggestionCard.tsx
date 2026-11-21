@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
-import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
+import { startWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { routineSummaryLine } from '@/features/routines/summary';
 import { Button, Card } from '@/ui';
@@ -59,26 +59,16 @@ interface Props {
  * récemment — et la règle est écrite sous le titre. La routine n'est jamais
  * modifiée par cet écran : proposer, c'est tout ce que fait cette carte.
  */
-function routineContextEpisodeKey(routineContext: HomeDashboardData['routineContext']): string {
-  return JSON.stringify({
-    required: routineContext.required,
-    selected: routineContext.selected,
-    optionValues: routineContext.options.map((option) => option.value),
-  });
-}
-
-export function HomeSuggestionCard(props: Props) {
-  return <HomeSuggestionCardContent key={routineContextEpisodeKey(props.routineContext)} {...props} />;
-}
-
-function HomeSuggestionCardContent({
+export function HomeSuggestionCard({
   suggestion,
   routineCount,
   disabled,
   routineContext,
 }: Props) {
   const navigate = useAppNavigate();
-  const [contextSheetOpen, setContextSheetOpen] = useState(() => routineContext.required);
+  // Jamais ouverte d'office : la feuille ne s'ouvre que sur le geste de l'icône.
+  const [contextSheetOpen, setContextSheetOpen] = useState(false);
+  const [freeFailed, setFreeFailed] = useState(false);
 
   const selectedOptions = selectedRoutineContextOptions(routineContext);
   const hasFolderPicker = routineContext.options.length > 0;
@@ -92,6 +82,13 @@ function HomeSuggestionCardContent({
     void startWorkoutFromRoutine(routineId).then(() => navigate('/workout'));
   };
 
+  const startFree = () => {
+    setFreeFailed(false);
+    void startWorkout('', t('workout.emptyName'))
+      .then(() => navigate('/workout'))
+      .catch(() => setFreeFailed(true));
+  };
+
   const contextHeader = (
     <div data-part="card-head" className="flex min-h-12 items-center gap-3">
       <div className="min-w-0 flex-1">
@@ -101,7 +98,7 @@ function HomeSuggestionCardContent({
         {hasFolderPicker && (
           <p className="mt-1 truncate text-sm font-semibold text-[var(--text-1)]">
             {selectedOptions.length === 0
-              ? t('home.chooseRoutineFolder')
+              ? t('home.allRoutines')
               : routineContextLabel(selectedOptions)}
           </p>
         )}
@@ -135,14 +132,26 @@ function HomeSuggestionCardContent({
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
               {selectedFoldersAreEmpty
                 ? t(followsSeveralFolders ? 'home.emptyRoutineFolders' : 'home.emptyRoutineFolder')
-                : routineContext.required
-                  ? t('home.chooseRoutineFolder')
-                  : t('home.noRoutines')}
+                : t('home.noRoutines')}
             </p>
-            {!selectedFoldersAreEmpty && !routineContext.required && (
-              <Button variant="secondary" fullWidth onClick={() => void navigate('/routines')}>
+            {/* Deux secondaires, aucune principale : on n'a encore rien à lancer.
+                « Séance libre » est le chemin le plus court pour qui est déjà à la salle. */}
+            <Button variant="secondary" fullWidth disabled={disabled} onClick={startFree}>
+              {t('home.freeWorkout')}
+            </Button>
+            {!selectedFoldersAreEmpty && (
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => void navigate('/routines', { state: { create: true } })}
+              >
                 {t('home.createRoutine')}
               </Button>
+            )}
+            {freeFailed && (
+              <p role="alert" className="text-sm text-[var(--danger-ink)]">
+                {t('home.freeWorkoutError')}
+              </p>
             )}
           </div>
         ) : (

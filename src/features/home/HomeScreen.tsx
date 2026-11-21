@@ -83,7 +83,18 @@ export function HomeScreen() {
         {state.status === 'ready' && (
           <>
             {state.data.activeProgram !== null ? (
-              <ProgramHeroCard program={state.data.activeProgram} disabled={active != null} />
+              <ProgramHeroCard
+                program={state.data.activeProgram}
+                disabled={active != null}
+                offPlan={
+                  state.data.suggestedRoutine === null
+                    ? null
+                    : {
+                        routineId: state.data.suggestedRoutine.routineId,
+                        name: state.data.suggestedRoutine.name,
+                      }
+                }
+              />
             ) : (
               <HomeSuggestionCard
                 suggestion={state.data.suggestedRoutine}
