@@ -1634,6 +1634,8 @@ const fr = {
     searchLabel: 'Chercher un exercice',
     searchPlaceholder: 'Développé, squat, tirage…',
     clearSearch: 'Effacer la recherche',
+    sameMuscle: 'Même muscle',
+    allExercises: 'Tous les exercices',
 
     filterMuscle: 'Muscle',
     filterEquipment: 'Matériel',

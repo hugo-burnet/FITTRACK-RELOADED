@@ -8,6 +8,7 @@ import { equipmentLabel, muscleLabel } from '@/i18n/labels';
 import { Button, EmptyState, FilterChip, Input, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
 import { ExerciseList } from './ExerciseList';
+import { sameMuscleExercises } from './sameMuscle';
 
 export type BrowserQuery = {
   search: string;
@@ -34,6 +35,12 @@ type Props = {
    * to clear the search, which does not leave the gesture in progress.
    */
   onCreate?: (name: string) => void;
+  /**
+   * Present = an unfiltered, unsearched list opens with a « same muscle » section
+   * (the replaced exercise left out) before the whole library. Typing a search or
+   * a filter drops it: the search applies to the entire list.
+   */
+  suggest?: { muscle: MuscleGroup | undefined; excludeId?: string };
 };
 
 /** `''` is "no filter" — a picker's value is never null, so the sentinel is a row like any other. */
@@ -64,7 +71,14 @@ const EQUIPMENT_OPTIONS: Option<EquipmentFilter>[] = [
  * required: two lists that must find "developpe" without an accent are one list
  * with two callers.
  */
-export function ExerciseBrowser({ query, onQueryChange, onPick, selectedIds, onCreate }: Props) {
+export function ExerciseBrowser({
+  query,
+  onQueryChange,
+  onPick,
+  selectedIds,
+  onCreate,
+  suggest,
+}: Props) {
   const [picker, setPicker] = useState<'muscle' | 'equipment' | null>(null);
 
   const { search, muscle, equipment } = query;
@@ -76,6 +90,10 @@ export function ExerciseBrowser({ query, onQueryChange, onPick, selectedIds, onC
   const total = useLiveQuery(countExercises);
 
   const filtered = search !== '' || muscle !== undefined || equipment !== undefined;
+  const similar =
+    suggest === undefined || filtered || exercises === undefined
+      ? []
+      : sameMuscleExercises(exercises, suggest.muscle, suggest.excludeId);
 
   return (
     <>
@@ -147,12 +165,35 @@ export function ExerciseBrowser({ query, onQueryChange, onPick, selectedIds, onC
           state then would flash "rien ne correspond" on every keystroke. */}
       {exercises !== undefined &&
         (exercises.length > 0 ? (
-          <ExerciseList
-            exercises={exercises}
-            grouped={search === ''}
-            onOpen={onPick}
-            selectedIds={selectedIds}
-          />
+          <>
+            {similar.length > 0 && (
+              <section className="mb-5" aria-labelledby="similar-exercises">
+                <h2
+                  id="similar-exercises"
+                  className="label-xs mb-2 px-1 font-semibold text-[var(--text-2)]"
+                >
+                  {t('exercises.sameMuscle')}
+                </h2>
+                <ExerciseList
+                  exercises={similar}
+                  grouped={false}
+                  onOpen={onPick}
+                  selectedIds={selectedIds}
+                />
+              </section>
+            )}
+            {similar.length > 0 && (
+              <h2 className="label-xs mb-2 px-1 font-semibold text-[var(--text-2)]">
+                {t('exercises.allExercises')}
+              </h2>
+            )}
+            <ExerciseList
+              exercises={exercises}
+              grouped={search === ''}
+              onOpen={onPick}
+              selectedIds={selectedIds}
+            />
+          </>
         ) : (
           <EmptyResult
             search={search}

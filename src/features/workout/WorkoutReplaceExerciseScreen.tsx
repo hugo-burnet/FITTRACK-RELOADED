@@ -72,6 +72,7 @@ export function WorkoutReplaceExerciseScreen() {
         query={query}
         onQueryChange={setQuery}
         onPick={(exercise) => void replace(exercise.id)}
+        suggest={{ muscle: line?.exercise?.primaryMuscle, excludeId: line?.row.exerciseId }}
       />
     </Screen>
   );
