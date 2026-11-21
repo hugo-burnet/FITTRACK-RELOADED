@@ -53,7 +53,7 @@ function WorkoutRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <h3 className="truncate text-base font-semibold text-[var(--text-1)]">
+              <h3 className="line-clamp-2 text-base font-semibold [overflow-wrap:anywhere] text-[var(--text-1)]">
                 {summary.name}
               </h3>
               <p className="mt-1 text-sm capitalize text-[var(--text-2)]">
