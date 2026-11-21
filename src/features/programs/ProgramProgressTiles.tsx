@@ -80,27 +80,29 @@ export function ProgramProgressTiles({
               .filter((part) => part !== null)
               .join(' ');
 
+  const toDate = {
+    value: `${adherence.doneToDate} / ${adherence.plannedToDate}`,
+    caption: t('program.detailAdherenceToDate'),
+    spoken: t('program.detailAdherenceSpoken', {
+      done: adherence.doneToDate,
+      planned: adherence.plannedToDate,
+    }),
+  } as const;
+  const overall = {
+    value: `${adherence.doneTotal} / ${adherence.plannedTotal}`,
+    caption: t('program.detailAdherenceTotal'),
+  } as const;
   // Avant le départ, rien n'est dû ni joué : « 0 / 0 » ne dirait rien, on ne garde que le total.
-  const adherenceValue =
-    adherence.plannedToDate === 0
-      ? ({
-          value: `${adherence.doneTotal} / ${adherence.plannedTotal}`,
-          caption: t('program.detailAdherenceTotal'),
-        } as const)
-      : ([
-          {
-            value: `${adherence.doneToDate} / ${adherence.plannedToDate}`,
-            caption: t('program.detailAdherenceToDate'),
-            spoken: t('program.detailAdherenceSpoken', {
-              done: adherence.doneToDate,
-              planned: adherence.plannedToDate,
-            }),
-          },
-          {
-            value: `${adherence.doneTotal} / ${adherence.plannedTotal}`,
-            caption: t('program.detailAdherenceTotal'),
-          },
-        ] as const);
+  // Un programme clos avant terme ne dit que « à ce jour » : les semaines qu'il n'a pas jouées
+  // ne sont plus dues, « sur le programme » en ferait des séances manquées.
+  const adherenceValue = adherence.plannedToDate === 0 ? overall : toDate;
+  const adherenceDetail =
+    adherence.plannedToDate === 0 || program.status === 'completed'
+      ? undefined
+      : t('program.detailAdherenceOverall', {
+          done: adherence.doneTotal,
+          planned: adherence.plannedTotal,
+        });
 
   const current = weeklyTonnage[displayWeekIndex] ?? 0;
   const previous = displayWeekIndex > 0 ? weeklyTonnage[displayWeekIndex - 1] : undefined;
@@ -131,9 +133,11 @@ export function ProgramProgressTiles({
       {started && (
         <Tile
           key="adherence"
-          size="S"
+          // « 12 / 24 » fait sept signes : au-delà des six d'une S (DESIGN.md › Grille modulaire).
+          size="L"
           label={t('program.detailAdherenceLabel')}
           value={adherenceValue}
+          detail={adherenceDetail}
         />
       )}
       {started && hasWorkouts && (

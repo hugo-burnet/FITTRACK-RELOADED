@@ -1068,6 +1068,8 @@ const fr = {
     detailAdherenceLabel: 'Assiduité',
     detailAdherenceToDate: 'prévues à ce jour',
     detailAdherenceTotal: 'sur le programme',
+    /** Sous le chiffre « à ce jour » de la tuile large : le total du programme, en une phrase. */
+    detailAdherenceOverall: '{done} sur {planned} sur tout le programme',
     detailAdherenceSpoken: '{done} séances faites sur {planned}',
     detailTonnageLabel: 'Tonnage',
     detailTonnageCurrent: 'sem. {number}, en cours',
