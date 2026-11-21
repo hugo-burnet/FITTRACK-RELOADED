@@ -1948,7 +1948,6 @@ const fr = {
     backupTitle: 'Sauvegarde',
     summaryBackupBanner: 'Dernière sauvegarde : {ago}',
     summaryBackupNone: 'Aucune sauvegarde sur cet appareil',
-    summaryBackupShort: 'Dernière : {ago}',
     summaryStepValue: '{value} kg',
     summaryStepNone: 'Selon le matériel',
     summaryOfflineReady: 'Prête hors-ligne',
@@ -2046,6 +2045,7 @@ const fr = {
       'Écrit le record dans les notifications, sans un bruit : la séance l’a déjà annoncé.',
     notificationsReminders: 'Rappels d’entraînement',
     notificationsRemindersHint: 'Aux jours et à l’heure que tu choisis.',
+    notificationsRecordsShort: 'Dans les notifications, sans bruit',
     notificationsOn: 'Oui',
     notificationsOff: 'Non',
     notificationsDays: 'Jours de rappel',
@@ -2061,6 +2061,9 @@ const fr = {
     effortPromptHint:
       'Une bande de quatre touches sous la série validée. Elle allonge le repos quand ça ' +
       'a été dur — 15, 30 ou 45 secondes de plus. L’ignorer ne coûte rien : elle s’efface seule.',
+    /** La ligne : le titre court tient sur une ligne à 390 px ; la phrase entière (au-dessus) reste le nom de l'interrupteur. */
+    effortPromptRowTitle: 'Demander l’effort',
+    effortPromptRowSubtitle: 'Après chaque série',
     effortPromptOn: 'Oui',
     effortPromptOff: 'Non',
     effortTempoHint:
@@ -2148,6 +2151,11 @@ const fr = {
     backupAgoYesterday: 'hier',
     backupAgoDays: 'il y a {count} jours',
     backupAgoDate: 'le {date}',
+    /** Les sous-titres courts des lignes ; les phrases entières (…Hint) se déplient dessous. */
+    backupExportShort: 'Tout le contenu, dans un seul fichier',
+    backupImportShort: 'Remplace le contenu de l’app',
+    exportCsvShort: 'Réimportable, lisible dans un tableur',
+    summaryBackupContent: 'Compte complet · restaurer · exports',
     backupImportLink: 'Restaurer une sauvegarde',
     backupImportHint:
       'Remplace tout le contenu de l’app par celui du fichier. À faire sur un téléphone neuf, ou après une perte.',

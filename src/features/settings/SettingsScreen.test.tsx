@@ -42,7 +42,8 @@ describe('SettingsScreen — le sommaire', () => {
     expect(row(/^Apparence/)).toHaveTextContent('Clair');
     expect(row(/^Séance/)).toHaveTextContent('Sons + voix');
     await waitFor(() => expect(row(/^Coach/)).toHaveTextContent('1,125 kg'));
-    expect(row(/^Sauvegarde/)).toHaveTextContent('Aucune sauvegarde sur cet appareil');
+    // L'état de la sauvegarde vit dans le bandeau seul ; la ligne dit ce que la page contient.
+    expect(row(/^Sauvegarde/)).toHaveTextContent('Compte complet · restaurer · exports');
     expect(row(/^Application/)).toHaveTextContent('Hors-ligne en préparation');
   });
 
@@ -69,6 +70,6 @@ describe('SettingsScreen — le sommaire', () => {
     renderSummary();
 
     expect(screen.getByText('Dernière sauvegarde : il y a 3 jours')).toBeVisible();
-    expect(screen.getByText('Dernière : il y a 3 jours')).toBeVisible();
+    expect(screen.queryByText(/^Dernière : /)).toBeNull();
   });
 });

@@ -9,7 +9,7 @@ import {
   type BackupProblem,
 } from '@/lib/backup';
 import { rememberBackup } from '@/stores/backupMemory';
-import { ConfirmSheet, ListRow } from '@/ui';
+import { ConfirmSheet, LearnMore, ListRow } from '@/ui';
 import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
 import { backupStatusLine } from './backupText';
 import { exportBackup } from './exportBackup';
@@ -148,17 +148,25 @@ export function BackupActions({
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
           title={t('settings.backupExportLink')}
-          subtitle={t('settings.backupExportHint')}
+          subtitle={t('settings.backupExportShort')}
           disabled={busy}
           onClick={() => void save()}
         />
         <ListRow
           title={t('settings.backupImportLink')}
-          subtitle={t('settings.backupImportHint')}
+          subtitle={t('settings.backupImportShort')}
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         />
       </div>
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.backupExportHint')}
+        </p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.backupImportHint')}
+        </p>
+      </LearnMore>
 
       <input
         ref={inputRef}

@@ -92,11 +92,7 @@ export function SettingsScreen() {
           />
           <ListRow
             title={t('settings.backupTitle')}
-            subtitle={
-              noBackup
-                ? t('settings.summaryBackupNone')
-                : t('settings.summaryBackupShort', { ago })
-            }
+            subtitle={t('settings.summaryBackupContent')}
             trailing={<ChevronRightIcon />}
             onClick={go('backup')}
           />

@@ -9,7 +9,7 @@ import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
 import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
 import { saveTextFile } from '@/platform/saveFile';
 import { shareText, type ShareOutcome } from '@/platform/share';
-import { ListRow, SectionTitle } from '@/ui';
+import { LearnMore, ListRow, SectionTitle } from '@/ui';
 
 /**
  * Les deux exports que d'autres outils lisent : l'historique en texte, le CSV.
@@ -95,11 +95,16 @@ export function ReadableExports() {
         />
         <ListRow
           title={t('settings.exportCsvLink')}
-          subtitle={t('settings.exportCsvHint')}
+          subtitle={t('settings.exportCsvShort')}
           disabled={csvBusy || workoutCount === 0}
           onClick={() => void saveCsv()}
         />
       </div>
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.exportCsvHint')}
+        </p>
+      </LearnMore>
       {csvMessage !== undefined && (
         <p
           role="status"

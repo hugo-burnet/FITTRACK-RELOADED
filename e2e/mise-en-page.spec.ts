@@ -151,6 +151,14 @@ test('Réglages : chaque commande des six écrans fait au moins 48 px', async ({
           })
           .filter((box) => box.height > 0 && box.width > 0),
       );
+    // Un titre de ligne tronqué (`truncate`) est un titre qu'on ne lit pas.
+    for (const clipped of await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('[data-part="row"] .truncate')]
+        .filter((element) => element.scrollWidth > element.clientWidth + 1)
+        .map((element) => (element.textContent ?? '').trim().slice(0, 40)),
+    )) {
+      failures.push(`${route} — titre tronqué : « ${clipped} »`);
+    }
     for (const box of boxes) {
       if (box.height < 47.5) failures.push(`${route} — « ${box.name} » : ${box.height} px`);
     }

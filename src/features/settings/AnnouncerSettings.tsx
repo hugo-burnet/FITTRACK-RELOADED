@@ -103,31 +103,12 @@ export function AnnouncerSettings() {
             </button>
           ))}
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('settings.announcerHint')}
-        </p>
-        {/* Une phrase d'aide visible ; la musique et le mode « Voix uniquement » se déplient. */}
-        <LearnMore>
-          <p className="text-sm leading-relaxed text-[var(--text-2)]">
-            {t('settings.announcerMusicHint')}
-          </p>
-          {mode === 'voice-only' && (
-            <p className="text-sm leading-relaxed text-[var(--text-2)]">
-              {t('settings.announcerVoiceOnlyHint')}
-            </p>
-          )}
-        </LearnMore>
-        {/* Le pack manquant concerne les deux modes qui parlent. */}
-        {(mode === 'voice' || mode === 'voice-only') && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
-        )}
       </div>
 
       {mode !== 'silence' && (
         <div className="mt-3 overflow-hidden rounded-2xl bg-[var(--surface-1)]">
           <ListRow
             title={t('settings.announcerEcho')}
-            subtitle={t('settings.announcerEchoHint')}
             trailing={
               <Toggle
                 label={t('settings.announcerEcho')}
@@ -139,6 +120,28 @@ export function AnnouncerSettings() {
           />
         </div>
       )}
+
+      {/* Aucune phrase d'aide visible : le groupe tient en ses boutons, et tout ce qu'il dit se déplie. */}
+      <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('settings.announcerHint')}</p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.announcerMusicHint')}
+        </p>
+        {mode === 'voice-only' && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerVoiceOnlyHint')}
+          </p>
+        )}
+        {/* Le pack manquant concerne les deux modes qui parlent. */}
+        {(mode === 'voice' || mode === 'voice-only') && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
+        )}
+        {mode !== 'silence' && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerEchoHint')}
+          </p>
+        )}
+      </LearnMore>
     </section>
   );
 }

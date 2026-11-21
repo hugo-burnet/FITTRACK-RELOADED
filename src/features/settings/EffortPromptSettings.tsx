@@ -25,8 +25,8 @@ export function EffortPromptSettings() {
       <SectionTitle>{t('settings.effortSection')}</SectionTitle>
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
-          title={t('settings.effortPromptTitle')}
-          subtitle={t('settings.effortPromptHint')}
+          title={t('settings.effortPromptRowTitle')}
+          subtitle={t('settings.effortPromptRowSubtitle')}
           trailing={
             <Toggle
               label={t('settings.effortPromptTitle')}
@@ -38,6 +38,9 @@ export function EffortPromptSettings() {
         />
       </div>
       <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.effortPromptHint')}
+        </p>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.effortTempoHint')}
         </p>

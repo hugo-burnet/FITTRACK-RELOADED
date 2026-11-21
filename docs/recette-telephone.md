@@ -50,6 +50,11 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 - [ ] **Rappel de sauvegarde.** Sur une installation qui n'a jamais été sauvegardée et qui a au moins
       trois séances, l'accueil porte « Sauvegarde ton historique » **sous** la séance à lancer, avec
       « Exporter » et « Plus tard ». « Plus tard » le fait taire une semaine. *(cette session)*
+- [ ] **Réglages en sommaire.** Réglages montre le bandeau de sauvegarde (« Dernière sauvegarde : il y a N
+      jours », ou « Aucune sauvegarde sur cet appareil » en rouge) puis cinq lignes : Apparence, Séance,
+      Coach, Sauvegarde, Application. Ouvrir une page, puis le retour Android : il ramène au sommaire (depuis
+      Volume par muscle, à Coach ; depuis Dépannage ou À propos, à Application). « En savoir plus » déplie le
+      texte d'aide sur place et le replie ; aucun titre de ligne n'est coupé. *(v2.19.0)*
 - [ ] « Exporter » ouvre la feuille de partage d'Android ; choisir Drive ou un dossier : le
       rappel disparaît, et Réglages › Sauvegarde complète dit « Dernière sauvegarde : aujourd'hui. À jour. »
       Fermer la feuille sans choisir ne retient rien. *(cette session)*

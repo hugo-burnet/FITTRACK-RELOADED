@@ -69,7 +69,7 @@ export function NotificationSettings() {
         />
         <ListRow
           title={t('settings.notificationsRecords')}
-          subtitle={t('settings.notificationsRecordsHint')}
+          subtitle={t('settings.notificationsRecordsShort')}
           trailing={
             <Toggle
               label={t('settings.notificationsRecords')}
@@ -157,6 +157,9 @@ export function NotificationSettings() {
       )}
 
       <LearnMore>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('settings.notificationsRecordsHint')}
+        </p>
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.notificationsAndroidHint')}
         </p>
