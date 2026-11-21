@@ -7,6 +7,26 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-21 — v3.0.0 : le temps 3 et la finition des thèmes
+
+- **Choix tranchés en route, à relire** : « Sans choix de dossier, l'accueil suit les routines hors dossier, toutes s'il n'y
+  en a aucune » (les copies d'un import Hevy « — Archivé » ne passent plus devant les routines de l'utilisateur) ; la page
+  Exercice nomme « la plus lourde » dans ses lignes de séance plutôt que de les aligner sur le record de meilleure série
+  (la colonne sert à lire la charge séance après séance) ; « La dernière fois » ignore les séances test, la courbe et la
+  liste les gardent ; « Sous le plancher » sans plancher réglé dit « — » et invite à en régler un ; la tuile Séances de
+  Progression est toujours une `L`.
+- **Vocabulaire** : les séances test déjà enregistrées gardent leur nom « Benchmark · … » en base (donnée, non migrée).
+- **Mesure** : Progression lit tout l'historique ; 160 à 230 ms pour 3 ans (624 séances, ~15 000 séries) en environnement
+  de test, sous le seuil de 300 ms fixé — rien de borné. Si l'onglet paraît lent sur le téléphone : lire 12 semaines plus
+  les seuls horodatages.
+- **Piège : un E2E d'agent peut tester le build d'un autre.** `playwright.config.ts` réutilise un serveur sur 4173
+  (`reuseExistingServer`) ; avec plusieurs arbres, le premier qui sert gagne. Copie de config hors dépôt, autre port,
+  `reuseExistingServer: false` ; la passe finale se refait sur la branche fusionnée.
+- **Piège : Dexie signale ses écritures au tour de boucle suivant** (`signalSubscribersLazily`). Un test qui sème la base
+  puis rend un écran à `useLiveQuery` doit laisser passer ce tour, sinon la requête peut repartir une ou plusieurs fois
+  sous charge (`RecordsScreen.test.tsx`). D'autres fichiers (`HomeBodyWeightSheet`, `MeasurementsScreen`) ont échoué une
+  fois sous charge pendant la session : même mécanisme probable, non vérifié.
+
 ### 2026-11-21 — Fondations de la v3.0 (branche, non publiée)
 
 - **Choix de l'agent à relire** : la tuile `S` étirée sur toute une rangée quand elle est seule devant un groupe

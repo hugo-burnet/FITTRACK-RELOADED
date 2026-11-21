@@ -5,26 +5,27 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-21 — **v3.0, fondations** sur `claude/fittrack-v3-foundations-ntgpcx` (non fusionnée) : grille modulaire, `Tile`, `Segmented`, `Tabs`, `Skeleton`, `--warn-ink`, maquettes validées. Publié : v2.19.0.
+**Dernière mise à jour :** 2026-11-21 — **v3.0.0**, la refonte par objets ([journal](docs/journal/2026-11-21-versions-v3-0-0.md)).
 
 ## Où on en est
 
-- **Publié : v2.19.0** ([journal](docs/journal/2026-11-21-versions-v2-19-0.md)) : coach sans hausse au-dessus de RPE 8,5,
-  tutoriel supprimé, Réglages en sommaire, repos épinglé, série du dessus en gris, retour Android, recherche à plusieurs
-  mots, et les correctifs de l'audit et de la cartographie. **Dû** : recette, lignes *(v2.19.0)*.
-- **En cours : la v3.0, refonte par objets.** Branche `claude/fittrack-v3-foundations-ntgpcx` (non fusionnée,
-  rien vers `master`). **Fait** : temps 1 et 2 du plan de reprise. `DESIGN.md` gagne la grille modulaire (tailles S/L/G,
-  colonnes par requête de conteneur en rem, `placeTiles` testé contre un oracle) ; les 12 écarts traités ou laissés
-  exprès (tableau d'état dans `DESIGN.md`) ; `ui/Tile`, `TileGrid`, `Segmented`, `Tabs`, `Skeleton` ; jeton `--warn-ink`.
-  Maquettes validées le 21/11 : https://claude.ai/artifact/9iMqMxpTg7KgAZc9kMuDVh (Progression en tuiles dont la G =
-  tonnage de la semaine, page Exercice, détail de séance, détail de bloc). **Reste** : le temps 3, le code page par
-  page dans l'ordre de `cartographie.md` §7 (liens → détail de séance → page Exercice → Muscle → Semaine), puis les
-  constats 4, 5, 6, 9, 10 de l'audit. **Dû** : recette « Fondations de la v3.0 ». Piège consigné : deux agents en
-  arbres isolés partagent les références git — jamais deux fois le même nom de branche (`work`).
-- **Avant, le plan :** Prompt de reprise : `docs/design/plans/2026-11-21-reprise-v3.md`. Audit et
-  cartographie : `docs/design/audits/2026-11-21/`. Décisions en attente : la définition du volume par muscle, le lot F du
-  coach (signaler une gêne). La branche de synchro attend toujours Caddy.
-
+- **Publié : v3.0.0** ([journal](docs/journal/2026-11-21-versions-v3-0-0.md)) : une page par objet (exercice, séance
+  passée, programme), Progression en tableau de bord de tuiles, records en cours, accueil jamais sans « Démarrer » et
+  séance libre, « programme » partout, grille modulaire et finition des quatre thèmes. **Dû** : la recette, section
+  « Mise à jour v3.0.0 » — à cocher sur le téléphone : https://claude.ai/artifact/QtYMeWrAWLWPLE2CQMLXxU (les coches et
+  les notes s'y lisent ; « Problème » = à corriger).
+- **Reste de la v3** : les pages **Muscle** et **Semaine** (cartographie §5.3, §5.4), qui attendent la décision de
+  l'utilisateur sur le volume par muscle (séries directes ou secondaires pondérés ; semaine civile ou 7 jours glissants).
+  Le **lot F du coach** (signaler une gêne) attend la sauvegarde JSON pour `npm run coach:replay`. Petites suites de la
+  relecture et de la finition, non faites : à 200 %, le nom d'exercice en séance reste serré (chrono et chevron à côté) ;
+  « PRÉCÉDENT / kg » de la séance à 200 % ; le lien « Voir la fiche » de la vue plein écran d'un exercice empile un écran.
+  Un échec sur ~85 passages sous charge dans un test de cadence reste sans cause (rien de contourné). Le commit `5d51e05`
+  porte le message « x » (correctif de l'accueil, réécriture d'historique refusée).
+- **Piège des agents en parallèle** : arbres isolés = références git partagées (un nom de branche par agent) **et** port
+  4173 partagé par l'E2E (`reuseExistingServer`) — un agent peut tester le build d'un autre. Un E2E d'agent se lance sur
+  une copie de config avec un autre port ; la passe finale se refait à la main sur la branche fusionnée.
+- **Avant : v2.19.0** ([journal](docs/journal/2026-11-21-versions-v2-19-0.md)) : RPE 8,5, Réglages en sommaire, tutoriel
+  supprimé, sept correctifs.
 - **Avant : v2.18.0**, le coach fiabilisé ([journal](docs/journal/2026-11-20-versions-v2-18-0.md)). Audit en trois passes, puis une
   trentaine de défauts corrigés test d'abord : fin de séance qui ne casse plus et s'enregistre d'un bloc, « Appliquer » qui n'écrit que
   les séries de travail, refus de 14 jours, plus de carte fausse après une séance allégée, abandonnée, supprimée ou corrigée, série
@@ -205,6 +206,7 @@ résultat attendu de chaque ligne. L'ancienne liste figure en bas de l'archive d
 
 | Fichier | Contenu |
 | --- | --- |
+| [2026-11-21-versions-v3-0-0.md](docs/journal/2026-11-21-versions-v3-0-0.md) | Version v3.0.0 (2026-11-21) |
 | [2026-10-25-versions-v2-16-1.md](docs/journal/2026-10-25-versions-v2-16-1.md) | Version v2.16.1 (2026-10-25) |
 | [2026-10-16-versions-v2-16.md](docs/journal/2026-10-16-versions-v2-16.md) | Version v2.16.0 (2026-10-16) |
 | [2026-10-16-versions-v2-15.md](docs/journal/2026-10-16-versions-v2-15.md) | Version v2.15.0 (2026-10-16) |
