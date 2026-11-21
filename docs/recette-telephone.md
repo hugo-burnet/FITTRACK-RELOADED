@@ -90,6 +90,12 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Bilan de fin** d'une séance à deux charges différentes (20 × 8 puis 30 × 6) : la ligne de
       l'exercice dit « 2 série(s) · dernière : 6 reps · 30 kg » et non « 2 × 6 reps · 30 kg ».
       *(v2.5.0)*
+- [ ] **Remplacer : même muscle d'abord.** Dans la liste de « Remplacer l'exercice », une section
+      « Même muscle » ouvre la liste (l'exercice remplacé n'y est pas), puis « Tous les exercices ».
+      Taper une recherche : la section disparaît, la recherche porte sur tout. *(v2.19.0)*
+- [ ] **Retour d'Android et feuilles.** En séance, ouvrir une feuille (menu ⋮ d'un exercice, type de
+      série, confirmation de fin) puis le bouton retour d'Android : la feuille se ferme, on reste sur
+      la séance. Un second retour remonte alors d'un cran, comme avant. *(v2.19.0)*
 - [ ] **Remplacer l'exercice.** Menu ⋮ d'un exercice dont aucune série n'est validée › « Remplacer
       l'exercice » › toucher un autre exercice : la carte prend son nom sur place, même rang, séries vides.
       Avec une série **déjà validée** : elle reste sous l'ancien nom, une carte du nouvel exercice

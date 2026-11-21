@@ -9,6 +9,7 @@ import { getNotificationPreferences } from '@/data/repositories/notificationSett
 import type { NotificationPreferences } from '@/lib/notificationPreferences';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { useRestTimer } from '@/stores/restTimer';
+import { closeTopSheet, hasOpenSheet } from '@/ui/sheetStack';
 import { androidBackDecision } from './androidBack';
 import { isNativeAndroid } from './nativeEnvironment';
 import { nativeNotifications } from './nativeNotifications';
@@ -119,7 +120,11 @@ export function NativeRuntimeBridge() {
     let disposed = false;
 
     void App.addListener('backButton', ({ canGoBack }) => {
-      const decision = androidBackDecision(pathnameRef.current, canGoBack);
+      const decision = androidBackDecision(pathnameRef.current, canGoBack, hasOpenSheet());
+      if (decision.kind === 'close-sheet') {
+        closeTopSheet();
+        return;
+      }
       // Le bouton physique remonte, quelle que soit la forme que prend la
       // décision. `navigate(-1)` le déduirait du signe, mais le repli vers un
       // chemin, non : il partirait en marche avant, soit exactement le
