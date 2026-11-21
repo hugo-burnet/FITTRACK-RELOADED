@@ -3,6 +3,7 @@ import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { t } from '@/i18n/fr';
 import { CloseIcon } from './icons';
+import { registerSheet } from './sheetStack';
 
 type Props = {
   open: boolean;
@@ -61,6 +62,18 @@ export function Sheet({ open, onClose, title, children }: Props) {
   useEffect(() => {
     if (!open) return;
     panelRef.current?.focus();
+  }, [open]);
+
+  // Le retour d'Android ferme la feuille la plus récente. `onClose` passe par une
+  // ref : il change d'identité à chaque rendu du parent, et se réinscrire à
+  // chaque fois ferait perdre à la feuille son rang dans la pile.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+  useEffect(() => {
+    if (!open) return;
+    return registerSheet(() => onCloseRef.current());
   }, [open]);
 
   useEffect(() => {

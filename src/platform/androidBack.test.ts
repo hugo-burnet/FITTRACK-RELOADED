@@ -49,4 +49,18 @@ describe('androidBackDecision', () => {
   it('exits from an unknown root route', () => {
     expect(androidBackDecision('/unknown', false)).toEqual({ kind: 'exit' });
   });
+
+  // Une feuille ouverte absorbe le retour : rien d'autre ne doit bouger.
+  it.each(['/workout', '/', '/workout/add', '/routines/r1'])(
+    'closes the open sheet on %s and does nothing else',
+    (pathname) => {
+      expect(androidBackDecision(pathname, true, true)).toEqual({ kind: 'close-sheet' });
+      expect(androidBackDecision(pathname, false, true)).toEqual({ kind: 'close-sheet' });
+    },
+  );
+
+  it('keeps the old behaviour when no sheet is open', () => {
+    expect(androidBackDecision('/workout', false, false)).toEqual({ kind: 'navigate', to: '/' });
+    expect(androidBackDecision('/workout', true)).toEqual({ kind: 'history' });
+  });
 });
