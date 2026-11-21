@@ -104,14 +104,14 @@ describe('HistoryDetailScreen — benchmark', () => {
       <MemoryRouter initialEntries={[`/history/${workout.id}`]}>
         <Routes>
           <Route path="/history/:workoutId" element={<HistoryDetailScreen />} />
-          <Route path="/benchmark/:workoutId" element={<p>Bilan du benchmark</p>} />
+          <Route path="/benchmark/:workoutId" element={<p>Bilan de la séance test</p>} />
         </Routes>
       </MemoryRouter>,
     );
 
     await userEvent.click(await screen.findByRole('button', { name: 'Voir le bilan' }));
 
-    expect(await screen.findByText('Bilan du benchmark')).toBeInTheDocument();
+    expect(await screen.findByText('Bilan de la séance test')).toBeInTheDocument();
   });
 
   it('ne propose pas de bilan pour une séance ordinaire', async () => {

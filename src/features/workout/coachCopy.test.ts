@@ -487,13 +487,13 @@ describe('coachSignalMessage — benchmark', () => {
 
   it('dit ce qui a été mesuré, et la charge pour la fourchette de l’exercice', () => {
     expect(coachSignalMessage(calibrated([8, 12], 1))).toBe(
-      'Benchmark : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.',
+      'Séance test : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour ta fourchette (8 – 12 reps), démarre à 77,5 kg.',
     );
   });
 
   it('dit sur combien de séries la charge est calculée dès qu’il y en a plusieurs', () => {
     expect(coachSignalMessage(calibrated([8, 12], 3, 72.5))).toBe(
-      'Benchmark : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour 3 séries de 8 – 12 reps, démarre à 72,5 kg.',
+      'Séance test : 9 répétitions à 80 kg, soit un max d’environ 104 kg. Pour 3 séries de 8 – 12 reps, démarre à 72,5 kg.',
     );
     expect(coachSignalMessage(calibrated([5, 5], 5, 95))).toContain('Pour 5 séries de 5 reps, démarre à 95 kg.');
   });
@@ -517,7 +517,7 @@ describe('coachSignalMessage — benchmark', () => {
     };
 
     expect(coachSignalMessage(floor)).toBe(
-      'Benchmark : 35 répétitions à 40 kg, soit un max d’au moins 80 kg. Pour 3 séries de 15 – 20 reps, démarre à 45 kg.',
+      'Séance test : 35 répétitions à 40 kg, soit un max d’au moins 80 kg. Pour 3 séries de 15 – 20 reps, démarre à 45 kg.',
     );
   });
 

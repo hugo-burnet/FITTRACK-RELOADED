@@ -303,7 +303,7 @@ describe('WorkoutScreen — benchmark', () => {
     renderWorkout();
 
     expect(
-      await screen.findByText(/Benchmark léger · une série à l’échec par exercice.*environ 18 fois/),
+      await screen.findByText(/Séance test \(léger\) · une série à l’échec par exercice.*environ 18 fois/),
     ).toBeInTheDocument();
   });
 

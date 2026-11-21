@@ -34,7 +34,7 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 });
 
-/** Everything the hero is not: drafts, finished blocks, and any active one it could not read. */
+/** Everything the hero is not: drafts, finished programs, and any active one it could not read. */
 function otherPrograms(query: Extract<ProgramsQuery, { status: 'ready' }>) {
   return query.programs.filter(({ program }) => program.id !== query.hero?.programId);
 }
@@ -56,16 +56,9 @@ export function ProgramListScreen() {
     }
   }, []);
 
-  const goBack = () => {
-    const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-    if (index > 0) void navigate(-1);
-    else void navigate('/');
-  };
-
   return (
     <Screen
       title={t('program.listTitle')}
-      onBack={goBack}
       action={
         <HeaderAction
           label={t('program.listCreate')}
@@ -99,7 +92,7 @@ export function ProgramListScreen() {
         />
       )}
       {/*
-        Le bloc actif est le héros : c'est la seule ligne de cet écran qui
+        Le programme actif est le héros : c'est la seule ligne de cet écran qui
         demande une action aujourd'hui. Même carte que l'accueil, même
         projection — deux écrans qui classeraient le split chacun de leur côté,
         ce sont deux occasions de ne pas dire la même chose.

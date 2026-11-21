@@ -138,7 +138,7 @@ describe('les lectures du bilan', () => {
       proposedWeight: 77.5,
     };
     expect(changedReading(line({ proposal, routineChanged: true }))).toBe(
-      'La routine a changé depuis ce benchmark : vérifie la charge avant de l’appliquer.',
+      'La routine a changé depuis cette séance test : vérifie la charge avant de l’appliquer.',
     );
     expect(changedReading(line({ routineChanged: true }))).toBeUndefined();
     expect(changedReading(line({ proposal }))).toBeUndefined();
@@ -247,13 +247,13 @@ describe('les lectures du bilan', () => {
 
   it('rappelle en tête de séance ce que le benchmark demande, et le nombre de répétitions à viser avec un style', () => {
     expect(bannerReading(undefined)).toBe(
-      'Benchmark · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
+      'Séance test · une série à l’échec par exercice, avec la charge que tu penses tenir dans sa fourchette.',
     );
     expect(bannerReading('light')).toBe(
-      'Benchmark léger · une série à l’échec par exercice, avec la charge que tu penses tenir environ 18 fois.',
+      'Séance test (léger) · une série à l’échec par exercice, avec la charge que tu penses tenir environ 18 fois.',
     );
-    expect(bannerReading('classic')).toMatch(/Benchmark classique .* environ 12 fois\.$/);
-    expect(bannerReading('heavy')).toMatch(/Benchmark lourd .* environ 8 fois\.$/);
+    expect(bannerReading('classic')).toMatch(/Séance test \(classique\) .* environ 12 fois\.$/);
+    expect(bannerReading('heavy')).toMatch(/Séance test \(lourd\) .* environ 8 fois\.$/);
   });
 
   it('accorde le compte des exercices mis à jour', () => {

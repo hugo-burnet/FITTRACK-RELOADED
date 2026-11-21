@@ -57,6 +57,6 @@ describe('ProgramBenchmarkCard', () => {
 
     expect(await screen.findByText(/Une seule série par exercice, menée jusqu’à l’échec/)).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Ton style' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Lancer le benchmark' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Lancer la séance test' })).toBeInTheDocument();
   });
 });
