@@ -1039,6 +1039,47 @@ const fr = {
     progressBefore: 'Le bloc commence le {date}.',
     progressAfter: 'Les {count} semaines sont terminées.',
     intentionTitle: 'Intention de la semaine',
+    /**
+     * Le détail d'un programme (v3). Le mot est « programme » ; les clés plus
+     * anciennes de cet écran disent encore « bloc » et seront reprises avec le
+     * reste du vocabulaire de Planifier.
+     */
+    detailActionsLabel: 'Actions du programme',
+    detailStatusLine: '{status} · {count} semaines · départ le {date}',
+    detailProgressTitle: 'Avancement',
+    detailWeekLabel: 'Semaine du programme',
+    detailWeekPhase: '{phase}, du {from} au {to}',
+    detailWeekBefore: 'Le programme commence le {date}.',
+    detailWeekAfter: 'Les {count} semaines sont terminées.',
+    detailNextDeload: 'La semaine {number} est une décharge.',
+    detailAdherenceLabel: 'Assiduité',
+    detailAdherenceToDate: 'prévues à ce jour',
+    detailAdherenceTotal: 'sur le programme',
+    detailAdherenceSpoken: '{done} séances faites sur {planned}',
+    detailTonnageLabel: 'Tonnage',
+    detailTonnageCurrent: 'sem. {number}, en cours',
+    detailTonnageWeek: 'sem. {number}',
+    detailCoachTitle: 'Ce que ça change au coach',
+    detailCoachBuild:
+      'Quand une série atteint le haut de la fourchette, il te propose d’abord une charge plus lourde, jamais une série de plus.',
+    detailCoachOverload:
+      'Quand une série atteint le haut de la fourchette, il te propose d’abord une série de plus, avant la charge.',
+    detailCoachDeload:
+      'Il ne propose rien de nouveau : il maintient. Une séance de décharge n’est jamais lue comme un plateau.',
+    detailCoachReturn:
+      'Il préfère maintenir. Une répétition de plus ou une charge plus lourde ne viennent qu’après.',
+    detailCoachNextDeload: 'La semaine prochaine, en décharge, il ne propose rien : il maintient.',
+    detailPastTitle: 'Semaines passées',
+    detailPastCount: '{done} / {planned}',
+    detailOpenSession: 'Ouvrir la séance {name}, {date}',
+    detailSessionDate: '{date} · {tonnage}',
+    weekdayShort1: 'Lun.',
+    weekdayShort2: 'Mar.',
+    weekdayShort3: 'Mer.',
+    weekdayShort4: 'Jeu.',
+    weekdayShort5: 'Ven.',
+    weekdayShort6: 'Sam.',
+    weekdayShort7: 'Dim.',
 
     /**
      * Le pont vers le corpus. Le libellé ne promet pas une réponse : il dit où
