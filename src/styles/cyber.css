@@ -296,8 +296,7 @@
   gap: 6px 4px;
   padding: 0;
 }
-:root[data-theme='cyber'] [data-part='segmented'] > *,
-:root[data-theme='cyber'] [data-part='segmented'] > li > a {
+:root[data-theme='cyber'] [data-part='segmented'] > * {
   background: var(--surface-2);
   border-radius: 0;
   clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
@@ -306,7 +305,7 @@
 }
 :root[data-theme='cyber']
   [data-part='segmented']
-  :is([aria-checked='true'], [aria-current='page'], [aria-pressed='true'], [aria-selected='true']) {
+  [aria-checked='true'] {
   background: var(--accent-fill);
   color: var(--accent-on-fill);
 }
