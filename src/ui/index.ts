@@ -22,6 +22,8 @@ export { ReorderableList } from './ReorderableList';
 export type { ItemState } from './ReorderableList';
 export { RestPicker } from './RestPicker';
 export { SectionTitle } from './SectionTitle';
+export { Segmented } from './Segmented';
+export type { SegmentedOption } from './Segmented';
 export { Sheet } from './Sheet';
 export { SwipeToDelete } from './SwipeToDelete';
 export { Textarea } from './Textarea';
