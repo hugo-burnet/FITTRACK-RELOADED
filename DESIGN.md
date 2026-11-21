@@ -16,10 +16,10 @@ clair). Un composant ne cite jamais une valeur : il cite un jeton.
 
 | Jeton | Sombre (défaut) | Clair | TTY1 | Cyber |
 |---|---|---|---|---|
-| `--surface-0` (page) | `#12110f` | `#f7f8f6` | `#000000` | `#0b0c12` |
+| `--surface-0` (page) | `#12110f` | `#f1f3ef` | `#000000` | `#0b0c12` |
 | `--surface-1` (cartes, lignes) | `#1b1916` | `#ffffff` | `#000000` + filet | `#12131c` |
-| `--surface-2` (champs, éléments levés) | `#25221e` | `#eef1ec` | `#1c1c1c` | `#1c1d29` |
-| `--border` | `#3a352f` | `#d9e0d8` | `#555555` | `#5a2328` |
+| `--surface-2` (champs, éléments levés) | `#25221e` | `#e8ece6` | `#1c1c1c` | `#1c1d29` |
+| `--border` | `#3a352f` | `#d0d8cf` | `#555555` | `#5a2328` |
 | `--text-1` | `#f5f3f0` (17,0:1) | `#182019` (15,7:1) | `#ffffff` | `#e8f3f3` (17,2:1) |
 | `--text-2` | `#b9b1a8` (8,9:1) | `#5c675e` (5,9:1) | `#aaaaaa` | `#ff6b63` (6,6:1) |
 | `--text-3` (réservé) | `#7e766d` | `#8e998f` | `#555555` | `#7d3b3b` |
@@ -29,12 +29,20 @@ clair). Un composant ne cite jamais une valeur : il cite un jeton.
 | `--accent-ink` | `#ff8a3d` | `#93370d` | `#55ff55` | `#fcee0a` |
 | `--accent-soft` | `#3a2115` | `#ffedd5` | `#00260b` | `#2b2a0c` |
 | `--accent-data` | `#a85a20` | `#b96b35` | `#00aa00` | `#2fc6d6` |
-| `--axis` | `#756e64` | `#869087` | `#878787` | `#a5524f` |
+| `--axis` | `#756e64` | `#808a81` | `#878787` | `#a5524f` |
 | `--danger-ink` | `#ff5c5c` (5,8:1) | `#b91c1c` (6,5:1) | `#ff5555` | `#ff2e63` |
 | `--warn-ink` | `#f5c518` (10,8:1) | `#7a5c00` (6,3:1) | `#ffff55` (19,7:1) | `#ff9f1c` (9,0:1) |
 | `--scrim` | `rgb(0 0 0 / 0.6)` | (hérite du sombre) | `rgb(0 0 0 / 0.72)` | `rgb(5 5 9 / 0.75)` |
 
-Jetons propres à Cyber : `--cyber-focus` `#5ef6ff`, `--cyber-crit` `#ff3c46`, `--cyber-line`.
+Jetons propres à Cyber : `--cyber-focus` `#5ef6ff`, `--cyber-crit` `#ff3c46`, `--cyber-line`, `--cyber-prose` `#c4ccd3`.
+
+**Cyber, deux registres secondaires (v3.0, décidé avec l'utilisateur).** Le rouge `--text-2` reste au registre gravé
+(`label-xs`, `SectionTitle`, unités) : « le rouge encadre ». Les *phrases* — aide, corps des feuilles et de la
+confirmation, sous-titres de ligne, valeurs lues, champs et placeholders — prennent `--cyber-prose` (≥ 10:1), pour que
+`--danger-ink` soit le seul rouge vif d'une confirmation. Les chiffres lus en `--text-2` (`.metric`, `.record-figure`)
+prennent `--accent-data`, le cyan : « le cyan compte ». Tout se fait dans `cyber.css`, aucun composant ne le sait.
+
+**Clair (v3.0).** Page `#f1f3ef` sous des cartes blanches (1,12:1 au lieu de 1,07:1) : la carte se détache.
 Jetons exposés à Tailwind (`@theme`) : `--color-accent` (= `--accent-fill`), `--color-accent-dim`
 (= `--accent-fill-pressed`), `--color-accent-fg` (= `--accent-on-fill`).
 
@@ -56,7 +64,7 @@ agit, cyan qui compte ; coins coupés (`corner-shape: bevel`) ; repli propre sur
 
 - Famille : `--font-sans` = `ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. TTY1 : `--tty1-16` (Terminus, quatre tailles natives 12/16/24/32 px, sans flou). Cyber : `'Cyber Sans'` (Rajdhani, chiffres de chasse égale), un cran plus grand (`--text-xs` 0.8125rem, `--text-sm` 0.9375rem, `--text-base` 1.0625rem, `--text-lg` 1.1875rem).
 - Échelle : celle de Tailwind (`text-xs` … `text-7xl`). Usages réels : titre d'écran `text-2xl font-semibold tracking-tight` (une ligne, tronquée) ; corps et ligne `text-base` ; sous-titre `text-sm` en `--text-2` ; bande d'action `text-lg font-semibold` ; chiffre d'une tuile `text-2xl` ; état vide `text-7xl`.
-- Utilitaires maison : `label-xs` (0.75rem, interligne 1.35, +0.06em, majuscules — le registre « gravé », toujours `--text-2`) ; `tabular` (chiffres tabulaires) ; `metric` (tabulaires, −0.03em : toute valeur qui se compare ou change) ; `record-figure` (monospace, −0.035em : chiffres de records).
+- Utilitaires maison : `label-xs` (0.75rem, interligne 1.35, +0.06em, majuscules — le registre « gravé », toujours `--text-2`) ; `tabular` (chiffres tabulaires) ; `metric` (tabulaires, −0.03em : toute valeur qui se compare ou change) ; `record-figure` (chiffres tabulaires de la police du thème, −0.03em : chiffres de records ; plus de monospace système, dont la virgule prenait une cellule entière — « 36, 4 »).
 - Titre `h1` : un par écran. Un titre est choisi par l'utilisateur : il tronque, ne se replie pas.
 
 ## Espacements
@@ -109,10 +117,10 @@ séparées par `--border`. Une feuille se pose sur `--scrim` avec un filet haut.
 
 | Composant | Quand l'utiliser |
 |---|---|
-| `Screen` | Cadre de tout écran : titre, flèche retour (`onBack`), `action` (icône), `sub` (instruments épinglés), `footer` (une `ActionBand`). |
+| `Screen` | Cadre de tout écran : titre, flèche retour (`onBack`), `action` (icône), `sub` (instruments épinglés), `footer` (une `ActionBand`). En-tête de hauteur fixe (48 px + 2,25 rem), avec ou sans action : le titre ne saute pas d'un écran à l'autre. |
 | `BottomNav` | Cinq onglets, `min-h-14`, repère `--accent-ink` de 3 px en haut de l'onglet courant. Hors du défilement. |
 | `Card` | La seule surface levée. `padded` seulement si elle contient du contenu libre ; vide de padding autour de `ListRow`. |
-| `ListRow` | Une entrée qui est un lien, ou dont l'état tient en un mot : titre + sous-titre + `trailing`. Empilée dans une `Card`. |
+| `ListRow` | Une entrée qui est un lien, ou dont l'état tient en un mot : titre + sous-titre + `trailing`. Empilée dans une `Card`. Chevron automatique sur toute ligne cliquable sans `trailing` ; `chevron={false}` pour une ligne qui *agit* (exporter, installer). Titre sur deux lignes au plus (`line-clamp-2`), jamais tronqué sur une. Une seule flèche de lien dans l'app : `ChevronRightIcon`, jamais « → ». |
 | `SectionTitle` | Annote un groupe (`h2`, `label-xs`, `--text-2`). Ne narre pas. |
 | `Button` | `primary` (aplat d'accent), `secondary` (défaut), `ghost`, `danger` (texte `--danger-ink`) ; `md` / `lg`. |
 | `ActionBand` | L'unique verbe d'un écran, pleine largeur au-dessus des onglets. `accent` ou `quiet` (sortie). Jamais une navigation. |
@@ -130,7 +138,7 @@ séparées par `--border`. Une feuille se pose sur `--scrim` avec un filet haut.
 | `EmptyState` | Une collection vide montre son chiffre (`0` + unité) ; sans chiffre, un titre. |
 | `TileGrid` + `Tile` | Un groupe de tuiles qui répond à une question. Contrat : « Grille modulaire ». |
 | `Segmented` | Choisir une valeur parmi deux à quatre, à plat (`radiogroup`). Décision de l'écart 6. |
-| `Tabs` | Passer d'une vue à l'autre du même objet, ou entre routes sœurs. Décision de l'écart 6. |
+| `Tabs` | Passer d'une vue à l'autre du même objet, ou entre routes sœurs. Décision de l'écart 6. Colonnes `minmax(0,1fr)` avec césure : « Documentation » tient à 200 %. |
 | `Skeleton` | La place d'une carte pendant une lecture. Immobile. Décision de l'écart 12. |
 
 ## Règle de mise en page : tuile ou ligne
@@ -164,7 +172,11 @@ Une tuile déclare sa taille d'après ce qu'elle contient, jamais d'après la pl
 - Mini-courbe : un `<svg>` de polyligne écrit à la main, `h-[64px]` en pixels (elle n'a pas de texte, rien à
   faire grandir avec la police), série en `--accent-ink`, base en `--axis`, sans axe ni libellé, `aria-hidden` :
   le chiffre et le `detail` disent ce qu'elle montre. Jamais le module de graphiques, qui ne doit pas entrer dans
-  le chunk d'une page d'objet.
+  le chunk d'une page d'objet. L'échelle se prend sur les points complets ; une période en cours (`partialLast`, en
+  pointillé) est bornée à la zone et ne fait plus plonger la courbe chaque semaine ; 8 px de jour au-dessus de la base,
+  pour que le minimum ne se lise pas comme un zéro.
+- Une `S` qui resterait seule sur sa rangée (la suite `G, S, L` à deux colonnes l'étire sur toute la largeur pour un
+  chiffre) passe en `L` avec un `detail` : c'est la composition qu'on corrige, pas `placeTiles`.
 
 ### Colonnes
 
@@ -349,6 +361,15 @@ en lecture, `hint` = `home.weightLink`). Ce qui change à l'œil : deux plaques 
 bande coupée d'un filet, et une seule colonne à partir de 140 % de police sur 390 px, là où la bande serrait. Les
 tests qui cherchaient le bouton par `name: 'Renseigner le poids du jour'` le cherchent par `description` : le
 nom est désormais la valeur lue, et c'est le but.
+
+## Motifs de la finition v3.0
+
+- **Tonnage** : toujours groupé (« 10 872 kg », `groupedNumber`), jamais `formatNumber`, qui est un formateur de champ.
+- **Fin de séance et détail de séance** : un même `TileGrid` « Totaux » (Durée, Tonnage, Séries de travail, Répétitions).
+- **Carte d'exercice en séance** : boutons d'icône en `w-[48px]`, nom sur deux lignes au plus.
+- **Relevés « N exercices · N séries »** : `metric text-sm`, jamais en capitales `label-xs`.
+- **Deux boutons ou deux puces côte à côte** : `grid-cols-[repeat(auto-fit,minmax(min(Nrem,100%),1fr))]`, qui
+  s'empilent à 200 % ; le `min(…,100%)` est indispensable dans une carte étroite.
 
 ## À respecter / à éviter
 
