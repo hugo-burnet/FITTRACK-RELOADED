@@ -21,6 +21,7 @@ import {
 import { PERIOD_KEYS, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
 import { toAnalyticsSessions } from '@/lib/analytics/sessions';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
+import { ChevronRightIcon } from '@/ui/icons';
 import { ChartExportAction } from './ChartExportAction';
 import { ProgressCard } from './ProgressCard';
 
@@ -178,6 +179,17 @@ export function ExerciseAnalyticsScreen() {
           </div>
         )}
 
+        {/* Le chemin inverse de la fiche : cette vue n'a pas d'autre sortie vers l'exercice. */}
+        {exercise !== undefined && (
+          <Card>
+            <ListRow
+              title={t('analytics.exerciseSheetLink')}
+              onClick={() => void navigate(`/exercises/${exerciseId}`)}
+              trailing={<ChevronRightIcon />}
+            />
+          </Card>
+        )}
+
         {/* The accessible table. Not a hidden twin of the chart: it is the same
             session list the exercise sheet already shows, and it holds every
             value, so nothing is reachable through the drawing alone. */}
@@ -191,7 +203,7 @@ export function ExerciseAnalyticsScreen() {
                   <ListRow
                     key={point.workoutId}
                     title={longDate(point.timestamp)}
-                    onClick={() => setSelectedIndex(index)}
+                    onClick={() => void navigate(`/history/${point.workoutId}`)}
                     trailing={
                       <span
                         className={`metric text-base font-semibold ${
