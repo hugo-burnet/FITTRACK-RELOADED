@@ -80,7 +80,7 @@ export function ProgramActionsSheet({
       <Sheet open={shiftOpen} onClose={() => setShiftOpen(false)} title={t('program.shiftTitle')}>
         <div className="flex flex-col gap-5 pb-2">
           {hasStarted && (
-            <p className="text-sm leading-relaxed text-[var(--danger-ink)]">
+            <p className="text-sm leading-relaxed text-[var(--warn-ink)]">
               {t('program.shiftStartedWarning')}
             </p>
           )}

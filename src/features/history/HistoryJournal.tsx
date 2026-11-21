@@ -3,6 +3,7 @@ import { t } from '@/i18n/fr';
 import { Button, Card, EmptyState } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '../../ui/Skeleton';
 
 interface Props {
   page: HistoryPage | undefined;
@@ -107,9 +108,9 @@ export function HistoryJournal({
 }: Props) {
   if (page === undefined) {
     return (
-      <div aria-hidden="true" className="space-y-3">
-        <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-        <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+      <div aria-busy="true" className="space-y-3">
+        <Skeleton height="h-28" />
+        <Skeleton height="h-28" />
       </div>
     );
   }

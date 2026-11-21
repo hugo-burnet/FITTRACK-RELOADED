@@ -16,6 +16,7 @@ import { copyText, shareText, type ShareOutcome } from '@/platform/share';
 import { ActionSheet, Button, Card, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { HistoryWorkoutDetail } from './HistoryWorkoutDetail';
+import { Skeleton } from '../../ui/Skeleton';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -67,10 +68,10 @@ export function HistoryDetailScreen() {
   if (detail === undefined || detail === null) {
     return (
       <Screen title="" onBack={goBack}>
-        <div aria-hidden="true" className="space-y-4">
-          <div className="h-44 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-          <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-          <div className="h-52 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+        <div aria-busy="true" className="space-y-4">
+          <Skeleton height="h-44" />
+          <Skeleton height="h-28" />
+          <Skeleton height="h-52" />
         </div>
       </Screen>
     );

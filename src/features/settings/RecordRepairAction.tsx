@@ -45,7 +45,7 @@ export function RecordRepairAction() {
           {projectionCurrent !== undefined && (
             <span
               className={`label-xs shrink-0 font-semibold ${
-                projectionCurrent ? 'text-[var(--accent-ink)]' : 'text-[var(--danger-ink)]'
+                projectionCurrent ? 'text-[var(--accent-ink)]' : 'text-[var(--warn-ink)]'
               }`}
             >
               {t(projectionCurrent ? 'settings.repairStatusCurrent' : 'settings.repairStatusStale')}

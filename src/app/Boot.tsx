@@ -193,7 +193,7 @@ export function SeedErrorBanner() {
   return (
     <div
       role="alert"
-      className="safe-top fixed inset-x-0 top-0 z-50 border-b-2 border-[var(--color-warn)]
+      className="safe-top fixed inset-x-0 top-0 z-50 border-b-2 border-[var(--warn-ink)]
         bg-[var(--surface-2)]"
     >
       <div className="mx-auto flex max-w-[36rem] items-center gap-3 px-4 py-2">

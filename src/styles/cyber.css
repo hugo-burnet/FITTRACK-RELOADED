@@ -72,6 +72,8 @@
   /* Quand la structure est rouge, l'erreur ne se distingue plus par sa couleur seule : elle est plus
      vive, et garde toujours son mot. */
   --danger-ink: #ff2e63;
+  /* Le jaune agit et le rouge encadre : l'alerte qui n'a rien perdu prend l'orange. */
+  --warn-ink: #ff9f1c;
 
   --scrim: rgb(5 5 9 / 0.75);
 
