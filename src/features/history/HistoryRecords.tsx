@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useAppNavigate } from '@/app/navigation';
+import { useExerciseLinks } from '@/app/useExerciseLinks';
 import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import type { RecordTimelineEntry } from '@/data/repositories/recordTimeline';
 import { t } from '@/i18n/fr';
@@ -25,6 +26,7 @@ function groupByExercise(entries: readonly RecordTimelineEntry[]): RecordTimelin
 export function HistoryRecords({ workoutId }: { workoutId: string }) {
   const navigate = useAppNavigate();
   const entries = useLiveQuery(() => listRecordsForWorkout(workoutId), [workoutId]);
+  const hasPage = useExerciseLinks();
 
   if (entries === undefined || entries.length === 0) return null;
 
@@ -49,8 +51,13 @@ export function HistoryRecords({ workoutId }: { workoutId: string }) {
                     subtitle={[recordValue(entry.record), gain]
                       .filter((part): part is string => part !== undefined)
                       .join(' · ')}
-                    onClick={() => void navigate(`/exercises/${exerciseId}`)}
-                    trailing={<ChevronRightIcon />}
+                    // Un exercice supprimé garde ses records mais n'a plus de page.
+                    {...(hasPage(exerciseId)
+                      ? {
+                          onClick: () => void navigate(`/exercises/${exerciseId}`),
+                          trailing: <ChevronRightIcon />,
+                        }
+                      : {})}
                   />
                 );
               })}

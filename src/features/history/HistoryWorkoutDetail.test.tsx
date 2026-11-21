@@ -135,6 +135,23 @@ describe('HistoryWorkoutDetail — le nom affiché', () => {
   });
 });
 
+describe('HistoryWorkoutDetail — le lien vers la fiche', () => {
+  const snapshot = row({ exerciseName: 'Développé couché', exerciseMeasurementType: 'weight_reps' });
+
+  it('ouvre la fiche d’un exercice vivant', () => {
+    render(<HistoryWorkoutDetail detail={detail({ row: snapshot })} />);
+
+    expect(screen.getByRole('button', { name: 'Développé couché' })).toBeInTheDocument();
+  });
+
+  it('ne mène pas à « Cet exercice n’existe plus » : un exercice supprimé garde son nom, sans lien', () => {
+    render(<HistoryWorkoutDetail detail={detail({ row: snapshot, exercise: undefined })} />);
+
+    expect(screen.getByRole('heading', { name: 'Développé couché' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Développé couché' })).toBeNull();
+  });
+});
+
 describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
   /**
    * The point of the milestone. `exerciseMeasurementType` decides which stored

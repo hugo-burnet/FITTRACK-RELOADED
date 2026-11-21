@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useAppNavigate } from '@/app/navigation';
+import { useExerciseLinks } from '@/app/useExerciseLinks';
 import { Screen } from '@/app/Screen';
 import { listVolumeLow } from '@/data/repositories/coachVolume';
 import { getActiveProgramProjection } from '@/data/repositories/home';
@@ -57,6 +58,7 @@ export function AnalyticsScreen() {
   const goals = useLiveQuery(getWeeklyTrainingGoalHistory, []);
   const program = useLiveQuery(() => getActiveProgramProjection(), []);
   const timeline = useLiveQuery(() => listRecordTimeline(), []);
+  const hasPage = useExerciseLinks();
   const milestones = useLiveQuery(() => listMilestones(), []);
   const lows = useLiveQuery(async () => {
     try {
@@ -228,7 +230,10 @@ export function AnalyticsScreen() {
               void navigate(
                 latestRecord === undefined
                   ? '/analytics/records'
-                  : `/exercises/${latestRecord.record.exerciseId}`,
+                  : hasPage(latestRecord.record.exerciseId)
+                    ? `/exercises/${latestRecord.record.exerciseId}`
+                    : // Exercice supprimé : sa fiche n'existe plus, la séance du record, si.
+                      `/history/${latestRecord.record.workoutId}`,
               )
             }
           />

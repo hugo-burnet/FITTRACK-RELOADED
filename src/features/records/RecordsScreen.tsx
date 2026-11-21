@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useSearchParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
+import { useExerciseLinks } from '@/app/useExerciseLinks';
 import { useGoBack } from '@/app/useGoBack';
 import { Screen } from '@/app/Screen';
 import { currentRecordsByExercise } from '@/data/repositories/currentRecords';
@@ -39,6 +40,7 @@ export function RecordsScreen() {
   const hasFilters = exerciseId !== ALL || type !== ALL;
 
   const projectionCurrent = useLiveQuery(isRecordProjectionCurrent, []);
+  const hasPage = useExerciseLinks();
   const allEntries = useLiveQuery(() => listRecordTimeline(), []);
   const filteredEntries = useLiveQuery(
     () =>
@@ -216,6 +218,7 @@ export function RecordsScreen() {
                     <CurrentRecords
                       groups={currentRecordsByExercise(entries)}
                       onOpenExercise={(id) => void navigate(`/exercises/${id}`)}
+                      canOpenExercise={hasPage}
                       onOpenRecord={openRecord}
                     />
                   ) : (

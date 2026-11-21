@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { newEntity } from '@/data/repositories/base';
 import { db } from '@/data/db';
+import { deleteExercise } from '@/data/repositories/exercises';
 import { saveMeasurement } from '@/data/repositories/measurements';
 import {
   activateProgram,
@@ -129,6 +130,27 @@ describe('AnalyticsScreen', () => {
       await user.click(await tile(label));
       expect(screen.getByTestId('where')).toHaveTextContent(path);
     }
+  });
+
+  it('« Dernier record » d’un exercice supprimé mène à la séance du record, pas à une fiche qui n’existe plus', async () => {
+    const user = userEvent.setup();
+    const bench = await seedExercise({ name: 'Développé couché (barre)' });
+    const workout = await seedWorkout({
+      exerciseId: bench.id,
+      performedAt: Date.now(),
+      sets: [[100, 5]],
+    });
+    await rebuildAllRecords();
+    await deleteExercise(bench.id);
+
+    renderScreen();
+
+    // Le record doit être lu avant le clic : sans lui, la tuile ouvre la page des records.
+    await waitFor(async () =>
+      expect((await tile('Dernier record')).textContent).toContain('Développé couché (barre)'),
+    );
+    await user.click(await tile('Dernier record'));
+    expect(screen.getByTestId('where')).toHaveTextContent(`/history/${workout.id}`);
   });
 
   it('n’offre pas le programme sans programme actif', async () => {
