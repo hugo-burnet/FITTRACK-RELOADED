@@ -1,5 +1,6 @@
 import type { CoachRecommendation } from '@/data/types';
 import type { CoachSignal } from '@/lib/coach';
+import { INCREASE_MAX_RPE } from '@/lib/coach/constants';
 import { t } from '@/i18n/fr';
 import { partReading } from '@/i18n/labels';
 import { repsReading } from '@/lib/measurement';
@@ -123,6 +124,14 @@ function constatMessage(signal: SignalLike): string {
       const current = evidenceValue(signal, 'current_load_kg');
       // Plafond arraché (R1) : le constat, et pourquoi on ne monte pas.
       if (hasFlag(signal, 'ceiling_grinding')) {
+        // Règle du 2026-11-21 : le maximum des RPE saisis. Une ligne du journal d'avant n'a que `session_rpe`.
+        const maxRpe = evidenceValue(signal, 'max_rpe');
+        if (maxRpe !== undefined) {
+          return t('coach.ceilingAboveRpeMax', {
+            rpe: formatNumber(maxRpe),
+            max: formatNumber(evidenceValue(signal, 'increase_max_rpe') ?? INCREASE_MAX_RPE),
+          });
+        }
         return t('coach.ceilingGrinding', {
           sets,
           reps,

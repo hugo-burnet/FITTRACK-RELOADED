@@ -650,6 +650,8 @@ const fr = {
       'Même charge ({weight} kg), au moins autant de répétitions, et un RPE moyen passé de {before} à {after} : la charge se consolide.',
     ceilingGrinding:
       '{sets} × {reps} a atteint le haut de la fourchette, mais à l’échec (RPE moyen {rpe}) : on refait cette charge plus facilement avant de monter.',
+    ceilingAboveRpeMax:
+      'Plafond tenu, mais à RPE {rpe} : on monte quand chaque série reste à {max} ou moins. Garde la charge.',
     plateauAtFailure: 'Effort maximal à chaque séance : une décharge servira plus qu’une séance de plus.',
     returning: 'Reprise après {days} jours sans cet exercice : on consolide avant de monter.',
     /**

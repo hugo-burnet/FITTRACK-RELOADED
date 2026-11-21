@@ -28,7 +28,6 @@ import type {
 // morceau est allé.
 export {
   AT_FAILURE_RPE,
-  CEILING_GRINDING_RPE,
   CONSOLIDATION_RPE_DROP,
   RETURN_GAP_DAYS,
 } from './constants';
