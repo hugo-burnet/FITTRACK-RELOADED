@@ -9,8 +9,13 @@ import { openApp } from './support';
 
 /** Réglages › Pas de charge par défaut, par les écrans et non par l'adresse : c'est la porte d'entrée. */
 async function openStepSheet(page: Page): Promise<Locator> {
-  await page.getByRole('button', { name: 'Réglages' }).click();
-  await page.getByRole('button', { name: /^Pas de charge par défaut/ }).click();
+  const stepRow = page.getByRole('button', { name: /^Pas de charge par défaut/ });
+  // Déjà sur la page Coach (on rouvre la feuille après l'avoir fermée) : pas de chemin à refaire.
+  if (!(await stepRow.isVisible())) {
+    await page.getByRole('button', { name: 'Réglages' }).click();
+    await page.getByRole('button', { name: /^Coach/ }).click();
+  }
+  await stepRow.click();
   const sheet = page.getByRole('dialog', { name: 'Pas de charge par défaut' });
   await expect(sheet).toBeVisible();
   return sheet;

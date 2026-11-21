@@ -22,6 +22,7 @@ async function seedHistory(page: Page): Promise<void> {
 /** Réglages › Volume par muscle, par les écrans et non par l'adresse : c'est la porte d'entrée. */
 async function openVolume(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Réglages' }).click();
+  await page.getByRole('button', { name: /^Coach/ }).click();
   await page.getByRole('button', { name: /Volume par muscle/ }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Volume par muscle' })).toBeVisible();
 }

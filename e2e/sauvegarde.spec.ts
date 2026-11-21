@@ -51,6 +51,8 @@ test.describe('la protection de l’historique', () => {
 
     // Les Réglages disent la même chose, et la mémoire survit à un rechargement.
     await page.getByRole('button', { name: 'Réglages' }).click();
+    await expect(page.getByText('Dernière sauvegarde : aujourd’hui')).toBeVisible();
+    await page.getByRole('button', { name: /^Sauvegarde/ }).click();
     await expect(page.getByText(/Dernière sauvegarde : aujourd.hui\. À jour\./)).toBeVisible();
     await page.goto('');
     await expect(page.getByRole('region', { name: 'Sauvegarde ton historique' })).toBeHidden();
@@ -68,6 +70,7 @@ test.describe('la protection de l’historique', () => {
 
   test('les Réglages disent combien de séances rien ne protège', async ({ page }) => {
     await page.getByRole('button', { name: 'Réglages' }).click();
+    await page.getByRole('button', { name: /^Sauvegarde/ }).click();
     await expect(
       page.getByText('Aucune sauvegarde faite depuis cet appareil. 3 séances à protéger.'),
     ).toBeVisible();
