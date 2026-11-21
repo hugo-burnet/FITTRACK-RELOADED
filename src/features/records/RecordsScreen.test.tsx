@@ -79,6 +79,11 @@ async function seedTimeline(input: {
       }
     },
   );
+  // Dexie ne prévient les requêtes vivantes d'une écriture qu'au tour suivant de la boucle
+  // (`signalSubscribersLazily`, un `setTimeout(…, 0)` posé au commit). Sans ce tour, l'écran rendu
+  // juste après peut recevoir ces signaux de préparation une fois sa requête partie, et la relancer :
+  // c'est ce qui faisait compter 3 ou 4 lectures au lieu d'une sous la charge de la suite complète.
+  await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 function LocationProbe() {
