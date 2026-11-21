@@ -156,6 +156,13 @@ Une séance de deux exercices au moins, dont un en barre.
       rien. *(v2.10.0)*
 - [ ] **Corpus d'un programme.** Ouvrir un bloc actif puis « Ce qu'en dit le corpus » : l'article du
       Guide correspondant à la phase s'ouvre, sans page d'erreur. *(30 août)*
+- [ ] **Recherche à plusieurs mots.** Bibliothèque (et sélecteur d'exercices d'une routine) : taper « squat barre »
+      trouve « Squat (barre) » ; « couché haltères » trouve « Développé couché (haltères) » ; l'ordre des mots
+      n'importe pas ; un mot absent ne rend rien. *(v2.19.0)*
+- [ ] **Meilleure série d'un exercice assisté.** Fiche des tractions assistées, historique : chaque séance affiche
+      la série la **moins** assistée (20 kg × 6 plutôt que 40 kg × 8). *(v2.19.0)*
+- [ ] **La fiche ignore la séance en cours.** Séance démarrée, une série validée sur un exercice : sa fiche
+      n'affiche pas encore cette séance dans l'historique ; elle apparaît une fois la séance terminée. *(v2.19.0)*
 
 ## 3 bis. Mensurations (3 min)
 
