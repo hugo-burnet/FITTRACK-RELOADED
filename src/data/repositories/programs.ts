@@ -109,6 +109,19 @@ export async function getProgramDetail(programId: string): Promise<ProgramDetail
   );
 }
 
+/** Ce qu'une ligne de contexte a besoin de savoir d'un programme : son nom et sa durée. */
+export type ProgramHeader = Pick<Program, 'id' | 'name' | 'durationWeeks'>;
+
+/**
+ * Lecture légère d'un programme, pour la séance passée qui en vient : une seule ligne, sans les semaines
+ * ni les révisions que lit `getProgramDetail`. `null` quand il n'existe plus ou qu'il a été supprimé.
+ */
+export async function getProgramHeader(programId: string): Promise<ProgramHeader | null> {
+  const program = await db.programs.get(programId);
+  if (program === undefined || program.deletedAt !== 0) return null;
+  return { id: program.id, name: program.name, durationWeeks: program.durationWeeks };
+}
+
 export async function listPrograms(): Promise<ProgramSummary[]> {
   return alive(await db.programs.toArray())
     .sort(
