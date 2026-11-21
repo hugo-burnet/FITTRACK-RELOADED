@@ -33,8 +33,7 @@ export function primeAnnouncer(): void {
   setAudioEcho(loadAnnouncerEcho());
   // The master gain is in the same situation, and worse: `applyAnnouncerMode`
   // is the only thing that ever moves it, so a stored `silence` came back at
-  // full volume on the next launch for every path that bypasses `planCue` —
-  // the tutorial narration being one.
+  // full volume on the next launch for every path that bypasses `planCue`.
   setAudioVolume(loadAnnouncerMode() === 'silence' ? 0 : 1);
   if (warmed) return;
   warmed = true;

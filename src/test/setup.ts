@@ -3,8 +3,7 @@ import '@testing-library/jest-dom/vitest';
 // forever instead of failing — the symptom is a timeout, not an error.
 import 'fake-indexeddb/auto';
 
-// jsdom ne fournit pas non plus `ResizeObserver`. Le tutoriel s'en sert pour
-// suivre l'élément qu'il encadre ; sans lui, `new ResizeObserver` lève, et le
+// jsdom ne fournit pas non plus `ResizeObserver`. Sans lui, `new ResizeObserver` lève, et le
 // test échoue sur une référence manquante au lieu de dire ce qu'il vérifie.
 // Rien ne mesure en jsdom : cette doublure n'a donc qu'à exister, pas à notifier.
 if (!('ResizeObserver' in globalThis)) {

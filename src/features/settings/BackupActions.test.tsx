@@ -5,7 +5,6 @@ import { db } from '@/data/db';
 import * as backupRepository from '@/data/repositories/backup';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { serializeBackup } from '@/lib/backup';
 import type { SaveOutcome } from '@/platform/saveFile';
@@ -42,19 +41,8 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderBackupActions(report = vi.fn(), reload = vi.fn()) {
-  return render(
-    <TutorialContext.Provider
-      value={{
-        openHelp: vi.fn(),
-        startMission: vi.fn(),
-        offerMission: vi.fn(),
-        report,
-      }}
-    >
-      <BackupActions reload={reload} />
-    </TutorialContext.Provider>,
-  );
+function renderBackupActions(reload = vi.fn()) {
+  return render(<BackupActions reload={reload} />);
 }
 
 describe('BackupActions', () => {
@@ -172,7 +160,7 @@ describe('BackupActions', () => {
 
     const reload = vi.fn();
     const user = userEvent.setup();
-    renderBackupActions(vi.fn(), reload);
+    renderBackupActions(reload);
 
     await chooseFile(user, jsonFile(text));
 
@@ -203,38 +191,16 @@ describe('BackupActions', () => {
     expect(routines.map((routine) => routine.name)).toEqual(['Une routine de cet appareil']);
   });
 
-  it.each(['shared', 'downloaded'] satisfies SaveOutcome[])(
-    'signale l’export %s seulement après la sauvegarde effective',
-    async (outcome) => {
-      const pendingSave = deferred<SaveOutcome>();
-      const report = vi.fn();
-      saveTextFileMock.mockReturnValueOnce(pendingSave.promise);
-      const user = userEvent.setup();
-      renderBackupActions(report);
-
-      await user.click(screen.getByRole('button', { name: /Exporter tout le compte/ }));
-      await waitFor(() => expect(saveTextFileMock).toHaveBeenCalledOnce());
-      expect(report).not.toHaveBeenCalled();
-
-      pendingSave.resolve(outcome);
-
-      await waitFor(() => expect(report).toHaveBeenCalledOnce());
-      expect(report).toHaveBeenLastCalledWith({ type: 'backup-exported', outcome });
-    },
-  );
-
   it.each(['failed', 'cancelled'] satisfies SaveOutcome[])(
-    'ne signale pas un export %s',
+    'laisse l’écran utilisable après un export %s',
     async (outcome) => {
       const pendingSave = deferred<SaveOutcome>();
-      const report = vi.fn();
       saveTextFileMock.mockReturnValueOnce(pendingSave.promise);
       const user = userEvent.setup();
-      renderBackupActions(report);
+      renderBackupActions();
 
       await user.click(screen.getByRole('button', { name: /Exporter tout le compte/ }));
       await waitFor(() => expect(saveTextFileMock).toHaveBeenCalledOnce());
-      expect(report).not.toHaveBeenCalled();
 
       pendingSave.resolve(outcome);
       if (outcome === 'failed') {
@@ -242,35 +208,30 @@ describe('BackupActions', () => {
       } else {
         await waitFor(() => expect(screen.getByRole('button', { name: /Exporter/ })).toBeEnabled());
       }
-      expect(report).not.toHaveBeenCalled();
     },
   );
 
-  it('signale la confirmation d’une restauration valide sans restaurer', async () => {
+  it('ouvre la confirmation d’une restauration valide sans restaurer', async () => {
     await createRoutine('Poussée');
     const text = serializeBackup(await backupRepository.buildBackup());
     const pendingText = deferred<string>();
     const readText = vi.fn(() => pendingText.promise);
     const restoreSpy = vi.spyOn(backupRepository, 'restoreBackup');
-    const report = vi.fn();
     const user = userEvent.setup();
-    renderBackupActions(report);
+    renderBackupActions();
 
     await chooseFile(user, jsonFile(text, 'fittrack-sauvegarde.json', readText));
 
     await waitFor(() => expect(readText).toHaveBeenCalledOnce());
-    expect(report).not.toHaveBeenCalled();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     pendingText.resolve(text);
 
     expect(await screen.findByRole('dialog', { name: /Restaurer cette sauvegarde/ })).toBeVisible();
-    expect(report).toHaveBeenCalledOnce();
-    expect(report).toHaveBeenLastCalledWith({ type: 'restore-confirmation-opened' });
     expect(restoreSpy).not.toHaveBeenCalled();
   });
 
-  it('ne signale pas les fichiers invalides, vides ou d’une version future', async () => {
+  it('refuse les fichiers invalides, vides ou d’une version future', async () => {
     await createRoutine('Poussée');
     const valid = JSON.parse(serializeBackup(await backupRepository.buildBackup())) as Record<
       string,
@@ -283,9 +244,8 @@ describe('BackupActions', () => {
     }
     const future = structuredClone(valid);
     future.version = Number.MAX_SAFE_INTEGER;
-    const report = vi.fn();
     const user = userEvent.setup();
-    renderBackupActions(report);
+    renderBackupActions();
 
     const cases = [
       ['pas du json', t('settings.restoreErrorNotJson')],
@@ -297,7 +257,6 @@ describe('BackupActions', () => {
     for (const [text, expectedMessage] of cases) {
       await chooseFile(user, jsonFile(text));
       await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(expectedMessage));
-      expect(report).not.toHaveBeenCalled();
     }
   });
 
@@ -311,9 +270,8 @@ describe('BackupActions', () => {
     // fichier que l'ancienne lecture acceptait.
     (raw.tables as Record<string, unknown>).workouts = [{ id: 'broken' }];
     const restoreSpy = vi.spyOn(backupRepository, 'restoreBackup');
-    const report = vi.fn();
     const user = userEvent.setup();
-    renderBackupActions(report);
+    renderBackupActions();
 
     await chooseFile(user, jsonFile(JSON.stringify(raw)));
 
@@ -323,7 +281,6 @@ describe('BackupActions', () => {
     expect(status).toHaveTextContent(/Rien n.a été remplacé/);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(restoreSpy).not.toHaveBeenCalled();
-    expect(report).not.toHaveBeenCalled();
     expect(await db.routines.count()).toBe(1);
   });
 
@@ -356,18 +313,5 @@ describe('BackupActions', () => {
 
     expect(await screen.findByRole('dialog', { name: /Restaurer cette sauvegarde/ })).toBeVisible();
     expect(screen.getByText(/désignent une donnée absente du fichier/)).toBeVisible();
-  });
-
-  it('expose les ancres exactes des actions de sauvegarde', () => {
-    renderBackupActions();
-
-    expect(screen.getByRole('button', { name: /Exporter tout le compte/ })).toHaveAttribute(
-      'data-tutorial-id',
-      'backup-export',
-    );
-    expect(screen.getByRole('button', { name: /Restaurer une sauvegarde/ })).toHaveAttribute(
-      'data-tutorial-id',
-      'backup-restore',
-    );
   });
 });

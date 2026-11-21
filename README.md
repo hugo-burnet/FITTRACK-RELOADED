@@ -23,7 +23,6 @@ Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol
 - **Séance en direct** — saisie une main, écriture en base à chaque série validée.
 - **Coach vocal** — annonces sérialisées, musique atténuée hors effort, records et récapitulatif de fin.
 - **Cadence** — tempo choisi au chrono de la carte d’exercice, préparation dans 10 secondes, 3–2–1, impacts par répétition et passage à l’exercice suivant.
-- **Tutoriel oral** — visite initiale facultative et aide contextuelle `?` sur chaque grande page.
 - **Routines** — modèles, dossiers, pas de quota.
 - **Blocs** — périodisation par intention (`loadIndex` + phase). La routine reste le 100 %. Le Coach tranche sur les perfs, il n’invente pas de permissions.
 - **Carte du corps** — les muscles travaillés sur douze semaines ; toucher un muscle donne ses exercices.

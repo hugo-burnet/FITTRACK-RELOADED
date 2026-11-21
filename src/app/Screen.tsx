@@ -1,11 +1,9 @@
 import type { ReactNode } from 'react';
 import { DecodedTitle } from './DecodedTitle';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
-import { HeaderAction } from '@/ui/HeaderAction';
 import { navigatingBack } from './navigation';
 import { APP_VERSION } from './version';
-import { ArrowLeftIcon, HelpIcon } from '@/ui/icons';
+import { ArrowLeftIcon } from '@/ui/icons';
 
 export type ScreenProps = {
   title: string;
@@ -32,8 +30,6 @@ export type ScreenProps = {
    * n'est dessiné.
    */
   footer?: ReactNode;
-  /** Contextual tutorial help is opt-out for self-explanatory reading surfaces. */
-  showTutorialHelp?: boolean;
   /**
    * A decorative block cursor at the end of the title. Hidden in every theme but TTY1, which
    * shows it blinking — the app's front door reads as a prompt waiting for a command. Only the
@@ -74,13 +70,9 @@ export function Screen({
   action,
   sub,
   footer,
-  showTutorialHelp = true,
   cursor = false,
   children,
 }: ScreenProps) {
-  const tutorial = useTutorialControls();
-  const hasTutorialHelp = showTutorialHelp && tutorial !== null;
-
   return (
     <section
       data-part="screen"
@@ -126,15 +118,8 @@ export function Screen({
           <DecodedTitle text={title} />
           {cursor && <span aria-hidden="true" className="tty-cursor hidden" />}
         </h1>
-        {(action !== undefined || hasTutorialHelp) && (
-          <div className="flex shrink-0 items-center gap-1">
-            {action}
-            {hasTutorialHelp && tutorial !== null && (
-              <HeaderAction label={t('tutorial.pageHelp')} onClick={tutorial.openHelp}>
-                <HelpIcon />
-              </HeaderAction>
-            )}
-          </div>
+        {action !== undefined && (
+          <div className="flex shrink-0 items-center gap-1">{action}</div>
         )}
       </header>
 

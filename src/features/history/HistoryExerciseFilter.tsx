@@ -26,7 +26,6 @@ export function HistoryExerciseFilter({
   return (
     <>
       <FilterChip
-        tutorialId="history-exercise-filter"
         label={selected?.name ?? t('history.exerciseFilter')}
         active={value !== undefined}
         onClick={() => setOpen(true)}

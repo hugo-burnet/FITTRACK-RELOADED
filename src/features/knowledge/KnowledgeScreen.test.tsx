@@ -1,40 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
+import { describe, expect, it } from 'vitest';
 import { KnowledgeScreen } from './KnowledgeScreen';
 
 function renderScreen() {
   render(
-    <TutorialContext.Provider
-      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report: vi.fn() }}
-    >
-      <MemoryRouter>
-        <KnowledgeScreen />
-      </MemoryRouter>
-    </TutorialContext.Provider>,
+    <MemoryRouter>
+      <KnowledgeScreen />
+    </MemoryRouter>,
   );
 }
 
 describe('KnowledgeScreen', () => {
-  /*
-   * La règle a changé, et pas par accident. `KnowledgeScreenFrame` retirait
-   * l'aide à TOUTES les routes du corpus, y compris celle-ci, parce qu'un
-   * article se lit et ne se manipule pas. C'est toujours vrai des articles —
-   * `LearnProgrammingScreen` le vérifie encore.
-   *
-   * Ce hub n'est pas une surface de lecture : c'est une surface de recherche, et
-   * le bouton d'aide est la seule porte d'entrée des missions contextuelles.
-   * Sans lui, les deux missions qui apprennent à interroger le corpus
-   * existaient dans le catalogue sans qu'aucun écran ne sache les proposer.
-   */
-  it('garde l’aide contextuelle, seule porte des missions du corpus', () => {
-    renderScreen();
-
-    expect(screen.getByRole('button', { name: 'Aide sur cette page' })).toBeVisible();
-  });
-
   it('présente l’outil comme un navigateur non calibré, jamais comme un coach', () => {
     renderScreen();
 

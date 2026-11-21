@@ -18,7 +18,6 @@ type Props = {
    * row that is not selectable must not announce a checked state.
    */
   checked?: boolean;
-  tutorialId?: string;
 };
 
 /**
@@ -35,7 +34,6 @@ export function ListRow({
   disabled,
   checked,
   ariaLabel,
-  tutorialId,
 }: Props) {
   const Element = onClick ? 'button' : 'div';
 
@@ -43,7 +41,6 @@ export function ListRow({
     <Element
       type={onClick ? 'button' : undefined}
       data-part="row"
-      data-tutorial-id={tutorialId}
       role={checked === undefined ? undefined : 'checkbox'}
       aria-checked={checked}
       aria-label={ariaLabel}

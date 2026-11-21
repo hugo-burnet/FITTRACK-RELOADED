@@ -24,7 +24,6 @@ import { projectRoutineExport } from '@/lib/export/projectRoutineExport';
 import { serializeRoutineMarkdown } from '@/lib/export/serializeRoutineMarkdown';
 import { DEFAULT_EXPORT_OPTIONS, type RoutineExportScope } from '@/lib/export/types';
 import { copyText, shareText, type ShareOutcome } from '@/platform/share';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionSheet, ConfirmSheet, HeaderAction, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
 import { CollapseAllIcon, ExpandAllIcon, PlusIcon } from '@/ui/icons';
@@ -54,7 +53,6 @@ const scopeIdOf = (scope: RoutineExportScope): string =>
 
 export function RoutinesScreen() {
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
   const collapsedFolderIds = useRoutineLibraryView((state) => state.collapsedFolderIds);
@@ -123,7 +121,6 @@ export function RoutinesScreen() {
   const startBlank = () => {
     void createRoutine(t('routines.defaultName'))
       .then((routine) => {
-        tutorial?.report({ type: 'routine-created', routineId: routine.id });
         openEditor(routine);
       })
       .catch(() => undefined);
@@ -139,8 +136,7 @@ export function RoutinesScreen() {
    */
   const start = (routineId: string) => {
     void startWorkoutFromRoutine(routineId)
-      .then((workout) => {
-        tutorial?.report({ type: 'workout-started', workoutId: workout.id, routineId });
+      .then(() => {
         navigate('/workout');
       })
       .catch(() => undefined);
@@ -195,9 +191,7 @@ export function RoutinesScreen() {
       action={
         <HeaderAction
           label={t('routines.create')}
-          tutorialId="routine-create"
           onClick={() => {
-            tutorial?.report({ type: 'routine-create-opened' });
             setSheet({ kind: 'create' });
           }}
         >
@@ -274,7 +268,6 @@ export function RoutinesScreen() {
           {
             label: t('routines.newBlank'),
             hint: t('routines.newBlankHint'),
-            tutorialId: 'routine-create-blank',
             onSelect: startBlank,
           },
           {

@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { getBootStorage } from '@/app/bootEasterEgg';
 import { restoreBackup } from '@/data/repositories/backup';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import {
   parseBackup,
@@ -54,7 +53,6 @@ export function BackupActions({
 }: {
   reload?: () => void;
 } = {}) {
-  const tutorial = useTutorialControls();
   const { lastBackupAt, workoutsSince, now } = useBackupStatus();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -79,7 +77,6 @@ export function BackupActions({
       const outcome = await exportBackup();
       if (outcome === 'failed') fail('settings.backupExportFailed');
       else if (outcome === 'shared' || outcome === 'downloaded') {
-        tutorial?.report({ type: 'backup-exported', outcome });
         if (outcome === 'downloaded') {
           setNotice({ text: t('settings.backupExportDownloaded'), failed: false });
         }
@@ -118,7 +115,6 @@ export function BackupActions({
       total: parsed.total,
       orphans: backupOrphanMessage(parsed.orphans),
     });
-    tutorial?.report({ type: 'restore-confirmation-opened' });
   };
 
   const confirm = () => {
@@ -148,14 +144,12 @@ export function BackupActions({
       <SectionTitle>{t('settings.backupSection')}</SectionTitle>
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
-          tutorialId="backup-export"
           title={t('settings.backupExportLink')}
           subtitle={t('settings.backupExportHint')}
           disabled={busy}
           onClick={() => void save()}
         />
         <ListRow
-          tutorialId="backup-restore"
           title={t('settings.backupImportLink')}
           subtitle={t('settings.backupImportHint')}
           disabled={busy}

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { P1_MISSIONS } from '@/features/tutorial/tutorialMissions';
 import type { AudioBus } from './context';
 import { createVoicePack } from './voicePack';
 
@@ -26,21 +25,6 @@ function createBus() {
 }
 
 describe('voicePack', () => {
-  // Les missions ont désormais leur voix. Ce qui reste à garantir est qu'aucune
-  // ne partage son clip avec une autre : deux étapes sur le même enregistrement,
-  // et l'une des deux dirait la consigne de sa voisine.
-  it('donne à chaque mission son propre clip', () => {
-    const clips = P1_MISSIONS.flatMap((mission) => mission.steps).flatMap((step) =>
-      step.clipId === undefined ? [] : [step.clipId],
-    );
-
-    // Une étape sans clip parle par son texte ; deux étapes sur le même
-    // enregistrement, en revanche, feraient dire à l'une la consigne de sa
-    // voisine.
-    expect(clips).not.toHaveLength(0);
-    expect(new Set(clips).size).toBe(clips.length);
-  });
-
   it('ne télécharge chaque clip qu’une fois', async () => {
     const load = vi.fn().mockResolvedValue(new ArrayBuffer(8));
     const pack = createVoicePack(load);

@@ -1,11 +1,10 @@
 import type { RoutineSummary } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { Button } from '@/ui';
 import type { ProgramSplitDraftEntry } from './ProgramSplitStep';
 
 interface Props {
-  /** Place dans la liste entière, à partir de 0 : c'est elle que les libellés et le tutoriel citent. */
+  /** Place dans la liste entière, à partir de 0 : c'est elle que les libellés citent. */
   index: number;
   entry: ProgramSplitDraftEntry;
   routines: RoutineSummary[] | undefined;
@@ -53,7 +52,6 @@ export function ProgramSplitSession({
   onRemove,
   onCreateRoutine,
 }: Props) {
-  const tutorial = useTutorialControls();
   const number = index + 1;
 
   return (
@@ -93,7 +91,6 @@ export function ProgramSplitSession({
           /* Seule la première séance porte l'ancre : une consigne qui
              dit « choisis le jour » doit désigner une rangée, pas
              toutes celles de la liste. */
-          data-tutorial-id={index === 0 ? 'program-split-day' : undefined}
           className="grid grid-cols-4 gap-2"
         >
           {DAYS.map((day, dayIndex) => {
@@ -106,11 +103,6 @@ export function ProgramSplitSession({
                 aria-label={dayLabel(day)}
                 onClick={() => {
                   onChange({ dayOfWeek: day });
-                  tutorial?.report({
-                    type: 'program-split-day-set',
-                    index,
-                    dayOfWeek: day,
-                  });
                 }}
                 className={`min-h-12 rounded-xl text-sm font-semibold
                   transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
@@ -135,16 +127,10 @@ export function ProgramSplitSession({
         </span>
         <select
           aria-label={t('program.sessionRoutineLabel', { number })}
-          data-tutorial-id={index === 0 ? 'program-split-routine' : undefined}
           value={entry.routineId}
           disabled={routines === undefined}
           onChange={(event) => {
             onChange({ routineId: event.target.value });
-            tutorial?.report({
-              type: 'program-split-routine-set',
-              index,
-              routineId: event.target.value,
-            });
           }}
           className={selectClass}
         >

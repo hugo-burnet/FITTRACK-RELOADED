@@ -13,7 +13,6 @@ import {
   updateProgramDraft,
 } from '@/data/repositories/programs';
 import { createRoutine } from '@/data/repositories/routines';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { ActionBand, ConfirmSheet, SectionTitle } from '@/ui';
@@ -43,7 +42,6 @@ import { useProgramEditorData } from './useProgramEditorData';
 export function ProgramEditorScreen() {
   const { id: routeProgramId } = useParams();
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const [editorOpenedAt] = useState(() => Date.now());
   const [step, setStep] = useState<ProgramEditorStep>('basics');
   const [basics, setBasics] = useState<ProgramBasicsDraft>({
@@ -226,23 +224,17 @@ export function ProgramEditorScreen() {
         if (programId === '') {
           const program = await createProgramDraft({ ...basics, name: basics.name.trim() });
           setProgramId(program.id);
-          // Après l'écriture, jamais avant : c'est la création du brouillon que
-          // le tutoriel retient, pas l'intention de le créer.
-          tutorial?.report({ type: 'program-draft-created', programId: program.id });
         } else {
           await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
-          tutorial?.report({ type: 'program-draft-created', programId });
         }
         setStep('split');
       } else if (step === 'split') {
         const entries = orderedSplit(split.entries);
         await createScheduleRevision(programId, 0, entries, split.cycleWeeks);
-        tutorial?.report({ type: 'program-split-saved', programId, entries: entries.length });
         setStep('weeks');
       } else {
         await replaceProgramWeeks(programId, weeks);
         await activateProgram(programId);
-        tutorial?.report({ type: 'program-activated', programId });
         settleOnProgram(programId);
       }
     });
@@ -317,7 +309,6 @@ export function ProgramEditorScreen() {
                   ? t('program.activate')
                   : t('program.continue')
           }
-          tutorialId="program-step-continue"
           disabled={
             saving ||
             ((stacked || step === 'split') && splitBlocked) ||

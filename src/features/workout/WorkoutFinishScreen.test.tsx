@@ -16,7 +16,6 @@ import {
 } from '@/data/repositories/workouts';
 import * as coachEvaluate from '@/data/repositories/coachEvaluate';
 import * as workoutsRepository from '@/data/repositories/workouts';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutFinishScreen } from './WorkoutFinishScreen';
 import { forgetWorkoutRecaps } from './workoutRecapVoice';
@@ -36,20 +35,16 @@ function LocationProbe() {
   return <output data-testid="location-probe">{useLocation().pathname}</output>;
 }
 
-function renderFinishScreen(report = vi.fn()) {
+function renderFinishScreen() {
   return render(
-    <TutorialContext.Provider
-      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
-    >
-      <MemoryRouter initialEntries={['/workout/finish']}>
-        <Routes>
-          <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
-          <Route path="/" element={<p>Destination accueil</p>} />
-          <Route path="/benchmark/:workoutId" element={<p>Destination bilan</p>} />
-        </Routes>
-        <LocationProbe />
-      </MemoryRouter>
-    </TutorialContext.Provider>,
+    <MemoryRouter initialEntries={['/workout/finish']}>
+      <Routes>
+        <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
+        <Route path="/" element={<p>Destination accueil</p>} />
+        <Route path="/benchmark/:workoutId" element={<p>Destination bilan</p>} />
+      </Routes>
+      <LocationProbe />
+    </MemoryRouter>,
   );
 }
 
@@ -101,7 +96,7 @@ describe('WorkoutFinishScreen', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('reports workout-saved only after completion is durable and exposes the save anchor', async () => {
+  it('stays active until finishWorkout resolves, then completes the workout', async () => {
     const workout = await startWorkout('', 'Séance sûre');
     const exercise = await createCustomExercise({
       name: 'Audit',
@@ -120,24 +115,21 @@ describe('WorkoutFinishScreen', () => {
       await gate.promise;
       return realFinish(workoutId);
     });
-    const report = vi.fn();
-    renderFinishScreen(report);
+    renderFinishScreen();
 
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
 
     await screen.findByText('Enregistrer la séance');
-    const saveAnchors = document.querySelectorAll('[data-tutorial-id="workout-save"]');
-    expect(saveAnchors).toHaveLength(1);
-    await userEvent.click(saveAnchors[0] as HTMLButtonElement);
+    await userEvent.click(
+      (await screen.findByText('Enregistrer la séance')).closest('button') as HTMLButtonElement,
+    );
 
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
     expect((await db.workouts.get(workout.id))?.status).toBe('active');
 
     gate.resolve();
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'workout-saved', workoutId: workout.id }),
+    await waitFor(async () =>
+      expect((await db.workouts.get(workout.id))?.status).toBe('completed'),
     );
-    expect((await db.workouts.get(workout.id))?.status).toBe('completed');
   });
 
   it('shows the finish screen and still saves when the coach evaluation rejects', async () => {
@@ -158,20 +150,18 @@ describe('WorkoutFinishScreen', () => {
     const evaluate = vi
       .spyOn(coachEvaluate, 'evaluateCoachForWorkout')
       .mockRejectedValue(new Error('coach en panne'));
-    const report = vi.fn();
-    renderFinishScreen(report);
+    renderFinishScreen();
 
     const save = (await screen.findByText('Enregistrer la séance')).closest('button');
     await waitFor(() => expect(evaluate).toHaveBeenCalled());
     await userEvent.click(save as HTMLButtonElement);
 
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'workout-saved', workoutId: workout.id }),
+    await waitFor(async () =>
+      expect((await db.workouts.get(workout.id))?.status).toBe('completed'),
     );
-    expect((await db.workouts.get(workout.id))?.status).toBe('completed');
   });
 
-  it('never reports workout-saved when finishWorkout rejects', async () => {
+  it('keeps the workout active when finishWorkout rejects', async () => {
     const workout = await startWorkout('', 'Séance en erreur');
     const exercise = await createCustomExercise({
       name: 'Audit',
@@ -187,8 +177,7 @@ describe('WorkoutFinishScreen', () => {
     const finish = vi
       .spyOn(workoutsRepository, 'finishWorkout')
       .mockRejectedValueOnce(new Error('IndexedDB unavailable'));
-    const report = vi.fn();
-    renderFinishScreen(report);
+    renderFinishScreen();
 
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
 
@@ -198,25 +187,10 @@ describe('WorkoutFinishScreen', () => {
     await waitFor(() => expect(finish).toHaveBeenCalledOnce());
     await Promise.resolve();
 
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
     expect((await db.workouts.get(workout.id))?.status).toBe('active');
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
     expect(screen.queryByText('Destination accueil')).not.toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('n’a pas pu être enregistrée');
-  });
-
-  it('never reports workout-saved from the explicit discard path', async () => {
-    const workout = await startWorkout('', 'Séance abandonnée');
-    const report = vi.fn();
-    renderFinishScreen(report);
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Abandonner la séance' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Abandonner' }));
-    await waitFor(async () =>
-      expect((await db.workouts.get(workout.id))?.deletedAt).toBeGreaterThan(0),
-    );
-
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
   });
 
   it('affiche le tonnage effectif des exercices au poids du corps', async () => {

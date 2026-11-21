@@ -20,7 +20,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > d'environ 20 minutes, en salle ou à défaut à bout de bras.
 >
 > **Ce que cette liste ne contient plus.** Les parcours E2E (`npm run test:e2e`) vérifient déjà,
-> dans un navigateur à 390 px : le premier lancement en silence, une séance de bout en bout, la
+> dans un navigateur à 390 px : le premier lancement sans feuille, une séance de bout en bout, la
 > série qui survit à un rechargement, les cibles de 48 px, l'absence de débordement dans les quatre
 > thèmes à 100, 130 et 200 % (TTY1 : 130 %), −15 s / +15 s sur un vrai repos, l'app qui démarre sans réseau, la sauvegarde, le
 > remplacement d'un exercice, les mensurations (hors sélecteur de date natif), le benchmark de bout en bout et le pas de charge de l'appli (posé, relu après un rechargement, lu sur la fiche d'un exercice).
@@ -64,7 +64,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 - [ ] Repasser en Sombre : rien n'a changé, sinon le numéro de version en haut à droite de chaque
       écran. *(v2.8.0)*
 - [ ] **Taille de police du système au maximum** (Android › Affichage) : l'en-tête de la séance garde
-      son bouton d'aide à l'écran, rien ne défile de côté. *(cette session)*
+      ses boutons (retour, options) à l'écran, rien ne défile de côté. *(cette session)*
 
 ## 2. En séance (8 min)
 
@@ -241,7 +241,7 @@ Une séance de deux exercices au moins, dont un en barre.
       la carte propose **plusieurs crans de moins** (40 → 32,5 kg) et dit « 3 crans de moins plutôt qu'un seul : à 32,5 kg, tu retombes dans la fourchette (15 – 20 reps) ».
       Quand on est à une répétition du bas (14 · 13 · 13), un seul cran, comme avant. Jamais plus de 30 % de moins. *(v2.16.0)*
 
-## 4. Guide, paliers, tutoriel (3 min)
+## 4. Guide, paliers, premier lancement (3 min)
 
 - [ ] **Documentation d'un exercice.** Adduction à la machine › Documentation : taper un titre de
       l'encadré du haut ouvre l'article nommé. Étirements : le cadre général est proposé, l'accueil
@@ -252,8 +252,10 @@ Une séance de deux exercices au moins, dont un en barre.
 - [ ] **Première séance et DOMS** (installation neuve ou IndexedDB réinitialisé) : enregistrer une
       première séance, voir le Malphite-Chad « Rock solid. » sur l'accueil ; 48 h plus tard la
       notification « Tes premières DOMS », puis la porte au toucher. *(31 août)*
-- [ ] **Tutoriel.** Le sélecteur de guidage à quatre modes, une série unilatérale menée jusqu'au bout ;
-      « Passer » ne rouvre rien d'autre. *(v2.5.0)*
+- [ ] **Premier lancement** (installation neuve ou données effacées) : l'app s'ouvre directement sur
+      l'accueil, sans feuille ni visite guidée, et aucun « ? » n'est dans l'en-tête des écrans. Le mode
+      d'annonce est « Sons + voix » d'emblée ; Réglages › Annonces propose toujours les quatre modes
+      (Silence, Sons, Sons + voix, Voix uniquement) et le choix survit à un redémarrage.
 - [ ] **Ouverture normale.** Fermer l'app, la relancer à froid : plaques, deux phrases, accueil.
       *(30 août)*
 

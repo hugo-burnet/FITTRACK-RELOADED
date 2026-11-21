@@ -25,26 +25,21 @@ import type { Workout } from '@/data/types';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { useRoutineLibraryView } from '@/stores/routineLibraryView';
 import { resetDb } from '@/test/resetDb';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { ExercisePickerScreen } from './ExercisePickerScreen';
 import { RoutineEditorScreen } from './RoutineEditorScreen';
 import { RoutinesScreen } from './RoutinesScreen';
 
-function renderRoutineFlow(initialEntry = '/routines', report = vi.fn()) {
+function renderRoutineFlow(initialEntry = '/routines') {
   return render(
-    <TutorialContext.Provider
-      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
-    >
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <LocationProbe />
-        <Routes>
-          <Route path="/routines" element={<RoutinesScreen />} />
-          <Route path="/routines/:id" element={<RoutineEditorScreen />} />
-          <Route path="/routines/:id/add" element={<ExercisePickerScreen />} />
-          <Route path="/programs" element={<p>Liste des programmes</p>} />
-        </Routes>
-      </MemoryRouter>
-    </TutorialContext.Provider>,
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <LocationProbe />
+      <Routes>
+        <Route path="/routines" element={<RoutinesScreen />} />
+        <Route path="/routines/:id" element={<RoutineEditorScreen />} />
+        <Route path="/routines/:id/add" element={<ExercisePickerScreen />} />
+        <Route path="/programs" element={<p>Liste des programmes</p>} />
+      </Routes>
+    </MemoryRouter>,
   );
 }
 
@@ -64,12 +59,6 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
-function reportedEvent<T extends string>(report: ReturnType<typeof vi.fn>, type: T) {
-  const event = report.mock.calls.map(([value]) => value).find((value) => value.type === type);
-  expect(event).toBeDefined();
-  return event;
-}
-
 describe('parcours de composition d’une routine', () => {
   const monday = new Date(2026, 7, 10, 8, 0, 0, 0).getTime();
 
@@ -82,38 +71,30 @@ describe('parcours de composition d’une routine', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('reports routine creation only after a successful repository write and exposes the picker anchor', async () => {
-    const report = vi.fn();
+  it('creates the routine in the repository, then opens its editor', async () => {
     const user = userEvent.setup();
-    renderRoutineFlow('/routines', report);
+    renderRoutineFlow('/routines');
 
-    expect(document.querySelectorAll('[data-tutorial-id="routine-create"]')).toHaveLength(1);
     await user.click(screen.getByRole('button', { name: 'Nouvelle routine' }));
     await user.click(screen.getByRole('button', { name: 'Routine vide' }));
 
-    await waitFor(() => expect(reportedEvent(report, 'routine-created')).toBeDefined());
-    const created = reportedEvent(report, 'routine-created');
-    expect(created).toEqual({ type: 'routine-created', routineId: expect.any(String) });
-    expect((await getRoutineDetail(created.routineId))?.routine.id).toBe(created.routineId);
     await screen.findByRole('textbox', { name: 'Nom de la routine' });
-    expect(document.querySelectorAll('[data-tutorial-id="routine-add-exercise"]')).toHaveLength(1);
+    const createdId = screen.getByTestId('location-probe').textContent?.split('/')[2] ?? '';
+    expect((await getRoutineDetail(createdId))?.routine.id).toBe(createdId);
   });
 
-  it('does not report or navigate when routine creation is rejected', async () => {
-    const report = vi.fn();
+  it('does not navigate when routine creation is rejected', async () => {
     const user = userEvent.setup();
     const failure = new Error('IndexedDB unavailable');
     const create = vi.spyOn(routinesRepository, 'createRoutine').mockRejectedValueOnce(failure);
-    renderRoutineFlow('/routines', report);
+    renderRoutineFlow('/routines');
 
     await user.click(screen.getByRole('button', { name: 'Nouvelle routine' }));
     await user.click(screen.getByRole('button', { name: 'Routine vide' }));
     await waitFor(() => expect(create).toHaveBeenCalledOnce());
     await Promise.resolve();
 
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'routine-created' }));
     expect(screen.queryByRole('textbox', { name: 'Nom de la routine' })).not.toBeInTheDocument();
-    expect(document.querySelector('[data-tutorial-id="routine-add-exercise"]')).toBeNull();
   });
 
   it('réutilise les commandes compactes de la séance et omet la racine vide', async () => {
@@ -142,7 +123,7 @@ describe('parcours de composition d’une routine', () => {
     expect(screen.getByRole('button', { name: 'Tout déplier' })).toBeVisible();
   });
 
-  it('reports collection start only after the workout repository resolves', async () => {
+  it('opens the workout only after the workout repository resolves', async () => {
     const routine = await createRoutine('Démarrage collection');
     const workout: Workout = {
       id: 'workout-collection-success',
@@ -158,32 +139,20 @@ describe('parcours de composition d’une routine', () => {
       startedTimezoneOffsetMinutes: 120,
     };
     const pending = deferred<Workout>();
-    const report = vi.fn();
     const user = userEvent.setup();
     vi.spyOn(workoutsRepository, 'startWorkoutFromRoutine').mockReturnValueOnce(pending.promise);
-    renderRoutineFlow('/routines', report);
+    renderRoutineFlow('/routines');
 
     await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
     await user.click(screen.getByRole('button', { name: 'Démarrer' }));
 
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-started' }));
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/routines');
 
     pending.resolve(workout);
 
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'workout-started',
-        workoutId: workout.id,
-        routineId: routine.id,
-      }),
-    );
-    expect(
-      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'workout-started'),
-    ).toEqual([{ type: 'workout-started', workoutId: workout.id, routineId: routine.id }]);
-    // `navigate` runs right after `report`, but through a React transition: the router's new
-    // location is committed a tick later. Asserting it at once passed on a quiet machine and read
-    // `/routines` on a busy CI runner.
+    // `navigate` goes through a React transition: the router's new location is committed a tick
+    // later. Asserting it at once passed on a quiet machine and read `/routines` on a busy CI
+    // runner.
     await waitFor(() =>
       expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
     );
@@ -293,13 +262,12 @@ describe('parcours de composition d’une routine', () => {
     });
   });
 
-  it('keeps the collection route and emits no event when workout start is rejected', async () => {
+  it('keeps the collection route when workout start is rejected', async () => {
     const routine = await createRoutine('Échec collection');
     const pending = deferred<Workout>();
-    const report = vi.fn();
     const user = userEvent.setup();
     vi.spyOn(workoutsRepository, 'startWorkoutFromRoutine').mockReturnValueOnce(pending.promise);
-    renderRoutineFlow('/routines', report);
+    renderRoutineFlow('/routines');
 
     await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
     await user.click(screen.getByRole('button', { name: 'Démarrer' }));
@@ -307,11 +275,10 @@ describe('parcours de composition d’une routine', () => {
 
     await Promise.resolve();
 
-    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-started' }));
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/routines');
   });
 
-  it('reports persisted routine configuration events with exact IDs and values', async () => {
+  it('persists the routine configuration: exercises, sets, targets, rest, start', async () => {
     const first = await createCustomExercise({
       name: 'Développé guidé',
       primaryMuscle: 'chest',
@@ -329,17 +296,10 @@ describe('parcours de composition d’une routine', () => {
       isUnilateral: 0,
     });
     const routine = await createRoutine('Poussée');
-    const report = vi.fn();
     const user = userEvent.setup();
-    renderRoutineFlow(`/routines/${routine.id}`, report);
+    renderRoutineFlow(`/routines/${routine.id}`);
 
     await screen.findByRole('textbox', { name: 'Nom de la routine' });
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'routine-opened', routineId: routine.id }),
-    );
-    expect(
-      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
-    ).toEqual([{ type: 'routine-opened', routineId: routine.id }]);
 
     await user.click(screen.getByRole('button', { name: 'Ajouter un exercice' }));
     await user.click(await screen.findByRole('checkbox', { name: new RegExp(first.name) }));
@@ -347,96 +307,40 @@ describe('parcours de composition d’une routine', () => {
     await user.click(screen.getByRole('button', { name: 'Ajouter 2 exercices' }));
     await screen.findByRole('textbox', { name: 'Nom de la routine' });
 
-    await waitFor(() => {
-      // Deux exercices personnels : ils n'ont pas de slug, et l'événement ne
-      // s'en invente pas. Une mission ne peut donc désigner qu'un exercice du
-      // catalogue — celui de la campagne en est un.
-      expect(reportedEvent(report, 'routine-exercise-added')).toEqual({
-        type: 'routine-exercise-added',
-        routineId: routine.id,
-        exerciseSlugs: [],
-      });
+    await waitFor(async () => {
+      expect((await getRoutineDetail(routine.id))?.exercises).toHaveLength(2);
     });
-    expect(
-      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
-    ).toEqual([
-      { type: 'routine-opened', routineId: routine.id },
-      { type: 'routine-opened', routineId: routine.id },
-    ]);
-    report.mockClear();
-    expect(document.querySelectorAll('[data-tutorial-id="routine-add-exercise"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="routine-first-set"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="routine-exercise-menu"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="routine-add-set"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="routine-start"]')).toHaveLength(1);
 
-    await user.click(
-      document.querySelector('[data-tutorial-id="routine-add-set"]') as HTMLButtonElement,
-    );
+    await user.click(screen.getAllByRole('button', { name: 'Ajouter une série' })[0]!);
     await waitFor(async () => {
       const detail = await getRoutineDetail(routine.id);
       expect(detail?.exercises[0]?.sets).toHaveLength(2);
     });
-    const addedSet = reportedEvent(report, 'routine-set-added');
-    expect(addedSet).toEqual({
-      type: 'routine-set-added',
-      routineId: routine.id,
-      setId: expect.any(String),
-      count: 2,
-    });
-    const detailAfterSet = await getRoutineDetail(routine.id);
-    expect(detailAfterSet?.exercises[0]?.sets.map((set) => set.id)).toContain(addedSet.setId);
 
-    await user.click(
-      document.querySelector('[data-tutorial-id="routine-first-set"]') as HTMLButtonElement,
-    );
+    await user.click(screen.getAllByRole('button', { name: /^1libre/ })[0]!);
     await user.click(screen.getAllByRole('button', { name: 'Augmenter' })[0] as HTMLButtonElement);
     await waitFor(async () => {
       const detail = await getRoutineDetail(routine.id);
       expect(detail?.exercises[0]?.sets[0]?.targetReps).toBe(1);
-      expect(reportedEvent(report, 'routine-target-updated')).toEqual({
-        type: 'routine-target-updated',
-        routineId: routine.id,
-        setId: expect.any(String),
-      });
     });
     await user.click(screen.getByRole('button', { name: 'Appliquer à toutes les séries' }));
     await waitFor(async () => {
       const detail = await getRoutineDetail(routine.id);
       expect(detail?.exercises[0]?.sets[1]?.targetReps).toBe(1);
-      expect(
-        report.mock.calls
-          .map(([event]) => event)
-          .filter((event) => event.type === 'routine-target-updated'),
-      ).toHaveLength(2);
     });
 
-    await user.click(
-      document.querySelector('[data-tutorial-id="routine-exercise-menu"]') as HTMLButtonElement,
-    );
+    await user.click(screen.getAllByRole('button', { name: /^Dans cette routine/ })[0]!);
     await user.click(screen.getByRole('button', { name: '1:30' }));
     await waitFor(async () => {
       const detail = await getRoutineDetail(routine.id);
       expect(detail?.exercises[0]?.row.restSeconds).toBe(90);
-      expect(reportedEvent(report, 'routine-rest-updated')).toEqual({
-        type: 'routine-rest-updated',
-        routineId: routine.id,
-        seconds: 90,
-      });
     });
 
     await user.click(screen.getByRole('button', { name: 'Démarrer' }));
     await waitFor(async () => {
       const workout = await getActiveWorkout();
-      expect(reportedEvent(report, 'workout-started')).toEqual({
-        type: 'workout-started',
-        workoutId: workout?.id,
-        routineId: routine.id,
-      });
+      expect(workout?.routineId).toBe(routine.id);
     });
-    expect(
-      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
-    ).toEqual([]);
   });
 
   it('persiste la routine complète après un remontage de la liste', async () => {

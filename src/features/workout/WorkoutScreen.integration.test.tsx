@@ -14,7 +14,6 @@ import {
 } from '@/data/repositories/workouts';
 import * as workoutsRepository from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
-import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { exerciseDisplayName } from '@/i18n/labels';
 import { DELOAD_PERCENT } from '@/lib/deload';
@@ -51,17 +50,13 @@ async function firstSet(workoutId: string): Promise<WorkoutSet> {
   return set;
 }
 
-function renderWorkout(report = vi.fn()) {
+function renderWorkout() {
   return render(
-    <TutorialContext.Provider
-      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
-    >
-      <MemoryRouter initialEntries={['/workout']}>
-        <Routes>
-          <Route path="/workout" element={<WorkoutScreen />} />
-        </Routes>
-      </MemoryRouter>
-    </TutorialContext.Provider>,
+    <MemoryRouter initialEntries={['/workout']}>
+      <Routes>
+        <Route path="/workout" element={<WorkoutScreen />} />
+      </Routes>
+    </MemoryRouter>,
   );
 }
 
@@ -567,7 +562,7 @@ async function seedTwoSetWorkout(): Promise<string> {
   return workoutId;
 }
 
-describe('WorkoutScreen — tutoriel durable', () => {
+describe('WorkoutScreen — écriture durable', () => {
   beforeEach(async () => {
     useRestTimer.getState().stop();
     useRepPacer.getState().stop();
@@ -582,33 +577,19 @@ describe('WorkoutScreen — tutoriel durable', () => {
     useRepPacer.getState().stop();
   });
 
-  it('reports a partial numeric edit as non-recordable and exposes unique first-row anchors', async () => {
+  it('writes a partial numeric edit to the set without validating it', async () => {
     const workoutId = await seedActiveWorkout();
-    const set = await firstSet(workoutId);
-    const report = vi.fn();
-    renderWorkout(report);
+    renderWorkout();
 
     await screen.findByText('Développé couché');
-    expect(document.querySelectorAll('[data-tutorial-id="workout-first-set"]')).toHaveLength(1);
-    expect(
-      document.querySelectorAll('[data-tutorial-id="workout-first-set-complete"]'),
-    ).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="workout-finish"]')).toHaveLength(1);
-    expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(0);
-
     await userEvent.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
 
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'workout-set-written',
-        workoutId,
-        setId: set.id,
-        recordable: false,
-      }),
+    await waitFor(async () =>
+      expect(await firstSet(workoutId)).toMatchObject({ weight: 80, isCompleted: 0 }),
     );
   });
 
-  it('reports a recordable first row only after updateSetValues resolves', async () => {
+  it('writes the typed reps only once updateSetValues resolves', async () => {
     const workoutId = await seedActiveWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80 });
@@ -618,45 +599,33 @@ describe('WorkoutScreen — tutoriel durable', () => {
       await gate.promise;
       return realUpdate(setId, values);
     });
-    const report = vi.fn();
-    renderWorkout(report);
+    renderWorkout();
 
     fireEvent.change(await screen.findByRole('textbox', { name: 'Série 1 — reps' }), {
       target: { value: '10' },
     });
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'workout-set-written', recordable: true }),
-    );
+    expect(await firstSet(workoutId)).toMatchObject({ weight: 80 });
+    expect((await firstSet(workoutId)).reps).not.toBe(10);
 
     gate.resolve();
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'workout-set-written',
-        workoutId,
-        setId: set.id,
-        recordable: true,
-      }),
+    await waitFor(async () =>
+      expect(await firstSet(workoutId)).toMatchObject({ weight: 80, reps: 10 }),
     );
-    expect(await firstSet(workoutId)).toMatchObject({ weight: 80, reps: 10 });
   });
 
-  it('emits no write event when updateSetValues rejects', async () => {
+  it('shows the write failure when updateSetValues rejects', async () => {
     await seedActiveWorkout();
     vi.spyOn(workoutsRepository, 'updateSetValues').mockRejectedValueOnce(
       new Error('IndexedDB unavailable'),
     );
-    const report = vi.fn();
-    renderWorkout(report);
+    renderWorkout();
 
     fireEvent.change(await screen.findByRole('textbox', { name: 'Série 1 — kg' }), {
       target: { value: '80' },
     });
     await waitFor(() => expect(workoutsRepository.updateSetValues).toHaveBeenCalledOnce());
-    await Promise.resolve();
 
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'workout-set-written' }),
-    );
+    expect(await screen.findByRole('alert')).toHaveTextContent('Enregistrement impossible');
   });
 
   it('ne perd pas le poids tapé quand la coche devance la relecture de l’écran', async () => {
@@ -710,7 +679,7 @@ describe('WorkoutScreen — tutoriel durable', () => {
     );
   });
 
-  it('starts rest and reports completion only after the durable write', async () => {
+  it('starts rest only after the durable write', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
@@ -720,40 +689,27 @@ describe('WorkoutScreen — tutoriel durable', () => {
       await gate.promise;
       return realComplete(setId, values, options);
     });
-    const report = vi.fn();
-    renderWorkout(report);
+    renderWorkout();
 
     const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
     await waitFor(() => expect(complete).toBeEnabled());
     await userEvent.click(complete);
 
     expect(useRestTimer.getState().setId).toBeNull();
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'workout-set-completed' }),
-    );
-    expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(0);
 
     gate.resolve();
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'workout-set-completed',
-        workoutId,
-        setId: set.id,
-      }),
-    );
-    expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 });
+    await waitFor(async () => expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 }));
     expect(useRestTimer.getState().setId).toBe(set.id);
   });
 
-  it('reports a write error without starting rest or reporting completion', async () => {
+  it('shows a write error without starting rest', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
     vi.spyOn(workoutsRepository, 'completeSet').mockRejectedValueOnce(
       new Error('IndexedDB unavailable'),
     );
-    const report = vi.fn();
-    renderWorkout(report);
+    renderWorkout();
 
     const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
     await waitFor(() => expect(complete).toBeEnabled());
@@ -762,50 +718,6 @@ describe('WorkoutScreen — tutoriel durable', () => {
 
     expect(useRestTimer.getState().setId).toBeNull();
     expect(await screen.findByRole('alert')).toHaveTextContent('Enregistrement impossible');
-    expect(report).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'workout-set-completed' }),
-    );
-  });
-
-  it('reports the exact resting set when its countdown finishes', async () => {
-    const workoutId = await seedTwoSetWorkout();
-    const set = await firstSet(workoutId);
-    await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
-    const report = vi.fn();
-    renderWorkout(report);
-
-    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
-    await waitFor(() => expect(complete).toBeEnabled());
-    await userEvent.click(complete);
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({
-        type: 'workout-set-completed',
-        workoutId,
-        setId: set.id,
-      }),
-    );
-    report.mockClear();
-
-    act(() => useRestTimer.getState().start(set.id, 0.05));
-
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'rest-finished', setId: set.id }),
-    );
-  });
-
-  it('reports opening the finish screen from its unique footer anchor', async () => {
-    const workoutId = await seedActiveWorkout();
-    const report = vi.fn();
-    renderWorkout(report);
-
-    await screen.findByText('Développé couché');
-    const finish = document.querySelector(
-      '[data-tutorial-id="workout-finish"]',
-    ) as HTMLButtonElement | null;
-    expect(finish).not.toBeNull();
-    await userEvent.click(finish!);
-
-    expect(report).toHaveBeenCalledWith({ type: 'workout-finish-opened', workoutId });
   });
 });
 
@@ -859,21 +771,17 @@ describe('WorkoutScreen — effort et fatigue', () => {
   it('termine le repos sans lancer la série suivante tant que le RPE reste ouvert', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
-    const report = vi.fn();
     const user = userEvent.setup();
-    renderWorkout(report);
+    renderWorkout();
 
     await screen.findByText('Développé couché');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
     expect(await screen.findByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
-    report.mockClear();
 
     act(() => useRestTimer.getState().start(set.id, 0.05));
 
-    await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'rest-finished', setId: set.id }),
-    );
+    await waitFor(() => expect(useRestTimer.getState().setId).toBeNull());
     expect(useRestTimer.getState().setId).toBeNull();
     expect(useRepPacer.getState().setId).toBeNull();
   });

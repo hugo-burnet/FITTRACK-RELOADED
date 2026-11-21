@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAppNavigate } from './navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { discardWorkout, getActiveWorkout, getWorkoutDetail } from '@/data/repositories/workouts';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ElapsedTime } from '@/features/workout/ElapsedTime';
 import { t } from '@/i18n/fr';
 import { ChevronRightIcon } from '@/ui/icons';
@@ -25,7 +24,6 @@ import { isWorkoutStale } from './staleWorkout';
 export function ActiveWorkoutBar() {
   const { pathname } = useLocation();
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
   const [recoveryOpen, setRecoveryOpen] = useState(false);
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const detail = useLiveQuery(
@@ -71,7 +69,6 @@ export function ActiveWorkoutBar() {
         );
 
   const choose = (choice: 'resume' | 'finish') => {
-    tutorial?.report({ type: 'stale-workout-choice', workoutId: active.id, choice });
     setRecoveryOpen(false);
     void navigate(choice === 'resume' ? '/workout' : '/workout/finish');
   };
@@ -79,11 +76,6 @@ export function ActiveWorkoutBar() {
   const discard = () => {
     void discardWorkout(active.id)
       .then(() => {
-        tutorial?.report({
-          type: 'stale-workout-choice',
-          workoutId: active.id,
-          choice: 'discard',
-        });
         setRecoveryOpen(false);
         void navigate('/', { replace: true });
       })
@@ -94,9 +86,7 @@ export function ActiveWorkoutBar() {
     <>
       <button
         type="button"
-        data-tutorial-id="active-workout-bar"
         onClick={() => {
-          tutorial?.offerMission('TUT-REC-01');
           setRecoveryOpen(true);
         }}
         className="animate-rise flex min-h-14 shrink-0 items-center gap-3 border-t border-[var(--border)]

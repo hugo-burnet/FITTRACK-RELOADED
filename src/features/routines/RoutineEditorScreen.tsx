@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -21,7 +21,6 @@ import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositori
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import {
@@ -66,8 +65,6 @@ type SheetState =
 export function RoutineEditorScreen() {
   const { id = '' } = useParams();
   const navigate = useAppNavigate();
-  const tutorial = useTutorialControls();
-  const report = tutorial?.report;
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const [benchmarking, setBenchmarking] = useState(false);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
@@ -88,8 +85,7 @@ export function RoutineEditorScreen() {
   const running = active != null;
 
   const start = () => {
-    void startWorkoutFromRoutine(id).then((workout) => {
-      report?.({ type: 'workout-started', workoutId: workout.id, routineId: id });
+    void startWorkoutFromRoutine(id).then(() => {
       navigate('/workout');
     });
   };
@@ -108,12 +104,6 @@ export function RoutineEditorScreen() {
       subtitle: detail.routine.subtitle ?? '',
     });
   }
-
-  useEffect(() => {
-    if (detail?.routine.id === id) {
-      report?.({ type: 'routine-opened', routineId: id });
-    }
-  }, [detail?.routine.id, id, report]);
 
   const goBack = () => {
     // React Router's own history index, not `location.key`: arriving here through
@@ -142,41 +132,19 @@ export function RoutineEditorScreen() {
 
   const { routine, exercises } = detail;
 
-  const reportTargetUpdate = (setId: string, changes: RoutineSetTargets) => {
-    const hasTarget = Object.entries(changes).some(
-      ([key, value]) => key.startsWith('target') && typeof value === 'number',
-    );
-    if (hasTarget) report?.({ type: 'routine-target-updated', routineId: routine.id, setId });
-  };
-
   const saveSetTargets = (setId: string, changes: RoutineSetTargets) => {
-    void updateRoutineSet(setId, changes).then(() => {
-      reportTargetUpdate(setId, changes);
-    });
+    void updateRoutineSet(setId, changes);
   };
 
   const applySetTargets = (rowId: string, changes: RoutineSetTargets) => {
-    void applyToAllSets(rowId, changes).then(() => {
-      // Un geste, plusieurs séries : la première porte l'identité, parce que
-      // c'est celle que l'utilisateur avait sous les yeux en la répercutant.
-      const first = exercises.find((line) => line.row.id === rowId)?.sets[0];
-      if (first !== undefined) reportTargetUpdate(first.id, changes);
-    });
+    void applyToAllSets(rowId, changes);
   };
 
   const saveExerciseChanges = (
     rowId: string,
     changes: { restSeconds?: number; notes?: string },
   ) => {
-    void updateRoutineExercise(rowId, changes).then(() => {
-      if (changes.restSeconds !== undefined) {
-        report?.({
-          type: 'routine-rest-updated',
-          routineId: routine.id,
-          seconds: changes.restSeconds,
-        });
-      }
-    });
+    void updateRoutineExercise(rowId, changes);
   };
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const setCount = exercises.reduce((total, line) => total + line.sets.length, 0);
@@ -219,7 +187,6 @@ export function RoutineEditorScreen() {
         running ? undefined : (
           <ActionBand
             label={t('routine.start')}
-            tutorialId="routine-start"
             // Une routine sans exercice démarrerait une séance vide sous un nom
             // qui promet des exercices. L'état vide dit déjà quoi faire.
             disabled={active === undefined || exercises.length === 0}
@@ -234,17 +201,11 @@ export function RoutineEditorScreen() {
             <Input
               label={t('routine.nameLabel')}
               placeholder={t('routine.namePlaceholder')}
-              tutorialId="routine-name"
               value={draft.name}
               enterKeyHint="done"
               onChange={(event) => {
                 setDraft({ ...draft, name: event.target.value });
                 void updateRoutine(routine.id, { name: event.target.value });
-                report?.({
-                  type: 'routine-renamed',
-                  routineId: routine.id,
-                  name: event.target.value,
-                });
               }}
             />
             {/* Everything the name should not have to carry, so the title stays
@@ -326,13 +287,12 @@ export function RoutineEditorScreen() {
               keyOf={(line) => line.row.id}
               disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderRoutineExercises(routine.id, from, to)}
-              renderItem={(line, index, state) => (
+              renderItem={(line, _index, state) => (
                 <RoutineExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
                   state={state}
                   reorderEnabled={reorderUnlocked}
-                  tutorial={index === 0}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onOpenSet={(set) =>
                     setSheet({
@@ -343,20 +303,7 @@ export function RoutineEditorScreen() {
                     })
                   }
                   onDeleteSet={(set) => void deleteRoutineSet(set.id)}
-                  onAddSet={() => {
-                    void addRoutineSet(line.row.id).then((set) => {
-                      // Le compte part de la liste rendue : une étape qui
-                      // demande « une deuxième série » a besoin de savoir
-                      // combien il y en a, pas seulement qu'il y en a une de
-                      // plus.
-                      report?.({
-                        type: 'routine-set-added',
-                        routineId: routine.id,
-                        setId: set.id,
-                        count: line.sets.length + 1,
-                      });
-                    });
-                  }}
+                  onAddSet={() => void addRoutineSet(line.row.id)}
                 />
               )}
             />
@@ -370,9 +317,7 @@ export function RoutineEditorScreen() {
         <Card>
           <AddRow
             label={t('routine.addExercise')}
-            tutorialId="routine-add-exercise"
             onClick={() => {
-              report?.({ type: 'routine-picker-opened', routineId: routine.id });
               void navigate(`/routines/${routine.id}/add`);
             }}
           />

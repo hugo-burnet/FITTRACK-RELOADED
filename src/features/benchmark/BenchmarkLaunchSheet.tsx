@@ -20,8 +20,7 @@ type Choice = BenchmarkGoal | 'routine';
  *
  * Partagée par les portes — le menu d'une routine dans la liste, la ligne de son éditeur, l'écran d'un
  * programme — pour qu'elles ne puissent pas dire deux choses différentes ni lancer deux séances différentes.
- * Même garde que « Démarrer » côté appelant (rien ne tourne), même sortie : la séance en direct. Aucun rapport
- * au tutoriel : lancer un benchmark n'est pas l'étape qu'il attend.
+ * Même garde que « Démarrer » côté appelant (rien ne tourne), même sortie : la séance en direct.
  *
  * Le dernier choix reste choisi tant que l'écran vit : on en refait un dans la foulée, du même style.
  */

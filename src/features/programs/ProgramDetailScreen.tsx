@@ -29,7 +29,6 @@ import {
   resolveSchedule,
 } from '@/lib/programs';
 import type { ProgramPosition } from '@/lib/programs';
-import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
@@ -103,7 +102,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
   const intention = loadRuleReading(week);
   const evidence = phaseEvidenceFor(week.phase);
   return (
-    <section data-tutorial-id="program-intention" className="border-y border-[var(--border)] py-4">
+    <section className="border-y border-[var(--border)] py-4">
       <p className="label-xs font-semibold text-[var(--text-2)]">{t('program.intentionTitle')}</p>
       <p
         className={`mt-2 text-xl font-semibold ${
@@ -246,7 +245,6 @@ export function ProgramDetailScreen() {
   const { id = '' } = useParams();
   const navigate = useAppNavigate();
   const [actionsOpen, setActionsOpen] = useState(false);
-  const tutorial = useTutorialControls();
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionErrorKey, setActionErrorKey] = useState<TranslationKey | null>(null);
   const [replacementOpen, setReplacementOpen] = useState(false);
@@ -389,9 +387,7 @@ export function ProgramDetailScreen() {
         // Même un bloc terminé garde son menu : il reste à supprimer.
         <HeaderAction
           label={t('program.actionsLabel')}
-          tutorialId="program-actions"
           onClick={() => {
-            tutorial?.report({ type: 'program-actions-opened', programId: detail.program.id });
             setActionsOpen(true);
           }}
         >
@@ -402,7 +398,6 @@ export function ProgramDetailScreen() {
         canStart ? (
           <ActionBand
             label={t('program.startSession', { name: effectiveSelected.routineName! })}
-            tutorialId="program-start"
             disabled={starting}
             onClick={() => void beginStart()}
           />
@@ -451,11 +446,6 @@ export function ProgramDetailScreen() {
             startDisabled={activeWorkoutExists || detail.program.status !== 'active'}
             onSelect={(entryId) => {
               setSelectedEntryId(entryId);
-              tutorial?.report({
-                type: 'program-session-selected',
-                programId: detail.program.id,
-                entryId,
-              });
             }}
             onRepair={setReplacementTarget}
           />
