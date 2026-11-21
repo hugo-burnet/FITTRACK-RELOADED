@@ -87,6 +87,7 @@ export function HistoryCalendar({
         <div
           aria-label={t('history.calendarGrid', { month: monthLabel })}
           aria-busy={completedWorkoutTimestamps === undefined}
+          data-part="calendar"
           className="overflow-x-auto rounded-2xl"
         >
           <div

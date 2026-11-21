@@ -14,7 +14,7 @@ export const THEME_STORAGE_KEY = 'fittrack:theme';
  */
 const SYSTEM_BAR_COLOR: Record<Theme, string> = {
   dark: '#12110f',
-  light: '#f7f8f6',
+  light: '#f1f3ef',
   tty1: '#000000',
   cyber: '#0b0c12',
 };

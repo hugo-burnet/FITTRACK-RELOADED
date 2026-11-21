@@ -34,7 +34,7 @@ describe('theme', () => {
     document.head.append(meta);
 
     applyTheme('light');
-    expect(meta.content).toBe('#f7f8f6');
+    expect(meta.content).toBe('#f1f3ef');
     applyTheme('dark');
     expect(meta.content).toBe('#12110f');
 
