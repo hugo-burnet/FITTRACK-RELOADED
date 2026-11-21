@@ -230,6 +230,14 @@
   margin-block-end: 0;
 }
 
+/* Une tuile `G` qui ouvre un groupe titré : le titre (« ── Cette semaine ─── ») et la légende de la tuile
+   (« ┌ Tonnage ─ ») étaient deux filets à vingt pixels l'un de l'autre, lus comme deux cadres emboîtés.
+   Un cran de plus entre eux, et la légende redevient celle de sa tuile. Seule la première tuile d'un
+   groupe titré : plus bas, l'espace de la grille suffit. */
+:root[data-theme='tty1'] h2 + ul > li:first-child:has([data-part='tile'][data-size='G']) {
+  margin-top: 12px;
+}
+
 /* Une ligne de liste se sépare de la suivante par un filet pointillé. Le trait lui-même vient du
    composant (`border-b`, retiré sur la dernière) : seul son style change. */
 :root[data-theme='tty1'] [data-part='row'] {
