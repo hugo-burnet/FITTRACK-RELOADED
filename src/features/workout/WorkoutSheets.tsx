@@ -380,9 +380,12 @@ export function WorkoutSheets({
           if (sheet?.kind === 'pace') void updateWorkoutExercise(sheet.rowId, { repSeconds });
         }}
         onSetDefault={(repSeconds) => void setDefaultRepSeconds(repSeconds)}
-        onStart={() => {
+        onStart={(repSeconds) => {
           if (paceSheetLine === null) return;
-          if (!pace.startFor(paceSheetLine)) return;
+          // The sheet's own tempo wins over the line as last read: the write
+          // behind a preset tap may not have come back through the live query.
+          const line = { ...paceSheetLine, row: { ...paceSheetLine.row, repSeconds } };
+          if (!pace.startFor(line)) return;
         }}
         onStop={() => pace.stop()}
       />
