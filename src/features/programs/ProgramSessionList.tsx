@@ -1,7 +1,15 @@
 import type { ProgramWeek } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { Button, SectionTitle } from '@/ui';
+import { Button, Card, SectionTitle } from '@/ui';
+import { DayColumn, RowText, RowTrailing } from './programRows';
+import {
+  PRESSABLE_ROW_CLASS,
+  SELECT_PART_CLASS,
+  WEEK_ROW_CLASS,
+  dayDateReading,
+} from './programRowStyle';
+import { ChevronRightIcon } from '@/ui/icons';
 import { weekRunLine } from './weekReading';
 import { groupWeekRuns } from './weekRuns';
 
@@ -14,6 +22,10 @@ export interface ProgramSessionReading {
   dayOfWeek: number;
   order: number;
   state: ProgramSessionState;
+  /** Le jour où elle est prévue — ou, une fois faite, celui où elle l'a été. */
+  date: number;
+  /** Présent quand la séance est faite : sa fiche d'historique est `/history/:workoutId`. */
+  workoutId?: string;
   repairUnavailableReason?: 'locked' | 'completed' | null;
 }
 
@@ -23,8 +35,12 @@ interface Props {
   cycleReading?: string | null;
   selectedEntryId: string | null;
   startDisabled: boolean;
+  /** Le jour d'aujourd'hui (ISO 1-7) quand la semaine affichée est la semaine en cours ; sinon `null`. */
+  todayDayOfWeek?: number | null;
   onSelect: (entryId: string) => void;
   onRepair: (session: ProgramSessionReading) => void;
+  /** Ouvre la séance faite : le lien manquant entre un programme et son historique. */
+  onOpenWorkout: (workoutId: string) => void;
 }
 
 const STATE_KEYS: Record<ProgramSessionState, TranslationKey> = {
@@ -45,27 +61,23 @@ const DAY_KEYS: TranslationKey[] = [
 ];
 
 /**
- * Ce qui reste du bloc, par changements et non par semaines.
+ * Ce qui reste du programme, par changements et non par semaines.
  *
  * Une ligne par semaine donnait huit lignes identiques sur un trajet plat —
  * huit fois la même phrase pour apprendre qu'il ne se passe rien. Les suites
  * identiques sont repliées : ce qui reste à l'écran, ce sont les endroits où le
- * bloc change d'avis.
+ * programme change d'avis.
  */
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
   if (weeks.length === 0) return null;
   return (
     <section>
       <SectionTitle>{t('program.upcomingTitle')}</SectionTitle>
-      <div className="border-y border-[var(--border)]">
+      <Card>
         {groupWeekRuns(weeks).map((run) => (
-          <div
-            key={run.weekIndex}
-            className="flex min-h-14 items-center border-b border-[var(--border)] py-3
-              last:border-b-0"
-          >
+          <div key={run.weekIndex} className={WEEK_ROW_CLASS}>
             <span
-              className={`text-base ${
+              className={`min-w-0 flex-1 text-base ${
                 run.phase === 'deload'
                   ? 'font-semibold text-[var(--accent-ink)]'
                   : 'text-[var(--text-1)]'
@@ -75,7 +87,7 @@ export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
             </span>
           </div>
         ))}
-      </div>
+      </Card>
     </section>
   );
 }
@@ -84,23 +96,15 @@ export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
 const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 
 /**
- * Un jour sans séance. Même gabarit qu'une séance — barre de sélection
- * transparente comprise, pour que les deux colonnes restent alignées — mais en
- * texte secondaire : le repos est un fait de la semaine, pas un objet à ouvrir.
+ * Un jour sans séance. Le repos est un fait de la semaine, pas un objet à
+ * ouvrir : une ligne sans geste, en texte secondaire.
  */
-function RestRow({ dayOfWeek }: { dayOfWeek: number }) {
+function RestRow({ dayOfWeek, today }: { dayOfWeek: number; today: boolean }) {
   return (
-    <div
-      className="flex min-h-16 items-center gap-3 border-b border-[var(--border)] py-3
-        last:border-b-0"
-    >
-      <span aria-hidden="true" className="h-8 w-0.5 shrink-0 rounded-full bg-transparent" />
-      <span className="min-w-0 flex-1">
-        <span className="block text-base text-[var(--text-2)]">{t('program.restDay')}</span>
-        <span className="mt-0.5 block text-sm text-[var(--text-2)]">
-          {t(DAY_KEYS[dayOfWeek - 1]!)}
-        </span>
-      </span>
+    <div className={WEEK_ROW_CLASS}>
+      <DayColumn dayOfWeek={dayOfWeek} today={today} />
+      <RowText title={t('program.restDay')} muted />
+      {today && <RowTrailing>{t('program.sessionToday')}</RowTrailing>}
     </div>
   );
 }
@@ -110,20 +114,27 @@ function RestRow({ dayOfWeek }: { dayOfWeek: number }) {
  *
  * Ne lister que les jours travaillés donnait une semaine en creux : on voyait
  * deux séances sans voir qu'elles étaient collées, ni combien de jours les
- * séparaient. Les jours de repos sont la moitié de l'information d'un bloc.
+ * séparaient. Les jours de repos sont la moitié de l'information d'un programme.
+ *
+ * Une séance faite mène à sa fiche ; les autres se choisissent, c'est celle
+ * qu'on lance depuis le bas de l'écran.
  */
 function SessionRow({
   session,
   selected,
   startDisabled,
+  today,
   onSelect,
   onRepair,
+  onOpenWorkout,
 }: {
   session: ProgramSessionReading;
   selected: boolean;
   startDisabled: boolean;
+  today: boolean;
   onSelect: (entryId: string) => void;
   onRepair: (session: ProgramSessionReading) => void;
+  onOpenWorkout: (workoutId: string) => void;
 }) {
   if (session.routineName === null) {
     const day = t(DAY_KEYS[session.dayOfWeek - 1]!).toLocaleLowerCase('fr-FR');
@@ -134,10 +145,8 @@ function SessionRow({
           ? t('program.missingRoutineLocked')
           : null;
     return (
-      <div
-        className="flex min-h-16 items-center gap-3 border-b border-[var(--border)] py-3
-          last:border-b-0"
-      >
+      <div className={WEEK_ROW_CLASS}>
+        <DayColumn dayOfWeek={session.dayOfWeek} today={today} />
         <span className="min-w-0 flex-1">
           <span className="block text-base font-semibold text-[var(--text-1)]">
             {t('program.missingRoutine')}
@@ -161,37 +170,41 @@ function SessionRow({
   }
 
   const stateLabel = t(STATE_KEYS[session.state]);
-  return (
+  const date = dayDateReading(session.date);
+
+  const select = (
     <button
       type="button"
       aria-label={`${session.routineName}, ${stateLabel}`}
       aria-pressed={selected}
       disabled={startDisabled}
       onClick={() => onSelect(session.entryId)}
-      className={`flex min-h-16 w-full items-center gap-3 border-b border-[var(--border)]
-        py-3 text-left last:border-b-0 disabled:opacity-40
-        ${selected ? 'text-[var(--accent-ink)]' : 'text-[var(--text-1)]'}`}
+      className={session.workoutId === undefined ? PRESSABLE_ROW_CLASS : SELECT_PART_CLASS}
     >
-      <span
-        aria-hidden="true"
-        className={`h-8 w-0.5 shrink-0 rounded-full ${
-          selected ? 'bg-[var(--color-accent)]' : 'bg-transparent'
-        }`}
-      />
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-base">{session.routineName}</span>
-        <span className="mt-0.5 block text-sm text-[var(--text-2)]">
-          {t(DAY_KEYS[session.dayOfWeek - 1]!)}
-        </span>
-      </span>
-      <span
-        className={`text-sm font-semibold ${
-          session.state === 'completed' ? 'text-[var(--text-2)]' : ''
-        }`}
-      >
-        {stateLabel}
-      </span>
+      <DayColumn dayOfWeek={session.dayOfWeek} today={today || selected} />
+      <RowText title={session.routineName} subtitle={date} selected={selected} />
+      <RowTrailing>{stateLabel}</RowTrailing>
     </button>
+  );
+  if (session.workoutId === undefined) return select;
+
+  // Une séance faite se choisit encore (pour la refaire) **et** s'ouvre : deux
+  // cibles côte à côte, la ligne pour le choix, la flèche pour la fiche. Une
+  // ligne qui ne ferait que s'ouvrir supprimerait le geste « refaire celle-ci ».
+  const { workoutId } = session;
+  return (
+    <div className="flex items-stretch border-b border-[var(--border)] last:border-b-0">
+      {select}
+      <button
+        type="button"
+        aria-label={t('program.detailOpenSession', { name: session.routineName, date })}
+        onClick={() => onOpenWorkout(workoutId)}
+        className="flex min-h-14 w-12 shrink-0 items-center justify-center bg-[var(--surface-1)]
+          text-[var(--text-2)] transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+      >
+        <ChevronRightIcon />
+      </button>
+    </div>
   );
 }
 
@@ -200,8 +213,10 @@ export function ProgramSessionList({
   cycleReading = null,
   selectedEntryId,
   startDisabled,
+  todayDayOfWeek = null,
   onSelect,
   onRepair,
+  onOpenWorkout,
 }: Props) {
   return (
     <section>
@@ -209,25 +224,30 @@ export function ProgramSessionList({
       {cycleReading !== null && (
         <p className="-mt-1 mb-3 px-1 text-sm text-[var(--text-2)]">{cycleReading}</p>
       )}
-      <div className="border-y border-[var(--border)]">
+      <Card>
         {WEEK_DAYS.map((dayOfWeek) => {
           const daySessions = sessions.filter((session) => session.dayOfWeek === dayOfWeek);
-          if (daySessions.length === 0) return <RestRow key={dayOfWeek} dayOfWeek={dayOfWeek} />;
+          const today = todayDayOfWeek === dayOfWeek;
+          if (daySessions.length === 0) {
+            return <RestRow key={dayOfWeek} dayOfWeek={dayOfWeek} today={today} />;
+          }
 
           // Un jour peut porter deux séances : elles se suivent, chacune sa
-          // ligne, et le jour n'est écrit qu'une fois par ligne comme avant.
+          // ligne, et le jour est écrit sur chacune.
           return daySessions.map((session) => (
             <SessionRow
               key={session.entryId}
               session={session}
               selected={selectedEntryId === session.entryId}
               startDisabled={startDisabled}
+              today={today}
               onSelect={onSelect}
               onRepair={onRepair}
+              onOpenWorkout={onOpenWorkout}
             />
           ));
         })}
-      </div>
+      </Card>
     </section>
   );
 }

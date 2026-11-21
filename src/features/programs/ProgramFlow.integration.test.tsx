@@ -71,6 +71,7 @@ function renderProgramFlow(initialEntry = '/programs/new') {
           }
         />
         <Route path="/workout" element={<LocationProbe />} />
+        <Route path="/history/:workoutId" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>,
   );
@@ -891,7 +892,10 @@ describe('suivi du bloc courant', () => {
 
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(await screen.findByText('Semaine 2 / 4')).toBeVisible();
+    // La semaine est une tuile : son libellé, puis « 2 / 4 » et la phase avec ses dates.
+    expect(await screen.findByText('Semaine du programme')).toBeVisible();
+    expect(screen.getByText('2 / 4')).toBeVisible();
+    expect(screen.getByText(/^Construction, du 10 au 16 août?/)).toBeVisible();
     expect(screen.getByText('02 — 75 % · Construction')).toBeVisible();
     // Les séances de la semaine avec leur état. La carte « Calibrer les charges » reprend les noms des
     // routines : on lit donc la liste par rôle (nom + état), pas par texte.
@@ -901,6 +905,53 @@ describe('suivi du bloc courant', () => {
     expect(screen.getByRole('button', { name: 'Tirage à venir, À venir' })).toBeVisible();
     expect(screen.getByText('03 — 80 % · Construction')).toBeVisible();
     expect(screen.getByText('04 — 85 % · Décharge')).toBeVisible();
+  });
+
+  it('mène chaque séance faite à sa fiche d’historique, de la semaine en cours comme des semaines passées', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const past = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_START + 18 * 3_600_000,
+    });
+    await finishWorkout(past.workout.id);
+    const current = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(current.workout.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    expect(await screen.findByRole('heading', { name: 'Semaines passées' })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: /^Ouvrir la séance Force terminée, lundi 3 août/ }));
+    await expectRoute(`/history/${past.workout.id}`);
+  });
+
+  it('ouvre la séance faite de la semaine en cours par sa flèche, sans perdre le choix de la refaire', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const { workout } = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(workout.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    await user.click(await screen.findByRole('button', { name: /^Ouvrir la séance Force terminée/ }));
+    await expectRoute(`/history/${workout.id}`);
+  });
+
+  it('lit l’assiduité et le tonnage sans afficher de séance qui n’existe pas', async () => {
+    const { program } = await createTrackingProgram();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // Aucune séance faite : l'assiduité se lit (0 faite sur les créneaux échus), le tonnage n'a rien à dire.
+    expect(await screen.findByText('Assiduité')).toBeVisible();
+    expect(screen.queryByText('Tonnage')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Semaines passées' })).toBeVisible();
   });
 
   it('propose de calibrer les charges de ses routines, une ligne chacune', async () => {
@@ -997,7 +1048,7 @@ describe('suivi du bloc courant', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
-    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
     await user.click(await screen.findByRole('button', { name: /Supprimer le bloc/ }));
     // La feuille de confirmation dit ce qui reste avant de demander de confirmer.
     expect(
@@ -1120,7 +1171,7 @@ describe('suivi du bloc courant', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
-    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
     await user.click(screen.getByRole('button', { name: /^Décaler le bloc/ }));
     expect(
       screen.getByText('Le bloc a déjà commencé. Les séances passées ne bougeront pas.'),
@@ -1146,7 +1197,7 @@ describe('suivi du bloc courant', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
-    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
     await user.click(screen.getByRole('button', { name: /^Terminer le bloc/ }));
     expect(
       screen.getByText('Les semaines, le split et les séances restent dans ton historique.'),
@@ -1159,10 +1210,10 @@ describe('suivi du bloc courant', () => {
       expect(after?.weeks).toEqual(before?.weeks);
       expect(after?.revisions).toEqual(before?.revisions);
     });
-    expect(await screen.findByText('Terminé')).toBeVisible();
+    expect(await screen.findByText(/^Terminé · 4 semaines/)).toBeVisible();
     // Le menu reste, mais il ne propose plus qu'une chose : un bloc terminé ne
     // se modifie ni ne se décale, il se supprime.
-    await user.click(screen.getByRole('button', { name: 'Options du bloc' }));
+    await user.click(screen.getByRole('button', { name: 'Actions du programme' }));
     expect(await screen.findByRole('button', { name: /Supprimer le bloc/ })).toBeVisible();
     expect(screen.queryByRole('button', { name: /Modifier à partir de/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Décaler le bloc/ })).not.toBeInTheDocument();
@@ -1174,7 +1225,9 @@ describe('suivi du bloc courant', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(await screen.findByText('Routine supprimée')).toBeVisible();
+    // La ligne de la semaine en cours d'abord ; les semaines passées, où le créneau
+    // est manqué, la nomment aussi.
+    expect((await screen.findAllByText('Routine supprimée'))[0]).toBeVisible();
     expect(screen.getByText(/La routine prévue .* n’existe plus/)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Poussée du jour, Aujourd’hui' })).toBeEnabled();
     await user.click(screen.getByRole('button', { name: 'Choisir une autre routine' }));
@@ -1186,7 +1239,12 @@ describe('suivi du bloc courant', () => {
       routines[0]!.id,
     );
     await user.click(screen.getByRole('button', { name: 'Confirmer le remplacement' }));
-    await waitFor(() => expect(screen.queryByText('Routine supprimée')).toBeNull());
+    // Les semaines déjà écoulées gardent leur routine d'alors : la réparation vaut à partir de
+    // la semaine affichée, c'est la ligne de la semaine en cours qui cesse de la signaler.
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: 'Choisir une autre routine' })).toBeNull(),
+    );
+    expect(screen.queryByText(/La routine prévue .* n’existe plus/)).toBeNull();
   });
 });
 
@@ -1235,13 +1293,13 @@ describe('liste des blocs', () => {
     // le seul moment où le split peut encore être corrigé sans rien perdre.
     expect(await screen.findByText('La semaine')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Force à venir, À venir' })).toBeVisible();
-    expect(screen.getByText('Lundi')).toBeVisible();
+    expect(screen.getByText('Lun.')).toBeVisible();
     expect(screen.getAllByText('Repos')).toHaveLength(6);
-    for (const day of ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']) {
+    for (const day of ['Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.', 'Dim.']) {
       expect(screen.getByText(day)).toBeVisible();
     }
 
-    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: 'Actions du programme' }));
     await user.click(await screen.findByRole('button', { name: /^Supprimer le bloc/ }));
     await user.click(
       within(await screen.findByRole('dialog', { name: 'Supprimer le bloc' })).getByRole('button', {
@@ -1326,7 +1384,9 @@ describe('liste des blocs', () => {
     await routinesRepository.deleteRoutine(routine.id);
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(await screen.findByText('Routine supprimée')).toBeVisible();
+    // La ligne de la semaine en cours d'abord ; les semaines passées, où le créneau
+    // est manqué, la nomment aussi.
+    expect((await screen.findAllByText('Routine supprimée'))[0]).toBeVisible();
     expect(screen.getByText(/La routine prévue .* n’existe plus/)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Choisir une autre routine' })).toBeVisible();
     expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
