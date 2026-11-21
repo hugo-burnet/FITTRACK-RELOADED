@@ -20,7 +20,7 @@ type Props = {
 const DAMAGE_HOLD_MS = 300;
 const DAMAGE_TOTAL_MS = 850;
 
-/** Compositor-driven progress bar anchored to the resting exercise. */
+/** Compositor-driven progress bar, at the foot of the rest dock (`RestDock`). */
 export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) {
   const barRef = useRef<HTMLSpanElement | null>(null);
 
@@ -162,7 +162,7 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
    * The sentence was never announced by anything.
    *
    * Removed rather than un-hidden, because the countdown is already readable:
-   * `RestStatus` prints it in the card, as text, once a second. Exposing the
+   * `RestStatus` prints it in the rest dock, as text, once a second. Exposing the
    * bar too would say the same thing twice.
    */
   return (
@@ -207,11 +207,13 @@ export function RestStatus({ endsAt }: { endsAt: number }) {
   const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
 
   return (
-    <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-[var(--accent-ink)]">
+    // 24 px, chiffres à chasse fixe : lu de loin, le téléphone posé sur le banc (audit v2.19,
+    // constat 3 — il était en 14 px dans l'en-tête de la carte).
+    <span className="flex min-w-0 items-center justify-center gap-2 text-2xl font-semibold text-[var(--accent-ink)]">
       <span
         aria-hidden="true"
         data-part="rest-dot"
-        className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]"
+        className="size-2 shrink-0 rounded-full bg-[var(--accent-ink)]"
       />
       <span className="tabular truncate">
         {t('workout.restLabel', { duration: formatRest(remaining) })}

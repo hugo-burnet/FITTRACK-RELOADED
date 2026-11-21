@@ -138,6 +138,15 @@ Une séance de deux exercices au moins, dont un en barre.
       *(v2.18.0)*
 - [ ] **Coach, une erreur ne bloque rien.** Terminer une séance : l'écran de fin s'affiche toujours et
       la séance s'enregistre (rien à provoquer : à noter seulement si un écran d'erreur apparaît). *(v2.18.0)*
+- [ ] **Le repos reste à l'écran.** Valider une série, puis ouvrir l'exercice suivant et faire défiler :
+      « Repos 1:59 » reste en bas, en gros, juste au-dessus de « Terminer la séance », avec −15 s, +15 s
+      et « Passer » sous le pouce. Le lire téléphone posé sur le banc, à bout de bras. « Passer » termine
+      le repos tout de suite (même son qu'un repos écoulé, la cadence prend le relais si elle est réglée).
+      Refaire en Cyber : la barre de vie et ses dégâts sur −15 s sont là, en bas. *(v2.19.0)*
+- [ ] **La série du dessus en grisé.** Sur un exercice jamais fait (ou une première séance) : saisir et
+      valider la série 1 à 60 × 8 ; la série 2 montre 60 et 8 **en gris**, cases vides ; la coche seule
+      l'enregistre à 60 × 8. Après un échauffement validé, la série de travail suivante ne montre **pas**
+      ses chiffres. *(v2.19.0)*
 - [ ] Série validée en thème **TTY1** : `[x]`, le repos qui clignote, la jauge d'effort ; la feuille
       des plaques ; l'historique. Police lisible à bout de bras. *(v2.8.0)*
 

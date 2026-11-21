@@ -83,3 +83,39 @@ describe('restTimer.shift', () => {
     expect(useRestTimer.getState().endsAt).toBe(before);
   });
 });
+
+describe('restTimer.skip', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+    useRestTimer.getState().stop();
+    useRestTimer.getState().start('set-1', 120);
+    vi.setSystemTime(NOW + 30_000); // 90 s left
+  });
+
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    vi.useRealTimers();
+  });
+
+  it('ends the rest now, the way a −15 s past zero does: the bar’s own timer finishes it', () => {
+    useRestTimer.getState().skip('set-1');
+
+    const { setId, startedAt, endsAt, seconds } = useRestTimer.getState();
+    // Not stopped here: stopping would skip the hand-over to the cadence.
+    // The deadline moves to now, and the start with it, as `shift` does.
+    expect(setId).toBe('set-1');
+    expect(endsAt).toBe(NOW + 30_000);
+    expect(startedAt).toBe(NOW - 90_000);
+    expect(seconds).toBe(120);
+  });
+
+  it('ignores a set that is not resting, and a rest already over', () => {
+    useRestTimer.getState().skip('set-2');
+    expect(useRestTimer.getState().endsAt).toBe(NOW + 120_000);
+
+    vi.setSystemTime(NOW + 125_000);
+    useRestTimer.getState().skip('set-1');
+    expect(useRestTimer.getState().endsAt).toBe(NOW + 120_000);
+  });
+});

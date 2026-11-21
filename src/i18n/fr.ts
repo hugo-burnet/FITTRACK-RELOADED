@@ -349,6 +349,9 @@ const fr = {
     setTonnage: '+{value} kg',
     setPlusOne: '+1 série',
     restLengthen: 'Ajouter 15 secondes au repos',
+    /** v2.19 — « Passer » dans la barre de repos, en bas de la séance : le repos se termine maintenant. */
+    restSkip: 'Passer le repos',
+    restSkipShort: 'Passer',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',
