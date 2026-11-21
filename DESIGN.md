@@ -31,7 +31,7 @@ clair). Un composant ne cite jamais une valeur : il cite un jeton.
 | `--accent-data` | `#a85a20` | `#b96b35` | `#00aa00` | `#2fc6d6` |
 | `--axis` | `#756e64` | `#869087` | `#878787` | `#a5524f` |
 | `--danger-ink` | `#ff5c5c` (5,8:1) | `#b91c1c` (6,5:1) | `#ff5555` | `#ff2e63` |
-| `--warn-ink` (à poser, écart 9) | `#f5c518` (10,8:1) | `#7a5c00` (6,3:1) | `#ffff55` (19,7:1) | `#ff9f1c` (9,0:1) |
+| `--warn-ink` | `#f5c518` (10,8:1) | `#7a5c00` (6,3:1) | `#ffff55` (19,7:1) | `#ff9f1c` (9,0:1) |
 | `--scrim` | `rgb(0 0 0 / 0.6)` | (hérite du sombre) | `rgb(0 0 0 / 0.72)` | `rgb(5 5 9 / 0.75)` |
 
 Jetons propres à Cyber : `--cyber-focus` `#5ef6ff`, `--cyber-crit` `#ff3c46`, `--cyber-line`.
@@ -128,10 +128,10 @@ séparées par `--border`. Une feuille se pose sur `--scrim` avec un filet haut.
 | `UndoRow` | Retour arrière d'une suppression, 6 s, à la place de la ligne. Pas un toast. |
 | `SwipeToDelete`, `ReorderableList` | Suppression et réordonnancement par geste. |
 | `EmptyState` | Une collection vide montre son chiffre (`0` + unité) ; sans chiffre, un titre. |
-| `TileGrid` + `Tile` *(à écrire)* | Un groupe de tuiles qui répond à une question. Contrat : « Grille modulaire ». |
-| `Segmented` *(à écrire)* | Choisir une valeur parmi deux à quatre, à plat (`radiogroup`). Décision de l'écart 6. |
-| `Tabs` *(à écrire)* | Passer d'une vue à l'autre du même objet, ou entre routes sœurs. Décision de l'écart 6. |
-| `Skeleton` *(à écrire)* | La place d'une carte pendant une lecture. Immobile. Décision de l'écart 12. |
+| `TileGrid` + `Tile` | Un groupe de tuiles qui répond à une question. Contrat : « Grille modulaire ». |
+| `Segmented` | Choisir une valeur parmi deux à quatre, à plat (`radiogroup`). Décision de l'écart 6. |
+| `Tabs` | Passer d'une vue à l'autre du même objet, ou entre routes sœurs. Décision de l'écart 6. |
+| `Skeleton` | La place d'une carte pendant une lecture. Immobile. Décision de l'écart 12. |
 
 ## Règle de mise en page : tuile ou ligne
 
@@ -139,9 +139,8 @@ Décidée avec l'utilisateur le 2026-11-21.
 
 **Tuile ou ligne.** Une *tuile* est une entrée qui affiche un chiffre ou un état chiffré à lire d'un coup d'œil (un tableau de bord : Progression › vue d'ensemble). Une *ligne* est une entrée qui n'est qu'un lien, ou dont l'état tient en un mot (Réglages, Planifier, Exercices, Historique). Pas de tuile qui ne montre qu'un nom. Un même type d'écran utilise un même motif.
 
-Motifs existants : la ligne est `ListRow` dans une `Card`. La tuile n'a pas de composant partagé ; son
-seul exemple propre est `Tile` dans `src/features/home/HomeStatsIsland.tsx:84` (valeur `metric text-2xl`
-+ libellé `label-xs`, `min-h-20`, cellules de grille séparées par `border-l`).
+Motifs : la ligne est `ListRow` dans une `Card` ; la tuile est `Tile` dans un `TileGrid` (`src/ui/`, contrat
+ci-dessous). Premier écran qui s'en sert : l'îlot de l'accueil (`HomeStatsIsland`).
 
 ## Grille modulaire
 
@@ -374,7 +373,23 @@ manifeste, `vite.config.ts`) sont verrouillés : aucun écran n'a de variante pa
 
 ## Écarts constatés
 
-Rien n'a été corrigé. 12 écarts.
+Relevés le 2026-11-21 sur la v2.18 ; **traités le même jour** sur la branche de la v3.0 (fondations).
+Les constats ci-dessous sont gardés tels qu'écrits, avec leur décision ; l'état de chacun :
+
+| # | État |
+|---|---|
+| 1 | Corrigé : les trois liens du corps sont des `ListRow`. |
+| 2 | **Reste** : Progression passe en tuiles avec la page d'objet (étape 7 de `cartographie.md` §7, maquette validée). |
+| 3 | Corrigé : `ui/Tile`, `ui/TileGrid`, `ui/tileLayout` ; `HomeStatsIsland` migré. |
+| 4 | Corrigé pour 15 surfaces (`Card` gagne une `className` de placement seulement). **Laissés exprès** : les cartes du wiki et de la documentation en `p-5`, les articles à barre d'accent, un `<details>`, deux `rounded-xl`. |
+| 5 | Corrigé pour les deux listes de programmes. **Laissés exprès** : un `<details>` dont le filet délimite le panneau, les blocs `role="status"` dont le filet dit l'état, les cartes `p-5` du wiki. |
+| 6 | Corrigé : `ui/Segmented` (4 écrans), `ui/Tabs` (Historique, fiche exercice, Planifier — soulignement validé par l'utilisateur). |
+| 7 | Corrigé en `text-xs` (aucun de ces textes n'est en majuscules, donc pas `label-xs`). **Exception** : les libellés de `BottomNav` restent en `text-[11px]`, en pixels exprès — en `rem`, « Progression » sort de l'écran à 200 % (`mise-en-page.spec.ts`). |
+| 8 | Corrigé. |
+| 9 | Corrigé : `--warn-ink` dans les quatre thèmes, cinq usages basculés, `@theme` nettoyé. |
+| 10 | **Laissés exprès** : `stores/theme.ts` (couleur de barre système avant le CSS) ; les défauts de `muscleMap.ts`, inatteignables (`MuscleMapView` passe des jetons) et exigés en hex par `mixHex` ; les replis de `ChartExportAction`, qui dessine sur un canevas. |
+| 11 | `TutorialHud` supprimé avec le tutoriel (v2.19). **Laissés exprès** : l'anneau de `RecordRail` (il découpe le rail derrière le marqueur, ce n'est pas une profondeur) ; les ombres de `cyber.css` (halo, biseaux, liserés) et de `tty1.css` (focus), qui sont la grammaire de ces thèmes ; l'anneau du curseur RPE d'`index.css`. |
+| 12 | Corrigé : `ui/Skeleton`, immobile ; les 18 `animate-pulse` remplacés, la zone en `aria-busy`. |
 
 1. **Tuiles qui ne montrent qu'un nom** — `src/features/home/HomeBodyCard.tsx:65-77` : trois cellules de grille (`LINKS`) avec seulement un libellé, `min-h-14`. Contredit « pas de tuile qui ne montre qu'un nom » ; ce sont des liens, donc des lignes.
 2. **Progression › vue d'ensemble en lignes** — `src/features/analytics/AnalyticsScreen.tsx:51-111` : sept `ListRow` titre + sous-titre, aucun chiffre. L'exemple même de la règle (tableau de bord → tuiles) est aujourd'hui une liste de liens.
