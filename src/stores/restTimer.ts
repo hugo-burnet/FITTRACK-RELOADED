@@ -39,6 +39,12 @@ interface RestTimerStore extends RestTimer {
    * same hand-over to the cadence. A rest already over is not revived.
    */
   shift: (setId: string, seconds: number) => void;
+  /**
+   * « Passer » : le repos se termine maintenant, comme un −15 s qui passerait zéro — l'échéance vient
+   * à maintenant et le début la suit. Pas un `stop` : c'est la minuterie de la barre qui le finit, et
+   * avec elle la relève par la cadence et le « repos terminé » du tutoriel, qu'un arrêt sauterait.
+   */
+  skip: (setId: string) => void;
   /** Ends the rest. Idempotent, and safe to call for a set that is not resting. */
   stop: (setId?: string) => void;
 }
@@ -82,6 +88,14 @@ export const useRestTimer = create<RestTimerStore>((set) => ({
       // being redrawn against a new length — but never past now, which no snapshot would accept.
       const startedAt = Math.min(now, state.startedAt + (endsAt - state.endsAt));
       return { startedAt, endsAt, seconds: (endsAt - startedAt) / 1000 };
+    }),
+
+  skip: (setId) =>
+    set((state) => {
+      const now = Date.now();
+      if (state.setId !== setId || state.endsAt <= now) return state;
+      const startedAt = Math.min(now, state.startedAt - (state.endsAt - now));
+      return { startedAt, endsAt: now, seconds: (now - startedAt) / 1000 };
     }),
 
   stop: (setId) => set((state) => (setId === undefined || state.setId === setId ? IDLE : state)),

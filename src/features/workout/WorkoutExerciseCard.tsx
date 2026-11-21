@@ -32,8 +32,6 @@ import { RecordNote } from './RecordNote';
 import { HoldRail } from './HoldRail';
 import type { SideStage } from './sideProgress';
 import { RepPaceRail } from './RepPaceRail';
-import { RestRail, RestStatus } from './RestRail';
-import { RestShift } from './RestShift';
 import { WarmupOfferRow } from './WarmupOfferRow';
 import { warmupOfferFor, type WarmupOffer } from './warmupOffer';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -77,18 +75,6 @@ export function workoutRecordNotices(
   return notices;
 }
 
-export type CardRest = {
-  setId: string;
-  startedAt: number;
-  endsAt: number;
-  /** True while this set's effort question owns the user's attention. */
-  audioSuppressed: boolean;
-  /** True when the rest flows directly into the next set's cadence. */
-  onDone: (audioAllowed: boolean) => boolean;
-  /** −15 s or +15 s on the rest in progress. Absent, the card shows no buttons. */
-  onShift?: (seconds: number) => void;
-};
-
 export type CardPace = RepPacer & { setId: string; onFinished: () => void };
 
 /**
@@ -113,7 +99,11 @@ type Props = {
   tutorial?: boolean;
   preferred?: boolean;
   superset?: SupersetPlace;
-  rest: CardRest | null;
+  /**
+   * Vrai quand une série de cette carte est au repos. Le décompte et ses boutons vivent en bas de
+   * l'écran (`RestDock`) ; la carte n'en garde que ce qu'elle cachait pendant ce temps.
+   */
+  resting: boolean;
   /** The metronome running on this card's next set, if any. */
   pace: CardPace | null;
   /** Le chrono de maintien de cette carte, si une série est tenue. */
@@ -162,7 +152,7 @@ export function WorkoutExerciseCard({
   tutorial = false,
   preferred = true,
   superset,
-  rest,
+  resting,
   pace,
   hold,
   sideStageOf,
@@ -258,7 +248,6 @@ export function WorkoutExerciseCard({
 
   return (
     <div
-      data-tutorial-id={rest !== null ? 'workout-rest' : undefined}
       className={`relative ${superset === undefined ? '' : 'pl-3'}`}
     >
       {superset !== undefined && (
@@ -333,9 +322,7 @@ export function WorkoutExerciseCard({
                   />
                 )}
               </span>
-              {rest !== null ? (
-                <RestStatus endsAt={rest.endsAt} />
-              ) : pace === null && expanded ? (
+              {pace === null && expanded ? (
                 exercise !== undefined && (
                   <span className="truncate text-sm text-[var(--text-2)]">
                     {exerciseSubtitle(exercise)}
@@ -349,12 +336,12 @@ export function WorkoutExerciseCard({
                   </span>
                 )
               )}
-              {/* Mounted for as long as the cadence runs, even when the rest
-                  reading takes the slot: this component's lifetime *is* the
+              {/* Mounted for as long as the cadence runs, even while hidden
+                  during the rest: this component's lifetime *is* the
                   pace's, so hiding it by unmounting cancels every beat left in
                   the set — silently, and with the store still armed. */}
               {pace !== null && (
-                <span className={rest === null ? 'contents' : 'hidden'}>
+                <span className={resting ? 'hidden' : 'contents'}>
                   <RepPaceRail
                     pacer={pace}
                     sideStage={sideStageOf(pace.setId)}
@@ -366,7 +353,7 @@ export function WorkoutExerciseCard({
                   métronome : la vie du composant *est* celle du chrono, donc le
                   masquer en le démontant annulerait tous ses repères. */}
               {hold !== null && (
-                <span className={rest === null ? 'contents' : 'hidden'}>
+                <span className={resting ? 'hidden' : 'contents'}>
                   <HoldRail hold={hold} sideStage={sideStageOf(hold.setId)} />
                 </span>
               )}
@@ -430,18 +417,7 @@ export function WorkoutExerciseCard({
             <MoreIcon />
           </button>
 
-          {rest !== null && (
-            <RestRail
-              key={rest.setId}
-              startedAt={rest.startedAt}
-              endsAt={rest.endsAt}
-              audioSuppressed={rest.audioSuppressed}
-              onDone={rest.onDone}
-            />
-          )}
         </div>
-
-        {rest?.onShift !== undefined && <RestShift onShift={rest.onShift} />}
 
         {expanded && (
           <>

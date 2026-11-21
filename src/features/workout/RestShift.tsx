@@ -4,19 +4,26 @@ import { t } from '@/i18n/fr';
 export const REST_SHIFT_SECONDS = 15;
 
 /**
- * −15 s et +15 s, sous l'en-tête de l'exercice qui se repose.
+ * −15 s et +15 s, et « Passer », dans la barre de repos en bas de la séance (`RestDock`).
  *
  * Deux cibles de 48 px côte à côte : on raccourcit un repos parce qu'on est prêt plus tôt, on
  * l'allonge parce qu'on ne l'est pas encore — les deux se font d'une main, sans ouvrir de feuille.
  * Un repos raccourci à zéro se termine comme un repos écoulé (`restTimer.shift`).
  */
-export function RestShift({ onShift }: { onShift: (seconds: number) => void }) {
+export function RestShift({
+  onShift,
+  onSkip,
+}: {
+  onShift: (seconds: number) => void;
+  /** Termine le repos maintenant. Absent, le bouton n'est pas affiché. */
+  onSkip?: () => void;
+}) {
   const button = `flex min-h-12 flex-1 items-center justify-center rounded-xl bg-[var(--surface-2)]
     text-base font-semibold tabular transition-colors duration-[var(--dur-1)]
     active:bg-[var(--surface-1)]`;
 
   return (
-    <div data-part="rest-shift" className="flex gap-2 px-3 pb-3">
+    <div data-part="rest-shift" className="flex gap-2">
       <button
         type="button"
         data-shift="-15"
@@ -35,6 +42,17 @@ export function RestShift({ onShift }: { onShift: (seconds: number) => void }) {
       >
         <span aria-hidden="true">{t('workout.restPlus')}</span>
       </button>
+      {onSkip !== undefined && (
+        <button
+          type="button"
+          data-shift="skip"
+          aria-label={t('workout.restSkip')}
+          onClick={onSkip}
+          className={`${button} text-[var(--text-1)]`}
+        >
+          <span aria-hidden="true">{t('workout.restSkipShort')}</span>
+        </button>
+      )}
     </div>
   );
 }
