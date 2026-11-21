@@ -96,7 +96,7 @@ export function RestPicker({
             {isSet && (
               <span
                 aria-hidden="true"
-                className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]"
+                className="text-xs font-semibold tracking-[0.08em] text-[var(--text-2)]"
               >
                 {t('units.minutes')}
               </span>
