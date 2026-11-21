@@ -32,6 +32,7 @@ export function DefaultLoadStepRow() {
         }
         disabled={step === undefined}
         onClick={() => setOpen(true)}
+        chevron={false}
       />
       <Sheet open={open} onClose={() => setOpen(false)} title={t('settings.loadStepSheetTitle')}>
         {/* Monté avec la feuille, démonté avec elle : chaque ouverture repart du pas enregistré. */}

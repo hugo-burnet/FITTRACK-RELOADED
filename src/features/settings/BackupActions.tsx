@@ -145,13 +145,13 @@ export function BackupActions({
           title={t('settings.backupExportLink')}
           subtitle={t('settings.backupExportShort')}
           disabled={busy}
-          onClick={() => void save()}
+          onClick={() => void save()} chevron={false}
         />
         <ListRow
           title={t('settings.backupImportLink')}
           subtitle={t('settings.backupImportShort')}
           disabled={busy}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => inputRef.current?.click()} chevron={false}
         />
       </Card>
       <LearnMore>

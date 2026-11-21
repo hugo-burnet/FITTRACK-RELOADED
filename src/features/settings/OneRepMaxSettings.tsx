@@ -88,7 +88,7 @@ export function OneRepMaxSettings() {
           title={t('settings.oneRepMaxTitle')}
           subtitle={subtitle}
           disabled={formula === undefined || saving}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpen(true)} chevron={false}
         />
       </Card>
       {failed && (

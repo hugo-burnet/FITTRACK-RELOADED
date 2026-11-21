@@ -91,13 +91,13 @@ export function ReadableExports() {
           title={t('settings.exportHistoryLink')}
           subtitle={t('settings.exportHistoryHint')}
           disabled={historyMarkdown === undefined || historyMarkdown === ''}
-          onClick={shareHistory}
+          onClick={shareHistory} chevron={false}
         />
         <ListRow
           title={t('settings.exportCsvLink')}
           subtitle={t('settings.exportCsvShort')}
           disabled={csvBusy || workoutCount === 0}
-          onClick={() => void saveCsv()}
+          onClick={() => void saveCsv()} chevron={false}
         />
       </Card>
       <LearnMore>

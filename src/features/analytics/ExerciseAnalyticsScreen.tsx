@@ -21,7 +21,6 @@ import {
 import { PERIOD_KEYS, isPeriodKey, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
 import { toAnalyticsSessions } from '@/lib/analytics/sessions';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
-import { ChevronRightIcon } from '@/ui/icons';
 import { ChartExportAction } from './ChartExportAction';
 import { ProgressCard } from './ProgressCard';
 
@@ -189,7 +188,6 @@ export function ExerciseAnalyticsScreen() {
             <ListRow
               title={t('analytics.exerciseSheetLink')}
               onClick={() => void navigate(`/exercises/${exerciseId}`)}
-              trailing={<ChevronRightIcon />}
             />
           </Card>
         )}
