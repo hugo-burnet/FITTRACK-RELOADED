@@ -27,7 +27,16 @@ import {
   percentToFactor,
   supportsBodyweightLoad,
 } from '@/lib/bodyweightLoad';
-import { Button, Card, Input, ListRow, MultiOptionSheet, NumberInput, OptionSheet } from '@/ui';
+import {
+  Button,
+  Card,
+  Input,
+  ListRow,
+  MultiOptionSheet,
+  NumberInput,
+  OptionSheet,
+  Segmented,
+} from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 
@@ -337,36 +346,22 @@ export function ExerciseFormScreen({
         </Card>
 
         <Card padded>
-          <div
-            role="radiogroup"
-            aria-label={t('exerciseForm.unilateralLabel')}
-            className="flex items-center gap-4"
-          >
+          <div className="flex items-center gap-4">
             <span className="flex-1 text-base text-[var(--text-1)]">
               {t('exerciseForm.unilateralLabel')}
             </span>
-            <span data-part="segmented" className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1">
-              {([0, 1] as const).map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={draft.isUnilateral === value}
-                  onClick={() => {
-                    setDraft({ ...draft, isUnilateral: value });
-                  }}
-                  className={`min-h-12 w-16 rounded-lg text-base font-semibold
-                    transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                    ${
-                      draft.isUnilateral === value
-                        ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                        : 'text-[var(--text-2)]'
-                    }`}
-                >
-                  {value === 1 ? t('common.yes') : t('common.no')}
-                </button>
-              ))}
-            </span>
+            <Segmented
+              inline
+              label={t('exerciseForm.unilateralLabel')}
+              value={draft.isUnilateral}
+              onChange={(isUnilateral) => {
+                setDraft({ ...draft, isUnilateral });
+              }}
+              options={[
+                { value: 0, label: t('common.no') },
+                { value: 1, label: t('common.yes') },
+              ]}
+            />
           </div>
           <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
             {t('exerciseForm.unilateralHint')}
