@@ -147,7 +147,7 @@ describe('RecordsScreen', () => {
 
     renderRoute('/analytics/records?exerciseId=bench&vue=chronologie');
     expect(await screen.findByText('100 kg')).toBeVisible();
-    await userEvent.click(await screen.findByRole('button', { name: 'Tous les records' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Type' }));
 
     expect(screen.getByRole('radio', { name: 'Charge max' })).toBeVisible();
     expect(screen.queryByRole('radio', { name: 'Répétitions max' })).toBeNull();
@@ -241,7 +241,7 @@ describe('RecordsScreen', () => {
       }),
     ).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Tous les records' }));
+    await user.click(screen.getByRole('button', { name: 'Type' }));
     await user.click(screen.getByRole('radio', { name: 'Répétitions max' }));
     expect(await screen.findByText('14 reps')).toBeVisible();
     await waitFor(() => expect(screen.queryByText('100 kg')).toBeNull());
@@ -283,7 +283,7 @@ describe('RecordsScreen', () => {
     const user = userEvent.setup();
     renderRoute('/analytics/records?exerciseId=bench&vue=chronologie');
     expect(await screen.findByText('100 kg')).toBeVisible();
-    await user.click(await screen.findByRole('button', { name: 'Tous les records' }));
+    await user.click(await screen.findByRole('button', { name: 'Type' }));
 
     expect(screen.getByRole('radio', { name: 'Charge max' })).toBeVisible();
     expect(screen.queryByRole('radio', { name: 'Répétitions max' })).toBeNull();
@@ -367,6 +367,24 @@ describe('RecordsScreen', () => {
 
     expect(await screen.findByText('Ton premier record commencera ici')).toBeVisible();
     expect(screen.getByText(/Valide une série/)).toBeVisible();
+    // Rien à filtrer : pas de puces.
+    expect(screen.queryByRole('button', { name: 'Exercice' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Type' })).toBeNull();
+  });
+
+  it('nomme les puces par leur critère, « Exercice » et « Type », tant qu’aucun filtre n’est choisi', async () => {
+    const bench = exercise('bench', 'Développé couché');
+    const session = workout('workout-1', 'completed', day(1));
+    await seedTimeline({
+      exercises: [bench],
+      workouts: [session],
+      records: [record('record-1', bench.id, session.id, 80, day(1))],
+    });
+
+    renderRoute();
+
+    expect(await screen.findByRole('button', { name: 'Exercice' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Type' })).toBeVisible();
   });
 
   it('permet de réessayer une projection obsolète puis remplace la réparation par le rail', async () => {

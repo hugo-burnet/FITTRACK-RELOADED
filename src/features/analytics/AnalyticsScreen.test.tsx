@@ -72,7 +72,14 @@ describe('AnalyticsScreen', () => {
   it('affiche chaque chiffre dans sa tuile, nommée par son libellé puis sa valeur', async () => {
     const bench = await seedExercise({ name: 'Développé couché (barre)' });
     // Une séance cette semaine : 2 × 100 kg × 5 = 1 000 kg.
-    await seedWorkout({ exerciseId: bench.id, performedAt: Date.now(), sets: [[100, 5], [100, 5]] });
+    await seedWorkout({
+      exerciseId: bench.id,
+      performedAt: Date.now(),
+      sets: [
+        [100, 5],
+        [100, 5],
+      ],
+    });
     // Une plus ancienne, pour que le dernier record ait un écart à dire.
     await seedWorkout({ exerciseId: bench.id, performedAt: day(0), sets: [[90, 5]] });
     await rebuildAllRecords();
@@ -97,8 +104,16 @@ describe('AnalyticsScreen', () => {
     expect(await tile('Records battus')).toBeVisible();
     expect(await tile('Paliers')).toBeVisible();
     expect(await tile('Sous le plancher 0')).toBeVisible();
+    // Zéro n'est pas un écran vide : la tuile dit pourquoi.
+    expect((await tile('Sous le plancher')).textContent).toContain(
+      'Tous les muscles sont au-dessus du plancher',
+    );
+    // Série tenue ou non, la tuile Séances dit quelque chose de plus que son chiffre.
+    expect((await tile('Séances')).textContent).toContain('Aucune semaine tenue');
     const weight = await tile('Poids de corps 82,4 kg');
-    expect(plain(weight.textContent ?? '')).toContain('−1,7 kg depuis la pesée précédente (84,1 kg)');
+    expect(plain(weight.textContent ?? '')).toContain(
+      '−1,7 kg depuis la pesée précédente (84,1 kg)',
+    );
 
     // Les trois groupes, puis la ligne du bilan ; la liste des exercices n'est plus ici.
     expect(screen.getByRole('region', { name: 'Cette semaine' })).toBeVisible();
@@ -166,6 +181,16 @@ describe('AnalyticsScreen', () => {
     const floor = await tile('Sous le plancher');
     await waitFor(() => expect(floor.textContent).toContain('Aucun plancher réglé'));
     expect(plain(floor.textContent ?? '')).not.toMatch(/Sous le plancher\s*0/);
+  });
+
+  it('sans objectif hebdo, « Séances » dit où en est le rythme au lieu de rester un chiffre seul', async () => {
+    const bench = await seedExercise({ name: 'Développé couché (barre)' });
+    await seedWorkout({ exerciseId: bench.id, performedAt: Date.now(), sets: [[100, 5]] });
+
+    renderScreen();
+
+    const sessions = await tile('Séances');
+    await waitFor(() => expect(sessions.textContent).toContain('Aucun objectif hebdo'));
   });
 
   it('n’offre pas le programme sans programme actif', async () => {

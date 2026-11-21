@@ -167,20 +167,13 @@ export function HistoryScreen() {
             />
 
             {view === 'journal' ? (
-              <section aria-labelledby="history-journal-title">
-                <h2
-                  id="history-journal-title"
-                  className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]"
-                >
-                  {t('history.journal')}
-                </h2>
-                <HistoryJournal
-                  page={page}
-                  filterExerciseName={selectedExerciseName}
-                  onClearExercise={() => changeExercise(undefined)}
-                  onShowMore={() => setPageSize((current) => current + 20)}
-                />
-              </section>
+              // Pas de titre « Journal » : l'onglet actif, juste au-dessus, le dit déjà.
+              <HistoryJournal
+                page={page}
+                filterExerciseName={selectedExerciseName}
+                onClearExercise={() => changeExercise(undefined)}
+                onShowMore={() => setPageSize((current) => current + 20)}
+              />
             ) : (
               <HistoryCalendar
                 visibleMonth={visibleMonth}
