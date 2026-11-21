@@ -1,5 +1,6 @@
 import { artForMilestone, milestoneArtUrl } from '@/lib/milestones/art';
-import { Sheet } from '@/ui';
+import { t } from '@/i18n/fr';
+import { Button, Sheet } from '@/ui';
 import { captionForArt } from './artCaption';
 
 /**
@@ -14,10 +15,13 @@ export function MilestonePeek({
   definitionId,
   title,
   onClose,
+  onOpenWorkout,
 }: {
   definitionId: string | null;
   title: string;
   onClose: () => void;
+  /** Absent pour un palier sans séance (un secret) : pas de bouton qui ne mène nulle part. */
+  onOpenWorkout?: () => void;
 }) {
   const key = definitionId === null ? undefined : artForMilestone(definitionId);
 
@@ -33,6 +37,11 @@ export function MilestonePeek({
           <p className="mt-4 text-pretty text-sm leading-relaxed text-[var(--text-2)]">
             {captionForArt(key)}
           </p>
+          {onOpenWorkout && (
+            <Button type="button" variant="secondary" fullWidth className="mt-4" onClick={onOpenWorkout}>
+              {t('milestone.openWorkout')}
+            </Button>
+          )}
         </div>
       )}
     </Sheet>

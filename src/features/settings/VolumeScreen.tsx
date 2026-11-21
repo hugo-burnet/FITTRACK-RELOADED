@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useAppNavigate } from '@/app/navigation';
+import { useGoBack } from '@/app/useGoBack';
 import { Screen } from '@/app/Screen';
 import { getVolumeOverview } from '@/data/repositories/coachVolume';
 import { t } from '@/i18n/fr';
@@ -18,12 +18,12 @@ import { volumeBoundsReading, volumeReading } from './volumeText';
  * et c'est ce que cet écran existe pour montrer. Toucher une ligne ouvre ses bornes.
  */
 export function VolumeScreen() {
-  const navigate = useAppNavigate();
+  const goBack = useGoBack('/settings/coach');
   const rows = useLiveQuery(() => getVolumeOverview(), []);
   const [editing, setEditing] = useState<MuscleGroup>();
 
   return (
-    <Screen title={t('muscleVolume.title')} onBack={() => void navigate('/settings/coach')}>
+    <Screen title={t('muscleVolume.title')} onBack={goBack}>
       <div className="space-y-6" aria-busy={rows === undefined}>
         <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">{t('muscleVolume.intro')}</p>
 

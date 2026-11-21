@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { getCoachVolumeBounds, setCoachVolumeBounds } from '@/data/repositories/settings';
 import { resetDb } from '@/test/resetDb';
@@ -146,5 +146,39 @@ describe('VolumeScreen', () => {
     await user.type(floor, '8,5');
 
     expect(floor).toHaveValue('85');
+  });
+
+  it('revient là d’où l’on vient quand il y a un historique', async () => {
+    window.history.replaceState({ idx: 1 }, '');
+    render(
+      <MemoryRouter initialEntries={['/analytics', '/settings/volume']} initialIndex={1}>
+        <Routes>
+          <Route path="/settings/volume" element={<VolumeScreen />} />
+          <Route path="/analytics" element={<p>Analyses</p>} />
+          <Route path="/settings/coach" element={<p>Coach</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Retour' }));
+
+    expect(await screen.findByText('Analyses')).toBeInTheDocument();
+    window.history.replaceState(null, '');
+  });
+
+  it('retombe sur les réglages du coach quand l’écran est ouvert sans historique', async () => {
+    window.history.replaceState(null, '');
+    render(
+      <MemoryRouter initialEntries={['/settings/volume']}>
+        <Routes>
+          <Route path="/settings/volume" element={<VolumeScreen />} />
+          <Route path="/settings/coach" element={<p>Coach</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Retour' }));
+
+    expect(await screen.findByText('Coach')).toBeInTheDocument();
   });
 });
