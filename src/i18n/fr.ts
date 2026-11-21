@@ -2717,7 +2717,9 @@ const fr = {
     /** « Corps et muscles » : les muscles sous leur plancher, le poids. */
     floorLabel: 'Sous le plancher',
     floorMany: 'À regarder : {muscles}.',
-    floorHint: 'Voir les séries par muscle',
+    floorHint: 'Voir le volume par muscle et ses planchers',
+    floorUnset: 'Aucun plancher réglé : règle-en un pour être prévenu.',
+    floorUnsetHint: 'Régler les planchers par muscle',
     weightLabel: 'Poids de corps',
     weightDetail: '{change} depuis la pesée précédente ({previous}).',
     weightHint: 'Voir les mensurations',

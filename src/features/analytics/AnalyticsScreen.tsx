@@ -8,7 +8,7 @@ import { getActiveProgramProjection } from '@/data/repositories/home';
 import { listMeasurementTypes } from '@/data/repositories/measurements';
 import { listMilestones } from '@/data/repositories/milestones';
 import { listRecordTimeline } from '@/data/repositories/personalRecords';
-import { getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
+import { getCoachVolumeBounds, getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
 import { phaseLabel } from '@/features/programs/weekReading';
 import { volumeLowLine } from '@/features/settings/volumeText';
 import { t } from '@/i18n/fr';
@@ -68,7 +68,12 @@ export function AnalyticsScreen() {
       return [];
     }
   }, []);
+  const bounds = useLiveQuery(() => getCoachVolumeBounds(), []);
   const measured = useLiveQuery(() => listMeasurementTypes(), []);
+
+  // Sans plancher réglé, « 0 » laisserait croire que tout va bien : il n'y a rien qu'on surveille.
+  const floorsSet =
+    bounds === undefined ? undefined : Object.values(bounds).some((entry) => entry.floor !== undefined);
 
   const data = history.data;
   const hasHistory = data === undefined ? undefined : data.workouts.length > 0;
@@ -263,19 +268,29 @@ export function AnalyticsScreen() {
               key="floor"
               size="L"
               label={t('analytics.floorLabel')}
-              value={lows === undefined ? undefined : { value: String(lows.length) }}
-              {...(lows === undefined || lows.length === 0
-                ? {}
-                : {
-                    detail:
-                      lows.length === 1
-                        ? volumeLowLine(lows[0]!)
-                        : t('analytics.floorMany', {
-                            muscles: lows.map((low) => muscleLabel(low.muscle)).join(', '),
-                          }),
-                  })}
-              hint={t('analytics.floorHint')}
-              onClick={() => void navigate('/analytics/muscles')}
+              value={
+                lows === undefined || floorsSet === undefined
+                  ? undefined
+                  : floorsSet
+                    ? { value: String(lows.length) }
+                    : null
+              }
+              {...(floorsSet === false
+                ? { detail: t('analytics.floorUnset') }
+                : lows === undefined || lows.length === 0
+                  ? {}
+                  : {
+                      detail:
+                        lows.length === 1
+                          ? volumeLowLine(lows[0]!)
+                          : t('analytics.floorMany', {
+                              muscles: lows.map((low) => muscleLabel(low.muscle)).join(', '),
+                            }),
+                    })}
+              hint={floorsSet === false ? t('analytics.floorUnsetHint') : t('analytics.floorHint')}
+              // Les planchers se règlent et se lisent dans Volume par muscle ; la répartition par
+              // muscle (`/analytics/muscles`) ne parle pas de plancher.
+              onClick={() => void navigate('/settings/volume')}
             />
           )}
           <Tile

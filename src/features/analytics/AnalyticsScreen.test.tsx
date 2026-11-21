@@ -13,7 +13,7 @@ import {
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
 import { rebuildAllRecords } from '@/data/repositories/personalRecords';
-import { setWeeklyTrainingGoal } from '@/data/repositories/settings';
+import { setCoachVolumeBounds, setWeeklyTrainingGoal } from '@/data/repositories/settings';
 import type { Workout } from '@/data/types';
 import { startOfLocalWeek } from '@/lib/history';
 import { day, seedWorkout } from '@/test/factories';
@@ -76,6 +76,8 @@ describe('AnalyticsScreen', () => {
     await seedWorkout({ exerciseId: bench.id, performedAt: day(0), sets: [[90, 5]] });
     await rebuildAllRecords();
     await setWeeklyTrainingGoal(3);
+    // Un plancher réglé : sans lui, la tuile ne dit pas « 0 » (cf. le test dédié).
+    await setCoachVolumeBounds('chest', { floor: 1 });
     await saveMeasurement({ type: 'body_weight', value: 84.1, unit: 'kg', measuredAt: day(0) });
     await saveMeasurement({ type: 'body_weight', value: 82.4, unit: 'kg', measuredAt: day(7) });
     await seedProgram();
@@ -122,7 +124,7 @@ describe('AnalyticsScreen', () => {
       ['Dernier record', `/exercises/${bench.id}`],
       ['Records battus', '/analytics/records'],
       ['Paliers', '/analytics/milestones'],
-      ['Sous le plancher', '/analytics/muscles'],
+      ['Sous le plancher', '/settings/volume'],
       ['Poids de corps', '/analytics/measurements'],
       ['Rapport mensuel', '/analytics/months'],
     ];
@@ -151,6 +153,17 @@ describe('AnalyticsScreen', () => {
     );
     await user.click(await tile('Dernier record'));
     expect(screen.getByTestId('where')).toHaveTextContent(`/history/${workout.id}`);
+  });
+
+  it('sans aucun plancher réglé, « Sous le plancher » ne dit pas 0 : il invite à en régler un', async () => {
+    const bench = await seedExercise({ name: 'Développé couché (barre)' });
+    await seedWorkout({ exerciseId: bench.id, performedAt: Date.now(), sets: [[100, 5]] });
+
+    renderScreen();
+
+    const floor = await tile('Sous le plancher');
+    await waitFor(() => expect(floor.textContent).toContain('Aucun plancher réglé'));
+    expect(plain(floor.textContent ?? '')).not.toMatch(/Sous le plancher\s*0/);
   });
 
   it('n’offre pas le programme sans programme actif', async () => {
