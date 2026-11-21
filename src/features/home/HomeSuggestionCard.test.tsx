@@ -53,13 +53,26 @@ function renderCard(
 }
 
 describe('HomeSuggestionCard routine folder context', () => {
-  it('never opens the folder picker by itself and follows every routine', () => {
+  it('never opens the folder picker by itself and says it follows the routines without folder', () => {
     renderCard({ routineContext: context({ selected: [] }) });
 
     expect(screen.queryByRole('dialog', { name: 'Choisir les dossiers' })).not.toBeInTheDocument();
-    expect(screen.getByText(t('home.allRoutines'))).toBeVisible();
+    // Sans choix, l'accueil suit les routines rangées nulle part quand il y en a (`getHomeDashboard`).
+    expect(screen.getByText(t('home.rootRoutineFolder'))).toBeVisible();
+    expect(screen.queryByText(t('home.allRoutines'))).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Démarrer Poussée A' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Changer de dossier' })).toBeVisible();
+  });
+
+  it('says it follows every routine when none sits outside a folder', () => {
+    renderCard({
+      routineContext: context({
+        selected: [],
+        options: options.filter((option) => option.value !== 'root'),
+      }),
+    });
+
+    expect(screen.getByText(t('home.allRoutines'))).toBeVisible();
   });
 
   it('offers a free workout and a routine creation on an empty home', async () => {

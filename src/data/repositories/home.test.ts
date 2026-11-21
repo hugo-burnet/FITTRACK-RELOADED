@@ -302,6 +302,19 @@ describe('getHomeDashboard', () => {
     expect(dashboard.suggestedRoutine).not.toBeNull();
   });
 
+  it('prefers the routines outside any folder when nothing was chosen', async () => {
+    // L'import Hevy range ses copies dans « Import Hevy — … — Archivé » : sans choix, l'accueil ne doit
+    // pas proposer une routine archivée quand l'utilisateur en a qui ne sont rangées nulle part.
+    const archive = await createFolder('Import Hevy — 21/11/2026 — Archivé');
+    await createRoutine('Push importé', archive.id);
+    const own = await createRoutine('Libre');
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext.selected).toEqual([]);
+    expect(dashboard.suggestedRoutine?.routineId).toBe(own.id);
+  });
+
   it('does not fall back when the selected folder has no routines', async () => {
     await createRoutine('Libre');
     const emptyFolder = await createFolder('Vide');

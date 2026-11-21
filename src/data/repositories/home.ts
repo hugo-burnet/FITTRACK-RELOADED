@@ -259,12 +259,16 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
   const optionRank = new Map(options.map((option, index) => [option.value, index]));
   const rankOf = ({ routine }: (typeof routines)[number]): number =>
     optionRank.get(contextValueOf(routine.folderId)) ?? Number.MAX_SAFE_INTEGER;
+  // Sans choix valide, un dossier créé (par un import, par un geste de
+  // rangement) ne doit jamais retirer « Démarrer » : on suit les routines
+  // rangées nulle part, et toutes s'il n'y en a aucune. Pas toutes d'emblée :
+  // l'import Hevy range ses copies dans un dossier « — Archivé », que l'accueil
+  // ne doit pas proposer devant les routines de l'utilisateur. Seul un choix
+  // explicite restreint la suggestion à des dossiers.
+  const unchosen = rootRoutines.length > 0 ? rootRoutines : routines;
   const candidates = (
-    // Sans choix valide, on suit toutes les routines : un dossier créé (par un
-    // import, par un geste de rangement) ne doit jamais retirer « Démarrer ».
-    // Seul un choix explicite restreint la suggestion.
     folders.length === 0 || validSelected.length === 0
-      ? routines.slice()
+      ? unchosen.slice()
       : routines.filter(({ routine }) => validSelected.includes(contextValueOf(routine.folderId)))
   ).sort(
     (left, right) =>

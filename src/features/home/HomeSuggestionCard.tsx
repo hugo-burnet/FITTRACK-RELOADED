@@ -72,6 +72,11 @@ export function HomeSuggestionCard({
 
   const selectedOptions = selectedRoutineContextOptions(routineContext);
   const hasFolderPicker = routineContext.options.length > 0;
+  // Sans choix, l'accueil suit les routines rangées nulle part s'il y en a
+  // (`getHomeDashboard`), toutes sinon : l'en-tête dit laquelle des deux.
+  const rootOption = routineContext.options.find((option) => option.value === 'root');
+  const unchosenLabel =
+    rootOption === undefined ? t('home.allRoutines') : routineContextLabel([rootOption]);
   // Vide quand **aucune** des lignes cochées n'a de routine : un cycle dont un
   // seul dossier est vide a encore de quoi proposer.
   const selectedFoldersAreEmpty =
@@ -97,9 +102,9 @@ export function HomeSuggestionCard({
         </p>
         {hasFolderPicker && (
           <p className="mt-1 truncate text-sm font-semibold text-[var(--text-1)]">
-            {selectedOptions.length === 0
-              ? t('home.allRoutines')
-              : routineContextLabel(selectedOptions)}
+            {selectedOptions.length > 0
+              ? routineContextLabel(selectedOptions)
+              : unchosenLabel}
           </p>
         )}
       </div>
