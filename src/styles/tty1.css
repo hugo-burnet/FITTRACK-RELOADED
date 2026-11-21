@@ -511,13 +511,13 @@
   background-color: var(--border);
   mask-image: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 8px);
 }
-/* L'objectif hebdomadaire : huit pixels de haut. Le fil du repos : quatre, au pied de la carte. */
+/* L'objectif hebdomadaire : huit pixels de haut. Le fil du repos : quatre, au bord haut de la rangée. */
 :root[data-theme='tty1'] [data-part='meter'] {
   height: 8px;
 }
 :root[data-theme='tty1'] [data-part='meter-rail'] {
   height: 4px;
-  bottom: 4px;
+  top: 0;
 }
 
 /* Le point du repos devient le curseur bloc, le seul clignotement de la séance. */

@@ -370,6 +370,10 @@ nom est désormais la valeur lue, et c'est le but.
 - **Relevés « N exercices · N séries »** : `metric text-sm`, jamais en capitales `label-xs`.
 - **Deux boutons ou deux puces côte à côte** : `grid-cols-[repeat(auto-fit,minmax(min(Nrem,100%),1fr))]`, qui
   s'empilent à 200 % ; le `min(…,100%)` est indispensable dans une carte étroite.
+- **Repos en séance (`RestDock`)** : une rangée (chiffre `metric text-3xl` avec « Repos » en `label-xs` au-dessus, puis
+  −15 s / +15 s / Passer en 48 px) sous un filet de progression sur toute la largeur ; sous 23 rem de large
+  (`@container`, donc à 200 %) le chiffre passe au-dessus des boutons. « Terminer la séance » s'efface le temps du
+  repos et reste dans le menu ⋮.
 
 ## À respecter / à éviter
 

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { createRoutineFromTemplate, openApp, startSuggestedWorkout } from './support';
+import { createRoutineFromTemplate, finishWorkout, openApp, startSuggestedWorkout } from './support';
 
 test.describe('une séance, du premier lancement à l’historique', () => {
   test('le premier lancement ouvre l’app directement, sans feuille', async ({ page }) => {
@@ -18,7 +18,7 @@ test.describe('une séance, du premier lancement à l’historique', () => {
     await page.getByRole('button', { name: 'Valider la série 1' }).click();
     await expect(page.getByText('1 série sur 15')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Terminer la séance' }).click();
+    await finishWorkout(page);
     await expect(page).toHaveURL(/#\/workout\/finish$/);
 
     // Un 5×5 est une cible unique, sans fourchette : le coach propose le cran. Il réclamait

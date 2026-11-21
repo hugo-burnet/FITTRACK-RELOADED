@@ -20,7 +20,7 @@ type Props = {
 const DAMAGE_HOLD_MS = 300;
 const DAMAGE_TOTAL_MS = 850;
 
-/** Compositor-driven progress bar, at the foot of the rest dock (`RestDock`). */
+/** Compositor-driven progress bar, a hairline along the top edge of the rest dock (`RestDock`). */
 export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) {
   const barRef = useRef<HTMLSpanElement | null>(null);
 
@@ -172,12 +172,12 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
         data-part="meter-rail"
         data-crit={critical || undefined}
         data-hit={hit || undefined}
-        className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
-        rounded-full bg-[var(--border)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[3px] overflow-hidden
+        bg-[var(--border)]"
       >
         <span
           ref={barRef}
-          className="block h-full w-full origin-left rounded-full bg-[var(--accent-ink)]"
+          className="block h-full w-full origin-left bg-[var(--accent-ink)]"
           style={reduced ? { transform: `scaleX(${progress})` } : undefined}
         />
       </span>
@@ -185,7 +185,7 @@ export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) 
       <span
         aria-hidden="true"
         data-part="rest-loss"
-        className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[3px]"
       >
         {loss !== null && (
           <i key={loss.key} style={{ left: `${loss.left}%`, width: `${loss.width}%` }} />
@@ -207,16 +207,22 @@ export function RestStatus({ endsAt }: { endsAt: number }) {
   const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
 
   return (
-    // 24 px, chiffres à chasse fixe : lu de loin, le téléphone posé sur le banc (audit v2.19,
-    // constat 3 — il était en 14 px dans l'en-tête de la carte).
-    <span className="flex min-w-0 items-center justify-center gap-2 text-2xl font-semibold text-[var(--accent-ink)]">
+    // La typographie du chiffre d'une tuile (`metric`, semi-gras, `leading-none`), à 30 px : lu de
+    // loin, le téléphone posé sur le banc (audit v2.19, constat 3). Le libellé « Repos » est celui
+    // d'une tuile, gravé en petit au-dessus.
+    <span className="flex shrink-0 items-center gap-2">
       <span
         aria-hidden="true"
         data-part="rest-dot"
         className="size-2 shrink-0 rounded-full bg-[var(--accent-ink)]"
       />
-      <span className="tabular truncate">
-        {t('workout.restLabel', { duration: formatRest(remaining) })}
+      {/* Le texte lu reste « Repos 1:58 » : le libellé, puis le chiffre, dans cet ordre, séparés par
+          l'espace que le flex ne dessine pas (`textContent` en a besoin, et les lecteurs d'écran aussi). */}
+      <span className="flex flex-col gap-0.5">
+        <span className="label-xs font-semibold text-[var(--text-2)]">{t('workout.restGroup')}</span>{' '}
+        <span className="metric text-3xl leading-none font-semibold text-[var(--accent-ink)]">
+          {formatRest(remaining)}
+        </span>
       </span>
     </span>
   );

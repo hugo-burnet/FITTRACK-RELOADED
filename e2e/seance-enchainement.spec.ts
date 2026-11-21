@@ -38,7 +38,11 @@ test.describe('enchaîner les séries', () => {
 
     await expect(reading).toBeInViewport();
     // Lisible à bout de bras : au moins 24 px.
-    const size = await reading.evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
+    // Le chiffre est le dernier élément du texte de repos (« Repos » au-dessus, en petit).
+    const size = await reading
+      .locator('span')
+      .last()
+      .evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
     expect(size).toBeGreaterThanOrEqual(24);
     // Les trois gestes du repos, sous le pouce et à 48 px.
     for (const name of [
@@ -89,6 +93,10 @@ test.describe('enchaîner les séries', () => {
 
       expect(await findHorizontalOverflow(page)).toEqual([]);
       await expect(page.getByRole('button', { name: 'Passer le repos' })).toBeInViewport();
+      // On ne termine pas en plein repos : la bande s'efface (la commande reste dans le menu ⋮)…
+      await expect(page.getByRole('button', { name: 'Terminer la séance' })).toHaveCount(0);
+      // … et revient dès que le repos est passé.
+      await page.getByRole('button', { name: 'Passer le repos' }).click();
       await expect(page.getByRole('button', { name: 'Terminer la séance' })).toBeInViewport();
     });
   }

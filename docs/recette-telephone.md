@@ -35,6 +35,15 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > Entre parenthèses : la version où le point est apparu, pour retrouver sa section dans
 > `docs/journal/`.
 
+## Mise à jour v3.0.1 — le repos sur une rangée (2 min)
+
+- [ ] **Le repos tient sur une rangée.** En séance, valider une série : en bas, « REPOS » et le chrono à gauche,
+      −15 s / +15 s / Passer à droite, la jauge en filet au-dessus. Le chrono se lit d'un coup d'œil, à bout de bras.
+- [ ] **« Terminer la séance » attend la fin du repos.** Pendant le repos, le bouton n'est plus en bas ; il revient dès
+      que le repos est fini ou passé. Il est aussi dans le menu ⋮ en haut à droite, même pendant le repos.
+- [ ] **Cyber : la barre de vie encaisse toujours.** En thème Cyber, −15 s pendant un repos : la barre perd un morceau
+      qui flashe puis se vide, comme avant.
+
 ## Mise à jour v3.0.0 — la refonte par objets (10 min)
 
 Installer **par-dessus** la v2.19, sans désinstaller, après avoir exporté une sauvegarde.
