@@ -35,6 +35,31 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > Entre parenthèses : la version où le point est apparu, pour retrouver sa section dans
 > `docs/journal/`.
 
+## Protocole disciplinaire RPE (5 min) *(branche, 2026-11-22)*
+
+Avant de commencer : Réglages → Séance → « Protocole disciplinaire RPE » est sur **Oui**, plafond **RPE 8**. Le son en
+« Sons + voix », le téléphone pas en silencieux.
+
+- [ ] **RPE 8 : rien ne se passe.** Valider une série, répondre 8 à « Effort perçu » : le repos démarre (et s'allonge de
+      15 s), la série suivante reste validable.
+- [ ] **RPE 9 : le carillon, puis la voix.** Valider la série suivante, répondre 9 : le carillon d'annonce, puis « Un
+      dépassement du seuil d'effort a été constaté. […] Vous pouvez disposer. » (ou l'une des deux variantes, qui finissent
+      pareil). Voix calme, même pièce que les autres annonces, la musique baisse puis remonte. **Une seule fois.**
+- [ ] **La séance est suspendue.** En tête : « Autorisation d'entraînement suspendue », l'exercice, la série, le RPE et le
+      plafond. Les coches sont grisées, « Ajouter une série » et « Ajouter un exercice » ont disparu, le balayage ne
+      supprime rien. Le repos s'est arrêté. « Terminer la séance » est en bas, en couleur.
+- [ ] **Le verrou survit.** Fermer l'app depuis les applis récentes, mode avion, rouvrir : la séance reprend suspendue,
+      **sans** rejouer l'annonce.
+- [ ] **Le palier.** De retour à l'accueil (ou dans Paliers → Secrets) : « Vous pouvez disposer », un tampon rouge.
+- [ ] **Corriger une erreur de saisie.** « Corriger une erreur de saisie » → 7 : la séance reprend ; une carte « Protocole
+      RPE » liste le dépassement et la correction 9 → 7.
+- [ ] **Déverrouillage exceptionnel.** Redépasser (RPE 9,5), puis « Déverrouillage exceptionnel » : une confirmation
+      d'abord, rien ne change tant qu'elle n'est pas validée. « Déverrouiller quand même » : « Dérogation enregistrée. Elle
+      figurera à votre dossier. » La séance reprend, la carte liste la dérogation.
+- [ ] **La trace reste.** Terminer la séance, l'ouvrir dans l'Historique : la carte « Protocole RPE » y est, et les RPE
+      saisis (9, 9,5) sont intacts.
+- [ ] **Désactivable.** Réglages → Séance → protocole sur **Non** : un RPE 10 ne déclenche plus rien.
+
 ## Mise à jour v3.0.1 — le repos sur une rangée (2 min)
 
 - [ ] **Le repos tient sur une rangée.** En séance, valider une série : en bas, « REPOS » et le chrono à gauche,

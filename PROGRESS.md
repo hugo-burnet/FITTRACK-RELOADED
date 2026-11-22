@@ -5,10 +5,17 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-21 — **v3.0.1**, le repos sur une rangée ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) ; avant, la v3.0.0, la refonte par objets.
+**Dernière mise à jour :** 2026-11-22 — **protocole disciplinaire RPE** sur la branche `claude/sleepy-hopper-ngays7`, non fusionné ; avant, la **v3.0.1**, le repos sur une rangée ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)).
 
 ## Où on en est
 
+- **Branche, non fusionnée : protocole disciplinaire RPE** ([spec](docs/design/specs/2026-11-22-protocole-rpe-design.md),
+  décisions au 2026-11-22). Plafond de séance réglable (RPE 8, actif par défaut, Réglages → Séance) : au-delà, la série est
+  enregistrée puis la séance suspendue — carillon et « … Vous pouvez disposer. » une seule fois, verrou relu après
+  rechargement et hors ligne, correction et déverrouillage exceptionnel journalisés sur la séance, palier secret au premier
+  dépassement. Indépendant du seuil 8,5 du coach, qui n'a pas changé. Quatre clips générés avec la voix de l'annonceuse.
+  Vérifié : typecheck, lint, build, suite unitaire, 56 parcours E2E (dont `protocole-rpe.spec.ts`). **Dû** : la recette,
+  section « Protocole disciplinaire RPE » ; la fusion dans `master` et la version, sur demande.
 - **Publié : v3.0.1** ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) : en séance, le repos tient sur une
   rangée et « Terminer la séance » s'efface pendant un repos (le bas de l'écran passe de 230 à 126 px). **Dû** : recette,
   section « Mise à jour v3.0.1 ».

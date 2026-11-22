@@ -302,6 +302,28 @@ export type WorkoutKind = 'benchmark';
  */
 export type BenchmarkGoal = 'light' | 'classic' | 'heavy';
 
+/**
+ * Une ligne du journal. Le plafond en vigueur est **figé** dans chaque événement : baisser le
+ * plafond demain ne réécrit pas ce qui a été constaté aujourd'hui.
+ */
+export type RpeDisciplineEvent =
+  /** Le dépassement constaté, sur la série qui l'a porté, avec la valeur saisie. */
+  | { kind: 'triggered'; at: number; setId: string; rpe: number; ceiling: number }
+  /**
+   * Une erreur de saisie corrigée sur une série qui a déclenché le protocole. `rpe` absent : la
+   * valeur a été effacée. Les deux valeurs restent, l'ancienne n'est jamais perdue.
+   */
+  | {
+      kind: 'corrected';
+      at: number;
+      setId: string;
+      previousRpe?: number;
+      rpe?: number;
+      ceiling: number;
+    }
+  /** Le déverrouillage exceptionnel, confirmé, sur le déclenchement en cours. */
+  | { kind: 'override'; at: number; setId: string; ceiling: number };
+
 export interface Workout extends Syncable {
   routineId: string; // '' for an empty workout (RF-17)
   name: string;
@@ -328,6 +350,14 @@ export interface Workout extends Syncable {
 
   /** Minutes added to UTC at workout time; preserves the historical civil day. */
   startedTimezoneOffsetMinutes?: number;
+
+  /**
+   * Le journal du protocole disciplinaire RPE de cette séance (`lib/rpeDiscipline`), dans l'ordre
+   * d'écriture. Absent : rien n'a jamais été constaté. Non indexé, donc sans version Dexie ; il
+   * traverse la sauvegarde JSON comme le reste de la ligne. Le verrou s'en **déduit** : il survit
+   * à un rechargement sans aucun état en mémoire.
+   */
+  rpeDiscipline?: RpeDisciplineEvent[];
 }
 
 export interface WorkoutExercise extends Syncable {

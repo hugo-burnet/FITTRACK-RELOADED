@@ -9,7 +9,6 @@ import {
   insertWarmupSets,
   removeWorkoutExercise,
   updateSetType,
-  updateSetValues,
   updateWorkout,
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
@@ -89,6 +88,13 @@ export type WorkoutSheetsProps = {
   platesView: PlatesView | null;
   setPlatesView: Dispatch<SetStateAction<PlatesView | null>>;
   availablePlateWeightsKg: number[] | undefined;
+  /**
+   * Protocole disciplinaire RPE : la séance est suspendue. Les gestes qui ajoutent, retirent ou
+   * préparent une série se grisent avec leur raison ; consulter, noter et terminer restent.
+   */
+  locked: boolean;
+  /** L'unique voie d'écriture d'un RPE, pour que le protocole la voie. */
+  onRate: (setId: string, rpe: number | undefined) => Promise<unknown>;
 };
 
 /**
@@ -118,7 +124,10 @@ export function WorkoutSheets({
   platesView,
   setPlatesView,
   availablePlateWeightsKg,
+  locked,
+  onRate,
 }: WorkoutSheetsProps) {
+  const suspended = locked ? { disabled: true, hint: t('rpeDiscipline.lockedSetHint') } : {};
   const navigate = useAppNavigate();
   // Un magasin global, lu ici : le faire descendre en propriété depuis l'écran
   // n'aurait rien dit de plus.
@@ -254,9 +263,11 @@ export function WorkoutSheets({
               if (sheet?.kind !== 'exercise') return;
               setSheet({ kind: 'pace', rowId: sheet.rowId });
             },
+            ...suspended,
           },
           {
             label: t('workout.addSetAction'),
+            ...suspended,
             onSelect: () => {
               if (sheet?.kind === 'exercise') void duplicateLastSet(sheet.rowId);
             },
@@ -265,6 +276,7 @@ export function WorkoutSheets({
             ? [
                 {
                   label: t('workout.warmupAction'),
+                  ...suspended,
                   onSelect: () => {
                     if (sheet?.kind !== 'exercise') return;
                     setSheet({ kind: 'warmup', rowId: sheet.rowId });
@@ -285,6 +297,7 @@ export function WorkoutSheets({
             ...(sheet?.kind === 'exercise' && hasSetsLeft(sheet.rowId)
               ? { hint: t('workout.replaceExerciseHint') }
               : { disabled: true, hint: t('workout.replaceExerciseNothingLeft') }),
+            ...suspended,
             onSelect: () => {
               if (sheet?.kind === 'exercise') void navigate(`/workout/replace/${sheet.rowId}`);
             },
@@ -292,6 +305,7 @@ export function WorkoutSheets({
           {
             label: t('workout.removeExercise'),
             danger: true,
+            ...suspended,
             onSelect: () => {
               if (sheet?.kind === 'exercise')
                 setSheet({ kind: 'removeExercise', rowId: sheet.rowId });
@@ -360,7 +374,7 @@ export function WorkoutSheets({
           <WorkoutRpeField
             value={setOf(sheet.setId)?.rpe}
             targetValue={setOf(sheet.setId)?.targetRpe}
-            onChange={(rpe) => void updateSetValues(sheet.setId, { rpe })}
+            onChange={(rpe) => void onRate(sheet.setId, rpe)}
           />
         )}
       </ActionSheet>

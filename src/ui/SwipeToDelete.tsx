@@ -5,6 +5,8 @@ type Props = {
   label: string;
   onDelete: () => void;
   children: ReactNode;
+  /** Inerte : le geste ne s'engage pas (ex. séance suspendue par le protocole RPE). */
+  disabled?: boolean;
 };
 
 const ENGAGE_PX = 10;
@@ -18,7 +20,7 @@ const THRESHOLD_MIN_PX = 72;
 const THRESHOLD_MAX_PX = 170;
 
 /** Horizontal deletion shortcut; the set menu remains the keyboard-accessible path. */
-export function SwipeToDelete({ label, onDelete, children }: Props) {
+export function SwipeToDelete({ label, onDelete, children, disabled = false }: Props) {
   const wordRef = useRef<HTMLSpanElement>(null);
   const origin = useRef<{ x: number; y: number; id: number } | null>(null);
   const swallowClick = useRef(false);
@@ -52,7 +54,7 @@ export function SwipeToDelete({ label, onDelete, children }: Props) {
 
   const startSwipe = (event: ReactPointerEvent<HTMLDivElement>) => {
     swallowClick.current = false;
-    if (leaving) return;
+    if (leaving || disabled) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     if ((event.target as HTMLElement).closest('input, textarea') !== null) return;
     origin.current = { x: event.clientX, y: event.clientY, id: event.pointerId };

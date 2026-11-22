@@ -546,6 +546,40 @@ const fr = {
     platesBelowBase: 'Plus léger que la charge à vide ({weight} kg).',
   },
 
+  /**
+   * Le protocole disciplinaire RPE (`lib/rpeDiscipline`). L'écran tutoie, comme toute l'app ; seule
+   * l'annonceuse vouvoie, dans `voiceScript.json`. Le plafond de séance n'est **pas** le seuil du
+   * coach (8,5) : les textes ne doivent jamais les confondre.
+   */
+  rpeDiscipline: {
+    lockedTitle: 'Autorisation d’entraînement suspendue',
+    lockedBody:
+      'RPE {rpe} constaté sur {exercise}, série {number}. Ton plafond de séance est RPE {ceiling}.',
+    lockedBodyUnknownSet: 'RPE {rpe} constaté. Ton plafond de séance est RPE {ceiling}.',
+    lockedRule:
+      'Plus aucune série ne peut être validée jusqu’à la fin de la séance. Tu peux consulter, sauvegarder et terminer la séance normalement.',
+    correct: 'Corriger une erreur de saisie',
+    correctTitle: 'Corriger le RPE saisi',
+    correctBody:
+      'Seulement si la valeur a été mal saisie. L’ancienne valeur ({rpe}) reste inscrite dans la séance.',
+    correctOption: 'RPE {value}',
+    correctClear: 'Aucun RPE',
+    correctFailed: 'La correction n’a pas pu être enregistrée. Réessaie.',
+    override: 'Déverrouillage exceptionnel',
+    overrideTitle: 'Déverrouiller cette séance ?',
+    overrideBody:
+      'Les séries reprennent. La dérogation est inscrite dans la séance avec son heure, et un nouveau dépassement réactivera le protocole.',
+    overrideConfirm: 'Déverrouiller quand même',
+    overrideFailed: 'Le déverrouillage n’a pas pu être enregistré. Réessaie.',
+    lockedSetHint: 'Suspendu par le protocole RPE',
+    /** Le journal, relu dans une séance passée et en séance après une dérogation. */
+    traceTitle: 'Protocole RPE',
+    traceTriggered: '{time} — dépassement : RPE {rpe} pour un plafond de {ceiling}',
+    traceCorrected: '{time} — correction : RPE {from} → {to}',
+    traceOverride: '{time} — déverrouillage exceptionnel',
+    traceNone: 'aucun',
+  },
+
   androidNotification: {
     workoutChannel: 'Séance en cours',
     workoutChannelDescription: 'Affiche la séance active dans les notifications.',
@@ -842,6 +876,7 @@ const fr = {
      */
     secret: {
       noclip: 'noclip',
+      dismissed: 'Vous pouvez disposer',
     },
 
     /**
@@ -956,6 +991,7 @@ const fr = {
       'rock-solid': 'Rock solid.',
       'doms-door': 'Ça fait mal. FitTrack est toujours là. Tu lâches pas.',
       noclip: 'Il n’y a pas de mur. Il n’y a pas de cuillère.',
+      dismissed: 'Le plafond, c’est toi qui l’avais fixé. Toute contestation sera ignorée.',
     },
   },
 
@@ -2171,6 +2207,26 @@ const fr = {
       'La cadence de série s’allonge d’elle-même avec la fatigue : un quart de seconde par ' +
       'série déjà faite, une demi-seconde sur la dernière, une demi-seconde après trois ' +
       'quarts d’heure de séance — 5 secondes par répétition au maximum.',
+    rpeDisciplineSection: 'Protocole disciplinaire RPE',
+    rpeDisciplineToggle: 'Activer le protocole disciplinaire RPE',
+    rpeDisciplineRowTitle: 'Plafond de séance',
+    rpeDisciplineRowSubtitle: 'Arrêt au-delà de RPE {ceiling}',
+    rpeDisciplineRowSubtitleOff: 'Désactivé',
+    rpeDisciplineOn: 'Oui',
+    rpeDisciplineOff: 'Non',
+    rpeDisciplineCeilingTitle: 'Plafond',
+    rpeDisciplineCeilingSheetTitle: 'Plafond RPE de séance',
+    rpeDisciplineCeilingValue: 'RPE {value}',
+    rpeDisciplineCeilingHint: 'Au-delà, la séance est suspendue.',
+    rpeDisciplineSaveFailed: 'Le réglage n’a pas pu être enregistré. Réessaie.',
+    rpeDisciplineHint:
+      'Une série validée avec un RPE au-dessus du plafond est enregistrée telle quelle, puis la ' +
+      'séance est suspendue : plus aucune série jusqu’à la fin, et l’annonceuse te congédie. Une ' +
+      'erreur de saisie se corrige, et un déverrouillage exceptionnel reste possible — l’un comme ' +
+      'l’autre restent inscrits dans la séance.',
+    rpeDisciplineCoachHint:
+      'Ce plafond est indépendant du seuil de 8,5 que le coach lit pour proposer une hausse de ' +
+      'charge : changer l’un ne change pas l’autre.',
     oneRepMaxTitle: 'Estimation du 1RM',
     oneRepMaxSheetTitle: 'Formule d’estimation du 1RM',
     oneRepMaxLoading: 'Chargement…',
