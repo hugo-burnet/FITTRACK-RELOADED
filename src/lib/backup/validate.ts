@@ -290,6 +290,9 @@ const SPECS: Record<BackupTable, TableSpec> = {
       // Greenwich, et c'est exactement le champ où un plancher à zéro se met
       // tout seul par symétrie avec les voisins.
       startedTimezoneOffsetMinutes: isNumber,
+      // Le journal du protocole RPE. Seule la forme de liste est exigée : une ligne illisible y est
+      // ignorée à la lecture (`readDisciplineEvents`), elle ne vaut pas de refuser une sauvegarde.
+      rpeDiscipline: isList,
     },
     links: [{ field: 'routineId', table: 'routines' }],
   },

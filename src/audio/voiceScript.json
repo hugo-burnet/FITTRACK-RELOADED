@@ -600,6 +600,34 @@
       "text": "Changement de côté. Reprise dans dix secondes.",
       "direction": "Deux constats, pas un encouragement. Pause nette après « côté » : la première phrase dit ce qui se passe, la seconde ce qui va se passer. Aucune insistance sur « dix ».",
       "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "rpe-discipline-breach-1",
+      "cue": "rpe-discipline-breach",
+      "text": "Un dépassement du seuil d'effort a été constaté. Votre autorisation d'entraînement est suspendue. Veuillez ranger votre matériel et quitter les installations. Toute contestation sera ignorée. Vous pouvez disposer.",
+      "direction": "La réplique de référence du protocole disciplinaire, dite à la lettre. Un constat administratif lu d'une traite, sans colère et sans sermon : la sanction est dans le texte, jamais dans la voix. Intonation neutre et calme, chaque phrase retombe. « Toute contestation sera ignorée » sans durcir ; « Vous pouvez disposer » comme un congé signifié, sans chaleur.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "rpe-discipline-breach-2",
+      "cue": "rpe-discipline-breach",
+      "text": "Le plafond d'effort que vous avez fixé a été franchi. La séance est close pour les séries suivantes. Veuillez restituer le matériel et vous diriger vers la sortie. Vous pouvez disposer.",
+      "direction": "Variante de la référence. Même registre : un guichet qui ferme, pas une réprimande. « que vous avez fixé » sans insister — c'est un rappel de procédure, pas une leçon.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "rpe-discipline-breach-3",
+      "cue": "rpe-discipline-breach",
+      "text": "Seuil d'effort dépassé. Votre dossier est transmis au service de récupération. Aucune série supplémentaire ne sera autorisée aujourd'hui. Vous pouvez disposer.",
+      "direction": "Variante brève. Bureaucratique jusqu'au bout : elle classe un dossier. Aucune ironie sur « service de récupération ».",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "rpe-discipline-override-1",
+      "cue": "rpe-discipline-override",
+      "text": "Dérogation enregistrée. Elle figurera à votre dossier.",
+      "direction": "Constat neutre. Ni approbation ni reproche : elle note, elle archive.",
+      "settings": { "stability": 0.85, "style": 0.05 }
     }
   ],
   "generation": {

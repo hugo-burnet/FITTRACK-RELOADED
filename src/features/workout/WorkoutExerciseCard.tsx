@@ -103,6 +103,11 @@ type Props = {
    * l'écran (`RestDock`) ; la carte n'en garde que ce qu'elle cachait pendant ce temps.
    */
   resting: boolean;
+  /**
+   * Protocole disciplinaire RPE : la séance est suspendue. La carte reste lisible — ses séries, ses
+   * notes, son menu — mais plus rien ne s'y valide, ne s'y ajoute, ne s'y décoche ni ne s'y efface.
+   */
+  locked?: boolean;
   /** The metronome running on this card's next set, if any. */
   pace: CardPace | null;
   /** Le chrono de maintien de cette carte, si une série est tenue. */
@@ -151,6 +156,7 @@ export function WorkoutExerciseCard({
   preferred = true,
   superset,
   resting,
+  locked = false,
   pace,
   hold,
   sideStageOf,
@@ -192,7 +198,8 @@ export function WorkoutExerciseCard({
   // Sur la seule carte de l'exercice en cours. Six bandeaux au début d'une
   // séance de six exercices seraient six choses à écarter avant de commencer,
   // et la proposition deviendrait le bruit qu'elle prétend éviter.
-  const warmupOffer = onWarmup !== undefined && preferred ? warmupOfferFor(line) : null;
+  const warmupOffer =
+    onWarmup !== undefined && preferred && !locked ? warmupOfferFor(line) : null;
 
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;
@@ -381,9 +388,11 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t(timed ? 'workout.holdOpen' : 'workout.paceOpen', { name })}
+              disabled={locked}
               onClick={onPace}
               className="flex w-[48px] shrink-0 items-center justify-center text-[var(--text-2)]
-                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
+                disabled:opacity-40"
             >
               <StopwatchIcon width={20} height={20} />
             </button>
@@ -466,53 +475,61 @@ export function WorkoutExerciseCard({
               <span className="w-12 shrink-0" />
             </div>
 
-            {sets.map((set, index) => {
-              const record = records.get(set.id);
-              return (
-                <Fragment key={set.id}>
-                  {deleted?.rank === index && undoRow}
-                  <SwipeToDelete
-                    label={t('workout.swipeDelete')}
-                    onDelete={() => {
-                      setDeleted({
-                        setId: set.id,
-                        rank: index,
-                        reading:
-                          setReading(set, columns) ||
-                          t('workout.emptySetReading', { number: index + 1 }),
-                      });
-                      onDeleteSet(set.id);
-                    }}
-                  >
-                    <WorkoutSetRow
-                      set={set}
-                      number={index + 1}
-                      columns={columns}
-                      previous={matchedPrevious[index]}
-                      above={suggestionAbove(sets, index)}
-                      holding={hold?.setId === set.id}
-                      unilateral={identity.isUnilateral === 1}
-                      amrap={amrap}
-                      onWrite={(values) => onWrite(set.id, values)}
-                      onComplete={(proposed) => onComplete(set.id, proposed, set)}
-                      onUncomplete={() => onUncomplete(set.id)}
-                      onMenu={() => onSetMenu(set, index + 1)}
-                    />
-                    {record !== undefined && <RecordNote notice={record} />}
-                  </SwipeToDelete>
-                  {effort?.setId === set.id && (
-                    <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
-                  )}
-                </Fragment>
-              );
-            })}
+            {/* Un `fieldset` désactivé grise d'un coup chaque champ et chaque bouton des
+                séries — coche, décoche, saisie, menu — sans passer un drapeau à chaque
+                ligne. `contents` : il ne pèse rien dans la mise en page. */}
+            <fieldset disabled={locked} className="contents">
+              {sets.map((set, index) => {
+                const record = records.get(set.id);
+                return (
+                  <Fragment key={set.id}>
+                    {deleted?.rank === index && undoRow}
+                    <SwipeToDelete
+                      label={t('workout.swipeDelete')}
+                      disabled={locked}
+                      onDelete={() => {
+                        setDeleted({
+                          setId: set.id,
+                          rank: index,
+                          reading:
+                            setReading(set, columns) ||
+                            t('workout.emptySetReading', { number: index + 1 }),
+                        });
+                        onDeleteSet(set.id);
+                      }}
+                    >
+                      <WorkoutSetRow
+                        set={set}
+                        number={index + 1}
+                        columns={columns}
+                        previous={matchedPrevious[index]}
+                        above={suggestionAbove(sets, index)}
+                        holding={hold?.setId === set.id}
+                        unilateral={identity.isUnilateral === 1}
+                        amrap={amrap}
+                        onWrite={(values) => onWrite(set.id, values)}
+                        onComplete={(proposed) => onComplete(set.id, proposed, set)}
+                        onUncomplete={() => onUncomplete(set.id)}
+                        onMenu={() => onSetMenu(set, index + 1)}
+                      />
+                      {record !== undefined && <RecordNote notice={record} />}
+                    </SwipeToDelete>
+                    {effort?.setId === set.id && (
+                      <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
+                    )}
+                  </Fragment>
+                );
+              })}
+            </fieldset>
 
             {deleted !== null && deleted.rank >= sets.length && undoRow}
 
-            <AddRow
-              label={t('workout.addSet')}
-              onClick={onAddSet}
-            />
+            {!locked && (
+              <AddRow
+                label={t('workout.addSet')}
+                onClick={onAddSet}
+              />
+            )}
           </>
         )}
 

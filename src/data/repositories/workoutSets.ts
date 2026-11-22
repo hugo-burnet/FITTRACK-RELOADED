@@ -9,6 +9,12 @@ import {
   reconcileRecordsForExercises,
 } from './recordReconciliation';
 import { getOneRepMaxFormula } from './settings';
+import {
+  applyRpeDisciplineAfterWrite,
+  assertRpeDisciplineOpen,
+  celebrateRpeBreach,
+  type RpeDisciplineOutcome,
+} from './rpeDiscipline';
 
 /** What a caller may set on a new set. The identity fields are derived, never passed. */
 export type NewSetValues = Partial<
@@ -61,11 +67,23 @@ async function mutateWithRecordsIfCompleted(
   });
 }
 
+/**
+ * Protocole disciplinaire RPE : une série **enregistrée** d'une séance verrouillée ne se décoche, ne
+ * change de type ni ne se supprime. Décocher puis terminer effacerait la série (`finishWorkout`
+ * retire les séries non validées) ; la retyper en échauffement la sortirait du constat. La seule
+ * modification permise est la correction du RPE, qui a sa propre voie tracée.
+ */
+async function guardRpeDiscipline(set: WorkoutSet): Promise<void> {
+  if (set.isCompleted === 1) await assertRpeDisciplineOpen(set.workoutId);
+}
+
 async function reconcileCompletedSetMutation(
   setId: string,
+  guard: (set: WorkoutSet) => Promise<void>,
   changes: (set: WorkoutSet) => Partial<WorkoutSet>,
 ): Promise<void> {
   await mutateWithRecordsIfCompleted(setId, async (set) => {
+    await guard(set);
     await db.workoutSets.put(touch(set, changes(set)));
     return true;
   });
@@ -243,8 +261,23 @@ export async function insertWarmupSets(
  * `undefined` erases: emptying a field must clear the value, not silently keep
  * the old one under a blank cell.
  */
-export async function updateSetValues(setId: string, values: Partial<SetValues>): Promise<void> {
-  await reconcileCompletedSetMutation(setId, () => values);
+export async function updateSetValues(
+  setId: string,
+  values: Partial<SetValues>,
+): Promise<RpeDisciplineOutcome> {
+  let outcome: RpeDisciplineOutcome = 'none';
+  // Une série non validée ne passe que par la première transaction, qui ne lit que les séries :
+  // le protocole ne regarde de toute façon qu'une série enregistrée.
+  await mutateWithRecordsIfCompleted(setId, async (set) => {
+    const next = touch(set, values);
+    await db.workoutSets.put(next);
+    if (set.isCompleted === 1 && 'rpe' in values) {
+      outcome = await applyRpeDisciplineAfterWrite(set, next);
+    }
+    return true;
+  });
+  await celebrateRpeBreach(outcome);
+  return outcome;
 }
 
 /**
@@ -257,7 +290,7 @@ export async function updateSetValues(setId: string, values: Partial<SetValues>)
  * towards volume and records (`isWorkingSet`).
  */
 export async function updateSetType(setId: string, setType: SetType): Promise<void> {
-  await reconcileCompletedSetMutation(setId, () => ({ setType }));
+  await reconcileCompletedSetMutation(setId, guardRpeDiscipline, () => ({ setType }));
 }
 
 export interface CompleteSetOptions {
@@ -309,29 +342,35 @@ export async function completeSet(
   setId: string,
   values: Partial<SetValues> = {},
   { proposed = {} }: CompleteSetOptions = {},
-): Promise<void> {
-  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+): Promise<RpeDisciplineOutcome> {
+  const outcome = await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const set = await db.workoutSets.get(setId);
-    if (set === undefined) return;
+    if (set === undefined) return 'none' as const;
 
     const newlyCompleted = set.isCompleted === 0;
-    await db.workoutSets.put(
-      touch(set, {
-        ...proposalsForBlanks(set, proposed),
-        ...definedValues(values),
-        isCompleted: 1,
-        performedAt: newlyCompleted ? Date.now() : set.performedAt,
-        // La progression des côtés est intermédiaire : une série validée n'a
-        // plus de côté en cours, et laisser l'échéance ferait rouvrir la
-        // série sur « second côté » après une décoche.
-        unilateralSecondSideStartsAt: undefined,
-      }),
-    );
+    // Protocole disciplinaire RPE : plus aucune série validée après un dépassement. Le refus vient
+    // d'ici et pas seulement de l'écran, qui peut être en retard d'un rendu sur la base.
+    if (newlyCompleted) await assertRpeDisciplineOpen(set.workoutId);
+    const next = touch(set, {
+      ...proposalsForBlanks(set, proposed),
+      ...definedValues(values),
+      isCompleted: 1,
+      performedAt: newlyCompleted ? Date.now() : set.performedAt,
+      // La progression des côtés est intermédiaire : une série validée n'a
+      // plus de côté en cours, et laisser l'échéance ferait rouvrir la
+      // série sur « second côté » après une décoche.
+      unilateralSecondSideStartsAt: undefined,
+    });
+    await db.workoutSets.put(next);
 
     const formula = await getOneRepMaxFormula();
     if (newlyCompleted) await persistRecordsForCompletedSet(setId, formula);
     else await reconcileRecordsForExercises([set.exerciseId], formula);
+    // La série est enregistrée d'abord ; le constat entre dans la même transaction qu'elle.
+    return applyRpeDisciplineAfterWrite(set, next);
   });
+  await celebrateRpeBreach(outcome);
+  return outcome;
 }
 
 /**
@@ -342,7 +381,7 @@ export async function completeSet(
  * the history and out of the previous-value column.
  */
 export async function uncompleteSet(setId: string): Promise<void> {
-  await reconcileCompletedSetMutation(setId, () => ({
+  await reconcileCompletedSetMutation(setId, guardRpeDiscipline, () => ({
     isCompleted: 0,
     performedAt: 0,
     // Une série décochée repart du premier côté. C'est la seule lecture qui ne
@@ -376,8 +415,9 @@ export async function completeFirstSide(
   setId: string,
   now = Date.now(),
 ): Promise<FirstSideWrite> {
-  return db.transaction('rw', db.workoutSets, async () => {
+  return db.transaction('rw', db.workoutSets, db.workouts, db.settings, async () => {
     const set = await db.workoutSets.get(setId);
+    if (set !== undefined) await assertRpeDisciplineOpen(set.workoutId);
     if (
       set === undefined ||
       set.deletedAt !== 0 ||
@@ -408,6 +448,7 @@ export async function resetUnilateralProgress(setId: string): Promise<void> {
 export async function deleteSet(setId: string): Promise<void> {
   await mutateWithRecordsIfCompleted(setId, async (set) => {
     if (set.deletedAt !== 0) return false;
+    await guardRpeDiscipline(set);
     await softDelete(db.workoutSets, setId);
 
     const renumbered = (await liveSetsOf(set.workoutExerciseId))

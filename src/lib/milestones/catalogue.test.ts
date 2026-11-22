@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import catalogue from '@/data/seed/exercises.json';
 import { t, type TranslationKey } from '@/i18n/fr';
-import { MILESTONES, milestoneById, NOCLIP_MILESTONE_ID } from './catalogue';
+import {
+  FIRST_RPE_BREACH_MILESTONE_ID,
+  MILESTONES,
+  milestoneById,
+  NOCLIP_MILESTONE_ID,
+} from './catalogue';
 
 const SLUGS = new Set(catalogue.map((row) => row.slug));
 
@@ -109,8 +114,20 @@ describe('les secrets', () => {
     }
   });
 
+  it('range « Vous pouvez disposer » parmi les secrets, sans exercice ni sujet', () => {
+    expect(milestoneById(FIRST_RPE_BREACH_MILESTONE_ID)).toEqual({
+      id: 'dismissed',
+      kind: 'secret',
+      group: 'secret',
+      threshold: 1,
+    });
+  });
+
   it('écrit ses secrets en dernier, après le volume', () => {
+    // Tous à la queue, dans l'ordre où ils sont arrivés : noclip, puis le premier dépassement RPE.
     const ids = MILESTONES.map((row) => row.id);
-    expect(ids.at(-1)).toBe(NOCLIP_MILESTONE_ID);
+    expect(ids.slice(-2)).toEqual([NOCLIP_MILESTONE_ID, FIRST_RPE_BREACH_MILESTONE_ID]);
+    const firstSecret = MILESTONES.findIndex((row) => row.kind === 'secret');
+    expect(MILESTONES.slice(firstSecret).every((row) => row.kind === 'secret')).toBe(true);
   });
 });

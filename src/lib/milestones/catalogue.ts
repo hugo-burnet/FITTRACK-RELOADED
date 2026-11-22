@@ -63,6 +63,12 @@ export const FIRST_SESSION_MILESTONE_ID = 'sessions-1';
 /** Le succès de TTY1 : acquis si et seulement si TTY1 est débloqué (`app/noclip.ts`). */
 export const NOCLIP_MILESTONE_ID = 'noclip';
 export const FIRST_DOMS_MILESTONE_ID = 'doms-48';
+/**
+ * Le premier dépassement du plafond RPE qu'on s'était soi-même fixé (`lib/rpeDiscipline`). Accordé
+ * par le dépôt du protocole au moment du constat, jamais par l'historique : un RPE n'est pas une
+ * performance, et aucune séance ne « franchit » ce palier au sens du moteur.
+ */
+export const FIRST_RPE_BREACH_MILESTONE_ID = 'dismissed';
 export const FIRST_DOMS_HOURS = 48;
 
 export const MILESTONES: readonly MilestoneDefinition[] = [
@@ -204,6 +210,9 @@ export const MILESTONES: readonly MilestoneDefinition[] = [
   // noclip est la triche qui traverse les murs, et ce qu'on obtient en ayant vu la console de
   // l'ouverture : TTY1 débloqué et ce palier sont la même chose, vue de deux côtés.
   secret(NOCLIP_MILESTONE_ID),
+  // Le soixantième, et le dernier que le plafond du catalogue autorise : la première fois que
+  // l'annonceuse a dit « Vous pouvez disposer » avant la fin de la séance.
+  secret(FIRST_RPE_BREACH_MILESTONE_ID),
 ];
 
 function subjectKeyFor(slugs: readonly string[]): string {

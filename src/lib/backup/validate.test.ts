@@ -111,6 +111,26 @@ describe('validateBackupTables', () => {
     expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
   });
 
+  it('accepte le journal du protocole RPE et refuse ce qui n’est pas une liste', () => {
+    const tables = account();
+    tables.workouts[0]!.rpeDiscipline = [
+      { kind: 'triggered', at: 1, setId: 's', rpe: 9, ceiling: 8 },
+      { kind: 'override', at: 2, setId: 's', ceiling: 8 },
+    ];
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+
+    tables.workouts[0]!.rpeDiscipline = 'verrouillé';
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'workouts',
+      index: 0,
+      field: 'rpeDiscipline',
+    });
+  });
+
   it('accepte une séance de benchmark et refuse un genre de séance inconnu', () => {
     const tables = account();
     tables.workouts[0]!.kind = 'benchmark';

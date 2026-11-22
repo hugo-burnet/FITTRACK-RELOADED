@@ -7,9 +7,11 @@ générateur est ici parce que sans lui personne ne saurait refaire l'image.
 | Fichier | Produit | Jeton |
 |---|---|---|
 | `noclip.py` | `public/milestones/noclip.jpg`, 384 × 384 | le palier secret « noclip » : une pluie de glyphes verts |
+| `dismissed.py` | `public/milestones/dismissed.jpg`, 384 × 384 | le palier secret « Vous pouvez disposer » : un tampon « Autorisation suspendue » |
 
 ```bash
 python3 scripts/milestone-art/noclip.py
+python3 scripts/milestone-art/dismissed.py   # Pillow et DejaVu Sans Bold
 ```
 
 Python 3 sans dépendance, et ImageMagick (`convert`) pour l'encodage JPEG. Le dessin est déterministe

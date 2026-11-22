@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
-import {
-  deleteSet,
-  reorderWorkoutExercises,
-  restoreSet,
-  updateSetValues,
-} from '@/data/repositories/workouts';
+import { deleteSet, reorderWorkoutExercises, restoreSet } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachRecommendation } from '@/data/repositories/coachApply';
 import { bannerReading } from '@/features/benchmark/benchmarkText';
@@ -38,6 +33,9 @@ import { restBonusSecondsFor } from '@/lib/restBonus';
 import { useWorkoutPace } from './useWorkoutPace';
 import { useWorkoutSetActions } from './useWorkoutSetActions';
 import { useActiveWorkout } from './useActiveWorkout';
+import { RpeDisciplinePanel } from './RpeDisciplinePanel';
+import { RpeDisciplineTrace } from './RpeDisciplineTrace';
+import { useRpeDiscipline } from './useRpeDiscipline';
 import { workoutExerciseLoads } from './workoutLookups';
 import { WorkoutExerciseCard, workoutRecordNotices } from './WorkoutExerciseCard';
 import { INITIAL_WORKOUT_FOLD_COMMAND, nextWorkoutFoldCommand } from './workoutFold';
@@ -75,6 +73,9 @@ export function WorkoutScreen() {
   } = useActiveWorkout();
 
   const extendRest = useRestTimer((state) => state.extend);
+  // Monté avant les retours anticipés, comme les autres hooks : le verrou se relit dans la base.
+  const { state: discipline, wouldSuspend } = useRpeDiscipline(detail?.workout);
+  const locked = discipline.status === 'locked';
   const pacer = useRepPacer();
   const hold = useHoldTimer();
   const pace = useWorkoutPace(detail?.exercises ?? EMPTY_LINES, defaultRepSeconds);
@@ -96,6 +97,9 @@ export function WorkoutScreen() {
     onAddSet,
     onInsertWarmup,
     onPaceFinished,
+    onRate,
+    onCorrectDiscipline,
+    onOverrideDiscipline,
     writeFailed,
   } =
     useWorkoutSetActions({
@@ -268,7 +272,10 @@ export function WorkoutScreen() {
           {!resting && (
             <ActionBand
               label={t('workout.finish')}
-              tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
+              // Suspendue par le protocole RPE, terminer est la seule chose qui reste à faire.
+              tone={
+                locked || (completedSets > 0 && completedSets === totalSets) ? 'accent' : 'quiet'
+              }
               onClick={() => {
                 void navigate('/workout/finish');
               }}
@@ -278,6 +285,16 @@ export function WorkoutScreen() {
       }
     >
       <div className="flex flex-col gap-2">
+        {discipline.status === 'locked' && (
+          <RpeDisciplinePanel
+            trigger={discipline.trigger}
+            exercises={exercises}
+            onCorrect={onCorrectDiscipline}
+            onOverride={onOverrideDiscipline}
+          />
+        )}
+        {/* Après une correction ou une dérogation, la séance reprend — et garde sa trace à l'écran. */}
+        {discipline.status === 'clear' && <RpeDisciplineTrace events={workout.rpeDiscipline} />}
         {workout.kind === 'benchmark' && (
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
@@ -340,8 +357,11 @@ export function WorkoutScreen() {
                         : undefined
                     }
                     resting={activeRestSetId !== null}
+                    locked={locked}
                     effort={
-                      effortSetId !== null && line.sets.some((set) => set.id === effortSetId)
+                      !locked &&
+                      effortSetId !== null &&
+                      line.sets.some((set) => set.id === effortSetId)
                         ? {
                             setId: effortSetId,
                             onExpire: () =>
@@ -349,13 +369,19 @@ export function WorkoutScreen() {
                                 current === effortSetId ? null : current,
                               ),
                             onAnswer: (rpe) => {
-                              void updateSetValues(effortSetId, { rpe });
+                              void onRate(effortSetId, rpe);
                               const bonus = restBonusSecondsFor(rpe);
                               // Only when the rest being extended is this set’s:
                               // a superset round and a set followed by a drop
                               // set start none, and announcing a bonus nothing
                               // is counting down is the announcer crying wolf.
-                              if (bonus > 0 && useRestTimer.getState().setId === effortSetId) {
+                              // Ni au-delà du plafond RPE : le protocole va arrêter ce
+                              // repos, et l'annonceuse a mieux à dire qu'un bonus.
+                              if (
+                                bonus > 0 &&
+                                !wouldSuspend(rpe) &&
+                                useRestTimer.getState().setId === effortSetId
+                              ) {
                                 extendRest(effortSetId, bonus);
                                 announce('rest-extended');
                               }
@@ -429,6 +455,9 @@ export function WorkoutScreen() {
                       // to write, and a dead tap target is worse than none. Also
                       // undefined under a deload: the session already carries its
                       // own reduced loads, and the objective would overwrite them.
+                      // Ni sous un protocole RPE qui a suspendu la séance : il ne reste aucune
+                      // série à charger.
+                      locked ||
                       deloadActive ||
                       coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
                         ? undefined
@@ -449,14 +478,16 @@ export function WorkoutScreen() {
           </>
         )}
 
-        <Card>
-          <AddRow
-            label={t('workout.addExercise')}
-            onClick={() => {
-              void navigate('/workout/add');
-            }}
-          />
-        </Card>
+        {!locked && (
+          <Card>
+            <AddRow
+              label={t('workout.addExercise')}
+              onClick={() => {
+                void navigate('/workout/add');
+              }}
+            />
+          </Card>
+        )}
       </div>
 
       <WorkoutSheets
@@ -470,6 +501,8 @@ export function WorkoutScreen() {
         platesView={platesView}
         setPlatesView={setPlatesView}
         availablePlateWeightsKg={availablePlateWeightsKg}
+        locked={locked}
+        onRate={onRate}
       />
     </Screen>
   );

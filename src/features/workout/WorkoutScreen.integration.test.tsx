@@ -23,6 +23,7 @@ import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
+import { setRpeDisciplineSettings } from '@/data/repositories/rpeDiscipline';
 import * as announcer from '@/audio/announce';
 import { resetDb } from '@/test/resetDb';
 import { seedWorkout } from '@/test/factories';
@@ -789,6 +790,9 @@ describe('WorkoutScreen — effort et fatigue', () => {
   });
 
   it('demande l’effort sous la série validée, et allonge le repos', async () => {
+    // Le bonus de repos d'un RPE 9, protocole RPE éteint : actif, ce 9 suspendrait la séance (cf.
+    // `WorkoutScreen.rpeDiscipline.test.tsx`), et il n'y aurait plus de repos à allonger.
+    await setRpeDisciplineSettings({ enabled: false, ceiling: 8 });
     const workoutId = await seedTwoSetWorkout();
     const user = userEvent.setup();
     renderWorkout();

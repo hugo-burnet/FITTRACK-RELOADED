@@ -39,6 +39,10 @@ export type CueId =
   | 'coach-recap-fatigue'
   | 'coach-recap-plateau'
   | 'workout-finished'
+  /** Protocole disciplinaire RPE : le plafond de séance est dépassé (`lib/rpeDiscipline`). */
+  | 'rpe-discipline-breach'
+  /** Protocole disciplinaire RPE : le déverrouillage exceptionnel est enregistré. */
+  | 'rpe-discipline-override'
   /** Les repères du chrono de maintien — cf. `holdMarks.ts`. */
   | HoldMarkCue;
 
@@ -125,6 +129,8 @@ const REP_CADENCE_BY_CUE: Record<CueId, boolean> = {
   'coach-recap-fatigue': false,
   'coach-recap-plateau': false,
   'workout-finished': false,
+  'rpe-discipline-breach': false,
+  'rpe-discipline-override': false,
 };
 
 /** Les cues de la cadence, dans l'ordre du tableau — pour les tests et le tri. */
@@ -286,6 +292,29 @@ export const CUES: Record<CueId, CueDefinition> = {
     priority: 3,
     gapMs: 1_500,
     cooldownMs: 60_000,
+    duckMusic: true,
+  },
+  /*
+   * « Un dépassement du seuil d'effort a été constaté. […] Vous pouvez disposer. »
+   *
+   * Le carillon d'annonce, puis la phrase — l'ordre que le personnage a toujours eu. Priorité au-dessus
+   * de tout : c'est la seule annonce qui met fin à la séance, et une « dernière série » en file ne doit
+   * pas la couvrir. Aucun refroidissement : le dépôt garantit déjà qu'elle ne part qu'une fois par
+   * déclenchement (`RpeDisciplineOutcome`), et un refroidissement mangerait la seconde annonce d'un
+   * second dépassement après une dérogation.
+   */
+  'rpe-discipline-breach': {
+    tone: 'chime',
+    priority: 4,
+    gapMs: 0,
+    cooldownMs: 0,
+    duckMusic: true,
+  },
+  'rpe-discipline-override': {
+    tone: 'chime',
+    priority: 4,
+    gapMs: 0,
+    cooldownMs: 0,
     duckMusic: true,
   },
   ...HOLD_MARK_CUES,

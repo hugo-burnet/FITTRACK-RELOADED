@@ -62,6 +62,7 @@ export const MILESTONE_ART_KEYS = [
   'rock-solid',
   'doms-door',
   'noclip',
+  'dismissed',
 ] as const;
 
 export type MilestoneArtKey = (typeof MILESTONE_ART_KEYS)[number];
@@ -128,6 +129,9 @@ const ART_BY_MILESTONE: Readonly<Record<string, MilestoneArtKey>> = {
   // Le seul jeton qui n'est pas un mème : une pluie de glyphes verts, dessinée par
   // `scripts/milestone-art/noclip.py`, en 384 px parce qu'une pluie floue n'est plus une pluie.
   noclip: 'noclip',
+  // Un tampon administratif, dessiné par `scripts/milestone-art/dismissed.py` : le palier n'est pas
+  // une victoire, c'est un congé signifié.
+  dismissed: 'dismissed',
 };
 
 /** `undefined` pour un palier retiré du catalogue : sa ligne en base survit. */

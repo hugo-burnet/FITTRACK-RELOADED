@@ -11,6 +11,7 @@ import {
 } from './app/bootEasterEgg';
 import { drawBootScript } from './app/bootFacts';
 import { grantNoclipIfUnlocked } from './app/noclip';
+import { grantRpeBreachMilestoneIfEarned } from './data/repositories/rpeDiscipline';
 import { seededRandom } from './app/bootTty1Script';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
@@ -194,6 +195,9 @@ void Promise.all([
       // Le rattrapage de noclip, après l'ancienneté pour que les 30 jours le donnent dans le même
       // démarrage : qui avait TTY1 avant ce palier le reçoit ici, acquitté.
       await grantNoclipIfUnlocked(bootStorage, { celebrate: false });
+      // Le palier « Vous pouvez disposer » d'un dépassement constaté sans que le palier ait pu
+      // s'écrire (restauration, kill au mauvais instant) : rangé ici, acquitté. Ne lève jamais.
+      await grantRpeBreachMilestoneIfEarned();
       return seedFailed;
     }),
   openingHeld,

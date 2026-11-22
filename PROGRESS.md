@@ -5,11 +5,15 @@
 > les décisions, les pièges et la dette vont dans `docs/progress/decisions-et-pieges.md`. Ce fichier ne
 > garde que ce qui est vivant : où on en est, ce qui reste, ce qui est dû.
 
-**Dernière mise à jour :** 2026-11-21 — **v3.0.1**, le repos sur une rangée ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) ; avant, la v3.0.0, la refonte par objets.
+**Dernière mise à jour :** 2026-11-22 — **v3.1.0**, le protocole disciplinaire RPE ([journal](docs/journal/2026-11-22-versions-v3-1-0.md)) ; avant, la v3.0.1, le repos sur une rangée.
 
 ## Où on en est
 
-- **Publié : v3.0.1** ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) : en séance, le repos tient sur une
+- **Publié : v3.1.0** ([journal](docs/journal/2026-11-22-versions-v3-1-0.md)) : le protocole disciplinaire RPE — plafond
+  de séance réglable (RPE 8, actif par défaut), séance suspendue après la série qui dépasse, carillon et « … Vous pouvez
+  disposer. » une seule fois, correction et déverrouillage exceptionnel journalisés, palier secret au premier dépassement.
+  Indépendant du seuil 8,5 du coach. **Dû** : recette, section « Mise à jour v3.1.0 ».
+- **Avant : v3.0.1** ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) : en séance, le repos tient sur une
   rangée et « Terminer la séance » s'efface pendant un repos (le bas de l'écran passe de 230 à 126 px). **Dû** : recette,
   section « Mise à jour v3.0.1 ».
 - **Avant : v3.0.0** ([journal](docs/journal/2026-11-21-versions-v3-0-0.md)) : une page par objet (exercice, séance

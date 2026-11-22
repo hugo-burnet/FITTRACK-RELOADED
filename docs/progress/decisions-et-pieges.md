@@ -7,6 +7,42 @@
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-11-22 — Protocole disciplinaire RPE (branche, non publiée)
+
+**Demande.** « Un système qui m'empêche de dépasser volontairement mon plafond RPE pendant mes séances », plafond
+configurable (8 au départ), séance suspendue après la série qui dépasse, correction et déverrouillage exceptionnel
+traçables, désactivable ; l'annonceuse dit « … Vous pouvez disposer. » ; un palier pour le premier dépassement.
+Spec : `docs/design/specs/2026-11-22-protocole-rpe-design.md`.
+
+- **Deux règles, deux constantes.** Le plafond de séance (`DEFAULT_RPE_DISCIPLINE.ceiling`, `lib/rpeDiscipline.ts`) n'est
+  pas `INCREASE_MAX_RPE` (8,5, `lib/coach/constants.ts`). Le coach n'a pas été touché : un test vérifie qu'il propose la
+  même chose protocole actif ou non, et qu'un RPE 8 (au plafond) laisse passer sa hausse.
+- **Le verrou est un journal, pas un drapeau.** `Workout.rpeDiscipline` (non indexé, pas de version Dexie) garde
+  `triggered`, `corrected`, `override`, chacun avec son heure et le plafond **figé**. Le verrou s'en déduit
+  (`disciplineState`) : il survit au rechargement, au kill et au hors-ligne sans état en mémoire, et changer le plafond
+  demain ne réécrit rien. Le RPE de la série n'est jamais touché par le protocole.
+- **Le constat entre dans la transaction de la série** (`completeSet`, `updateSetValues`). Un kill entre les deux ne peut
+  pas laisser un RPE 9 sans verrou. Le dépôt rend `triggered` une seule fois par déclenchement : c'est ce retour, et lui
+  seul, qui fait parler l'annonceuse — un rechargement relit le verrou sans réannoncer.
+- **La base refuse, pas seulement l'écran.** Sur une séance verrouillée : valider, finir un premier côté, décocher,
+  retyper ou supprimer une série enregistrée lève `RpeDisciplineLockedError`. Décocher puis terminer aurait effacé la
+  série (`finishWorkout` retire les non-validées) — c'est la porte que ces gardes ferment. Terminer, consulter, noter,
+  exporter restent libres.
+- **Choix de l'agent, à relire :** le plafond s'applique aux séries de travail (pas aux échauffements, comme le coach) ;
+  il ne s'applique qu'à une séance **en cours** ; une dérogation exempte la série qu'elle couvre, pas les suivantes (un
+  second dépassement rejoue le protocole et l'annonce) ; une correction qui repasse au-dessus du plafond reverrouille ;
+  désactiver le protocole lève un verrou en cours sans effacer le journal ; plafond 10 non proposé (infranchissable) ;
+  protocole **actif par défaut**.
+- **Le bonus de repos se décide toujours au doigt.** La bande d'effort l'appliquait de façon synchrone ; l'attendre après
+  l'écriture du RPE décalait le repos et un test de cadence l'a vu. Il reste synchrone, et n'est sauté que si le RPE
+  dépasse le plafond actif (`wouldSuspend`) : on n'annonce pas un bonus sur un repos que le protocole va arrêter.
+- **La voix** : quatre clips générés avec la voix ElevenLabs de l'annonceuse (référence + deux variantes qui finissent
+  toutes par « Vous pouvez disposer. », plus « Dérogation enregistrée. Elle figurera à votre dossier. »). Cue priorité 4,
+  carillon, aucun refroidissement (l'unicité vient du dépôt). **Piège** : le `fetch` de Node n'emprunte pas le proxy
+  sans `NODE_USE_ENV_PROXY=1`.
+- **Le palier** `dismissed` est un secret (comme noclip), accordé par le dépôt au constat, rattrapé acquitté au démarrage.
+  C'est le 60ᵉ : le plafond du catalogue est atteint. Jeton dessiné par `scripts/milestone-art/dismissed.py`.
+
 ### 2026-11-21 — v3.0.0 : le temps 3 et la finition des thèmes
 
 - **Choix tranchés en route, à relire** : « Sans choix de dossier, l'accueil suit les routines hors dossier, toutes s'il n'y

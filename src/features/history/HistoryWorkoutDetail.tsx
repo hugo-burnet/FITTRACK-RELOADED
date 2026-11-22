@@ -25,6 +25,7 @@ import { HistoryCoachConclusions } from './HistoryCoachConclusions';
 import { HistoryMusclesCard } from './HistoryMusclesCard';
 import { HistoryProgramLine } from './HistoryProgramLine';
 import { HistoryRecords } from './HistoryRecords';
+import { RpeDisciplineTrace } from '@/features/workout/RpeDisciplineTrace';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -135,6 +136,8 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
           </Card>
         </section>
       )}
+
+      <RpeDisciplineTrace events={workout.rpeDiscipline} />
 
       {/* Quatre tuiles `S` sans lien : la séance est passée, ces chiffres ne mènent nulle part.
           La durée est celle de l'horloge. L'ancien « Temps » (reps × cadence) en était une estimation

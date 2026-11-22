@@ -10,6 +10,12 @@ import {
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import {
+  RpeDisciplineLockedError,
+  correctRpeDisciplineTrigger,
+  overrideRpeDiscipline,
+  type RpeDisciplineOutcome,
+} from '@/data/repositories/rpeDiscipline';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { announce } from '@/audio/announce';
 import { isRestTriggering, type restPlans } from '@/lib/rest';
@@ -60,6 +66,28 @@ export function useWorkoutSetActions({
   const [writeFailed, setWriteFailed] = useState(false);
   const completing = useRef(new Set<string>());
 
+  /*
+   * Protocole disciplinaire RPE : le dépôt a constaté un dépassement, et ne le dit qu'une fois par
+   * déclenchement (`RpeDisciplineOutcome`). C'est donc ici, et seulement sur ce retour, que la séance
+   * s'arrête et que l'annonceuse parle : carillon, puis « … Vous pouvez disposer. ». Un rechargement
+   * relit le verrou dans la base sans repasser par ici, donc sans réannoncer.
+   *
+   * Le repos et la cadence s'arrêtent : il n'y a plus de série à préparer.
+   */
+  const onDisciplineOutcome = (outcome: RpeDisciplineOutcome): boolean => {
+    if (outcome !== 'triggered') return false;
+    stopRest();
+    pace.stop();
+    setEffortSetId(null);
+    announce('rpe-discipline-breach');
+    return true;
+  };
+
+  /** Une série refusée par le protocole n'est pas une écriture ratée : le panneau l'explique. */
+  const onWriteError = (error: unknown): void => {
+    if (!(error instanceof RpeDisciplineLockedError)) setWriteFailed(true);
+  };
+
   /** Le stade de cette série, ou `null` si elle n'est pas unilatérale. */
   const stageOf = (line: WorkoutExerciseDetail, set: WorkoutSet) =>
     sideStageFor(set, workoutExerciseIdentityOf(line).isUnilateral === 1);
@@ -85,7 +113,7 @@ export function useWorkoutSetActions({
         announce('side-change');
         pace.startSecondSide(line, setId, result.startsAt);
       })
-      .catch(() => setWriteFailed(true));
+      .catch(onWriteError);
   };
 
   // Warm-ups, supersets, and chained drop sets do not trigger a rest.
@@ -148,18 +176,49 @@ export function useWorkoutSetActions({
     // Les chiffres de l'écran sont des propositions : seul le chrono décide d'une valeur, et il
     // prime sur une durée tapée. Cf. `completeSet` pour ce que la coche relit elle-même.
     void completeSet(setId, held === undefined ? {} : { durationSeconds: held }, { proposed })
-      .then(() => {
+      .then((outcome) => {
         pace.stop(setId);
+        // La série est enregistrée ; au-delà du plafond, le protocole prend la main.
+        if (onDisciplineOutcome(outcome)) return;
         startRest(line, setId, set.setType);
         announceSetValidation(setValidationCue(line.sets, setId));
         setEffortSetId(set.setType !== 'warmup' && loadEffortPrompt() ? setId : null);
       })
-      .catch(() => setWriteFailed(true))
+      .catch(onWriteError)
       .finally(() => completing.current.delete(setId));
   };
 
+  /**
+   * Le RPE d'une série, d'où qu'il vienne — la bande d'effort ou la feuille de série. Une seule voie,
+   * pour que le protocole voie chaque écriture. Rend le constat, pour que la bande d'effort sache
+   * s'il reste un repos à allonger.
+   */
+  const onRate = async (setId: string, rpe: number | undefined): Promise<RpeDisciplineOutcome> => {
+    setWriteFailed(false);
+    try {
+      const outcome = await updateSetValues(setId, { rpe });
+      onDisciplineOutcome(outcome);
+      return outcome;
+    } catch (error) {
+      onWriteError(error);
+      return 'none';
+    }
+  };
+
+  /** Corriger une erreur de saisie sur la série qui a déclenché le protocole. */
+  const onCorrectDiscipline = async (rpe: number | undefined): Promise<void> => {
+    if (workoutId === undefined) return;
+    onDisciplineOutcome(await correctRpeDisciplineTrigger(workoutId, rpe));
+  };
+
+  /** Le déverrouillage exceptionnel, déjà confirmé par la feuille. */
+  const onOverrideDiscipline = async (): Promise<void> => {
+    if (workoutId === undefined) return;
+    if (await overrideRpeDiscipline(workoutId)) announce('rpe-discipline-override');
+  };
+
   const onUncomplete = (setId: string): void => {
-    void uncompleteSet(setId).catch(() => setWriteFailed(true));
+    void uncompleteSet(setId).catch(onWriteError);
     setEffortSetId((current) => (current === setId ? null : current));
     // Only stop the rest owned by this set.
     stopRest(setId);
@@ -203,6 +262,9 @@ export function useWorkoutSetActions({
     onAddSet,
     onInsertWarmup,
     onPaceFinished,
+    onRate,
+    onCorrectDiscipline,
+    onOverrideDiscipline,
     writeFailed,
   };
 }
