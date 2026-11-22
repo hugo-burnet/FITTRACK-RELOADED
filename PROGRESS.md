@@ -12,7 +12,7 @@
 - **Publié : v3.1.0** ([journal](docs/journal/2026-11-22-versions-v3-1-0.md)) : le protocole disciplinaire RPE — plafond
   de séance réglable (RPE 8, actif par défaut), séance suspendue après la série qui dépasse, carillon et « … Vous pouvez
   disposer. » une seule fois, correction et déverrouillage exceptionnel journalisés, palier secret au premier dépassement.
-  Indépendant du seuil 8,5 du coach. **Dû** : recette, section « Mise à jour v3.1.0 ».
+  Indépendant du seuil 8,5 du coach. **Recette validée sur le téléphone** le 2026-11-22 (« tout fonctionne »).
 - **Avant : v3.0.1** ([journal](docs/journal/2026-11-21-versions-v3-0-1.md)) : en séance, le repos tient sur une
   rangée et « Terminer la séance » s'efface pendant un repos (le bas de l'écran passe de 230 à 126 px). **Dû** : recette,
   section « Mise à jour v3.0.1 ».
