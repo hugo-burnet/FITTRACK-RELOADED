@@ -35,7 +35,7 @@ Ce contrôle sur appareil réel reste à faire ; les tests automatisés ne le va
 > Entre parenthèses : la version où le point est apparu, pour retrouver sa section dans
 > `docs/journal/`.
 
-## Protocole disciplinaire RPE (5 min) *(branche, 2026-11-22)*
+## Mise à jour v3.1.0 — le protocole disciplinaire RPE (5 min)
 
 Avant de commencer : Réglages → Séance → « Protocole disciplinaire RPE » est sur **Oui**, plafond **RPE 8**. Le son en
 « Sons + voix », le téléphone pas en silencieux.
